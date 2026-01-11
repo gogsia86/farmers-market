@@ -24,11 +24,7 @@ import { CacheTTL, multiLayerCache } from "@/lib/cache/multi-layer.cache";
 import { database } from "@/lib/database";
 import { createLogger } from "@/lib/monitoring/logger";
 import { productRepository } from "@/lib/repositories/product.repository";
-import type {
-  Product,
-  ProductCategory,
-  ProductStatus,
-} from "@prisma/client";
+import type { Product, ProductCategory, ProductStatus } from "@prisma/client";
 import { Prisma } from "@prisma/client";
 import { nanoid } from "nanoid";
 
@@ -118,7 +114,7 @@ export class ProductValidationError extends Error {
   constructor(
     message: string,
     public readonly field: string,
-    public readonly value: any
+    public readonly value: any,
   ) {
     super(message);
     this.name = "ProductValidationError";
@@ -138,7 +134,10 @@ export class QuantumProductCatalogService {
     await this.validateProductData(productData);
 
     // Generate unique slug from product name
-    const slug = await this.generateUniqueSlug(productData.name, productData.farmId);
+    const slug = await this.generateUniqueSlug(
+      productData.name,
+      productData.farmId,
+    );
 
     // Create product in database
     const product = await database.product.create({
@@ -152,7 +151,9 @@ export class QuantumProductCatalogService {
         unit: productData.unit,
         quantityAvailable: productData.quantityAvailable,
         images: productData.images || [],
-        tags: productData.tags ? (productData.tags as Prisma.InputJsonValue) : Prisma.JsonNull,
+        tags: productData.tags
+          ? (productData.tags as Prisma.InputJsonValue)
+          : Prisma.JsonNull,
         organic: productData.organic || false,
         harvestDate: productData.harvestDate || null,
         storageInstructions: productData.storageInstructions || null,
@@ -165,12 +166,10 @@ export class QuantumProductCatalogService {
         reviewCount: 0,
       },
       include: {
-        farmId: {
+        farm: {
           select: {
             id: true,
-            tags: true,
             slug: true,
-            tags: true,
           },
         },
       },
@@ -185,12 +184,12 @@ export class QuantumProductCatalogService {
    */
   async getProductById(
     productId: string,
-    includeRelations: boolean = false
+    includeRelations: boolean = false,
   ): Promise<ProductWithRelations | null> {
     const product = await database.product.findUnique({
       where: { id: productId },
       include: {
-        farmId: true,
+        farm: true,
         reviews: includeRelations,
       },
     });
@@ -204,12 +203,12 @@ export class QuantumProductCatalogService {
    */
   async getProductBySlug(
     slug: string,
-    farmId: string
+    farmId: string,
   ): Promise<ProductWithRelations | null> {
     const product = await database.product.findFirst({
       where: { slug, farmId },
       include: {
-        farmId: true,
+        farm: true,
         reviews: {
           take: 10,
           orderBy: { createdAt: "desc" },
@@ -234,9 +233,11 @@ export class QuantumProductCatalogService {
    * 📋 SEARCH AND FILTER PRODUCTS
    * Retrieves products with advanced search, filtering, and pagination
    */
-  async searchProducts(
-    options: ProductSearchOptions
-  ): Promise<{ products: ProductWithRelations[]; total: number; hasMore: boolean }> {
+  async searchProducts(options: ProductSearchOptions): Promise<{
+    products: ProductWithRelations[];
+    total: number;
+    hasMore: boolean;
+  }> {
     const page = options.page || 1;
     const limit = options.limit || 20;
     const skip = (page - 1) * limit;
@@ -309,12 +310,10 @@ export class QuantumProductCatalogService {
         skip,
         orderBy,
         include: {
-          farmId: {
+          farm: {
             select: {
               id: true,
-              tags: true,
               slug: true,
-              averageRating: true,
             },
           },
         },
@@ -340,7 +339,7 @@ export class QuantumProductCatalogService {
       category?: ProductCategory;
       page?: number;
       limit?: number;
-    }
+    },
   ): Promise<{ products: Product[]; total: number }> {
     const page = options?.page || 1;
     const limit = options?.limit || 50;
@@ -376,7 +375,7 @@ export class QuantumProductCatalogService {
   async updateProduct(
     productId: string,
     updates: UpdateProductRequest,
-    userId: string
+    userId: string,
   ): Promise<Product> {
     // Verify product exists and user has permission
     await this.verifyProductAccess(productId, userId);
@@ -389,7 +388,11 @@ export class QuantumProductCatalogService {
         select: { farmId: true },
       });
       if (product) {
-        slug = await this.generateUniqueSlug(updates.name, product.farmId, productId);
+        slug = await this.generateUniqueSlug(
+          updates.name,
+          product.farmId,
+          productId,
+        );
       }
     }
 
@@ -398,11 +401,13 @@ export class QuantumProductCatalogService {
       data: {
         ...updates,
         slug,
-        tags: updates.tags ? (updates.tags as Prisma.InputJsonValue) : undefined,
+        tags: updates.tags
+          ? (updates.tags as Prisma.InputJsonValue)
+          : undefined,
         updatedAt: new Date(),
       },
       include: {
-        farmId: true,
+        farm: true,
       },
     });
 
@@ -416,7 +421,7 @@ export class QuantumProductCatalogService {
   async updateInventory(
     productId: string,
     quantityChange: number,
-    userId: string
+    userId: string,
   ): Promise<Product> {
     // Verify product exists and user has permission
     await this.verifyProductAccess(productId, userId);
@@ -505,20 +510,18 @@ export class QuantumProductCatalogService {
     };
   }
 
-
-
   /**
    * 🔐 VERIFY PRODUCT ACCESS
    * Verifies that a user has access to modify a product
    */
   private async verifyProductAccess(
     productId: string,
-    userId: string
+    userId: string,
   ): Promise<boolean> {
     const product = await database.product.findUnique({
       where: { id: productId },
       include: {
-        farmId: {
+        farm: {
           select: {
             ownerId: true,
             teamMembers: {
@@ -550,14 +553,14 @@ export class QuantumProductCatalogService {
    * Validates product data before creation
    */
   private async validateProductData(
-    productData: CreateProductRequest
+    productData: CreateProductRequest,
   ): Promise<void> {
     // Validate name
     if (!productData.name || productData.name.trim().length < 3) {
       throw new ProductValidationError(
         "Product name must be at least 3 characters long",
         "name",
-        productData.name
+        productData.name,
       );
     }
 
@@ -565,16 +568,19 @@ export class QuantumProductCatalogService {
       throw new ProductValidationError(
         "Product name must be less than 200 characters",
         "name",
-        productData.name
+        productData.name,
       );
     }
 
     // Validate description
-    if (!productData.description || productData.description.trim().length < 10) {
+    if (
+      !productData.description ||
+      productData.description.trim().length < 10
+    ) {
       throw new ProductValidationError(
         "Product description must be at least 10 characters long",
         "description",
-        productData.description
+        productData.description,
       );
     }
 
@@ -583,7 +589,7 @@ export class QuantumProductCatalogService {
       throw new ProductValidationError(
         "Product price must be greater than 0",
         "price",
-        productData.price
+        productData.price,
       );
     }
 
@@ -592,7 +598,7 @@ export class QuantumProductCatalogService {
       throw new ProductValidationError(
         "Quantity available cannot be negative",
         "quantityAvailable",
-        productData.quantityAvailable
+        productData.quantityAvailable,
       );
     }
 
@@ -606,7 +612,7 @@ export class QuantumProductCatalogService {
       throw new ProductValidationError(
         "Farm not found",
         "farmId",
-        productData.farmId
+        productData.farmId,
       );
     }
 
@@ -614,7 +620,7 @@ export class QuantumProductCatalogService {
       throw new ProductValidationError(
         "Cannot add products to inactive farm",
         "farmId",
-        farm.status
+        farm.status,
       );
     }
   }
@@ -626,7 +632,7 @@ export class QuantumProductCatalogService {
   private async generateUniqueSlug(
     name: string,
     farmId: string,
-    excludeProductId?: string
+    excludeProductId?: string,
   ): Promise<string> {
     // Convert to lowercase and replace spaces with hyphens
     const slug = name
@@ -665,7 +671,7 @@ export class QuantumProductCatalogService {
    */
   async batchUpdateProducts(
     updates: BatchUpdateProductRequest[],
-    userId: string
+    userId: string,
   ): Promise<Product[]> {
     // Use transaction for atomic updates
     return await database.$transaction(async (tx) => {
@@ -676,7 +682,7 @@ export class QuantumProductCatalogService {
         const product = await tx.product.findUnique({
           where: { id: productId },
           include: {
-            farmId: {
+            farm: {
               select: { ownerId: true },
             },
           },
@@ -686,7 +692,7 @@ export class QuantumProductCatalogService {
           throw new ProductValidationError(
             "Product not found",
             "productId",
-            productId
+            productId,
           );
         }
 
@@ -694,7 +700,7 @@ export class QuantumProductCatalogService {
           throw new ProductValidationError(
             "Unauthorized: You do not own this product",
             "userId",
-            userId
+            userId,
           );
         }
 
@@ -704,7 +710,7 @@ export class QuantumProductCatalogService {
           slug = await this.generateUniqueSlug(
             productUpdates.name,
             product.farmId,
-            productId
+            productId,
           );
         }
 
@@ -719,7 +725,7 @@ export class QuantumProductCatalogService {
             updatedAt: new Date(),
           },
           include: {
-            farmId: true,
+            farm: true,
           },
         });
 
@@ -736,7 +742,7 @@ export class QuantumProductCatalogService {
    */
   async batchUpdateInventory(
     updates: BatchInventoryUpdate[],
-    userId: string
+    userId: string,
   ): Promise<Product[]> {
     return await database.$transaction(async (tx) => {
       const updatedProducts: Product[] = [];
@@ -746,7 +752,7 @@ export class QuantumProductCatalogService {
         const product = await tx.product.findUnique({
           where: { id: productId },
           include: {
-            farmId: {
+            farm: {
               select: { ownerId: true },
             },
           },
@@ -756,7 +762,7 @@ export class QuantumProductCatalogService {
           throw new ProductValidationError(
             "Product not found",
             "productId",
-            productId
+            productId,
           );
         }
 
@@ -764,18 +770,20 @@ export class QuantumProductCatalogService {
           throw new ProductValidationError(
             "Unauthorized: You do not own this product",
             "userId",
-            userId
+            userId,
           );
         }
 
-        const currentQuantity = product.quantityAvailable ? parseFloat(product.quantityAvailable.toString()) : 0;
+        const currentQuantity = product.quantityAvailable
+          ? parseFloat(product.quantityAvailable.toString())
+          : 0;
         const newQuantity = currentQuantity + quantityChange;
 
         if (newQuantity < 0) {
           throw new ProductValidationError(
             "Insufficient inventory",
             "quantityAvailable",
-            newQuantity
+            newQuantity,
           );
         }
 
@@ -795,7 +803,7 @@ export class QuantumProductCatalogService {
             updatedAt: new Date(),
           },
           include: {
-            farmId: true,
+            farm: true,
           },
         });
 
@@ -814,7 +822,11 @@ export class QuantumProductCatalogService {
    * @param slug - Product slug
    * @returns Product with minimal relations for detail page
    */
-  async getProductDetailData(slug: string): Promise<Awaited<ReturnType<typeof productRepository.findBySlugWithMinimalData>>> {
+  async getProductDetailData(
+    slug: string,
+  ): Promise<
+    Awaited<ReturnType<typeof productRepository.findBySlugWithMinimalData>>
+  > {
     const requestId = nanoid();
     logger.debug("Getting optimized product detail data", { requestId, slug });
 
@@ -823,8 +835,13 @@ export class QuantumProductCatalogService {
       const cached = await multiLayerCache.get(cacheKey);
 
       if (cached) {
-        logger.debug("Product detail data retrieved from cache", { requestId, slug });
-        return cached as Awaited<ReturnType<typeof productRepository.findBySlugWithMinimalData>>;
+        logger.debug("Product detail data retrieved from cache", {
+          requestId,
+          slug,
+        });
+        return cached as Awaited<
+          ReturnType<typeof productRepository.findBySlugWithMinimalData>
+        >;
       }
 
       // Optimized query with minimal field selection
@@ -841,7 +858,7 @@ export class QuantumProductCatalogService {
       logger.info("Product detail data fetched and cached", {
         requestId,
         slug,
-        productId: product.id
+        productId: product.id,
       });
 
       return product;
@@ -865,20 +882,41 @@ export class QuantumProductCatalogService {
    * @param limit - Max products to return (default: 6)
    * @returns Array of related products
    */
-  async getRelatedProducts(productId: string, category: string | null, farmId: string, limit: number = 6): Promise<Awaited<ReturnType<typeof productRepository.findRelatedProducts>>> {
+  async getRelatedProducts(
+    productId: string,
+    category: string | null,
+    farmId: string,
+    limit: number = 6,
+  ): Promise<
+    Awaited<ReturnType<typeof productRepository.findRelatedProducts>>
+  > {
     const requestId = nanoid();
-    logger.debug("Getting related products (optimized)", { requestId, productId, limit });
+    logger.debug("Getting related products (optimized)", {
+      requestId,
+      productId,
+      limit,
+    });
 
     try {
       const cacheKey = `product:related:${productId}:${limit}`;
       const cached = await multiLayerCache.get(cacheKey);
 
       if (cached) {
-        logger.debug("Related products retrieved from cache", { requestId, productId });
-        return cached as Awaited<ReturnType<typeof productRepository.findRelatedProducts>>;
+        logger.debug("Related products retrieved from cache", {
+          requestId,
+          productId,
+        });
+        return cached as Awaited<
+          ReturnType<typeof productRepository.findRelatedProducts>
+        >;
       }
 
-      const products = await productRepository.findRelatedProducts(productId, category, farmId, limit);
+      const products = await productRepository.findRelatedProducts(
+        productId,
+        category,
+        farmId,
+        limit,
+      );
 
       // Cache for medium duration
       await multiLayerCache.set(cacheKey, products, { ttl: CacheTTL.MEDIUM });
@@ -886,7 +924,7 @@ export class QuantumProductCatalogService {
       logger.debug("Related products fetched and cached", {
         requestId,
         productId,
-        count: products.length
+        count: products.length,
       });
 
       return products;
@@ -919,16 +957,21 @@ export class QuantumProductCatalogService {
     limit?: number;
   }): Promise<Awaited<ReturnType<typeof productRepository.findForListing>>> {
     const requestId = nanoid();
-    logger.debug("Getting products for listing (optimized)", { requestId, filters });
+    logger.debug("Getting products for listing (optimized)", {
+      requestId,
+      filters,
+    });
 
     try {
       const filterKey = JSON.stringify(filters);
-      const cacheKey = `products:listing:${Buffer.from(filterKey).toString('base64').slice(0, 50)}`;
+      const cacheKey = `products:listing:${Buffer.from(filterKey).toString("base64").slice(0, 50)}`;
       const cached = await multiLayerCache.get(cacheKey);
 
       if (cached) {
         logger.debug("Product listing retrieved from cache", { requestId });
-        return cached as Awaited<ReturnType<typeof productRepository.findForListing>>;
+        return cached as Awaited<
+          ReturnType<typeof productRepository.findForListing>
+        >;
       }
 
       const result = await productRepository.findForListing(filters);
@@ -939,7 +982,7 @@ export class QuantumProductCatalogService {
       logger.debug("Product listing fetched and cached", {
         requestId,
         count: result.products.length,
-        total: result.total
+        total: result.total,
       });
 
       return result;
@@ -960,7 +1003,11 @@ export class QuantumProductCatalogService {
    * @param limit - Max products to return (default: 8)
    * @returns Array of featured products
    */
-  async getFeaturedProducts(limit: number = 8): Promise<Awaited<ReturnType<typeof productRepository.findFeaturedProducts>>> {
+  async getFeaturedProducts(
+    limit: number = 8,
+  ): Promise<
+    Awaited<ReturnType<typeof productRepository.findFeaturedProducts>>
+  > {
     const requestId = nanoid();
     logger.debug("Getting featured products (optimized)", { requestId, limit });
 
@@ -970,7 +1017,9 @@ export class QuantumProductCatalogService {
 
       if (cached) {
         logger.debug("Featured products retrieved from cache", { requestId });
-        return cached as Awaited<ReturnType<typeof productRepository.findFeaturedProducts>>;
+        return cached as Awaited<
+          ReturnType<typeof productRepository.findFeaturedProducts>
+        >;
       }
 
       const products = await productRepository.findFeaturedProducts(limit);
@@ -980,7 +1029,7 @@ export class QuantumProductCatalogService {
 
       logger.debug("Featured products fetched and cached", {
         requestId,
-        count: products.length
+        count: products.length,
       });
 
       return products;

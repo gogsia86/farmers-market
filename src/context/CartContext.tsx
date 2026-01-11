@@ -54,9 +54,9 @@ type CartAction =
   | { type: "ADD_ITEM"; payload: CartItem }
   | { type: "REMOVE_ITEM"; payload: { productId: string } }
   | {
-    type: "UPDATE_QUANTITY";
-    payload: { productId: string; quantity: number };
-  }
+      type: "UPDATE_QUANTITY";
+      payload: { productId: string; quantity: number };
+    }
   | { type: "CLEAR_CART" }
   | { type: "LOAD_CART"; payload: CartItem[] };
 
@@ -102,7 +102,7 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
 
       if (existingItemIndex > -1) {
         // Item already exists, increment quantity
-        newItems = state.items.map((item: any, index: any) => {
+        newItems = state.items.map((item: CartItem, index: number) => {
           if (index === existingItemIndex) {
             const newQuantity = Math.min(
               item.quantity + action.payload.quantity,
@@ -134,9 +134,11 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
 
       if (quantity <= 0) {
         // Remove item if quantity is 0 or less
-        newItems = state.items.filter((item: any) => item.productId !== productId);
+        newItems = state.items.filter(
+          (item: CartItem) => item.productId !== productId,
+        );
       } else {
-        newItems = state.items.map((item: any) => {
+        newItems = state.items.map((item: CartItem) => {
           if (item.productId === productId) {
             const validQuantity = Math.min(quantity, item.maxStock);
             return { ...item, quantity: validQuantity };
@@ -268,7 +270,7 @@ export function CartProvider({ children }: CartProviderProps) {
   // Remove item from cart
   const removeItem = useCallback(
     (productId: string) => {
-      const item = state.items.find((i: any) => i.productId === productId);
+      const item = state.items.find((i: CartItem) => i.productId === productId);
 
       dispatch({ type: "REMOVE_ITEM", payload: { productId } });
 
@@ -285,7 +287,7 @@ export function CartProvider({ children }: CartProviderProps) {
   // Update item quantity
   const updateQuantity = useCallback(
     (productId: string, quantity: number) => {
-      const item = state.items.find((i: any) => i.productId === productId);
+      const item = state.items.find((i: CartItem) => i.productId === productId);
 
       if (!item) {
         return;
@@ -326,7 +328,7 @@ export function CartProvider({ children }: CartProviderProps) {
   // Check if item is in cart
   const isInCart = useCallback(
     (productId: string): boolean => {
-      return state.items.some((item: any) => item.productId === productId);
+      return state.items.some((item: CartItem) => item.productId === productId);
     },
     [state.items],
   );
@@ -334,7 +336,7 @@ export function CartProvider({ children }: CartProviderProps) {
   // Get item quantity
   const getItemQuantity = useCallback(
     (productId: string): number => {
-      const item = state.items.find((i: any) => i.productId === productId);
+      const item = state.items.find((i: CartItem) => i.productId === productId);
       return item?.quantity || 0;
     },
     [state.items],
@@ -351,7 +353,7 @@ export function CartProvider({ children }: CartProviderProps) {
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
-};
+}
 
 // ============================================================================
 // CUSTOM HOOK

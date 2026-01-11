@@ -10,7 +10,7 @@ import { notificationService } from "@/lib/services/notification.service";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 // ============================================================================
 // Validation Schemas
@@ -19,7 +19,9 @@ import { logger } from '@/lib/monitoring/logger';
 const GetReviewsSchema = z.object({
   page: z.coerce.number().int().positive().default(1),
   limit: z.coerce.number().int().positive().max(100).default(20),
-  status: z.enum(["PENDING", "APPROVED", "FLAGGED", "REMOVED"]).default("PENDING"),
+  status: z
+    .enum(["PENDING", "APPROVED", "FLAGGED", "REMOVED"])
+    .default("PENDING"),
   farmId: z.string().cuid().optional(),
   productId: z.string().cuid().optional(),
   sortBy: z.enum(["createdAt", "rating"]).default("createdAt"),
@@ -48,7 +50,7 @@ async function logAdminAction(
   adminId: string,
   actionType: string,
   targetId: string,
-  details?: Record<string, any>
+  details?: Record<string, any>,
 ): Promise<void> {
   await database.adminAction.create({
     data: {
@@ -79,7 +81,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
             message: "Authentication required",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -94,7 +96,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
             message: "Admin access required",
           },
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -120,7 +122,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
             details: validation.error.flatten(),
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -144,7 +146,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
               email: true,
               firstName: true,
               lastName: true,
-              farm: true,
+              name: true,
             },
           },
           product: {
@@ -208,7 +210,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
             error instanceof Error ? error.message : "Failed to fetch reviews",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -230,7 +232,7 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
             message: "Authentication required",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -245,7 +247,7 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
             message: "Admin access required",
           },
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -262,7 +264,7 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
             details: validation.error.flatten(),
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -276,7 +278,7 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
           select: {
             id: true,
             email: true,
-            farm: true,
+            name: true,
             firstName: true,
           },
         },
@@ -306,7 +308,7 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
             message: "Review not found",
           },
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -318,7 +320,9 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
         status: newStatus,
         moderatedBy: session.user.id,
         moderatedAt: new Date(),
-        ...(newStatus === "FLAGGED" && reason ? { flaggedReason: reason, flaggedAt: new Date() } : {}),
+        ...(newStatus === "FLAGGED" && reason
+          ? { flaggedReason: reason, flaggedAt: new Date() }
+          : {}),
       },
     });
 
@@ -334,9 +338,7 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
     if (review.customer) {
       const productName = review.product?.name || review.farm.name;
       const notificationTitle =
-        action === "APPROVE"
-          ? "Review approved"
-          : "Review needs revision";
+        action === "APPROVE" ? "Review approved" : "Review needs revision";
       const notificationBody =
         action === "APPROVE"
           ? `Your review for ${productName} has been approved.`
@@ -396,7 +398,7 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
               : "Failed to moderate review",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

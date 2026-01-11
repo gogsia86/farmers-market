@@ -37,30 +37,34 @@ export default async function FarmerOrdersPage() {
   const farmIds = farms.map((f: any) => f.id);
 
   // Get all orders for farmer's farms
-  const orders = farmIds.length > 0 ? await database.order.findMany({
-    where: {
-      farmId: {
-        in: farmIds,
-      },
-    },
-    include: {
-      customer: {
-        select: {
-          tax: true,
-          email: true,
-        },
-      },
-      farm: {
-        select: {
-          name: true,
-        },
-      },
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-    take: 100,
-  }) : [];
+  const orders =
+    farmIds.length > 0
+      ? await database.order.findMany({
+          where: {
+            farmId: {
+              in: farmIds,
+            },
+          },
+          include: {
+            customer: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+              },
+            },
+            farm: {
+              select: {
+                name: true,
+              },
+            },
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
+          take: 100,
+        })
+      : [];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -69,9 +73,7 @@ export default async function FarmerOrdersPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
-                📦 Orders
-              </h1>
+              <h1 className="text-3xl font-bold text-gray-900">📦 Orders</h1>
               <p className="mt-2 text-gray-600">
                 View and manage orders from your farms
               </p>
@@ -99,7 +101,9 @@ export default async function FarmerOrdersPage() {
             {orders.length === 0 ? (
               <div className="text-center py-12">
                 <ShoppingBag className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-sm font-medium text-gray-900">No orders yet</p>
+                <p className="text-sm font-medium text-gray-900">
+                  No orders yet
+                </p>
                 <p className="text-sm text-gray-500 mt-1">
                   Orders will appear here once customers make purchases
                 </p>
@@ -155,14 +159,15 @@ export default async function FarmerOrdersPage() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span
-                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${order.status === "COMPLETED"
-                              ? "bg-green-100 text-green-800"
-                              : order.status === "PENDING"
-                                ? "bg-yellow-100 text-yellow-800"
-                                : order.status === "CANCELLED"
-                                  ? "bg-red-100 text-red-800"
-                                  : "bg-blue-100 text-blue-800"
-                              }`}
+                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                              order.status === "COMPLETED"
+                                ? "bg-green-100 text-green-800"
+                                : order.status === "PENDING"
+                                  ? "bg-yellow-100 text-yellow-800"
+                                  : order.status === "CANCELLED"
+                                    ? "bg-red-100 text-red-800"
+                                    : "bg-blue-100 text-blue-800"
+                            }`}
                           >
                             {order.status}
                           </span>
@@ -193,21 +198,30 @@ export default async function FarmerOrdersPage() {
         {orders.length > 0 && (
           <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-white rounded-lg shadow p-6">
-              <h3 className="text-sm font-medium text-gray-600">Total Orders</h3>
+              <h3 className="text-sm font-medium text-gray-600">
+                Total Orders
+              </h3>
               <p className="text-3xl font-bold text-gray-900 mt-2">
                 {orders.length}
               </p>
             </div>
             <div className="bg-white rounded-lg shadow p-6">
-              <h3 className="text-sm font-medium text-gray-600">Total Revenue</h3>
+              <h3 className="text-sm font-medium text-gray-600">
+                Total Revenue
+              </h3>
               <p className="text-3xl font-bold text-gray-900 mt-2">
                 {formatCurrency(
-                  orders.reduce((sum: any, order: any) => sum + Number(order.total), 0)
+                  orders.reduce(
+                    (sum: any, order: any) => sum + Number(order.total),
+                    0,
+                  ),
                 )}
               </p>
             </div>
             <div className="bg-white rounded-lg shadow p-6">
-              <h3 className="text-sm font-medium text-gray-600">Pending Orders</h3>
+              <h3 className="text-sm font-medium text-gray-600">
+                Pending Orders
+              </h3>
               <p className="text-3xl font-bold text-gray-900 mt-2">
                 {orders.filter((o: any) => o.status === "PENDING").length}
               </p>

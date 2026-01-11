@@ -80,7 +80,7 @@ type ToastPosition =
  */
 function getPositionStyles(
   position: ToastPosition,
-  offset: string
+  offset: string,
 ): CSSProperties {
   const styles: CSSProperties = {
     position: "fixed",
@@ -125,7 +125,7 @@ function selectToastVariants(
   toast: ToastNotification,
   position: ToastPosition,
   prefersReducedMotion: boolean,
-  useSeasonalAnimations: boolean
+  useSeasonalAnimations: boolean,
 ) {
   // Check for reduced motion
   if (prefersReducedMotion) {
@@ -186,7 +186,7 @@ export function ToastRenderer({
       acc[position].push(toast);
       return acc;
     },
-    {} as Record<ToastPosition, ToastNotification[]>
+    {} as Record<ToastPosition, ToastNotification[]>,
   );
 
   // Position array for consistent ordering
@@ -201,7 +201,7 @@ export function ToastRenderer({
 
   return (
     <>
-      {positions.map((position: any) => {
+      {positions.map((position: ToastPosition) => {
         const positionToasts = toastsByPosition[position] || [];
         if (positionToasts.length === 0) return null;
 
@@ -227,7 +227,7 @@ export function ToastRenderer({
                   toast,
                   position,
                   prefersReducedMotion,
-                  animationContext?.useSeasonalAnimations ?? true
+                  animationContext?.useSeasonalAnimations ?? true,
                 );
 
                 return (
@@ -238,7 +238,7 @@ export function ToastRenderer({
                     onActionClick={(actionId) => {
                       // Handle action click
                       const action = toast.actions?.find(
-                        (a) => a.id === actionId
+                        (a: any) => a.id === actionId,
                       );
                       action?.onClick?.();
                     }}

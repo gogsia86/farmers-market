@@ -5,11 +5,16 @@
  */
 
 import { database } from "@/lib/database";
-import type { Farm, Product, ProductCategory, ProductStatus } from "@prisma/client";
+import type {
+  Farm,
+  Product,
+  ProductCategory,
+  ProductStatus,
+} from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 /**
  * Search query validation schema
@@ -17,31 +22,38 @@ import { logger } from '@/lib/monitoring/logger';
 const SearchQuerySchema = z.object({
   q: z.string().min(1, "Search query is required"),
   type: z.enum(["all", "farms", "products"]).optional().default("all"),
-  category: z.enum([
-    "VEGETABLES",
-    "FRUITS",
-    "GRAINS",
-    "DAIRY",
-    "MEAT",
-    "EGGS",
-    "HONEY",
-    "PRESERVES",
-    "BAKED_GOODS",
-    "HERBS",
-    "OTHER",
-  ]).optional(),
+  category: z
+    .enum([
+      "VEGETABLES",
+      "FRUITS",
+      "GRAINS",
+      "DAIRY",
+      "MEAT",
+      "EGGS",
+      "HONEY",
+      "PRESERVES",
+      "BAKED_GOODS",
+      "HERBS",
+      "OTHER",
+    ])
+    .optional(),
   organic: z.string().optional(),
-  location: z.object({
-    lat: z.number(),
-    lng: z.number(),
-    radius: z.number().optional().default(25),
-  }).optional(),
+  location: z
+    .object({
+      lat: z.number(),
+      lng: z.number(),
+      radius: z.number().optional().default(25),
+    })
+    .optional(),
   minPrice: z.string().optional(),
   maxPrice: z.string().optional(),
   inStock: z.string().optional(),
   page: z.string().optional().default("1"),
   limit: z.string().optional().default("20"),
-  sortBy: z.enum(["relevance", "price", "rating", "distance", "createdAt"]).optional().default("relevance"),
+  sortBy: z
+    .enum(["relevance", "price", "rating", "distance", "createdAt"])
+    .optional()
+    .default("relevance"),
   sortOrder: z.enum(["asc", "desc"]).optional().default("desc"),
 });
 
@@ -78,7 +90,7 @@ function calculateDistance(
   lat1: number,
   lon1: number,
   lat2: number,
-  lon2: number
+  lon2: number,
 ): number {
   const R = 3958.8; // Earth's radius in miles
   const dLat = (lat2 - lat1) * (Math.PI / 180);
@@ -86,9 +98,9 @@ function calculateDistance(
   const a =
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
     Math.cos(lat1 * (Math.PI / 180)) *
-    Math.cos(lat2 * (Math.PI / 180)) *
-    Math.sin(dLon / 2) *
-    Math.sin(dLon / 2);
+      Math.cos(lat2 * (Math.PI / 180)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   const distance = R * c;
   return distance;
@@ -98,7 +110,9 @@ function calculateDistance(
  * GET /api/search
  * Unified search endpoint for farms and products
  */
-export async function GET(request: NextRequest): Promise<NextResponse<SearchResponse>> {
+export async function GET(
+  request: NextRequest,
+): Promise<NextResponse<SearchResponse>> {
   const startTime = Date.now();
 
   try {
@@ -144,7 +158,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<SearchResp
             details: queryValidation.error.flatten(),
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -212,7 +226,10 @@ export async function GET(request: NextRequest): Promise<NextResponse<SearchResp
         database.farm.findMany({
           where: farmWhere,
           skip: type === "farms" ? skip : 0,
-          take: type === "farms" ? limitNum : Math.min(Math.floor(limitNum / 2), 10),
+          take:
+            type === "farms"
+              ? limitNum
+              : Math.min(Math.floor(limitNum / 2), 10),
           orderBy: farmOrderBy,
           select: {
             id: true,
@@ -250,11 +267,11 @@ export async function GET(request: NextRequest): Promise<NextResponse<SearchResp
           const distance =
             farm.latitude && farm.longitude
               ? calculateDistance(
-                searchLocation.lat,
-                searchLocation.lng,
-                parseFloat(farm.latitude.toString()),
-                parseFloat(farm.longitude.toString())
-              )
+                  searchLocation.lat,
+                  searchLocation.lng,
+                  parseFloat(farm.latitude.toString()),
+                  parseFloat(farm.longitude.toString()),
+                )
               : null;
           return { ...farm, distance };
         });
@@ -337,15 +354,17 @@ export async function GET(request: NextRequest): Promise<NextResponse<SearchResp
         database.product.findMany({
           where: productWhere,
           skip: type === "products" ? skip : 0,
-          take: type === "products" ? limitNum : Math.min(Math.floor(limitNum / 2), 10),
+          take:
+            type === "products"
+              ? limitNum
+              : Math.min(Math.floor(limitNum / 2), 10),
           orderBy: productOrderBy,
           include: {
-            farmId: {
+            farm: {
               select: {
                 id: true,
-                tags: true,
+                name: true,
                 slug: true,
-                location: true,
                 latitude: true,
                 longitude: true,
                 certifications: true,
@@ -363,11 +382,11 @@ export async function GET(request: NextRequest): Promise<NextResponse<SearchResp
           const distance =
             product.farm.latitude && product.farm.longitude
               ? calculateDistance(
-                searchLocation.lat,
-                searchLocation.lng,
-                parseFloat(product.farm.latitude.toString()),
-                parseFloat(product.farm.longitude.toString())
-              )
+                  searchLocation.lat,
+                  searchLocation.lng,
+                  parseFloat(product.farm.latitude.toString()),
+                  parseFloat(product.farm.longitude.toString()),
+                )
               : null;
           return { ...product, distance };
         });
@@ -383,7 +402,12 @@ export async function GET(request: NextRequest): Promise<NextResponse<SearchResp
       }
     }
 
-    const total = type === "farms" ? totalFarms : type === "products" ? totalProducts : totalFarms + totalProducts;
+    const total =
+      type === "farms"
+        ? totalFarms
+        : type === "products"
+          ? totalProducts
+          : totalFarms + totalProducts;
     const totalPages = Math.ceil(total / limitNum);
     const executionTime = Date.now() - startTime;
 
@@ -420,7 +444,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<SearchResp
           message: error instanceof Error ? error.message : "Search failed",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

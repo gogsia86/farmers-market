@@ -13,7 +13,7 @@ import type { Product, ProductCategory, ProductStatus } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 // ============================================================================
 // TYPES & VALIDATION
@@ -23,25 +23,30 @@ const ProductQuerySchema = z.object({
   page: z.string().optional().default("1"),
   limit: z.string().optional().default("20"),
   search: z.string().optional(),
-  category: z.enum([
-    "VEGETABLES",
-    "FRUITS",
-    "GRAINS",
-    "DAIRY",
-    "MEAT",
-    "EGGS",
-    "HONEY",
-    "PRESERVES",
-    "BAKED_GOODS",
-    "HERBS",
-    "OTHER",
-  ]).optional(),
+  category: z
+    .enum([
+      "VEGETABLES",
+      "FRUITS",
+      "GRAINS",
+      "DAIRY",
+      "MEAT",
+      "EGGS",
+      "HONEY",
+      "PRESERVES",
+      "BAKED_GOODS",
+      "HERBS",
+      "OTHER",
+    ])
+    .optional(),
   farmId: z.string().optional(),
   organic: z.string().optional(),
   inStock: z.string().optional(),
   minPrice: z.string().optional(),
   maxPrice: z.string().optional(),
-  sortBy: z.enum(["createdAt", "price", "name", "popularity"]).optional().default("createdAt"),
+  sortBy: z
+    .enum(["createdAt", "price", "name", "popularity"])
+    .optional()
+    .default("createdAt"),
   sortOrder: z.enum(["asc", "desc"]).optional().default("desc"),
 });
 
@@ -100,7 +105,7 @@ interface ProductCreateResponse {
 // ============================================================================
 
 export async function GET(
-  request: NextRequest
+  request: NextRequest,
 ): Promise<NextResponse<ProductListResponse>> {
   try {
     const { searchParams } = new URL(request.url);
@@ -129,7 +134,7 @@ export async function GET(
             pagination: { page: 1, limit: 20, total: 0, totalPages: 0 },
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -209,12 +214,11 @@ export async function GET(
         take: limitNum,
         orderBy,
         include: {
-          farmId: {
+          farm: {
             select: {
               id: true,
-              tags: true,
+              name: true,
               slug: true,
-              location: true,
               certifications: true,
             },
           },
@@ -249,7 +253,7 @@ export async function GET(
           pagination: { page: 1, limit: 20, total: 0, totalPages: 0 },
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -259,7 +263,7 @@ export async function GET(
 // ============================================================================
 
 export async function POST(
-  request: NextRequest
+  request: NextRequest,
 ): Promise<NextResponse<ProductCreateResponse>> {
   try {
     // Check authentication
@@ -273,7 +277,7 @@ export async function POST(
             message: "Authentication required",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -289,7 +293,7 @@ export async function POST(
             message: "Only farmers can create products",
           },
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -307,7 +311,7 @@ export async function POST(
             details: validation.error.flatten(),
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -328,7 +332,7 @@ export async function POST(
             message: "Farm not found",
           },
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -341,7 +345,7 @@ export async function POST(
             message: "You do not have permission to add products to this farm",
           },
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -364,7 +368,9 @@ export async function POST(
         quantityAvailable: productData.quantityAvailable,
         images: productData.images || [],
         organic: productData.organic || false,
-        harvestDate: productData.harvestDate ? new Date(productData.harvestDate) : null,
+        harvestDate: productData.harvestDate
+          ? new Date(productData.harvestDate)
+          : null,
         storageInstructions: productData.storageInstructions || null,
         tags: productData.tags || [],
         status: "ACTIVE" as ProductStatus,
@@ -375,10 +381,10 @@ export async function POST(
         reviewCount: 0,
       },
       include: {
-        farmId: {
+        farm: {
           select: {
             id: true,
-            tags: true,
+            name: true,
             slug: true,
           },
         },
@@ -390,7 +396,7 @@ export async function POST(
         success: true,
         data: product as unknown as Product,
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     logger.error("POST /api/products error:", {
@@ -404,7 +410,7 @@ export async function POST(
           message: "Failed to create product",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

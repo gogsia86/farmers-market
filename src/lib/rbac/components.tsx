@@ -173,7 +173,7 @@ export function PermissionList({
   permissions,
   className = "",
 }: PermissionListProps) {
-  const userPermissions = permissions.filter((permission: any) =>
+  const userPermissions = permissions.filter((permission: Permission) =>
     hasPermission(role, permission),
   );
 
@@ -191,7 +191,7 @@ export function PermissionList({
         Available Permissions:
       </h4>
       <ul className="space-y-1">
-        {userPermissions.map((permission: any) => (
+        {userPermissions.map((permission: Permission) => (
           <li
             key={permission}
             className="flex items-center text-sm text-gray-600"

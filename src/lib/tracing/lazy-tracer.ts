@@ -29,7 +29,7 @@ import type { AgriculturalOperation } from "./agricultural-tracer";
  * Trace attributes type
  */
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 export type TraceAttributes = Record<string, string | number | boolean>;
 
@@ -111,9 +111,12 @@ export async function traceIfEnabled<T>(
     );
   } catch (error) {
     // Fallback: If tracing fails to load, execute without tracing
-    logger.warn("Failed to load tracing infrastructure, executing without tracing:", {
-        error: error instanceof Error ? error.message : String(error)
-      });
+    logger.warn(
+      "Failed to load tracing infrastructure, executing without tracing:",
+      {
+        error: error instanceof Error ? error.message : String(error),
+      },
+    );
     return fn();
   }
 }
@@ -172,8 +175,8 @@ export async function traceWithTiming<T>(
     };
   } catch (error) {
     logger.warn("Tracing failed, falling back to simple timing:", {
-        error: error instanceof Error ? error.message : String(error)
-      });
+      error: error instanceof Error ? error.message : String(error),
+    });
     const result = await fn();
     const durationMs = performance.now() - startTime;
 
@@ -288,7 +291,7 @@ export async function traceBatchOperations<T>(
         op.fn,
       ),
     ),
-  );
+  ) as Promise<T[]>;
 }
 
 /**

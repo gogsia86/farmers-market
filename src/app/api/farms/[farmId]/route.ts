@@ -14,7 +14,7 @@ import type { Farm, FarmStatus } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 // ============================================================================
 // TYPES & VALIDATION
@@ -36,7 +36,12 @@ const UpdateFarmSchema = z.object({
   businessName: z.string().optional(),
   taxId: z.string().optional(),
   businessType: z.string().optional(),
-  yearEstablished: z.number().int().min(1800).max(new Date().getFullYear()).optional(),
+  yearEstablished: z
+    .number()
+    .int()
+    .min(1800)
+    .max(new Date().getFullYear())
+    .optional(),
   farmSize: z.number().positive().optional(),
   certificationsArray: z.array(z.string()).optional(),
   deliveryRadius: z.number().int().positive().optional(),
@@ -61,7 +66,7 @@ interface ApiResponse<T = any> {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { farmId: string } }
+  { params }: { params: { farmId: string } },
 ): Promise<NextResponse<ApiResponse<Farm>>> {
   try {
     const { farmId } = params;
@@ -70,12 +75,12 @@ export async function GET(
     const farm = await database.farm.findUnique({
       where: { id: farmId },
       include: {
-        ownerId: {
+        owner: {
           select: {
             id: true,
+            email: true,
             firstName: true,
             lastName: true,
-            email: true,
           },
         },
         products: {
@@ -127,7 +132,7 @@ export async function GET(
             message: "Farm not found",
           },
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -147,7 +152,7 @@ export async function GET(
           message: "Failed to fetch farm",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -158,7 +163,7 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { farmId: string } }
+  { params }: { params: { farmId: string } },
 ): Promise<NextResponse<ApiResponse<Farm>>> {
   try {
     // Check authentication
@@ -172,7 +177,7 @@ export async function PATCH(
             message: "Authentication required",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -194,7 +199,7 @@ export async function PATCH(
             message: "Farm not found",
           },
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -208,7 +213,7 @@ export async function PATCH(
             message: "You do not have permission to update this farm",
           },
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -226,7 +231,7 @@ export async function PATCH(
             details: validation.error.flatten(),
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -238,27 +243,42 @@ export async function PATCH(
     };
 
     if (updateData.name !== undefined) dataToUpdate.name = updateData.name;
-    if (updateData.description !== undefined) dataToUpdate.description = updateData.description;
+    if (updateData.description !== undefined)
+      dataToUpdate.description = updateData.description;
     if (updateData.story !== undefined) dataToUpdate.story = updateData.story;
     if (updateData.email !== undefined) dataToUpdate.email = updateData.email;
     if (updateData.phone !== undefined) dataToUpdate.phone = updateData.phone;
-    if (updateData.website !== undefined) dataToUpdate.website = updateData.website;
-    if (updateData.address !== undefined) dataToUpdate.address = updateData.address;
+    if (updateData.website !== undefined)
+      dataToUpdate.website = updateData.website;
+    if (updateData.address !== undefined)
+      dataToUpdate.address = updateData.address;
     if (updateData.city !== undefined) dataToUpdate.city = updateData.city;
     if (updateData.state !== undefined) dataToUpdate.state = updateData.state;
-    if (updateData.zipCode !== undefined) dataToUpdate.zipCode = updateData.zipCode;
-    if (updateData.latitude !== undefined) dataToUpdate.latitude = updateData.latitude;
-    if (updateData.longitude !== undefined) dataToUpdate.longitude = updateData.longitude;
-    if (updateData.businessName !== undefined) dataToUpdate.businessName = updateData.businessName;
+    if (updateData.zipCode !== undefined)
+      dataToUpdate.zipCode = updateData.zipCode;
+    if (updateData.latitude !== undefined)
+      dataToUpdate.latitude = updateData.latitude;
+    if (updateData.longitude !== undefined)
+      dataToUpdate.longitude = updateData.longitude;
+    if (updateData.businessName !== undefined)
+      dataToUpdate.businessName = updateData.businessName;
     if (updateData.taxId !== undefined) dataToUpdate.taxId = updateData.taxId;
-    if (updateData.businessType !== undefined) dataToUpdate.businessType = updateData.businessType;
-    if (updateData.yearEstablished !== undefined) dataToUpdate.yearEstablished = updateData.yearEstablished;
-    if (updateData.farmSize !== undefined) dataToUpdate.farmSize = updateData.farmSize;
-    if (updateData.certificationsArray !== undefined) dataToUpdate.certificationsArray = updateData.certificationsArray;
-    if (updateData.deliveryRadius !== undefined) dataToUpdate.deliveryRadius = updateData.deliveryRadius;
-    if (updateData.logoUrl !== undefined) dataToUpdate.logoUrl = updateData.logoUrl;
-    if (updateData.bannerUrl !== undefined) dataToUpdate.bannerUrl = updateData.bannerUrl;
-    if (updateData.images !== undefined) dataToUpdate.images = updateData.images;
+    if (updateData.businessType !== undefined)
+      dataToUpdate.businessType = updateData.businessType;
+    if (updateData.yearEstablished !== undefined)
+      dataToUpdate.yearEstablished = updateData.yearEstablished;
+    if (updateData.farmSize !== undefined)
+      dataToUpdate.farmSize = updateData.farmSize;
+    if (updateData.certificationsArray !== undefined)
+      dataToUpdate.certificationsArray = updateData.certificationsArray;
+    if (updateData.deliveryRadius !== undefined)
+      dataToUpdate.deliveryRadius = updateData.deliveryRadius;
+    if (updateData.logoUrl !== undefined)
+      dataToUpdate.logoUrl = updateData.logoUrl;
+    if (updateData.bannerUrl !== undefined)
+      dataToUpdate.bannerUrl = updateData.bannerUrl;
+    if (updateData.images !== undefined)
+      dataToUpdate.images = updateData.images;
 
     // Update farm
     const updatedFarm = await database.farm.update({
@@ -282,7 +302,7 @@ export async function PATCH(
           message: "Failed to update farm",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -293,7 +313,7 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { farmId: string } }
+  { params }: { params: { farmId: string } },
 ): Promise<NextResponse<ApiResponse<{ message: string }>>> {
   try {
     // Check authentication
@@ -307,7 +327,7 @@ export async function DELETE(
             message: "Authentication required",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -338,7 +358,7 @@ export async function DELETE(
             message: "Farm not found",
           },
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -352,7 +372,7 @@ export async function DELETE(
             message: "You do not have permission to delete this farm",
           },
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -363,13 +383,14 @@ export async function DELETE(
           success: false,
           error: {
             code: "FARM_HAS_ORDERS",
-            message: "Cannot delete farm with existing orders. Please deactivate instead.",
+            message:
+              "Cannot delete farm with existing orders. Please deactivate instead.",
             details: {
               orderCount: farm._count.orders,
             },
           },
         },
-        { status: 409 }
+        { status: 409 },
       );
     }
 
@@ -400,7 +421,7 @@ export async function DELETE(
           message: "Failed to delete farm",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

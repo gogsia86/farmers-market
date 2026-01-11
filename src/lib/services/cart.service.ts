@@ -24,17 +24,6 @@ export interface UpdateCartItemRequest {
 }
 
 export interface CartItemWithProduct extends CartItem {
-  id: string;
-  userId: string;
-  productId: string;
-  farmId: string;
-  quantity: Decimal;
-  unit: string;
-  priceAtAdd: Decimal;
-  fulfillmentMethod: "DELIVERY" | "PICKUP";
-  reservedUntil: Date | null;
-  createdAt: Date;
-  updatedAt: Date;
   product: Product & {
     farm: {
       id: string;
@@ -126,12 +115,12 @@ export class QuantumCartService {
     const product = await database.product.findUnique({
       where: { id: productId },
       include: {
-        farmId: {
+        farm: {
           select: {
             id: true,
-            tags: true,
             slug: true,
-            tags: true,
+            name: true,
+            status: true,
           },
         },
       },
@@ -185,10 +174,10 @@ export class QuantumCartService {
         include: {
           product: {
             include: {
-              farmId: {
+              farm: {
                 select: {
                   id: true,
-                  tags: true,
+                  name: true,
                   slug: true,
                 },
               },
@@ -218,10 +207,10 @@ export class QuantumCartService {
       include: {
         product: {
           include: {
-            farmId: {
+            farm: {
               select: {
                 id: true,
-                tags: true,
+                name: true,
                 slug: true,
               },
             },
@@ -275,10 +264,10 @@ export class QuantumCartService {
       include: {
         product: {
           include: {
-            farmId: {
+            farm: {
               select: {
                 id: true,
-                tags: true,
+                name: true,
                 slug: true,
               },
             },
@@ -340,10 +329,10 @@ export class QuantumCartService {
         include: {
           product: {
             include: {
-              farmId: {
+              farm: {
                 select: {
                   id: true,
-                  tags: true,
+                  name: true,
                   slug: true,
                 },
               },

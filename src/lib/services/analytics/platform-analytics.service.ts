@@ -96,7 +96,7 @@ export interface DateRangeFilter {
 class PlatformAnalyticsService {
   private static instance: PlatformAnalyticsService;
 
-  private constructor() { }
+  private constructor() {}
 
   public static getInstance(): PlatformAnalyticsService {
     if (!PlatformAnalyticsService.instance) {
@@ -109,7 +109,7 @@ class PlatformAnalyticsService {
    * Get comprehensive platform metrics
    */
   async getPlatformMetrics(
-    dateRange?: DateRangeFilter
+    dateRange?: DateRangeFilter,
   ): Promise<PlatformMetrics> {
     const [users, farms, products, orders, revenue] = await Promise.all([
       this.getUserMetrics(dateRange),
@@ -230,8 +230,10 @@ class PlatformAnalyticsService {
 
     const averageProducts =
       productCounts.length > 0
-        ? productCounts.reduce((sum: any, f: any) => sum + f._count.products, 0) /
-        productCounts.length
+        ? productCounts.reduce(
+            (sum: any, f: any) => sum + f._count.products,
+            0,
+          ) / productCounts.length
         : 0;
 
     // Top performing farms by revenue
@@ -260,7 +262,10 @@ class PlatformAnalyticsService {
       .map((farm: any) => ({
         id: farm.id,
         name: farm.name,
-        revenue: farm.orders.reduce((sum: any, o: any) => sum + Number(o.total), 0),
+        revenue: farm.orders.reduce(
+          (sum: any, o: any) => sum + Number(o.total),
+          0,
+        ),
         orderCount: farm._count.orders,
       }))
       .sort((a, b) => b.revenue - a.revenue)
@@ -280,7 +285,7 @@ class PlatformAnalyticsService {
    * Get product metrics
    */
   async getProductMetrics(
-    dateRange?: DateRangeFilter
+    dateRange?: DateRangeFilter,
   ): Promise<ProductMetrics> {
     const totalProducts = await database.product.count();
 
@@ -335,12 +340,12 @@ class PlatformAnalyticsService {
         id: product.id,
         name: product.name,
         sales: product.orderItems.reduce(
-          (sum, item) => sum + Number(item.quantity),
-          0
+          (sum: number, item: any) => sum + Number(item.quantity),
+          0,
         ),
         revenue: product.orderItems.reduce(
-          (sum, item) => sum + Number(item.subtotal),
-          0
+          (sum: number, item: any) => sum + Number(item.subtotal),
+          0,
         ),
       }))
       .sort((a, b) => b.sales - a.sales)
@@ -436,7 +441,7 @@ class PlatformAnalyticsService {
    * Get revenue metrics
    */
   async getRevenueMetrics(
-    dateRange?: DateRangeFilter
+    dateRange?: DateRangeFilter,
   ): Promise<RevenueMetrics> {
     const now = new Date();
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -514,7 +519,7 @@ class PlatformAnalyticsService {
     const daysInMonth = new Date(
       now.getFullYear(),
       now.getMonth() + 1,
-      0
+      0,
     ).getDate();
     const daysPassed = now.getDate();
     const projectedMonthly =
@@ -536,7 +541,7 @@ class PlatformAnalyticsService {
    */
   async getTimeSeriesData(
     metric: "revenue" | "orders" | "users",
-    days: number = 30
+    days: number = 30,
   ): Promise<TimeSeriesData[]> {
     const endDate = new Date();
     const startDate = new Date();
@@ -556,7 +561,7 @@ class PlatformAnalyticsService {
    */
   private async getRevenueTimeSeries(
     startDate: Date,
-    endDate: Date
+    endDate: Date,
   ): Promise<TimeSeriesData[]> {
     const orders = await database.order.findMany({
       where: {
@@ -598,7 +603,7 @@ class PlatformAnalyticsService {
    */
   private async getOrdersTimeSeries(
     startDate: Date,
-    endDate: Date
+    endDate: Date,
   ): Promise<TimeSeriesData[]> {
     const orders = await database.order.findMany({
       where: {
@@ -638,7 +643,7 @@ class PlatformAnalyticsService {
    */
   private async getUsersTimeSeries(
     startDate: Date,
-    endDate: Date
+    endDate: Date,
   ): Promise<TimeSeriesData[]> {
     const users = await database.user.findMany({
       where: {

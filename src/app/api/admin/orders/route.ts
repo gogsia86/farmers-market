@@ -210,7 +210,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
               email: true,
               firstName: true,
               lastName: true,
-              tax: true,
+              name: true,
             },
           },
           items: {
@@ -218,11 +218,11 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
               product: {
                 select: {
                   id: true,
-                  tax: true,
+                  name: true,
                   farm: {
                     select: {
                       id: true,
-                      tax: true,
+                      name: true,
                     },
                   },
                 },
@@ -388,7 +388,7 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
           select: {
             id: true,
             email: true,
-            tax: true,
+            name: true,
           },
         },
         Payment: true,
@@ -579,7 +579,7 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
             email: true,
             firstName: true,
             lastName: true,
-            tax: true,
+            name: true,
           },
         },
         items: {
@@ -587,13 +587,20 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
             product: {
               select: {
                 id: true,
-                tax: true,
-                farm: true,
+                name: true,
               },
             },
           },
         },
-        Payment: true,
+        Payment: {
+          select: {
+            id: true,
+            status: true,
+            amount: true,
+            stripePaymentIntentId: true,
+            paidAt: true,
+          },
+        },
       },
     });
 

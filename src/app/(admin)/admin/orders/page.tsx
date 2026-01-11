@@ -30,7 +30,7 @@ export default async function AdminOrdersPage() {
       customer: {
         select: {
           id: true,
-          tax: true,
+          name: true,
           email: true,
         },
       },
@@ -39,7 +39,7 @@ export default async function AdminOrdersPage() {
           product: {
             select: {
               id: true,
-              tax: true,
+              name: true,
               slug: true,
             },
           },
@@ -55,7 +55,7 @@ export default async function AdminOrdersPage() {
       where: { status: "PENDING" },
     }),
     processing: await database.order.count({
-      where: { status: "PROCESSING" },
+      where: { status: "CONFIRMED" },
     }),
     completed: await database.order.count({
       where: { status: "COMPLETED" },

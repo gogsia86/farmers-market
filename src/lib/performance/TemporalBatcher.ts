@@ -286,11 +286,11 @@ export const createProductBatcher = () => {
     return await database.product.findMany({
       where: { id: { in: productIds } },
       include: {
-        farmId: {
+        farm: {
           select: {
             id: true,
-            tags: true,
-            location: true,
+            name: true,
+            slug: true,
           },
         },
       },

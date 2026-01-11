@@ -88,8 +88,8 @@ const nextConfig = {
   // TYPESCRIPT CONFIGURATION
   // ============================================
   typescript: {
-    // Skip type checking during Vercel builds (done in prebuild locally)
-    ignoreBuildErrors: process.env.VERCEL === "1" || process.env.CI === "true",
+    // ✅ ENABLED - Full type checking in all builds (Phase 2 Complete)
+    ignoreBuildErrors: false,
     tsconfigPath: "./tsconfig.json",
   },
 
@@ -289,7 +289,7 @@ if (process.env.ANALYZE === "true") {
 
 if (process.env.VERCEL === "1") {
   console.log("☁️  Building for Vercel deployment");
-  nextConfig.typescript.ignoreBuildErrors = true;
+  // ✅ Type checking enabled for Vercel builds (Phase 2 Complete)
 }
 
 if (process.env.NODE_ENV === "development") {

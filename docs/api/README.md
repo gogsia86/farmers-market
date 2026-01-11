@@ -1,87 +1,96 @@
-# 📖 Farmers Market Platform - API Documentation
+# 🌾 Farmers Market Platform API Documentation
 
-> **Complete API reference and integration guide**
+**Version:** 1.0.0  
+**Base URL:** `https://farmersmarket.vercel.app`  
+**Documentation:** [Interactive API Docs](/api-docs)
+
+---
+
+## 📋 Table of Contents
+
+- [Overview](#overview)
+- [Quick Start](#quick-start)
+- [Authentication](#authentication)
+- [API Endpoints](#api-endpoints)
+- [Response Format](#response-format)
+- [Error Handling](#error-handling)
+- [Rate Limiting](#rate-limiting)
+- [Pagination](#pagination)
+- [Examples](#examples)
+- [SDKs & Libraries](#sdks--libraries)
 
 ---
 
 ## 🎯 Overview
 
-The Farmers Market Platform provides a comprehensive RESTful API for building agricultural marketplace applications. Our API enables developers to integrate farm management, product catalogs, order processing, and payment functionality into their applications.
+The Farmers Market Platform API provides a comprehensive REST API for managing:
+
+- 🚜 **Farms** - Farm profiles, verification, and discovery
+- 🌾 **Products** - Product catalog, inventory, and categories
+- 📦 **Orders** - Order processing, tracking, and fulfillment
+- 🛒 **Cart** - Shopping cart management
+- 💳 **Payments** - Stripe integration for secure payments
+- 👤 **Users** - User profiles and authentication
+- ⭐ **Reviews** - Product and farm ratings
+- 🔔 **Notifications** - Real-time updates
+- 📊 **Analytics** - Sales reports and metrics
 
 ### Key Features
 
-- ✅ **RESTful Design** - Standard HTTP methods and status codes
-- ✅ **JSON Format** - All requests and responses use JSON
-- ✅ **Authentication** - Secure session-based authentication via NextAuth.js
-- ✅ **Role-Based Access** - ADMIN, FARMER, and CONSUMER roles
-- ✅ **Rate Limiting** - Fair usage policies
-- ✅ **Pagination** - Efficient data retrieval
-- ✅ **Error Handling** - Consistent error responses
-- ✅ **Versioning** - API version management
+- **RESTful Design** - Standard HTTP methods and status codes
+- **Type-Safe** - Complete TypeScript types available
+- **Well-Documented** - Interactive Swagger UI documentation
+- **Authenticated** - Secure JWT-based authentication
+- **Paginated** - Efficient data retrieval
+- **Filtered** - Flexible query parameters
+- **Real-time** - WebSocket support for live updates
 
 ---
 
 ## 🚀 Quick Start
 
-### Base URLs
+### 1. Get Your API Token
 
-| Environment | Base URL |
-|------------|----------|
-| **Development** | `http://localhost:3001/api` |
-| **Staging** | `https://staging.farmersmarket.com/api` |
-| **Production** | `https://farmersmarket.com/api` |
+```bash
+# Sign in to get JWT token
+curl -X POST https://farmersmarket.vercel.app/api/auth/signin \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "farmer@example.com",
+    "password": "your-password"
+  }'
+```
 
-### Interactive Documentation
+### 2. Make Your First Request
 
-Access our interactive Swagger UI documentation:
+```bash
+# List all farms
+curl -X GET https://farmersmarket.vercel.app/api/farms \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+```
 
-- **Local**: [http://localhost:3001/api-docs.html](http://localhost:3001/api-docs.html)
-- **Production**: [https://farmersmarket.com/api-docs.html](https://farmersmarket.com/api-docs.html)
+### 3. Explore Interactive Docs
 
-### OpenAPI Specification
-
-Download the OpenAPI 3.0 specification:
-- [YAML Format](swagger/openapi.yaml)
-- [JSON Format](swagger/openapi.json)
+Visit [/api-docs](/api-docs) to explore the API interactively with Swagger UI.
 
 ---
 
 ## 🔐 Authentication
 
-### Overview
+### NextAuth v5 (Auth.js)
 
-The API uses **NextAuth.js** for authentication with session-based cookies. All authenticated endpoints require a valid session.
+The API uses NextAuth v5 for authentication with JWT tokens.
 
-### Authentication Flow
+### Getting a Token
 
-```mermaid
-sequenceDiagram
-    participant Client
-    participant API
-    participant NextAuth
-    participant Database
-
-    Client->>API: POST /api/auth/signin
-    API->>NextAuth: Validate credentials
-    NextAuth->>Database: Check user
-    Database-->>NextAuth: User data
-    NextAuth-->>API: Create session
-    API-->>Client: Set session cookie
-    Client->>API: Authenticated request + cookie
-    API->>NextAuth: Validate session
-    NextAuth-->>API: User info
-    API-->>Client: Response
-```
-
-### Login
-
+**Sign In:**
 ```http
 POST /api/auth/signin
 Content-Type: application/json
 
 {
-  "email": "farmer@example.com",
-  "password": "securepassword123"
+  "email": "user@example.com",
+  "password": "SecurePassword123!"
 }
 ```
 
@@ -89,123 +98,316 @@ Content-Type: application/json
 ```json
 {
   "success": true,
-  "user": {
-    "id": "user_123",
-    "email": "farmer@example.com",
-    "name": "John Farmer",
-    "role": "FARMER"
+  "data": {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "user": {
+      "id": "user_abc123",
+      "email": "user@example.com",
+      "name": "John Farmer",
+      "role": "FARMER"
+    }
   }
 }
 ```
 
-### Logout
+### Using the Token
+
+Include the JWT token in the `Authorization` header:
 
 ```http
-POST /api/auth/signout
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
-### Making Authenticated Requests
+### Token Expiration
 
-Include the session cookie in all authenticated requests:
+- **Access tokens** expire after 30 days
+- Refresh tokens automatically when expired
+- Session endpoint: `GET /api/auth/session`
 
-```javascript
-// Using fetch
-fetch('http://localhost:3001/api/farms', {
-  credentials: 'include', // Important: includes cookies
-  headers: {
-    'Content-Type': 'application/json'
-  }
-})
+### Roles & Permissions
 
-// Using axios
-axios.get('/api/farms', {
-  withCredentials: true
-})
-```
+| Role | Permissions |
+|------|-------------|
+| **ADMIN** | Full access to all resources |
+| **FARMER** | Manage own farm, products, orders |
+| **CUSTOMER** | Browse products, place orders, reviews |
 
 ---
 
-## 📊 Response Format
+## 🛣️ API Endpoints
+
+### Health & Monitoring
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/health` | System health check |
+| GET | `/api/ready` | Readiness probe |
+
+### Authentication
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/auth/signin` | Sign in with credentials |
+| POST | `/api/auth/signout` | Sign out current user |
+| GET | `/api/auth/session` | Get current session |
+
+### Farms
+
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | `/api/farms` | List all farms | No |
+| POST | `/api/farms` | Create new farm | Yes (FARMER) |
+| GET | `/api/farms/{id}` | Get farm details | No |
+| PUT | `/api/farms/{id}` | Update farm | Yes (Owner/Admin) |
+| DELETE | `/api/farms/{id}` | Delete farm | Yes (Owner/Admin) |
+| GET | `/api/farms/search?q=...` | Search farms | No |
+
+### Products
+
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | `/api/products` | List all products | No |
+| POST | `/api/products` | Create product | Yes (FARMER) |
+| GET | `/api/products/{id}` | Get product details | No |
+| PUT | `/api/products/{id}` | Update product | Yes (Owner/Admin) |
+| DELETE | `/api/products/{id}` | Delete product | Yes (Owner/Admin) |
+| GET | `/api/products/search?q=...` | Search products | No |
+
+### Cart
+
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | `/api/cart` | Get user's cart | Yes |
+| POST | `/api/cart/items` | Add item to cart | Yes |
+| PUT | `/api/cart/items/{id}` | Update cart item | Yes |
+| DELETE | `/api/cart/items/{id}` | Remove from cart | Yes |
+
+### Orders
+
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | `/api/orders` | List user's orders | Yes |
+| POST | `/api/orders` | Create order | Yes |
+| GET | `/api/orders/{id}` | Get order details | Yes |
+| PATCH | `/api/orders/{id}` | Update order status | Yes (FARMER/Admin) |
+
+### Checkout
+
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| POST | `/api/checkout` | Create checkout session | Yes |
+
+### Search
+
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | `/api/search?q=...` | Global search | No |
+
+### Favorites
+
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | `/api/favorites` | Get user favorites | Yes |
+| POST | `/api/favorites` | Add to favorites | Yes |
+| DELETE | `/api/favorites/{id}` | Remove favorite | Yes |
+
+### Notifications
+
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | `/api/notifications` | List notifications | Yes |
+| POST | `/api/notifications/{id}/read` | Mark as read | Yes |
+
+### User Profile
+
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | `/api/user/profile` | Get user profile | Yes |
+| PUT | `/api/user/profile` | Update profile | Yes |
+
+### Admin
+
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | `/api/admin/users` | List all users | Yes (ADMIN) |
+| POST | `/api/admin/farms/{id}/verify` | Verify farm | Yes (ADMIN) |
+
+---
+
+## 📦 Response Format
+
+All API endpoints return a standardized `ServiceResponse<T>` format:
 
 ### Success Response
-
-All successful responses follow this structure:
 
 ```json
 {
   "success": true,
   "data": {
-    // Response data here
+    // Response data (varies by endpoint)
   },
   "meta": {
+    "timestamp": "2025-01-10T12:00:00Z",
     "requestId": "req_abc123",
-    "duration": 145,
-    "cached": false,
-    "version": "v1"
+    "pagination": {
+      "page": 1,
+      "pageSize": 20,
+      "totalPages": 5,
+      "totalItems": 100,
+      "hasNext": true,
+      "hasPrevious": false
+    }
   }
 }
 ```
 
 ### Error Response
 
-All error responses follow this structure:
-
 ```json
 {
   "success": false,
+  "data": null,
   "error": {
     "code": "VALIDATION_ERROR",
     "message": "Invalid input data",
     "details": {
-      "fields": {
-        "name": "Name is required",
-        "email": "Invalid email format"
-      }
-    },
-    "timestamp": "2025-01-07T18:30:00.000Z",
+      "name": "Name must be at least 3 characters",
+      "email": "Invalid email format"
+    }
+  },
+  "meta": {
+    "timestamp": "2025-01-10T12:00:00Z",
     "requestId": "req_abc123"
   }
 }
 ```
 
-### Common Error Codes
+---
 
-| Code | HTTP Status | Description |
-|------|-------------|-------------|
-| `VALIDATION_ERROR` | 400 | Invalid request data |
-| `UNAUTHORIZED` | 401 | Authentication required |
-| `FORBIDDEN` | 403 | Insufficient permissions |
-| `NOT_FOUND` | 404 | Resource not found |
-| `CONFLICT` | 409 | Resource conflict (duplicate) |
-| `RATE_LIMIT_EXCEEDED` | 429 | Too many requests |
-| `INTERNAL_ERROR` | 500 | Server error |
+## ⚠️ Error Handling
+
+### HTTP Status Codes
+
+| Code | Description | Common Scenarios |
+|------|-------------|------------------|
+| **200** | OK | Successful GET/PUT/PATCH |
+| **201** | Created | Successful POST |
+| **204** | No Content | Successful DELETE |
+| **400** | Bad Request | Validation error, invalid input |
+| **401** | Unauthorized | Missing or invalid token |
+| **403** | Forbidden | Insufficient permissions |
+| **404** | Not Found | Resource doesn't exist |
+| **409** | Conflict | Duplicate resource |
+| **422** | Unprocessable Entity | Business logic error |
+| **429** | Too Many Requests | Rate limit exceeded |
+| **500** | Internal Server Error | Server error |
+| **503** | Service Unavailable | Maintenance mode |
+
+### Error Codes
+
+| Code | Description |
+|------|-------------|
+| `VALIDATION_ERROR` | Input validation failed |
+| `AUTHENTICATION_REQUIRED` | User must be authenticated |
+| `INSUFFICIENT_PERMISSIONS` | User lacks required permissions |
+| `RESOURCE_NOT_FOUND` | Requested resource doesn't exist |
+| `DUPLICATE_RESOURCE` | Resource already exists |
+| `BUSINESS_LOGIC_ERROR` | Business rule violation |
+| `RATE_LIMIT_EXCEEDED` | Too many requests |
+| `INTERNAL_ERROR` | Unexpected server error |
+
+### Error Handling Example
+
+```typescript
+try {
+  const response = await fetch('/api/farms', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(farmData)
+  });
+
+  const result = await response.json();
+
+  if (!result.success) {
+    console.error('Error:', result.error.code);
+    console.error('Message:', result.error.message);
+    console.error('Details:', result.error.details);
+  }
+} catch (error) {
+  console.error('Network error:', error);
+}
+```
+
+---
+
+## 🚦 Rate Limiting
+
+### Limits
+
+- **Authenticated users:** 1,000 requests per hour
+- **Anonymous users:** 100 requests per hour
+
+### Rate Limit Headers
+
+```http
+X-RateLimit-Limit: 1000
+X-RateLimit-Remaining: 999
+X-RateLimit-Reset: 1641024000
+```
+
+### Handling Rate Limits
+
+When rate limit is exceeded (HTTP 429):
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "RATE_LIMIT_EXCEEDED",
+    "message": "Too many requests. Please try again later.",
+    "details": {
+      "retryAfter": 3600
+    }
+  }
+}
+```
 
 ---
 
 ## 📄 Pagination
 
-List endpoints support pagination:
+List endpoints support pagination via query parameters.
+
+### Parameters
+
+| Parameter | Type | Default | Max | Description |
+|-----------|------|---------|-----|-------------|
+| `page` | integer | 1 | - | Page number (1-based) |
+| `pageSize` | integer | 20 | 100 | Items per page |
+| `sortBy` | string | - | - | Sort field |
+| `sortOrder` | enum | desc | - | `asc` or `desc` |
+
+### Example Request
 
 ```http
-GET /api/farms?page=2&limit=20
+GET /api/farms?page=2&pageSize=50&sortBy=name&sortOrder=asc
 ```
 
-**Parameters:**
-- `page` - Page number (default: 1)
-- `limit` - Items per page (default: 20, max: 100)
-
-**Response includes pagination metadata:**
+### Pagination Response
 
 ```json
 {
   "success": true,
-  "data": {
-    "farms": [...],
+  "data": [ /* farms */ ],
+  "meta": {
     "pagination": {
       "page": 2,
-      "pageSize": 20,
-      "totalPages": 5,
-      "totalItems": 98,
+      "pageSize": 50,
+      "totalPages": 10,
+      "totalItems": 500,
       "hasNext": true,
       "hasPrevious": true
     }
@@ -215,710 +417,166 @@ GET /api/farms?page=2&limit=20
 
 ---
 
-## 🏪 Farms API
+## 💡 Examples
 
-### List Farms
+### Create a Farm
 
-Get a paginated list of farms with optional filters.
-
-```http
-GET /api/farms?status=ACTIVE&state=CA&page=1&limit=20
+```bash
+curl -X POST https://farmersmarket.vercel.app/api/farms \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Green Valley Farm",
+    "description": "Organic vegetables and fruits",
+    "location": {
+      "street": "123 Farm Road",
+      "city": "Farmville",
+      "state": "CA",
+      "zipCode": "12345",
+      "country": "USA",
+      "latitude": 40.7128,
+      "longitude": -74.0060
+    },
+    "certifications": ["ORGANIC", "NON_GMO"]
+  }'
 ```
 
-**Query Parameters:**
-- `status` - Filter by status (ACTIVE, PENDING, SUSPENDED, ARCHIVED)
-- `state` - Filter by state (2-letter code)
-- `search` - Search by name or description
-- `certifications` - Filter by certifications (comma-separated)
-- `page` - Page number (default: 1)
-- `limit` - Items per page (default: 20)
+### List Products with Filters
 
-**Example Request:**
-```javascript
-const response = await fetch('/api/farms?status=ACTIVE&state=CA', {
-  credentials: 'include'
-});
-const data = await response.json();
-```
-
-**Example Response:**
-```json
-{
-  "success": true,
-  "data": {
-    "farms": [
-      {
-        "id": "farm_123",
-        "name": "Green Valley Organic Farm",
-        "slug": "green-valley-organic-farm",
-        "description": "Family-owned organic farm since 1985",
-        "status": "ACTIVE",
-        "verificationStatus": "APPROVED",
-        "location": {
-          "address": "123 Farm Road",
-          "city": "Farmville",
-          "state": "CA",
-          "zipCode": "12345",
-          "coordinates": {
-            "lat": 40.7128,
-            "lng": -74.0060
-          }
-        },
-        "email": "contact@greenvalley.com",
-        "phone": "(555) 123-4567",
-        "certifications": ["ORGANIC", "NON_GMO"],
-        "images": [
-          "https://cdn.example.com/farm-123-1.jpg"
-        ],
-        "createdAt": "2024-01-15T10:30:00Z",
-        "updatedAt": "2024-12-20T14:22:00Z"
-      }
-    ],
-    "pagination": {
-      "page": 1,
-      "pageSize": 20,
-      "totalPages": 3,
-      "totalItems": 52,
-      "hasNext": true,
-      "hasPrevious": false
-    }
-  }
-}
-```
-
-### Get Farm by ID
-
-```http
-GET /api/farms/{id}
-```
-
-**Example:**
-```javascript
-const response = await fetch('/api/farms/farm_123');
-const data = await response.json();
-```
-
-### Create Farm
-
-Create a new farm (requires FARMER role).
-
-```http
-POST /api/farms
-Content-Type: application/json
-
-{
-  "name": "Sunny Acres Farm",
-  "description": "Sustainable agriculture with fresh produce",
-  "address": "456 Country Lane",
-  "city": "Farmington",
-  "state": "CA",
-  "zipCode": "54321",
-  "email": "info@sunnyacres.com",
-  "phone": "(555) 987-6543",
-  "certifications": ["ORGANIC"],
-  "latitude": 40.7580,
-  "longitude": -73.9855
-}
-```
-
-**Validation Rules:**
-- `name`: 3-100 characters, alphanumeric
-- `description`: 10-2000 characters
-- `email`: Valid email format
-- `state`: 2-letter state code
-- `zipCode`: Valid ZIP code format
-
-**Example Response:**
-```json
-{
-  "success": true,
-  "data": {
-    "id": "farm_456",
-    "name": "Sunny Acres Farm",
-    "status": "PENDING",
-    "verificationStatus": "PENDING",
-    // ... other fields
-  }
-}
-```
-
-### Update Farm
-
-```http
-PUT /api/farms/{id}
-Content-Type: application/json
-
-{
-  "description": "Updated description",
-  "phone": "(555) 111-2222"
-}
-```
-
-### Delete Farm
-
-```http
-DELETE /api/farms/{id}
-```
-
-**Response:**
-```http
-204 No Content
-```
-
----
-
-## 📦 Products API
-
-### List Products
-
-```http
-GET /api/products?category=vegetables&inStock=true&page=1&limit=20
-```
-
-**Query Parameters:**
-- `category` - Filter by category
-- `farmId` - Filter by farm ID
-- `minPrice` - Minimum price filter
-- `maxPrice` - Maximum price filter
-- `inStock` - Filter by stock availability (true/false)
-- `sortBy` - Sort field (price, name, createdAt, popularity)
-- `sortOrder` - Sort order (asc, desc)
-- `page` - Page number
-- `limit` - Items per page
-
-**Example Response:**
-```json
-{
-  "success": true,
-  "data": {
-    "products": [
-      {
-        "id": "prod_789",
-        "name": "Organic Tomatoes",
-        "description": "Fresh, locally-grown organic tomatoes",
-        "price": 4.99,
-        "unit": "lb",
-        "category": "VEGETABLES",
-        "farmId": "farm_123",
-        "farm": {
-          "id": "farm_123",
-          "name": "Green Valley Organic Farm"
-        },
-        "images": [
-          "https://cdn.example.com/products/tomatoes-1.jpg"
-        ],
-        "inventory": 150,
-        "inStock": true,
-        "organic": true,
-        "createdAt": "2024-06-15T08:00:00Z",
-        "updatedAt": "2025-01-05T12:30:00Z"
-      }
-    ],
-    "pagination": {
-      "page": 1,
-      "pageSize": 20,
-      "totalPages": 8,
-      "totalItems": 156,
-      "hasNext": true,
-      "hasPrevious": false
-    }
-  }
-}
-```
-
-### Create Product
-
-```http
-POST /api/products
-Content-Type: application/json
-
-{
-  "name": "Fresh Strawberries",
-  "description": "Sweet, juicy strawberries picked daily",
-  "price": 6.99,
-  "unit": "pint",
-  "category": "FRUITS",
-  "farmId": "farm_123",
-  "inventory": 100,
-  "organic": true
-}
-```
-
-### Update Product Inventory
-
-```http
-PATCH /api/products/{id}/inventory
-Content-Type: application/json
-
-{
-  "inventory": 75
-}
-```
-
----
-
-## 🛒 Shopping Cart API
-
-### Get Cart
-
-```http
-GET /api/cart
-```
-
-**Example Response:**
-```json
-{
-  "success": true,
-  "data": {
-    "id": "cart_abc",
-    "userId": "user_123",
-    "items": [
-      {
-        "id": "item_1",
-        "productId": "prod_789",
-        "product": {
-          "id": "prod_789",
-          "name": "Organic Tomatoes",
-          "price": 4.99,
-          "unit": "lb",
-          "images": ["..."]
-        },
-        "quantity": 3,
-        "price": 4.99,
-        "subtotal": 14.97
-      }
-    ],
-    "subtotal": 14.97,
-    "tax": 1.20,
-    "total": 16.17,
-    "itemCount": 3
-  }
-}
+```bash
+curl -X GET "https://farmersmarket.vercel.app/api/products?categoryId=cat_123&inStock=true&minPrice=5&maxPrice=20&page=1&pageSize=20"
 ```
 
 ### Add Item to Cart
 
-```http
-POST /api/cart/items
-Content-Type: application/json
-
-{
-  "productId": "prod_789",
-  "quantity": 2
-}
-```
-
-### Update Cart Item
-
-```http
-PUT /api/cart/items/{itemId}
-Content-Type: application/json
-
-{
-  "quantity": 5
-}
-```
-
-### Remove Cart Item
-
-```http
-DELETE /api/cart/items/{itemId}
-```
-
----
-
-## 📋 Orders API
-
-### List Orders
-
-```http
-GET /api/orders?status=DELIVERED&page=1
-```
-
-**Example Response:**
-```json
-{
-  "success": true,
-  "data": {
-    "orders": [
-      {
-        "id": "order_xyz",
-        "orderNumber": "ORD-2025-001234",
-        "userId": "user_123",
-        "status": "DELIVERED",
-        "items": [
-          {
-            "id": "item_1",
-            "productId": "prod_789",
-            "product": {
-              "name": "Organic Tomatoes"
-            },
-            "quantity": 3,
-            "price": 4.99,
-            "subtotal": 14.97
-          }
-        ],
-        "subtotal": 14.97,
-        "tax": 1.20,
-        "shippingCost": 5.00,
-        "total": 21.17,
-        "deliveryAddress": {
-          "street": "123 Main St",
-          "city": "Springfield",
-          "state": "IL",
-          "zipCode": "62701"
-        },
-        "paymentMethod": "card_****1234",
-        "createdAt": "2025-01-01T10:00:00Z",
-        "deliveredAt": "2025-01-03T14:30:00Z"
-      }
-    ],
-    "pagination": {
-      "page": 1,
-      "pageSize": 20,
-      "totalPages": 2,
-      "totalItems": 35,
-      "hasNext": true,
-      "hasPrevious": false
-    }
-  }
-}
+```bash
+curl -X POST https://farmersmarket.vercel.app/api/cart/items \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "productId": "prod_abc123",
+    "quantity": 2
+  }'
 ```
 
 ### Create Order
 
-```http
-POST /api/orders
-Content-Type: application/json
-
-{
-  "deliveryAddressId": "addr_123",
-  "paymentMethodId": "pm_stripe_abc",
-  "notes": "Please leave at front door"
-}
-```
-
-**Response:**
-```json
-{
-  "success": true,
-  "data": {
-    "id": "order_new",
-    "orderNumber": "ORD-2025-001235",
-    "status": "PENDING",
-    "total": 21.17,
-    // ... order details
-  }
-}
-```
-
----
-
-## 🔍 Search API
-
-### Global Search
-
-Search across farms and products.
-
-```http
-GET /api/search?q=organic&type=all&limit=20
-```
-
-**Query Parameters:**
-- `q` - Search query (required)
-- `type` - Search type (all, farms, products)
-- `limit` - Max results per type (default: 20)
-
-**Example Response:**
-```json
-{
-  "success": true,
-  "data": {
-    "farms": [
-      {
-        "id": "farm_123",
-        "name": "Green Valley Organic Farm",
-        "description": "Certified organic farm...",
-        "relevance": 0.95
-      }
-    ],
-    "products": [
-      {
-        "id": "prod_789",
-        "name": "Organic Tomatoes",
-        "description": "Fresh organic tomatoes...",
-        "relevance": 0.92
-      }
-    ],
-    "total": 47
-  }
-}
-```
-
----
-
-## ⚙️ Admin API
-
-### Get Platform Analytics
-
-```http
-GET /api/admin/analytics?startDate=2025-01-01&endDate=2025-01-31
-```
-
-**Requires:** ADMIN role
-
-**Example Response:**
-```json
-{
-  "success": true,
-  "data": {
-    "revenue": {
-      "total": 125678.50,
-      "growth": 23.5
+```bash
+curl -X POST https://farmersmarket.vercel.app/api/orders \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "deliveryAddress": {
+      "street": "456 Main St",
+      "city": "Springfield",
+      "state": "IL",
+      "zipCode": "62701",
+      "country": "USA"
     },
-    "orders": {
-      "total": 1543,
-      "growth": 18.2
-    },
-    "users": {
-      "total": 5234,
-      "active": 3421,
-      "growth": 12.7
-    },
-    "farms": {
-      "total": 156,
-      "active": 142,
-      "pending": 8,
-      "growth": 15.3
-    }
-  }
-}
+    "paymentMethodId": "pm_abc123",
+    "notes": "Please deliver in the morning"
+  }'
 ```
 
-### Verify Farm
+### Search Farms
 
-```http
-POST /api/admin/farms/verify
-Content-Type: application/json
-
-{
-  "farmId": "farm_456",
-  "status": "APPROVED"
-}
-```
-
-**Rejection with reason:**
-```json
-{
-  "farmId": "farm_789",
-  "status": "REJECTED",
-  "rejectionReason": "Incomplete documentation provided"
-}
+```bash
+curl -X GET "https://farmersmarket.vercel.app/api/search?q=organic&type=farms"
 ```
 
 ---
 
-## 🚦 Rate Limiting
+## 📚 SDKs & Libraries
 
-Rate limits are enforced per user:
-
-| User Type | Rate Limit |
-|-----------|-----------|
-| **Anonymous** | 100 requests/hour |
-| **Authenticated** | 1,000 requests/hour |
-| **Admin** | Unlimited |
-
-**Rate Limit Headers:**
-```http
-X-RateLimit-Limit: 1000
-X-RateLimit-Remaining: 995
-X-RateLimit-Reset: 1704657600
-```
-
-When rate limit is exceeded:
-```json
-{
-  "success": false,
-  "error": {
-    "code": "RATE_LIMIT_EXCEEDED",
-    "message": "Too many requests. Please try again later.",
-    "retryAfter": 3600
-  }
-}
-```
-
----
-
-## 📝 Best Practices
-
-### 1. Always Handle Errors
-
-```javascript
-try {
-  const response = await fetch('/api/farms');
-
-  if (!response.ok) {
-    const error = await response.json();
-    console.error('API Error:', error.error);
-    // Handle error appropriately
-  }
-
-  const data = await response.json();
-  // Process data
-} catch (error) {
-  console.error('Network Error:', error);
-  // Handle network errors
-}
-```
-
-### 2. Use Pagination for Large Datasets
-
-```javascript
-async function getAllFarms() {
-  const allFarms = [];
-  let page = 1;
-  let hasMore = true;
-
-  while (hasMore) {
-    const response = await fetch(`/api/farms?page=${page}&limit=100`);
-    const data = await response.json();
-
-    allFarms.push(...data.data.farms);
-    hasMore = data.data.pagination.hasNext;
-    page++;
-  }
-
-  return allFarms;
-}
-```
-
-### 3. Implement Retry Logic
-
-```javascript
-async function fetchWithRetry(url, options = {}, retries = 3) {
-  for (let i = 0; i < retries; i++) {
-    try {
-      const response = await fetch(url, options);
-
-      if (response.ok) {
-        return await response.json();
-      }
-
-      // Don't retry on client errors
-      if (response.status >= 400 && response.status < 500) {
-        throw new Error(`Client error: ${response.status}`);
-      }
-    } catch (error) {
-      if (i === retries - 1) throw error;
-
-      // Exponential backoff
-      await new Promise(resolve =>
-        setTimeout(resolve, Math.pow(2, i) * 1000)
-      );
-    }
-  }
-}
-```
-
-### 4. Cache Responses
-
-```javascript
-const cache = new Map();
-
-async function fetchWithCache(url, ttl = 60000) {
-  const cached = cache.get(url);
-
-  if (cached && Date.now() - cached.timestamp < ttl) {
-    return cached.data;
-  }
-
-  const response = await fetch(url);
-  const data = await response.json();
-
-  cache.set(url, {
-    data,
-    timestamp: Date.now()
-  });
-
-  return data;
-}
-```
-
----
-
-## 🔧 SDKs & Libraries
-
-### JavaScript/TypeScript
+### TypeScript/JavaScript
 
 ```bash
 npm install @farmersmarket/api-client
 ```
 
-```javascript
-import { FarmersMarketClient } from '@farmersmarket/api-client';
+```typescript
+import { FarmersMarketAPI } from '@farmersmarket/api-client';
 
-const client = new FarmersMarketClient({
-  baseUrl: 'http://localhost:3001',
-  credentials: 'include'
+const api = new FarmersMarketAPI({
+  token: 'YOUR_JWT_TOKEN'
 });
 
-// Get farms
-const farms = await client.farms.list({ status: 'ACTIVE' });
+// List farms
+const farms = await api.farms.list({
+  page: 1,
+  pageSize: 20,
+  status: 'ACTIVE'
+});
 
 // Create product
-const product = await client.products.create({
-  name: 'Organic Apples',
-  price: 3.99,
-  farmId: 'farm_123'
+const product = await api.products.create({
+  name: 'Organic Tomatoes',
+  description: 'Fresh, locally grown',
+  price: 4.99,
+  unit: 'LB',
+  farmId: 'farm_123',
+  categoryId: 'cat_456'
 });
 ```
 
-### Python
+### Python (Coming Soon)
 
 ```bash
 pip install farmersmarket-api
 ```
 
-```python
-from farmersmarket import Client
+---
 
-client = Client(base_url='http://localhost:3001')
-client.authenticate(email='user@example.com', password='password')
+## 🔗 Additional Resources
 
-# Get farms
-farms = client.farms.list(status='ACTIVE')
+- **[Interactive API Docs](/api-docs)** - Swagger UI
+- **[Authentication Guide](./authentication.md)** - Detailed auth documentation
+- **[Error Codes Reference](./error-codes.md)** - Complete error code list
+- **[Examples](./examples/)** - Code examples for common tasks
+- **[Changelog](../../CHANGELOG.md)** - API version history
+- **[Status Page](https://status.farmersmarket.com)** - Service status
 
-# Create product
-product = client.products.create(
-    name='Organic Apples',
-    price=3.99,
-    farm_id='farm_123'
-)
+---
+
+## 🐛 Support
+
+- **Email:** api-support@farmersmarket.com
+- **GitHub Issues:** [github.com/farmersmarket/issues](https://github.com)
+- **Discord:** [discord.gg/farmersmarket](https://discord.gg)
+- **Documentation:** [docs.farmersmarket.com](https://docs.farmersmarket.com)
+
+---
+
+## 📝 Versioning
+
+The API uses semantic versioning (SemVer):
+
+- **Current Version:** 1.0.0
+- **Breaking changes** increment major version
+- **New features** increment minor version
+- **Bug fixes** increment patch version
+
+Version is included in response headers:
+```http
+X-API-Version: 1.0.0
 ```
 
 ---
 
-## 🆘 Support
+## 🔒 Security
 
-### Documentation
-- [Getting Started Guide](../getting-started/QUICK_START_GUIDE.md)
-- [API Examples](examples/)
-- [Postman Collection](postman/collection.json)
+- **HTTPS Only** - All requests must use HTTPS
+- **JWT Authentication** - Secure token-based auth
+- **Rate Limiting** - Protection against abuse
+- **Input Validation** - All inputs are validated
+- **SQL Injection Protection** - Parameterized queries
+- **XSS Protection** - Output sanitization
+- **CORS** - Configured for security
 
-### Community
-- GitHub Issues: [Report bugs](https://github.com/your-repo/issues)
-- Discussions: [Ask questions](https://github.com/your-repo/discussions)
-- Discord: [Join our community](https://discord.gg/farmersmarket)
-
-### Contact
-- Email: api-support@farmersmarket.com
-- Documentation: https://docs.farmersmarket.com
-- Status Page: https://status.farmersmarket.com
+Report security issues: security@farmersmarket.com
 
 ---
 
-**Last Updated:** January 2025
-**API Version:** 1.0.0
-**OpenAPI Spec:** 3.0.3
-
-🌾 **Happy farming!** 🚜
+**Last Updated:** January 2025  
+**API Version:** 1.0.0  
+**Documentation Version:** 1.0.0

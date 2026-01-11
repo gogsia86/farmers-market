@@ -10,7 +10,7 @@ import type { Review, ReviewStatus } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 /**
  * Create review validation schema
@@ -68,7 +68,7 @@ interface ReviewCreateResponse {
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { productId: string } }
+  { params }: { params: { productId: string } },
 ): Promise<NextResponse<ReviewListResponse>> {
   try {
     const { productId } = params;
@@ -93,7 +93,7 @@ export async function GET(
             message: `Product with ID ${productId} not found`,
           },
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -121,7 +121,6 @@ export async function GET(
               id: true,
               firstName: true,
               lastName: true,
-              farm: true,
               avatar: true,
             },
           },
@@ -195,7 +194,7 @@ export async function GET(
             error instanceof Error ? error.message : "Failed to fetch reviews",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -206,7 +205,7 @@ export async function GET(
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: { productId: string } }
+  { params }: { params: { productId: string } },
 ): Promise<NextResponse<ReviewCreateResponse>> {
   try {
     const session = await auth();
@@ -220,7 +219,7 @@ export async function POST(
             message: "You must be logged in to submit a review",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -236,7 +235,7 @@ export async function POST(
             message: "Only consumers can submit reviews",
           },
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -261,7 +260,7 @@ export async function POST(
             message: `Product with ID ${productId} not found`,
           },
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -282,7 +281,7 @@ export async function POST(
             message: "You have already reviewed this product",
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -300,7 +299,7 @@ export async function POST(
             details: validation.error.flatten(),
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -372,7 +371,6 @@ export async function POST(
               id: true,
               firstName: true,
               lastName: true,
-              farm: true,
               avatar: true,
             },
           },
@@ -397,11 +395,10 @@ export async function POST(
         data: review as unknown as Review,
         meta: {
           timestamp: new Date().toISOString(),
-          message:
-            "Review submitted successfully and is pending approval",
+          message: "Review submitted successfully and is pending approval",
         },
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     logger.error(`POST /api/products/[productId]/reviews error:`, {
@@ -417,7 +414,7 @@ export async function POST(
             error instanceof Error ? error.message : "Failed to create review",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

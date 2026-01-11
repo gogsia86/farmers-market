@@ -280,7 +280,7 @@ export async function POST(request: NextRequest) {
         farm: {
           select: {
             id: true,
-            farm: true,
+            name: true,
             slug: true,
             logoUrl: true,
           },

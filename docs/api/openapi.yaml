@@ -1,664 +1,1829 @@
-{
-  "openapi": "3.0.0",
-  "info":
+openapi: 3.0.3
+info:
+  title: Farmers Market Platform API
+  version: 1.0.0
+  description: |
+    # 🌾 Farmers Market Platform API
+
+    **Enterprise-grade REST API connecting farmers directly with consumers**
+
+    ## Overview
+
+    This API provides comprehensive endpoints for:
+    - 🚜 **Farm Management** - CRUD operations, verification, search
+    - 🌾 **Product Catalog** - Inventory management, categories, search
+    - 📦 **Order Processing** - Cart, checkout, fulfillment, tracking
+    - 👤 **User Management** - Authentication, profiles, roles (Admin/Farmer/Customer)
+    - 💳 **Payments** - Stripe integration, payment methods, refunds
+    - 🔔 **Notifications** - Real-time updates, email/SMS notifications
+    - 📊 **Analytics** - Sales reports, dashboard metrics
+    - ⭐ **Reviews & Ratings** - Product and farm reviews
+    - ❤️ **Favorites** - Wishlist management
+
+    ## Authentication
+
+    All authenticated endpoints require a valid JWT token from NextAuth v5.
+
+    Include the token in the Authorization header:
+    ```
+    Authorization: Bearer <your-jwt-token>
+    ```
+
+    ## Response Format
+
+    All endpoints return a standardized `ServiceResponse<T>` format:
+
+    ```json
     {
-      "title": "Farmers Market Platform API",
-      "version": "1.0.0",
-      "description": "Divine Agricultural Platform - Comprehensive REST API\n\nThis API provides endpoints for:\n- 🚜 Farm Management (CRUD, search, verification)\n- 🌾 Product Catalog (inventory, categories, search)\n- 📦 Order Processing (cart, checkout, fulfillment)\n- 👤 User Management (authentication, profiles, roles)\n- 🌍 Marketplace (discovery, featured items, recommendations)\n- 📊 Analytics (farmer dashboard, sales reports)\n- 🔔 Notifications (real-time updates, alerts)\n\nAll endpoints return standardized ServiceResponse<T> format with:\n- success: boolean\n- data?: T\n- error?: ServiceError\n- meta?: ResponseMetadata (including agricultural consciousness)",
-      "contact":
-        {
-          "name": "API Support",
-          "email": "support@farmersmarket.com",
-          "url": "https://farmersmarket.com/support",
-        },
-      "license":
-        { "name": "MIT", "url": "https://opensource.org/licenses/MIT" },
-    },
-  "servers":
-    [
-      { "url": "http://localhost:3001", "description": "Production server" },
-      { "url": "http://localhost:3001", "description": "Development server" },
-    ],
-  "tags":
-    [
-      { "name": "Health", "description": "Health operations" },
-      { "name": "FarmController", "description": "FarmController operations" },
-      {
-        "name": "ProductController",
-        "description": "ProductController operations",
-      },
-      {
-        "name": "OrderController",
-        "description": "OrderController operations",
-      },
-      { "name": "Marketplace", "description": "Marketplace operations" },
-    ],
-  "paths":
+      "success": true,
+      "data": { ... },
+      "error": null,
+      "meta": {
+        "timestamp": "2025-01-10T12:00:00Z",
+        "requestId": "req_abc123"
+      }
+    }
+    ```
+
+    ## Error Handling
+
+    Error responses follow the same format:
+
+    ```json
     {
-      "/api/health":
-        {
-          "get":
-            {
-              "tags": ["Health"],
-              "summary": "GET",
-              "description": "Health check endpoint - verifies system and database connectivity",
-              "operationId": "get__api_health",
-              "responses":
-                {
-                  "200":
-                    {
-                      "description": "System is healthy",
-                      "content":
-                        {
-                          "application/json":
-                            {
-                              "schema":
-                                {
-                                  "type": "object",
-                                  "properties":
-                                    {
-                                      "status":
-                                        {
-                                          "type": "string",
-                                          "example": "healthy",
-                                        },
-                                      "database":
-                                        {
-                                          "type": "string",
-                                          "example": "connected",
-                                        },
-                                      "timestamp":
-                                        {
-                                          "type": "string",
-                                          "format": "date-time",
-                                        },
-                                      "version":
-                                        {
-                                          "type": "string",
-                                          "example": "1.0.0",
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                    },
-                },
-            },
-        },
-      "/api/ready":
-        {
-          "get":
-            {
-              "tags": ["Health"],
-              "summary": "GET",
-              "description": "Readiness check endpoint for Kubernetes/Docker",
-              "operationId": "get__api_ready",
-              "responses":
-                {
-                  "200":
-                    {
-                      "description": "Service is ready",
-                      "content":
-                        {
-                          "application/json":
-                            {
-                              "schema":
-                                {
-                                  "type": "object",
-                                  "properties":
-                                    {
-                                      "ready":
-                                        { "type": "boolean", "example": true },
-                                      "timestamp":
-                                        {
-                                          "type": "string",
-                                          "format": "date-time",
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                    },
-                },
-            },
-        },
-      "/api/farms":
-        {
-          "get":
-            {
-              "tags": ["FarmController"],
-              "summary": "handleListFarms",
-              "description": "List all farms with pagination and filtering",
-              "operationId": "get__api_farms",
-              "parameters":
-                [
-                  {
-                    "name": "page",
-                    "in": "query",
-                    "required": false,
-                    "schema": { "type": "integer", "example": 1 },
-                    "description": "Page number (starts at 1)",
-                  },
-                  {
-                    "name": "limit",
-                    "in": "query",
-                    "required": false,
-                    "schema": { "type": "integer", "example": 20 },
-                    "description": "Items per page",
-                  },
-                  {
-                    "name": "status",
-                    "in": "query",
-                    "required": false,
-                    "schema":
-                      {
-                        "type": "string",
-                        "enum": ["ACTIVE", "PENDING", "SUSPENDED", "INACTIVE"],
-                      },
-                    "description": "Filter by farm status",
-                  },
-                  {
-                    "name": "city",
-                    "in": "query",
-                    "required": false,
-                    "schema": { "type": "string" },
-                    "description": "Filter by city",
-                  },
-                  {
-                    "name": "state",
-                    "in": "query",
-                    "required": false,
-                    "schema": { "type": "string" },
-                    "description": "Filter by state",
-                  },
-                ],
-              "responses":
-                {
-                  "200":
-                    {
-                      "description": "Paginated list of farms",
-                      "content":
-                        {
-                          "application/json":
-                            {
-                              "schema":
-                                {
-                                  "type": "object",
-                                  "properties":
-                                    {
-                                      "success":
-                                        { "type": "boolean", "example": true },
-                                      "data":
-                                        {
-                                          "type": "array",
-                                          "items":
-                                            {
-                                              "type": "object",
-                                              "description": "Farm object",
-                                            },
-                                        },
-                                      "pagination":
-                                        {
-                                          "type": "object",
-                                          "properties":
-                                            {
-                                              "page": { "type": "integer" },
-                                              "limit": { "type": "integer" },
-                                              "total": { "type": "integer" },
-                                              "totalPages":
-                                                { "type": "integer" },
-                                            },
-                                        },
-                                      "meta":
-                                        {
-                                          "type": "object",
-                                          "properties":
-                                            {
-                                              "agricultural":
-                                                {
-                                                  "type": "object",
-                                                  "properties":
-                                                    {
-                                                      "season":
-                                                        {
-                                                          "type": "string",
-                                                          "enum":
-                                                            [
-                                                              "SPRING",
-                                                              "SUMMER",
-                                                              "FALL",
-                                                              "WINTER",
-                                                            ],
-                                                        },
-                                                      "consciousness":
-                                                        {
-                                                          "type": "string",
-                                                          "example": "DIVINE",
-                                                        },
-                                                    },
-                                                },
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                    },
-                },
-            },
-          "post":
-            {
-              "tags": ["FarmController"],
-              "summary": "handleCreateFarm",
-              "description": "Create a new farm (requires FARMER role)",
-              "operationId": "post__api_farms",
-              "requestBody":
-                {
-                  "required": true,
-                  "content":
-                    {
-                      "application/json":
-                        {
-                          "schema":
-                            {
-                              "type": "object",
-                              "required":
-                                [
-                                  "name",
-                                  "address",
-                                  "city",
-                                  "state",
-                                  "zipCode",
-                                  "latitude",
-                                  "longitude",
-                                ],
-                              "properties":
-                                {
-                                  "name":
-                                    {
-                                      "type": "string",
-                                      "example": "Sunny Valley Farm",
-                                    },
-                                  "address":
-                                    {
-                                      "type": "string",
-                                      "example": "123 Farm Road",
-                                    },
-                                  "city":
-                                    { "type": "string", "example": "Portland" },
-                                  "state":
-                                    { "type": "string", "example": "OR" },
-                                  "zipCode":
-                                    { "type": "string", "example": "97201" },
-                                  "latitude":
-                                    { "type": "number", "example": 45.5152 },
-                                  "longitude":
-                                    { "type": "number", "example": -122.6784 },
-                                  "description": { "type": "string" },
-                                  "story": { "type": "string" },
-                                  "businessName": { "type": "string" },
-                                  "yearEstablished": { "type": "integer" },
-                                  "farmSize": { "type": "number" },
-                                  "email":
-                                    { "type": "string", "format": "email" },
-                                  "phone": { "type": "string" },
-                                  "website":
-                                    { "type": "string", "format": "uri" },
-                                  "farmingPractices":
-                                    {
-                                      "type": "array",
-                                      "items": { "type": "string" },
-                                      "example": ["ORGANIC", "BIODYNAMIC"],
-                                    },
-                                  "productCategories":
-                                    {
-                                      "type": "array",
-                                      "items": { "type": "string" },
-                                      "example": ["VEGETABLES", "FRUITS"],
-                                    },
-                                  "deliveryRadius":
-                                    { "type": "integer", "example": 50 },
-                                },
-                            },
-                        },
-                    },
-                },
-              "security": [{ "bearerAuth": [] }],
-              "responses":
-                {
-                  "201":
-                    {
-                      "description": "Farm created successfully",
-                      "content":
-                        {
-                          "application/json":
-                            {
-                              "schema":
-                                {
-                                  "type": "object",
-                                  "properties":
-                                    {
-                                      "success":
-                                        { "type": "boolean", "example": true },
-                                      "data":
-                                        {
-                                          "type": "object",
-                                          "properties":
-                                            {
-                                              "farm":
-                                                {
-                                                  "type": "object",
-                                                  "description": "Created farm object",
-                                                },
-                                              "slug":
-                                                {
-                                                  "type": "string",
-                                                  "example": "sunny-valley-farm-portland",
-                                                },
-                                            },
-                                        },
-                                      "meta":
-                                        {
-                                          "type": "object",
-                                          "properties":
-                                            {
-                                              "message":
-                                                {
-                                                  "type": "string",
-                                                  "example": "Farm created successfully",
-                                                },
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                    },
-                  "401": { "description": "Authentication required" },
-                  "403": { "description": "User already has a farm" },
-                },
-            },
-        },
-      "/api/farms/{id}":
-        {
-          "get":
-            {
-              "tags": ["FarmController"],
-              "summary": "handleGetFarm",
-              "description": "Get farm by ID",
-              "operationId": "get__api_farms_id",
-              "parameters":
-                [
-                  {
-                    "name": "id",
-                    "in": "path",
-                    "required": true,
-                    "schema": { "type": "string" },
-                    "description": "Farm ID",
-                  },
-                ],
-              "responses":
-                {
-                  "200": { "description": "Farm details" },
-                  "404": { "description": "Farm not found" },
-                },
-            },
-          "put":
-            {
-              "tags": ["FarmController"],
-              "summary": "handleUpdateFarm",
-              "description": "Update farm (requires ownership)",
-              "operationId": "put__api_farms_id",
-              "parameters":
-                [
-                  {
-                    "name": "id",
-                    "in": "path",
-                    "required": true,
-                    "schema": { "type": "string" },
-                    "description": "Farm ID",
-                  },
-                ],
-              "security": [{ "bearerAuth": [] }],
-              "responses":
-                {
-                  "200": { "description": "Farm updated successfully" },
-                  "401": { "description": "Authentication required" },
-                  "403": { "description": "Not the farm owner" },
-                },
-            },
-          "delete":
-            {
-              "tags": ["FarmController"],
-              "summary": "handleDeleteFarm",
-              "description": "Delete farm (soft delete, requires ownership)",
-              "operationId": "delete__api_farms_id",
-              "parameters":
-                [
-                  {
-                    "name": "id",
-                    "in": "path",
-                    "required": true,
-                    "schema": { "type": "string" },
-                    "description": "Farm ID",
-                  },
-                ],
-              "security": [{ "bearerAuth": [] }],
-              "responses":
-                { "200": { "description": "Farm deleted successfully" } },
-            },
-        },
-      "/api/farms/search":
-        {
-          "get":
-            {
-              "tags": ["FarmController"],
-              "summary": "handleSearchFarms",
-              "description": "Search farms by query",
-              "operationId": "get__api_farms_search",
-              "parameters":
-                [
-                  {
-                    "name": "query",
-                    "in": "query",
-                    "required": true,
-                    "schema": { "type": "string" },
-                    "description": "Search query",
-                  },
-                  {
-                    "name": "limit",
-                    "in": "query",
-                    "required": false,
-                    "schema": { "type": "integer", "example": 20 },
-                    "description": "Maximum results",
-                  },
-                ],
-              "responses": { "200": { "description": "Search results" } },
-            },
-        },
-      "/api/products":
-        {
-          "get":
-            {
-              "tags": ["ProductController"],
-              "summary": "handleListProducts",
-              "description": "List all products with pagination and filtering",
-              "operationId": "get__api_products",
-              "parameters":
-                [
-                  {
-                    "name": "page",
-                    "in": "query",
-                    "required": false,
-                    "schema": { "type": "integer", "example": 1 },
-                  },
-                  {
-                    "name": "limit",
-                    "in": "query",
-                    "required": false,
-                    "schema": { "type": "integer", "example": 20 },
-                  },
-                  {
-                    "name": "category",
-                    "in": "query",
-                    "required": false,
-                    "schema": { "type": "string" },
-                  },
-                  {
-                    "name": "farmId",
-                    "in": "query",
-                    "required": false,
-                    "schema": { "type": "string" },
-                  },
-                ],
-              "responses":
-                { "200": { "description": "Paginated list of products" } },
-            },
-          "post":
-            {
-              "tags": ["ProductController"],
-              "summary": "handleCreateProduct",
-              "description": "Create a new product (requires FARMER role and farm ownership)",
-              "operationId": "post__api_products",
-              "security": [{ "bearerAuth": [] }],
-              "responses":
-                { "201": { "description": "Product created successfully" } },
-            },
-        },
-      "/api/products/search":
-        {
-          "get":
-            {
-              "tags": ["ProductController"],
-              "summary": "handleSearchProducts",
-              "description": "Search products by keyword",
-              "operationId": "get__api_products_search",
-              "parameters":
-                [
-                  {
-                    "name": "q",
-                    "in": "query",
-                    "required": true,
-                    "schema": { "type": "string" },
-                    "description": "Search query",
-                  },
-                ],
-              "responses": { "200": { "description": "Search results" } },
-            },
-        },
-      "/api/orders":
-        {
-          "get":
-            {
-              "tags": ["OrderController"],
-              "summary": "handleListOrders",
-              "description": "List orders for authenticated user",
-              "operationId": "get__api_orders",
-              "security": [{ "bearerAuth": [] }],
-              "responses": { "200": { "description": "List of user orders" } },
-            },
-          "post":
-            {
-              "tags": ["OrderController"],
-              "summary": "handleCreateOrder",
-              "description": "Create a new order",
-              "operationId": "post__api_orders",
-              "security": [{ "bearerAuth": [] }],
-              "responses":
-                { "201": { "description": "Order created successfully" } },
-            },
-        },
-      "/api/orders/{id}":
-        {
-          "get":
-            {
-              "tags": ["OrderController"],
-              "summary": "handleGetOrder",
-              "description": "Get order details",
-              "operationId": "get__api_orders_id",
-              "parameters":
-                [
-                  {
-                    "name": "id",
-                    "in": "path",
-                    "required": true,
-                    "schema": { "type": "string" },
-                  },
-                ],
-              "security": [{ "bearerAuth": [] }],
-              "responses": { "200": { "description": "Order details" } },
-            },
-        },
-      "/api/marketplace":
-        {
-          "get":
-            {
-              "tags": ["Marketplace"],
-              "summary": "GET",
-              "description": "Get marketplace products and featured farms",
-              "operationId": "get__api_marketplace",
-              "responses": { "200": { "description": "Marketplace data" } },
-            },
-        },
-    },
-  "components":
-    {
-      "securitySchemes":
-        {
-          "bearerAuth":
-            {
-              "type": "http",
-              "scheme": "bearer",
-              "bearerFormat": "JWT",
-              "description": "JWT token from NextAuth",
-            },
-        },
-      "schemas":
-        {
-          "ServiceResponse":
-            {
-              "type": "object",
-              "properties":
-                {
-                  "success": { "type": "boolean" },
-                  "data": { "type": "object" },
-                  "error":
-                    {
-                      "type": "object",
-                      "properties":
-                        {
-                          "code": { "type": "string" },
-                          "message": { "type": "string" },
-                          "details": { "type": "object" },
-                        },
-                    },
-                  "meta":
-                    {
-                      "type": "object",
-                      "properties":
-                        {
-                          "message": { "type": "string" },
-                          "timestamp":
-                            { "type": "string", "format": "date-time" },
-                          "agricultural":
-                            {
-                              "type": "object",
-                              "properties":
-                                {
-                                  "season":
-                                    {
-                                      "type": "string",
-                                      "enum":
-                                        ["SPRING", "SUMMER", "FALL", "WINTER"],
-                                    },
-                                  "consciousness":
-                                    { "type": "string", "example": "DIVINE" },
-                                },
-                            },
-                        },
-                    },
-                },
-            },
-        },
-    },
-}
+      "success": false,
+      "data": null,
+      "error": {
+        "code": "VALIDATION_ERROR",
+        "message": "Invalid input data",
+        "details": { ... }
+      }
+    }
+    ```
+
+    ## Rate Limiting
+
+    - **Authenticated users:** 1000 requests/hour
+    - **Anonymous users:** 100 requests/hour
+
+    ## Pagination
+
+    List endpoints support pagination via query parameters:
+    - `page` - Page number (default: 1)
+    - `pageSize` - Items per page (default: 20, max: 100)
+    - `sortBy` - Sort field
+    - `sortOrder` - Sort direction (asc/desc)
+
+  contact:
+    name: API Support
+    email: support@farmersmarket.com
+    url: https://farmersmarket.com/support
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: https://farmersmarket.vercel.app
+    description: Production server
+  - url: http://localhost:3001
+    description: Development server
+
+tags:
+  - name: Health
+    description: System health and readiness checks
+  - name: Authentication
+    description: User authentication and session management
+  - name: Farms
+    description: Farm management and discovery
+  - name: Products
+    description: Product catalog and inventory management
+  - name: Orders
+    description: Order processing and fulfillment
+  - name: Cart
+    description: Shopping cart operations
+  - name: Checkout
+    description: Checkout and payment processing
+  - name: Payments
+    description: Payment methods and transactions
+  - name: Users
+    description: User profiles and management
+  - name: Categories
+    description: Product categories
+  - name: Search
+    description: Search and discovery
+  - name: Favorites
+    description: Wishlist management
+  - name: Notifications
+    description: User notifications
+  - name: Admin
+    description: Administrative operations
+  - name: Webhooks
+    description: External webhook handlers
+
+paths:
+  # ============================================================================
+  # HEALTH & MONITORING
+  # ============================================================================
+
+  /api/health:
+    get:
+      tags: [Health]
+      summary: Health check
+      description: Verify system and database connectivity
+      operationId: getHealth
+      responses:
+        "200":
+          description: System is healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+              example:
+                success: true
+                data:
+                  status: healthy
+                  database: connected
+                  uptime: 86400
+                  timestamp: "2025-01-10T12:00:00Z"
+        "503":
+          description: System is unhealthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/ready:
+    get:
+      tags: [Health]
+      summary: Readiness check
+      description: Check if system is ready to accept traffic
+      operationId: getReady
+      responses:
+        "200":
+          description: System is ready
+        "503":
+          description: System is not ready
+
+  # ============================================================================
+  # AUTHENTICATION
+  # ============================================================================
+
+  /api/auth/session:
+    get:
+      tags: [Authentication]
+      summary: Get current session
+      description: Retrieve the current user session
+      operationId: getSession
+      responses:
+        "200":
+          description: Session retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SessionResponse"
+
+  /api/auth/signin:
+    post:
+      tags: [Authentication]
+      summary: Sign in
+      description: Authenticate user with credentials
+      operationId: signIn
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: farmer@example.com
+                password:
+                  type: string
+                  format: password
+                  example: SecurePassword123!
+      responses:
+        "200":
+          description: Successfully authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # ============================================================================
+  # FARMS
+  # ============================================================================
+
+  /api/farms:
+    get:
+      tags: [Farms]
+      summary: List farms
+      description: Get paginated list of farms with optional filters
+      operationId: listFarms
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - $ref: "#/components/parameters/SortBy"
+        - $ref: "#/components/parameters/SortOrder"
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [ACTIVE, PENDING, SUSPENDED, ARCHIVED]
+          description: Filter by farm status
+        - name: search
+          in: query
+          schema:
+            type: string
+          description: Search farms by name or description
+      responses:
+        "200":
+          description: List of farms
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FarmListResponse"
+
+    post:
+      tags: [Farms]
+      summary: Create farm
+      description: Create a new farm (requires FARMER role)
+      operationId: createFarm
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateFarmRequest"
+      responses:
+        "201":
+          description: Farm created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FarmResponse"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+        "403":
+          description: Insufficient permissions
+
+  /api/farms/{farmId}:
+    get:
+      tags: [Farms]
+      summary: Get farm details
+      description: Retrieve detailed information about a specific farm
+      operationId: getFarm
+      parameters:
+        - name: farmId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Farm ID
+      responses:
+        "200":
+          description: Farm details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FarmResponse"
+        "404":
+          description: Farm not found
+
+    put:
+      tags: [Farms]
+      summary: Update farm
+      description: Update farm details (requires ownership or ADMIN role)
+      operationId: updateFarm
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: farmId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateFarmRequest"
+      responses:
+        "200":
+          description: Farm updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FarmResponse"
+        "400":
+          description: Validation error
+        "401":
+          description: Unauthorized
+        "403":
+          description: Insufficient permissions
+        "404":
+          description: Farm not found
+
+    delete:
+      tags: [Farms]
+      summary: Delete farm
+      description: Soft delete farm (requires ownership or ADMIN role)
+      operationId: deleteFarm
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: farmId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Farm deleted
+        "401":
+          description: Unauthorized
+        "403":
+          description: Insufficient permissions
+        "404":
+          description: Farm not found
+
+  # ============================================================================
+  # PRODUCTS
+  # ============================================================================
+
+  /api/products:
+    get:
+      tags: [Products]
+      summary: List products
+      description: Get paginated list of products with filters
+      operationId: listProducts
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - $ref: "#/components/parameters/SortBy"
+        - $ref: "#/components/parameters/SortOrder"
+        - name: farmId
+          in: query
+          schema:
+            type: string
+          description: Filter by farm ID
+        - name: categoryId
+          in: query
+          schema:
+            type: string
+          description: Filter by category ID
+        - name: search
+          in: query
+          schema:
+            type: string
+          description: Search products by name or description
+        - name: minPrice
+          in: query
+          schema:
+            type: number
+            format: float
+        - name: maxPrice
+          in: query
+          schema:
+            type: number
+            format: float
+        - name: inStock
+          in: query
+          schema:
+            type: boolean
+          description: Filter by stock availability
+      responses:
+        "200":
+          description: List of products
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductListResponse"
+
+    post:
+      tags: [Products]
+      summary: Create product
+      description: Create a new product (requires FARMER role)
+      operationId: createProduct
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProductRequest"
+      responses:
+        "201":
+          description: Product created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductResponse"
+        "400":
+          description: Validation error
+        "401":
+          description: Unauthorized
+        "403":
+          description: Insufficient permissions
+
+  /api/products/{productId}:
+    get:
+      tags: [Products]
+      summary: Get product details
+      description: Retrieve detailed information about a specific product
+      operationId: getProduct
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Product details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductResponse"
+        "404":
+          description: Product not found
+
+    put:
+      tags: [Products]
+      summary: Update product
+      description: Update product details (requires ownership or ADMIN role)
+      operationId: updateProduct
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateProductRequest"
+      responses:
+        "200":
+          description: Product updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductResponse"
+        "400":
+          description: Validation error
+        "401":
+          description: Unauthorized
+        "403":
+          description: Insufficient permissions
+        "404":
+          description: Product not found
+
+    delete:
+      tags: [Products]
+      summary: Delete product
+      description: Soft delete product (requires ownership or ADMIN role)
+      operationId: deleteProduct
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Product deleted
+        "401":
+          description: Unauthorized
+        "403":
+          description: Insufficient permissions
+        "404":
+          description: Product not found
+
+  # ============================================================================
+  # CART
+  # ============================================================================
+
+  /api/cart:
+    get:
+      tags: [Cart]
+      summary: Get cart
+      description: Retrieve current user's shopping cart
+      operationId: getCart
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Shopping cart
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CartResponse"
+        "401":
+          description: Unauthorized
+
+  /api/cart/items:
+    post:
+      tags: [Cart]
+      summary: Add to cart
+      description: Add product to shopping cart
+      operationId: addToCart
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [productId, quantity]
+              properties:
+                productId:
+                  type: string
+                  example: prod_abc123
+                quantity:
+                  type: integer
+                  minimum: 1
+                  example: 2
+      responses:
+        "200":
+          description: Item added to cart
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CartResponse"
+        "400":
+          description: Validation error
+        "401":
+          description: Unauthorized
+        "404":
+          description: Product not found
+
+  /api/cart/items/{itemId}:
+    put:
+      tags: [Cart]
+      summary: Update cart item
+      description: Update quantity of cart item
+      operationId: updateCartItem
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: itemId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [quantity]
+              properties:
+                quantity:
+                  type: integer
+                  minimum: 1
+                  example: 3
+      responses:
+        "200":
+          description: Cart item updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CartResponse"
+        "400":
+          description: Validation error
+        "401":
+          description: Unauthorized
+        "404":
+          description: Item not found
+
+    delete:
+      tags: [Cart]
+      summary: Remove from cart
+      description: Remove item from shopping cart
+      operationId: removeFromCart
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: itemId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Item removed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CartResponse"
+        "401":
+          description: Unauthorized
+        "404":
+          description: Item not found
+
+  # ============================================================================
+  # ORDERS
+  # ============================================================================
+
+  /api/orders:
+    get:
+      tags: [Orders]
+      summary: List orders
+      description: Get user's orders (or all orders for ADMIN)
+      operationId: listOrders
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [PENDING, CONFIRMED, PREPARING, READY, DELIVERED, CANCELLED]
+      responses:
+        "200":
+          description: List of orders
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrderListResponse"
+        "401":
+          description: Unauthorized
+
+    post:
+      tags: [Orders]
+      summary: Create order
+      description: Create order from cart
+      operationId: createOrder
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateOrderRequest"
+      responses:
+        "201":
+          description: Order created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrderResponse"
+        "400":
+          description: Validation error
+        "401":
+          description: Unauthorized
+
+  /api/orders/{orderId}:
+    get:
+      tags: [Orders]
+      summary: Get order details
+      description: Retrieve detailed order information
+      operationId: getOrder
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Order details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrderResponse"
+        "401":
+          description: Unauthorized
+        "403":
+          description: Insufficient permissions
+        "404":
+          description: Order not found
+
+    patch:
+      tags: [Orders]
+      summary: Update order status
+      description: Update order status (requires FARMER or ADMIN role)
+      operationId: updateOrderStatus
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status:
+                  type: string
+                  enum: [CONFIRMED, PREPARING, READY, DELIVERED, CANCELLED]
+                notes:
+                  type: string
+      responses:
+        "200":
+          description: Order status updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrderResponse"
+        "400":
+          description: Validation error
+        "401":
+          description: Unauthorized
+        "403":
+          description: Insufficient permissions
+        "404":
+          description: Order not found
+
+  # ============================================================================
+  # CHECKOUT
+  # ============================================================================
+
+  /api/checkout:
+    post:
+      tags: [Checkout]
+      summary: Create checkout session
+      description: Initialize checkout process with payment intent
+      operationId: createCheckout
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [deliveryAddress, paymentMethodId]
+              properties:
+                deliveryAddress:
+                  $ref: "#/components/schemas/Address"
+                paymentMethodId:
+                  type: string
+                  example: pm_abc123
+                notes:
+                  type: string
+      responses:
+        "200":
+          description: Checkout session created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      clientSecret:
+                        type: string
+                      orderId:
+                        type: string
+        "400":
+          description: Validation error
+        "401":
+          description: Unauthorized
+
+  # ============================================================================
+  # SEARCH
+  # ============================================================================
+
+  /api/search:
+    get:
+      tags: [Search]
+      summary: Global search
+      description: Search across farms, products, and categories
+      operationId: search
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Search query
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [all, farms, products, categories]
+          description: Limit search to specific type
+      responses:
+        "200":
+          description: Search results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SearchResponse"
+
+  # ============================================================================
+  # FAVORITES
+  # ============================================================================
+
+  /api/favorites:
+    get:
+      tags: [Favorites]
+      summary: Get favorites
+      description: Retrieve user's favorite farms and products
+      operationId: getFavorites
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: User favorites
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FavoritesResponse"
+        "401":
+          description: Unauthorized
+
+    post:
+      tags: [Favorites]
+      summary: Add favorite
+      description: Add farm or product to favorites
+      operationId: addFavorite
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [type, id]
+              properties:
+                type:
+                  type: string
+                  enum: [farm, product]
+                id:
+                  type: string
+      responses:
+        "200":
+          description: Added to favorites
+        "401":
+          description: Unauthorized
+        "404":
+          description: Item not found
+
+  /api/favorites/{favoriteId}:
+    delete:
+      tags: [Favorites]
+      summary: Remove favorite
+      description: Remove item from favorites
+      operationId: removeFavorite
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: favoriteId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Removed from favorites
+        "401":
+          description: Unauthorized
+        "404":
+          description: Favorite not found
+
+  # ============================================================================
+  # NOTIFICATIONS
+  # ============================================================================
+
+  /api/notifications:
+    get:
+      tags: [Notifications]
+      summary: Get notifications
+      description: Retrieve user notifications
+      operationId: getNotifications
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - name: unreadOnly
+          in: query
+          schema:
+            type: boolean
+          description: Filter unread notifications only
+      responses:
+        "200":
+          description: User notifications
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotificationListResponse"
+        "401":
+          description: Unauthorized
+
+  /api/notifications/{notificationId}/read:
+    post:
+      tags: [Notifications]
+      summary: Mark as read
+      description: Mark notification as read
+      operationId: markNotificationRead
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: notificationId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Notification marked as read
+        "401":
+          description: Unauthorized
+        "404":
+          description: Notification not found
+
+  # ============================================================================
+  # USER MANAGEMENT
+  # ============================================================================
+
+  /api/user/profile:
+    get:
+      tags: [Users]
+      summary: Get user profile
+      description: Retrieve current user's profile
+      operationId: getUserProfile
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfileResponse"
+        "401":
+          description: Unauthorized
+
+    put:
+      tags: [Users]
+      summary: Update profile
+      description: Update user profile information
+      operationId: updateUserProfile
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateProfileRequest"
+      responses:
+        "200":
+          description: Profile updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfileResponse"
+        "400":
+          description: Validation error
+        "401":
+          description: Unauthorized
+
+  # ============================================================================
+  # ADMIN OPERATIONS
+  # ============================================================================
+
+  /api/admin/users:
+    get:
+      tags: [Admin]
+      summary: List all users
+      description: Get paginated list of users (ADMIN only)
+      operationId: listUsers
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - name: role
+          in: query
+          schema:
+            type: string
+            enum: [ADMIN, FARMER, CUSTOMER]
+      responses:
+        "200":
+          description: List of users
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserListResponse"
+        "401":
+          description: Unauthorized
+        "403":
+          description: Insufficient permissions
+
+  /api/admin/farms/{farmId}/verify:
+    post:
+      tags: [Admin]
+      summary: Verify farm
+      description: Approve farm verification (ADMIN only)
+      operationId: verifyFarm
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: farmId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Farm verified
+        "401":
+          description: Unauthorized
+        "403":
+          description: Insufficient permissions
+        "404":
+          description: Farm not found
+
+# ==============================================================================
+# COMPONENTS
+# ==============================================================================
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token from NextAuth v5 authentication
+
+  parameters:
+    Page:
+      name: page
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+      description: Page number for pagination
+
+    PageSize:
+      name: pageSize
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+      description: Number of items per page
+
+    SortBy:
+      name: sortBy
+      in: query
+      schema:
+        type: string
+      description: Field to sort by
+
+    SortOrder:
+      name: sortOrder
+      in: query
+      schema:
+        type: string
+        enum: [asc, desc]
+        default: desc
+      description: Sort direction
+
+  schemas:
+    # ========================================================================
+    # COMMON SCHEMAS
+    # ========================================================================
+
+    ServiceResponse:
+      type: object
+      required: [success]
+      properties:
+        success:
+          type: boolean
+          description: Indicates if request was successful
+        data:
+          type: object
+          description: Response data (varies by endpoint)
+        error:
+          $ref: "#/components/schemas/ServiceError"
+        meta:
+          $ref: "#/components/schemas/ResponseMetadata"
+
+    ServiceError:
+      type: object
+      properties:
+        code:
+          type: string
+          example: VALIDATION_ERROR
+        message:
+          type: string
+          example: Invalid input data
+        details:
+          type: object
+          additionalProperties: true
+
+    ResponseMetadata:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        requestId:
+          type: string
+        pagination:
+          $ref: "#/components/schemas/PaginationMetadata"
+
+    PaginationMetadata:
+      type: object
+      properties:
+        page:
+          type: integer
+        pageSize:
+          type: integer
+        totalPages:
+          type: integer
+        totalItems:
+          type: integer
+        hasNext:
+          type: boolean
+        hasPrevious:
+          type: boolean
+
+    ErrorResponse:
+      allOf:
+        - $ref: "#/components/schemas/ServiceResponse"
+        - type: object
+          properties:
+            success:
+              type: boolean
+              example: false
+            error:
+              $ref: "#/components/schemas/ServiceError"
+
+    Address:
+      type: object
+      required: [street, city, state, zipCode, country]
+      properties:
+        street:
+          type: string
+          example: 123 Farm Road
+        city:
+          type: string
+          example: Farmville
+        state:
+          type: string
+          example: CA
+        zipCode:
+          type: string
+          example: "12345"
+        country:
+          type: string
+          example: USA
+        latitude:
+          type: number
+          format: float
+        longitude:
+          type: number
+          format: float
+
+    # ========================================================================
+    # HEALTH SCHEMAS
+    # ========================================================================
+
+    HealthResponse:
+      allOf:
+        - $ref: "#/components/schemas/ServiceResponse"
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [healthy, unhealthy]
+                database:
+                  type: string
+                  enum: [connected, disconnected]
+                uptime:
+                  type: integer
+                  description: System uptime in seconds
+                timestamp:
+                  type: string
+                  format: date-time
+
+    # ========================================================================
+    # AUTH SCHEMAS
+    # ========================================================================
+
+    SessionResponse:
+      allOf:
+        - $ref: "#/components/schemas/ServiceResponse"
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                user:
+                  $ref: "#/components/schemas/User"
+                expires:
+                  type: string
+                  format: date-time
+
+    AuthResponse:
+      allOf:
+        - $ref: "#/components/schemas/ServiceResponse"
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                token:
+                  type: string
+                user:
+                  $ref: "#/components/schemas/User"
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          example: user_abc123
+        email:
+          type: string
+          format: email
+          example: farmer@example.com
+        name:
+          type: string
+          example: John Farmer
+        role:
+          type: string
+          enum: [ADMIN, FARMER, CUSTOMER]
+        avatar:
+          type: string
+          format: uri
+        createdAt:
+          type: string
+          format: date-time
+
+    # ========================================================================
+    # FARM SCHEMAS
+    # ========================================================================
+
+    Farm:
+      type: object
+      properties:
+        id:
+          type: string
+          example: farm_abc123
+        name:
+          type: string
+          example: Green Valley Farm
+        slug:
+          type: string
+          example: green-valley-farm
+        description:
+          type: string
+        status:
+          type: string
+          enum: [ACTIVE, PENDING, SUSPENDED, ARCHIVED]
+        owner:
+          $ref: "#/components/schemas/User"
+        location:
+          $ref: "#/components/schemas/Address"
+        certifications:
+          type: array
+          items:
+            type: string
+            enum:
+              [ORGANIC, NON_GMO, BIODYNAMIC, RAINFOREST_ALLIANCE, FAIR_TRADE]
+        images:
+          type: array
+          items:
+            type: string
+            format: uri
+        rating:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 5
+        reviewCount:
+          type: integer
+        productCount:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateFarmRequest:
+      type: object
+      required: [name, description, location]
+      properties:
+        name:
+          type: string
+          minLength: 3
+          maxLength: 100
+          example: Green Valley Farm
+        description:
+          type: string
+          minLength: 10
+          maxLength: 2000
+        location:
+          $ref: "#/components/schemas/Address"
+        certifications:
+          type: array
+          items:
+            type: string
+            enum:
+              [ORGANIC, NON_GMO, BIODYNAMIC, RAINFOREST_ALLIANCE, FAIR_TRADE]
+        images:
+          type: array
+          items:
+            type: string
+            format: uri
+
+    UpdateFarmRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        location:
+          $ref: "#/components/schemas/Address"
+        certifications:
+          type: array
+          items:
+            type: string
+        images:
+          type: array
+          items:
+            type: string
+
+    FarmResponse:
+      allOf:
+        - $ref: "#/components/schemas/ServiceResponse"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/Farm"
+
+    FarmListResponse:
+      allOf:
+        - $ref: "#/components/schemas/ServiceResponse"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/Farm"
+
+    # ========================================================================
+    # PRODUCT SCHEMAS
+    # ========================================================================
+
+    Product:
+      type: object
+      properties:
+        id:
+          type: string
+          example: prod_abc123
+        name:
+          type: string
+          example: Organic Tomatoes
+        slug:
+          type: string
+          example: organic-tomatoes
+        description:
+          type: string
+        price:
+          type: number
+          format: float
+          example: 4.99
+        unit:
+          type: string
+          enum: [LB, KG, OZ, EACH, BUNCH, DOZEN]
+          example: LB
+        stock:
+          type: integer
+          example: 50
+        farm:
+          $ref: "#/components/schemas/Farm"
+        category:
+          $ref: "#/components/schemas/Category"
+        images:
+          type: array
+          items:
+            type: string
+            format: uri
+        rating:
+          type: number
+          format: float
+        reviewCount:
+          type: integer
+        isOrganic:
+          type: boolean
+        isLocalGrown:
+          type: boolean
+        harvestDate:
+          type: string
+          format: date
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateProductRequest:
+      type: object
+      required: [name, description, price, unit, farmId, categoryId]
+      properties:
+        name:
+          type: string
+          minLength: 3
+          maxLength: 100
+        description:
+          type: string
+          minLength: 10
+          maxLength: 1000
+        price:
+          type: number
+          format: float
+          minimum: 0
+        unit:
+          type: string
+          enum: [LB, KG, OZ, EACH, BUNCH, DOZEN]
+        stock:
+          type: integer
+          minimum: 0
+        farmId:
+          type: string
+        categoryId:
+          type: string
+        images:
+          type: array
+          items:
+            type: string
+        isOrganic:
+          type: boolean
+        isLocalGrown:
+          type: boolean
+
+    UpdateProductRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+          format: float
+        stock:
+          type: integer
+        images:
+          type: array
+          items:
+            type: string
+        isOrganic:
+          type: boolean
+
+    ProductResponse:
+      allOf:
+        - $ref: "#/components/schemas/ServiceResponse"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/Product"
+
+    ProductListResponse:
+      allOf:
+        - $ref: "#/components/schemas/ServiceResponse"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/Product"
+
+    Category:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        slug:
+          type: string
+        icon:
+          type: string
+
+    # ========================================================================
+    # CART SCHEMAS
+    # ========================================================================
+
+    Cart:
+      type: object
+      properties:
+        id:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/CartItem"
+        subtotal:
+          type: number
+          format: float
+        tax:
+          type: number
+          format: float
+        total:
+          type: number
+          format: float
+        itemCount:
+          type: integer
+
+    CartItem:
+      type: object
+      properties:
+        id:
+          type: string
+        product:
+          $ref: "#/components/schemas/Product"
+        quantity:
+          type: integer
+        price:
+          type: number
+          format: float
+        subtotal:
+          type: number
+          format: float
+
+    CartResponse:
+      allOf:
+        - $ref: "#/components/schemas/ServiceResponse"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/Cart"
+
+    # ========================================================================
+    # ORDER SCHEMAS
+    # ========================================================================
+
+    Order:
+      type: object
+      properties:
+        id:
+          type: string
+          example: order_abc123
+        orderNumber:
+          type: string
+          example: ORD-2025-001234
+        status:
+          type: string
+          enum: [PENDING, CONFIRMED, PREPARING, READY, DELIVERED, CANCELLED]
+        customer:
+          $ref: "#/components/schemas/User"
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/OrderItem"
+        deliveryAddress:
+          $ref: "#/components/schemas/Address"
+        subtotal:
+          type: number
+          format: float
+        tax:
+          type: number
+          format: float
+        deliveryFee:
+          type: number
+          format: float
+        total:
+          type: number
+          format: float
+        notes:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    OrderItem:
+      type: object
+      properties:
+        id:
+          type: string
+        product:
+          $ref: "#/components/schemas/Product"
+        quantity:
+          type: integer
+        price:
+          type: number
+          format: float
+        subtotal:
+          type: number
+          format: float
+
+    CreateOrderRequest:
+      type: object
+      required: [deliveryAddress, paymentMethodId]
+      properties:
+        deliveryAddress:
+          $ref: "#/components/schemas/Address"
+        paymentMethodId:
+          type: string
+        notes:
+          type: string
+
+    OrderResponse:
+      allOf:
+        - $ref: "#/components/schemas/ServiceResponse"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/Order"
+
+    OrderListResponse:
+      allOf:
+        - $ref: "#/components/schemas/ServiceResponse"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/Order"
+
+    # ========================================================================
+    # SEARCH SCHEMAS
+    # ========================================================================
+
+    SearchResponse:
+      allOf:
+        - $ref: "#/components/schemas/ServiceResponse"
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                farms:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/Farm"
+                products:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/Product"
+                categories:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/Category"
+
+    # ========================================================================
+    # FAVORITES SCHEMAS
+    # ========================================================================
+
+    FavoritesResponse:
+      allOf:
+        - $ref: "#/components/schemas/ServiceResponse"
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                farms:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/Farm"
+                products:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/Product"
+
+    # ========================================================================
+    # NOTIFICATION SCHEMAS
+    # ========================================================================
+
+    Notification:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [ORDER_UPDATE, FARM_VERIFIED, PRODUCT_AVAILABLE, SYSTEM]
+        title:
+          type: string
+        message:
+          type: string
+        isRead:
+          type: boolean
+        data:
+          type: object
+        createdAt:
+          type: string
+          format: date-time
+
+    NotificationListResponse:
+      allOf:
+        - $ref: "#/components/schemas/ServiceResponse"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/Notification"
+
+    # ========================================================================
+    # USER SCHEMAS
+    # ========================================================================
+
+    UserProfile:
+      allOf:
+        - $ref: "#/components/schemas/User"
+        - type: object
+          properties:
+            phone:
+              type: string
+            addresses:
+              type: array
+              items:
+                $ref: "#/components/schemas/Address"
+            preferences:
+              type: object
+
+    UpdateProfileRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        phone:
+          type: string
+        avatar:
+          type: string
+
+    UserProfileResponse:
+      allOf:
+        - $ref: "#/components/schemas/ServiceResponse"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/UserProfile"
+
+    UserListResponse:
+      allOf:
+        - $ref: "#/components/schemas/ServiceResponse"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/User"
+
+security:
+  - bearerAuth: []

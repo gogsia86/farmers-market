@@ -19,7 +19,7 @@
 
 import { database } from "../../database";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 import type {
   MonitoringReport as PrismaMonitoringReport,
@@ -97,8 +97,8 @@ class DatabaseStorageService {
       logger.info(`✅ Report ${report.reportId} saved to database`);
     } catch (error) {
       logger.error(`❌ Failed to save report ${report.reportId}:`, {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
       throw error;
     }
   }
@@ -155,8 +155,8 @@ class DatabaseStorageService {
       }
     } catch (error) {
       logger.error(`❌ Failed to save execution ${result.runId}:`, {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
       throw error;
     }
   }
@@ -168,7 +168,7 @@ class DatabaseStorageService {
     result: WorkflowResult,
     executionRunId: string,
   ): Promise<void> {
-    const metricsToSave = [];
+    const metricsToSave: any[] = [];
 
     // Extract metrics from result
     if (result.metrics) {
@@ -254,8 +254,8 @@ class DatabaseStorageService {
       logger.info("✅ Health check saved to database");
     } catch (error) {
       logger.error("❌ Failed to save health check:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
       throw error;
     }
   }
@@ -288,8 +288,8 @@ class DatabaseStorageService {
       logger.info("✅ Notification logged to database");
     } catch (error) {
       logger.error("❌ Failed to log notification:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
       // Don't throw - notifications are not critical
     }
   }
@@ -464,8 +464,8 @@ class DatabaseStorageService {
       });
     } catch (error) {
       logger.error(`Failed to update schedule ${scheduleId}:`, {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
     }
   }
 
@@ -648,8 +648,8 @@ class DatabaseStorageService {
       return result;
     } catch (error) {
       logger.error("❌ Cleanup failed:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
       throw error;
     }
   }
