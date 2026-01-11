@@ -9,6 +9,8 @@
 > **Enterprise-grade marketplace connecting farmers directly with consumers**
 >
 > 🚀 **Status**: Production Ready | ✅ **Grade**: A+ (95/100) | 📊 **Completion**: 95%
+>
+> 📱 **Mobile App**: Now in [separate repository](https://github.com/gogsia86/farmers-market-mobile-app) - See [migration guide](MOBILE_APP_MIGRATION.md)
 
 ---
 
@@ -22,6 +24,7 @@
 | [📖 API Reference](docs/api/README.md) | API documentation |
 | [🧪 Testing Guide](docs/testing/README.md) | Testing documentation |
 | [🚢 Deployment](docs/deployment/README.md) | Deployment guides |
+| [📱 Mobile App](https://github.com/gogsia86/farmers-market-mobile-app) | React Native mobile app |
 | [🤝 Contributing](CONTRIBUTING.md) | How to contribute |
 
 ---
@@ -37,7 +40,8 @@
 - 📦 **Complete order management** - From cart to delivery
 - 🔐 **Role-based access** - Admin, Farmer, and Consumer portals
 - 🌍 **Multi-language** - English, French, Spanish (i18n ready)
-- 📱 **Mobile ready** - Responsive PWA design
+- 📱 **Mobile app** - [Separate React Native repository](https://github.com/gogsia86/farmers-market-mobile-app)
+- 🌐 **Responsive web** - Mobile-friendly PWA design
 - 🚀 **Production grade** - 1,274 tests, 85% coverage, A+ security
 
 ---
