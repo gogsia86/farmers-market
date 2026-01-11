@@ -291,7 +291,7 @@ export function OrderList({
       {/* Loading State */}
       {isLoading && (
         <div className="space-y-4">
-          {[...Array(3)].map((_: any, i: any) => (
+          {[...Array(3)].map((_, i: number) => (
             <Card key={i}>
               <CardHeader>
                 <div className="h-6 w-48 bg-gray-200 animate-pulse rounded" />
@@ -328,7 +328,7 @@ export function OrderList({
       {/* Order Cards Grid */}
       {!isLoading && orders.length > 0 && (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-1">
-          {orders.map((order: any) => (
+          {orders.map((order) => (
             <OrderCard
               key={order.id}
               order={order}

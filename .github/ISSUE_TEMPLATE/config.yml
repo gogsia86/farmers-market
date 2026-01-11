@@ -21,5 +21,5 @@ contact_links:
     about: Join our Slack workspace for real-time discussions (coming soon)
 
   - name: 📧 Email Support
-    url: mailto:dev@farmersmarket.com
-    about: Contact the development team directly
+    url: https://github.com/orgs/farmersmarket/discussions
+    about: Contact the development team via GitHub Discussions
