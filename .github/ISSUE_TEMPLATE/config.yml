@@ -1,0 +1,25 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 GitHub Discussions
+    url: https://github.com/gogsia86/farmers-market/discussions
+    about: Ask questions, share ideas, or discuss with the community
+
+  - name: 📖 Documentation
+    url: https://github.com/gogsia86/farmers-market/tree/main/docs
+    about: Browse our comprehensive documentation
+
+  - name: 🚀 Developer Onboarding
+    url: https://github.com/gogsia86/farmers-market/blob/main/docs/onboarding/DEVELOPER_ONBOARDING.md
+    about: New to the project? Start here!
+
+  - name: 🔒 Security Vulnerability
+    url: https://github.com/gogsia86/farmers-market/security/advisories/new
+    about: Report a security vulnerability privately
+
+  - name: 💬 Slack Community
+    url: https://farmersmarket.slack.com
+    about: Join our Slack workspace for real-time discussions (coming soon)
+
+  - name: 📧 Email Support
+    url: mailto:dev@farmersmarket.com
+    about: Contact the development team directly

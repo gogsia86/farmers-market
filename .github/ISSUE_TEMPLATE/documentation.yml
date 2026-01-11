@@ -1,0 +1,240 @@
+name: 📚 Documentation Issue
+description: Report missing, incorrect, or confusing documentation
+title: "[Docs]: "
+labels: ["documentation", "needs-triage"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 📚 Documentation Issue
+
+        Thanks for helping us improve our documentation! Clear docs help everyone succeed.
+
+  - type: dropdown
+    id: issue-type
+    attributes:
+      label: Issue Type
+      description: What kind of documentation issue is this?
+      options:
+        - Missing Documentation - Feature/API not documented
+        - Incorrect Information - Documentation is wrong or outdated
+        - Unclear/Confusing - Hard to understand or follow
+        - Broken Links - Links don't work
+        - Typo/Grammar - Spelling or grammar errors
+        - Example Needed - Missing code examples
+        - Improvement - General enhancement suggestion
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: documentation-area
+    attributes:
+      label: Documentation Area
+      description: Which documentation section is affected?
+      options:
+        - Getting Started / Quick Start
+        - API Documentation
+        - Developer Onboarding
+        - Testing Standards
+        - Security Best Practices
+        - Performance Best Practices
+        - Code Review Standards
+        - TypeScript Patterns
+        - Prisma/Database Patterns
+        - Architecture Decision Records (ADRs)
+        - Git Workflow
+        - Deployment Guide
+        - Contributing Guide
+        - README
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: file-path
+    attributes:
+      label: File/Page Location
+      description: Path to the documentation file or URL
+      placeholder: e.g., docs/testing/TESTING_STANDARDS.md or https://docs.farmersmarket.com/api
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description of Issue
+      description: Clearly describe the documentation problem
+      placeholder: What's wrong or missing? Be specific.
+    validations:
+      required: true
+
+  - type: textarea
+    id: current-content
+    attributes:
+      label: Current Content (if applicable)
+      description: Quote or paste the current documentation that needs fixing
+      render: markdown
+      placeholder: |
+        > Current documentation says:
+        > "To run tests, use npm test"
+
+  - type: textarea
+    id: suggested-fix
+    attributes:
+      label: Suggested Fix
+      description: How should it be corrected or improved?
+      placeholder: |
+        Provide your suggested documentation improvement.
+        Include code examples if relevant.
+
+  - type: textarea
+    id: steps-to-find
+    attributes:
+      label: Steps to Find the Issue
+      description: How did you discover this documentation problem?
+      placeholder: |
+        1. Was reading documentation about...
+        2. Tried to follow the instructions...
+        3. Got confused when...
+        4. Realized the docs were incorrect/missing...
+
+  - type: dropdown
+    id: impact
+    attributes:
+      label: Impact
+      description: How much does this affect users?
+      options:
+        - Critical - Prevents users from completing essential tasks
+        - High - Causes significant confusion or wasted time
+        - Medium - Minor inconvenience or confusion
+        - Low - Small improvement, doesn't block anyone
+    validations:
+      required: true
+
+  - type: dropdown
+    id: affected-users
+    attributes:
+      label: Who is Affected?
+      description: Which users are impacted by this issue?
+      multiple: true
+      options:
+        - New developers (onboarding)
+        - All developers
+        - DevOps/Infrastructure
+        - QA/Testing
+        - API consumers
+        - End users (farmers/customers)
+        - Admins
+        - Contributors
+    validations:
+      required: true
+
+  - type: textarea
+    id: code-examples
+    attributes:
+      label: Code Examples (if applicable)
+      description: Provide working code examples that should be documented
+      render: typescript
+      placeholder: |
+        // Example of what should be documented
+        const result = await farmService.createFarm({
+          name: "Green Valley Farm",
+          location: { ... }
+        });
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: If applicable, add screenshots showing the issue
+      placeholder: Drag and drop images here
+
+  - type: textarea
+    id: related-docs
+    attributes:
+      label: Related Documentation
+      description: Links to related docs that might need updates too
+      placeholder: |
+        - docs/api/README.md
+        - docs/onboarding/DEVELOPER_ONBOARDING.md
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Any other relevant information
+      placeholder: |
+        - When did you notice this?
+        - What were you trying to accomplish?
+        - Did you find a workaround?
+        - Are there external resources that explain this better?
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-submission Checklist
+      description: Please confirm before submitting
+      options:
+        - label: I have searched existing documentation issues to avoid duplicates
+          required: true
+        - label: I have checked the latest version of the documentation
+          required: true
+        - label: I can provide specific examples or suggestions for improvement
+          required: true
+        - label: This is about documentation, not a bug or feature request
+          required: true
+
+  - type: dropdown
+    id: willing-to-help
+    attributes:
+      label: Can You Help Fix This?
+      description: Would you be willing to submit a documentation PR?
+      options:
+        - Yes, I can submit a PR to fix this
+        - Yes, I can help review changes
+        - Yes, I can provide more examples/details
+        - No, but I can test the updated docs
+        - No, just reporting the issue
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+
+        ## What happens next?
+
+        1. **Triage** - Documentation owner reviews within 3 days
+        2. **Assignment** - Issue assigned to documentation owner or contributor
+        3. **Fix** - Documentation updated based on feedback
+        4. **Review** - Changes reviewed for accuracy and clarity
+        5. **Merge** - Updated documentation published
+
+        Documentation is maintained by our team and community contributors. Thank you for helping us improve! 🙏
+
+        ---
+
+        ### Documentation Owners
+
+        Each documentation area has an assigned owner who will respond:
+
+        - **API Docs:** Backend Lead
+        - **Testing Standards:** QA Lead
+        - **Security/Performance:** Security Champion
+        - **Onboarding:** Engineering Manager
+        - **Code Patterns:** Staff Engineer
+
+        For urgent documentation issues, ping #engineering-docs on Slack.
+
+        ---
+
+        **💡 Tip:** Good documentation includes:
+        - Clear explanations
+        - Working code examples
+        - Expected outputs
+        - Common pitfalls
+        - Related resources

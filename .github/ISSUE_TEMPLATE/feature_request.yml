@@ -1,0 +1,242 @@
+name: ✨ Feature Request
+description: Suggest a new feature or enhancement
+title: "[Feature]: "
+labels: ["enhancement", "needs-triage"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## ✨ Feature Request
+
+        Thanks for suggesting a new feature! Please provide as much detail as possible to help us understand your idea.
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Feature Summary
+      description: A clear and concise description of the feature
+      placeholder: What feature would you like to see?
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: What problem does this feature solve?
+      placeholder: |
+        Describe the problem or pain point this feature addresses.
+        Example: "As a farmer, I struggle to manage multiple product variants..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: How do you think this should work?
+      placeholder: |
+        Describe your ideal solution. Be as detailed as possible:
+        - How should it work?
+        - What should the UI/UX look like?
+        - What are the key features?
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternative Solutions
+      description: Have you considered any alternative approaches?
+      placeholder: Describe any alternative solutions or features you've considered
+
+  - type: dropdown
+    id: user-type
+    attributes:
+      label: User Type
+      description: Who would benefit from this feature?
+      options:
+        - Farmer
+        - Customer
+        - Admin
+        - All Users
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component/Area
+      description: Which part of the application would this affect?
+      options:
+        - Authentication
+        - Farmer Dashboard
+        - Customer Marketplace
+        - Product Management
+        - Order Management
+        - Payments
+        - Notifications
+        - Search/Filters
+        - Admin Panel
+        - API
+        - Mobile App
+        - Analytics/Reports
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How important is this feature to you?
+      options:
+        - Critical - Blocking my ability to use the platform
+        - High - Significantly impacts my workflow
+        - Medium - Would be nice to have
+        - Low - Minor improvement
+    validations:
+      required: true
+
+  - type: textarea
+    id: use-cases
+    attributes:
+      label: Use Cases
+      description: Describe specific scenarios where this feature would be used
+      placeholder: |
+        Provide 1-3 concrete examples:
+
+        1. **Use Case 1:** As a farmer, when I...
+        2. **Use Case 2:** As a customer, when I...
+        3. **Use Case 3:** As an admin, when I...
+
+  - type: textarea
+    id: mockups
+    attributes:
+      label: Mockups/Examples
+      description: Visual examples, mockups, or references from other platforms
+      placeholder: |
+        - Add screenshots, wireframes, or links to similar features
+        - Drag and drop images here
+        - Include links to examples from other platforms
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: What would success look like? How do we know when this is "done"?
+      placeholder: |
+        - [ ] Criterion 1
+        - [ ] Criterion 2
+        - [ ] Criterion 3
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      description: Where should this feature be available?
+      multiple: true
+      options:
+        - Web Application
+        - Mobile App (iOS)
+        - Mobile App (Android)
+        - Admin Dashboard
+        - API
+    validations:
+      required: true
+
+  - type: textarea
+    id: business-value
+    attributes:
+      label: Business Value
+      description: What's the potential impact of this feature?
+      placeholder: |
+        - How many users would benefit?
+        - What's the expected impact on user engagement/retention?
+        - Does this address a competitive gap?
+        - Revenue implications?
+
+  - type: textarea
+    id: technical-notes
+    attributes:
+      label: Technical Considerations (Optional)
+      description: Any technical details, dependencies, or constraints to consider?
+      placeholder: |
+        - Integration requirements
+        - Performance considerations
+        - Security implications
+        - Third-party services needed
+        - Database changes required
+
+  - type: textarea
+    id: related-features
+    attributes:
+      label: Related Features
+      description: Are there existing features this builds upon or relates to?
+      placeholder: |
+        - Link to related issues or features
+        - Dependencies on other work
+        - Features that should be updated alongside this
+
+  - type: checkboxes
+    id: research
+    attributes:
+      label: Research Done
+      description: Have you checked if this feature exists or is planned?
+      options:
+        - label: I have searched existing issues to ensure this is not a duplicate
+          required: true
+        - label: I have checked the roadmap to see if this is already planned
+          required: true
+        - label: I have considered how this fits with existing features
+          required: false
+        - label: I have talked to other users who want this feature
+          required: false
+
+  - type: dropdown
+    id: willing-to-contribute
+    attributes:
+      label: Contribution
+      description: Would you be willing to help implement this feature?
+      options:
+        - Yes, I can submit a PR
+        - Yes, I can help with design/mockups
+        - Yes, I can help with testing
+        - No, but I can provide feedback
+        - No, just suggesting the idea
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Any other information that might be helpful
+      placeholder: |
+        - Links to research or competitor features
+        - User feedback or quotes
+        - Market trends or industry standards
+        - Regulatory requirements
+        - Accessibility considerations
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+
+        ## What happens next?
+
+        1. **Triage** - We'll review your feature request within 1 week
+        2. **Discussion** - We may ask for clarification or additional details
+        3. **Planning** - If approved, we'll prioritize and schedule for development
+        4. **Implementation** - We'll keep you updated on progress
+        5. **Release** - You'll be notified when the feature is available
+
+        Thank you for helping us make the Farmers Market Platform better! 🌾
+
+        ---
+
+        **💡 Tip:** The more detail you provide, the easier it is for us to evaluate and implement your idea!
