@@ -292,17 +292,17 @@ Welcome to the team! 🌾⚡
 
 ### Your Mentor
 
-- **Name**: ******\_******
-- **Contact**: ******\_******
-- **Availability**: ******\_******
-- **Focus Areas**: ******\_******
+- **Name**: **\*\***\_**\*\***
+- **Contact**: **\*\***\_**\*\***
+- **Availability**: **\*\***\_**\*\***
+- **Focus Areas**: **\*\***\_**\*\***
 
 ### Key Contacts
 
-- **Tech Lead**: ******\_******
-- **Product Owner**: ******\_******
-- **DevOps**: ******\_******
-- **QA**: ******\_******
+- **Tech Lead**: **\*\***\_**\*\***
+- **Product Owner**: **\*\***\_**\*\***
+- **DevOps**: **\*\***\_**\*\***
+- **QA**: **\*\***\_**\*\***
 
 ### Getting Help
 
@@ -404,11 +404,11 @@ Personal development goals:
 
 When you've completed this checklist:
 
-**I, **********\_\_\_\_**********, have completed the Farmers Market Platform developer onboarding and am ready to contribute at full capacity with agricultural consciousness and divine precision.**
+**I, **\*\*\*\*\***\*\_\_\_\_\*\***\*\*\*\*\*\*, have completed the Farmers Market Platform developer onboarding and am ready to contribute at full capacity with agricultural consciousness and divine precision.\*\*
 
-**Date**: ******\_\_\_******
-**Mentor Signature**: ******\_\_\_******
-**Tech Lead Signature**: ******\_\_\_******
+**Date**: **\*\***\_\_\_**\*\***
+**Mentor Signature**: **\*\***\_\_\_**\*\***
+**Tech Lead Signature**: **\*\***\_\_\_**\*\***
 
 ---
 

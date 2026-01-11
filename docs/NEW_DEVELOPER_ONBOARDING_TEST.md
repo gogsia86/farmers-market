@@ -605,15 +605,15 @@ git checkout -b [branch-name]
 
 ### Time Tracking Summary
 
-| Day       | Planned Hours   | Actual Hours | Variance   |
-| --------- | --------------- | ------------ | ---------- |
-| Day 1     | 4-6 hours       | **\_**       | **\_**     |
-| Day 2     | 4-6 hours       | **\_**       | **\_**     |
-| Day 3     | 4-6 hours       | **\_**       | **\_**     |
-| Day 4     | 6-8 hours       | **\_**       | **\_**     |
-| Day 5     | 4-6 hours       | **\_**       | **\_**     |
-| Day 6-7   | 8-12 hours      | **\_**       | **\_**     |
-| **Total** | **30-44 hours** | ****\_****   | ****\_**** |
+| Day       | Planned Hours   | Actual Hours   | Variance       |
+| --------- | --------------- | -------------- | -------------- |
+| Day 1     | 4-6 hours       | **\_**         | **\_**         |
+| Day 2     | 4-6 hours       | **\_**         | **\_**         |
+| Day 3     | 4-6 hours       | **\_**         | **\_**         |
+| Day 4     | 6-8 hours       | **\_**         | **\_**         |
+| Day 5     | 4-6 hours       | **\_**         | **\_**         |
+| Day 6-7   | 8-12 hours      | **\_**         | **\_**         |
+| **Total** | **30-44 hours** | \***\*\_\*\*** | \***\*\_\*\*** |
 
 ### Success Metrics
 
@@ -775,7 +775,7 @@ After completing onboarding, I feel ready to:
 
 **Name:** [Name]  
 **Date Completed:** [Date]  
-**Signature:** ********\_\_\_********
+**Signature:** **\*\*\*\***\_\_\_**\*\*\*\***
 
 **Final Comments:**
 
@@ -787,7 +787,7 @@ After completing onboarding, I feel ready to:
 
 **Name:** [Name]  
 **Date Reviewed:** [Date]  
-**Signature:** ********\_\_\_********
+**Signature:** **\*\*\*\***\_\_\_**\*\*\*\***
 
 **Mentor Comments:**
 
@@ -799,7 +799,7 @@ After completing onboarding, I feel ready to:
 
 **Name:** [Name]  
 **Date Reviewed:** [Date]  
-**Signature:** ********\_\_\_********
+**Signature:** **\*\*\*\***\_\_\_**\*\*\*\***
 
 **Manager Assessment:**
 

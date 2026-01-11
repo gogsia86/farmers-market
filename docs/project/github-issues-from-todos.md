@@ -36,7 +36,7 @@ Implement API call to fetch order details
 
 **File**: `src\app\(customer)\checkout\success\page.tsx`
 **Line**: 63
-[View in code](./src\app(customer)\checkout\success\page.tsx#L63)
+[View in code](<./src\app(customer)\checkout\success\page.tsx#L63>)
 
 ## Context
 
@@ -398,7 +398,7 @@ Get userId from auth session
 
 **File**: `src\app\(customer)\cart\page.tsx`
 **Line**: 45
-[View in code](./src\app(customer)\cart\page.tsx#L45)
+[View in code](<./src\app(customer)\cart\page.tsx#L45>)
 
 ## Context
 
@@ -438,7 +438,7 @@ Implement receipt download
 
 **File**: `src\app\(customer)\checkout\success\page.tsx`
 **Line**: 96
-[View in code](./src\app(customer)\checkout\success\page.tsx#L96)
+[View in code](<./src\app(customer)\checkout\success\page.tsx#L96>)
 
 ## Context
 
