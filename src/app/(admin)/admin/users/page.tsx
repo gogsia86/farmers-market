@@ -6,7 +6,13 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -23,7 +29,7 @@ import {
   User,
   UserCheck,
   UserCog,
-  Users
+  Users,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -156,7 +162,11 @@ export default function AdminUsersPage() {
   };
 
   const handleUpdateRole = async (userId: string, newRole: string) => {
-    if (!confirm(`Are you sure you want to change this user's role to ${newRole}?`)) {
+    if (
+      !confirm(
+        `Are you sure you want to change this user's role to ${newRole}?`,
+      )
+    ) {
       return;
     }
 
@@ -262,7 +272,9 @@ export default function AdminUsersPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">User Management</h1>
-          <p className="text-gray-600 mt-1">Manage platform users and permissions</p>
+          <p className="text-gray-600 mt-1">
+            Manage platform users and permissions
+          </p>
         </div>
         <Button onClick={fetchUsers} variant="outline" size="sm">
           <RefreshCw className="h-4 w-4 mr-2" />
@@ -432,12 +444,14 @@ export default function AdminUsersPage() {
                   <div className="flex-1">
                     <div className="flex items-center gap-3">
                       <div className="font-medium text-lg">
-                        {user.name || `${user.firstName} ${user.lastName}` || "Unnamed User"}
+                        {user.name ||
+                          `${user.firstName} ${user.lastName}` ||
+                          "Unnamed User"}
                       </div>
                       <div className="flex items-center gap-2">
                         <span
                           className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${getRoleBadgeColor(
-                            user.role
+                            user.role,
                           )}`}
                         >
                           {getRoleIcon(user.role)}
@@ -445,24 +459,29 @@ export default function AdminUsersPage() {
                         </span>
                         <span
                           className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(
-                            user.status
+                            user.status,
                           )}`}
                         >
                           {user.status}
                         </span>
                       </div>
                     </div>
-                    <div className="text-sm text-gray-600 mt-1">{user.email}</div>
+                    <div className="text-sm text-gray-600 mt-1">
+                      {user.email}
+                    </div>
                     <div className="flex items-center gap-4 text-xs text-gray-500 mt-2">
                       <span>Orders: {user._count.orders}</span>
                       <span>Reviews: {user._count.reviews}</span>
-                      {user.role === "FARMER" && <span>Farms: {user._count.farms}</span>}
+                      {user.role === "FARMER" && (
+                        <span>Farms: {user._count.farms}</span>
+                      )}
                       <span>
                         Joined: {new Date(user.createdAt).toLocaleDateString()}
                       </span>
                       {user.lastLoginAt && (
                         <span>
-                          Last login: {new Date(user.lastLoginAt).toLocaleDateString()}
+                          Last login:{" "}
+                          {new Date(user.lastLoginAt).toLocaleDateString()}
                         </span>
                       )}
                     </div>
@@ -485,7 +504,9 @@ export default function AdminUsersPage() {
 
                     <select
                       value={user.role}
-                      onChange={(e) => handleUpdateRole(user.id, e.target.value)}
+                      onChange={(e) =>
+                        handleUpdateRole(user.id, e.target.value)
+                      }
                       disabled={actionLoading === user.id}
                       className="px-2 py-1 text-xs border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                     >

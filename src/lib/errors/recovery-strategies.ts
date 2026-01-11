@@ -63,7 +63,7 @@ const DEFAULT_CONFIG: Required<Omit<RecoveryStrategyConfig, "fallback">> = {
  */
 export async function retryStrategy<T>(
   fn: () => Promise<T>,
-  config: RecoveryStrategyConfig = {}
+  config: RecoveryStrategyConfig = {},
 ): Promise<RecoveryResult<T>> {
   const {
     maxRetries = DEFAULT_CONFIG.maxRetries,
@@ -129,7 +129,7 @@ export async function retryStrategy<T>(
 export async function fallbackStrategy<T>(
   fn: () => Promise<T>,
   fallbackValue: T,
-  config: RecoveryStrategyConfig = {}
+  config: RecoveryStrategyConfig = {},
 ): Promise<RecoveryResult<T>> {
   const { timeout = DEFAULT_CONFIG.timeout } = config;
 
@@ -191,24 +191,19 @@ export class CircuitBreaker {
       successThreshold: number;
       timeout: number;
     } = {
-        failureThreshold: 5,
-        successThreshold: 2,
-        timeout: 60000, // 1 minute
-      }
-  ) { }
+      failureThreshold: 5,
+      successThreshold: 2,
+      timeout: 60000, // 1 minute
+    },
+  ) {}
 
   async execute<T>(fn: () => Promise<T>): Promise<RecoveryResult<T>> {
     // Check if circuit is open
     if (this.state.state === "OPEN") {
       const now = Date.now();
-      if (
-        this.state.nextAttemptTime &&
-        now < this.state.nextAttemptTime
-      ) {
+      if (this.state.nextAttemptTime && now < this.state.nextAttemptTime) {
         // Circuit is still open
-        const error = toAppError(
-          new Error("Circuit breaker is open")
-        );
+        const error = toAppError(new Error("Circuit breaker is open"));
         return {
           success: false,
           error,
@@ -278,15 +273,13 @@ export class CircuitBreaker {
       // Open the circuit
       this.state.state = "OPEN";
       this.state.successes = 0;
-      this.state.nextAttemptTime =
-        Date.now() + this.config.timeout;
+      this.state.nextAttemptTime = Date.now() + this.config.timeout;
     }
 
     // If in half-open, go back to open
     if (this.state.state === "HALF_OPEN") {
       this.state.state = "OPEN";
-      this.state.nextAttemptTime =
-        Date.now() + this.config.timeout;
+      this.state.nextAttemptTime = Date.now() + this.config.timeout;
     }
   }
 
@@ -314,7 +307,7 @@ export class CircuitBreaker {
  */
 export async function gracefulDegradationStrategy<T>(
   strategies: Array<() => Promise<T>>,
-  config: RecoveryStrategyConfig = {}
+  config: RecoveryStrategyConfig = {},
 ): Promise<RecoveryResult<T>> {
   let lastError: AppError | null = null;
 
@@ -325,20 +318,20 @@ export async function gracefulDegradationStrategy<T>(
       const data = await strategy();
 
       if (i > 0) {
-        logError(
-          toAppError(new Error("Using degraded service")),
-          {
-            context: "graceful-degradation",
-            level: i,
-            totalLevels: strategies.length,
-          }
-        );
+        logError(toAppError(new Error("Using degraded service")), {
+          context: "graceful-degradation",
+          level: i,
+          totalLevels: strategies.length,
+        });
       }
 
       return {
         success: true,
         data,
-        strategy: i === 0 ? ("NONE" as RecoveryStrategy) : ("FALLBACK" as RecoveryStrategy),
+        strategy:
+          i === 0
+            ? ("NONE" as RecoveryStrategy)
+            : ("FALLBACK" as RecoveryStrategy),
         attempts: i + 1,
         usedFallback: i > 0,
       };
@@ -374,7 +367,7 @@ export async function gracefulDegradationStrategy<T>(
  */
 export async function timeoutStrategy<T>(
   fn: () => Promise<T>,
-  timeoutMs: number = 30000
+  timeoutMs: number = 30000,
 ): Promise<RecoveryResult<T>> {
   try {
     const data = await withTimeout(fn(), timeoutMs);
@@ -418,7 +411,7 @@ export async function compositeStrategy<T>(
     timeout?: number;
     useCircuitBreaker?: boolean;
     circuitBreaker?: CircuitBreaker;
-  } = {}
+  } = {},
 ): Promise<RecoveryResult<T>> {
   const {
     retry: retryConfig,
@@ -501,7 +494,7 @@ export async function agriculturalRecoveryStrategy<T>(
     season?: string;
     farmId?: string;
     checkSeasonal?: (error: AppError) => boolean;
-  } = {}
+  } = {},
 ): Promise<RecoveryResult<T>> {
   const { season, farmId, checkSeasonal, ...strategyConfig } = config;
 
@@ -551,7 +544,7 @@ export async function agriculturalRecoveryStrategy<T>(
 export async function seasonalFallbackStrategy<T>(
   fn: () => Promise<T>,
   fallbackByseason: Record<string, T>,
-  currentSeason: string
+  currentSeason: string,
 ): Promise<RecoveryResult<T>> {
   try {
     const data = await fn();
@@ -567,8 +560,7 @@ export async function seasonalFallbackStrategy<T>(
 
     // Get seasonal fallback
     const fallback =
-      fallbackByseason[currentSeason] ||
-      fallbackByseason["DEFAULT"];
+      fallbackByseason[currentSeason] || fallbackByseason["DEFAULT"];
 
     logError(error, {
       context: "seasonal-fallback",
@@ -610,7 +602,7 @@ export interface CacheEntry<T> {
 export class RecoveryCache<T> {
   private cache = new Map<string, CacheEntry<T>>();
 
-  constructor(private defaultTTL: number = 5 * 60 * 1000) { } // 5 minutes
+  constructor(private defaultTTL: number = 5 * 60 * 1000) {} // 5 minutes
 
   set(key: string, data: T, ttl?: number): void {
     const now = Date.now();
@@ -666,7 +658,7 @@ export async function cacheRecoveryStrategy<T>(
   config: {
     cacheTTL?: number;
     maxCacheAge?: number;
-  } = {}
+  } = {},
 ): Promise<RecoveryResult<T>> {
   const { cacheTTL, maxCacheAge = 5 * 60 * 1000 } = config;
 
@@ -726,17 +718,10 @@ function sleep(ms: number): Promise<void> {
 /**
  * Execute promise with timeout
  */
-function withTimeout<T>(
-  promise: Promise<T>,
-  timeoutMs: number
-): Promise<T> {
+function withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T> {
   return new Promise<T>((resolve, reject) => {
     const timer = setTimeout(() => {
-      reject(
-        toAppError(
-          new Error(`Operation timed out after ${timeoutMs}ms`)
-        )
-      );
+      reject(toAppError(new Error(`Operation timed out after ${timeoutMs}ms`)));
     }, timeoutMs);
 
     promise
@@ -758,9 +743,7 @@ function withTimeout<T>(
 /**
  * Select appropriate recovery strategy based on error
  */
-export function selectRecoveryStrategy(
-  error: AppError
-): RecoveryStrategy {
+export function selectRecoveryStrategy(error: AppError): RecoveryStrategy {
   // Network errors - retry
   if (error.category === ErrorCategory.NETWORK) {
     return "RETRY" as RecoveryStrategy;

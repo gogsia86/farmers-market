@@ -15,7 +15,7 @@ import type { AppError } from "@/lib/errors/types";
 import { toAppError } from "@/lib/errors/types";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 // ============================================================================
 // RETRY HOOK
@@ -71,7 +71,7 @@ export interface UseRetryReturn<T> {
  */
 export function useRetry<T>(
   fn: () => Promise<T>,
-  options: UseRetryOptions = {}
+  options: UseRetryOptions = {},
 ): UseRetryReturn<T> {
   const {
     maxAttempts = 3,
@@ -206,7 +206,7 @@ export interface UseFallbackReturn<T> {
  */
 export function useFallback<T>(
   fn: () => Promise<T>,
-  options: UseFallbackOptions<T>
+  options: UseFallbackOptions<T>,
 ): UseFallbackReturn<T> {
   const {
     fallback,
@@ -367,7 +367,7 @@ export interface UseCircuitBreakerReturn<T> {
  */
 export function useCircuitBreaker<T>(
   fn: () => Promise<T>,
-  options: UseCircuitBreakerOptions = {}
+  options: UseCircuitBreakerOptions = {},
 ): UseCircuitBreakerReturn<T> {
   const {
     failureThreshold = 5,
@@ -546,7 +546,7 @@ export interface UseGracefulDegradationReturn<T> {
  * ```
  */
 export function useGracefulDegradation<T>(
-  options: UseGracefulDegradationOptions<T>
+  options: UseGracefulDegradationOptions<T>,
 ): UseGracefulDegradationReturn<T> {
   const { levels, onDegrade } = options;
 
@@ -605,8 +605,10 @@ export function useGracefulDegradation<T>(
 // AGRICULTURAL RECOVERY HOOK (Divine Pattern)
 // ============================================================================
 
-export interface UseAgriculturalRecoveryOptions<T>
-  extends Omit<UseRetryOptions, "shouldRetry"> {
+export interface UseAgriculturalRecoveryOptions<T> extends Omit<
+  UseRetryOptions,
+  "shouldRetry"
+> {
   /** Season context */
   season?: string;
   /** Farm ID */
@@ -617,8 +619,10 @@ export interface UseAgriculturalRecoveryOptions<T>
   isSeasonalError?: (error: AppError) => boolean;
 }
 
-export interface UseAgriculturalRecoveryReturn<T>
-  extends Omit<UseRetryReturn<T>, "execute"> {
+export interface UseAgriculturalRecoveryReturn<T> extends Omit<
+  UseRetryReturn<T>,
+  "execute"
+> {
   /** Execute with agricultural consciousness */
   execute: () => Promise<T | null>;
   /** Is using fallback */
@@ -657,15 +661,10 @@ export interface UseAgriculturalRecoveryReturn<T>
  */
 export function useAgriculturalRecovery<T>(
   fn: () => Promise<T>,
-  options: UseAgriculturalRecoveryOptions<T> = {}
+  options: UseAgriculturalRecoveryOptions<T> = {},
 ): UseAgriculturalRecoveryReturn<T> {
-  const {
-    season,
-    farmId,
-    fallback,
-    isSeasonalError,
-    ...retryOptions
-  } = options;
+  const { season, farmId, fallback, isSeasonalError, ...retryOptions } =
+    options;
 
   const [isFallback, setIsFallback] = useState(false);
 

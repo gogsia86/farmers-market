@@ -27,7 +27,13 @@ import type { Transition, Variants } from "framer-motion";
 
 export type Season = "SPRING" | "SUMMER" | "FALL" | "WINTER";
 export type GrowthStage = "SEED" | "SPROUT" | "GROWING" | "MATURE" | "HARVEST";
-export type WeatherType = "SUNNY" | "RAINY" | "STORMY" | "CLOUDY" | "SNOWY" | "FROST";
+export type WeatherType =
+  | "SUNNY"
+  | "RAINY"
+  | "STORMY"
+  | "CLOUDY"
+  | "SNOWY"
+  | "FROST";
 export type AgriculturalEvent =
   | "PLANTING"
   | "WATERING"
@@ -795,7 +801,9 @@ export function getWeatherVariants(weather: WeatherType): Variants {
 /**
  * Get agricultural event variants
  */
-export function getAgriculturalEventVariants(event: AgriculturalEvent): Variants {
+export function getAgriculturalEventVariants(
+  event: AgriculturalEvent,
+): Variants {
   switch (event) {
     case "PLANTING":
       return plantingEventVariants;
@@ -824,7 +832,7 @@ export function getSeasonalColors(season: Season) {
  */
 export function createSeasonalAnimation(
   season: Season,
-  config: SeasonalConfig = {}
+  config: SeasonalConfig = {},
 ): Variants {
   const { intensity = "moderate", duration = 1.2 } = config;
 

@@ -5,7 +5,13 @@
  */
 
 import { CreateFarmForm } from "@/components/features/farms/create-farm-form";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { auth } from "@/lib/auth";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
@@ -41,7 +47,8 @@ export default async function CreateFarmPage() {
         <CardHeader>
           <CardTitle>🌾 Farm Information</CardTitle>
           <CardDescription>
-            Provide details about your farm. This information will be visible to customers.
+            Provide details about your farm. This information will be visible to
+            customers.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -50,7 +57,9 @@ export default async function CreateFarmPage() {
       </Card>
 
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-        <h3 className="font-semibold text-blue-900 mb-2">📋 What happens next?</h3>
+        <h3 className="font-semibold text-blue-900 mb-2">
+          📋 What happens next?
+        </h3>
         <ul className="space-y-2 text-blue-800 text-sm">
           <li className="flex items-start">
             <span className="mr-2">1.</span>
@@ -58,7 +67,9 @@ export default async function CreateFarmPage() {
           </li>
           <li className="flex items-start">
             <span className="mr-2">2.</span>
-            <span>Our team will review your information (usually within 24-48 hours)</span>
+            <span>
+              Our team will review your information (usually within 24-48 hours)
+            </span>
           </li>
           <li className="flex items-start">
             <span className="mr-2">3.</span>

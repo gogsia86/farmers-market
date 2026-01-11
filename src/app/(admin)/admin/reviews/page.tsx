@@ -6,7 +6,13 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   AlertCircle,
@@ -17,7 +23,7 @@ import {
   Flag,
   RefreshCw,
   Star,
-  ThumbsUp
+  ThumbsUp,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -210,10 +216,11 @@ export default function AdminReviewsPage() {
         {[1, 2, 3, 4, 5].map((star: any) => (
           <Star
             key={star}
-            className={`h-4 w-4 ${star <= rating
-              ? "text-yellow-500 fill-yellow-500"
-              : "text-gray-300"
-              }`}
+            className={`h-4 w-4 ${
+              star <= rating
+                ? "text-yellow-500 fill-yellow-500"
+                : "text-gray-300"
+            }`}
           />
         ))}
         <span className="ml-2 text-sm font-medium">{rating}/5</span>
@@ -226,7 +233,9 @@ export default function AdminReviewsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Review Moderation</h1>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Review Moderation
+          </h1>
           <p className="text-gray-600 mt-1">Approve or flag customer reviews</p>
         </div>
         <Button onClick={fetchReviews} variant="outline" size="sm">
@@ -358,7 +367,7 @@ export default function AdminReviewsPage() {
                         {renderStars(review.rating)}
                         <span
                           className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(
-                            review.status
+                            review.status,
                           )}`}
                         >
                           {review.status}
@@ -391,7 +400,9 @@ export default function AdminReviewsPage() {
                         <span className="text-gray-400">•</span>
                         <div>
                           <span className="text-gray-600">Product:</span>{" "}
-                          <span className="font-medium">{review.product.name}</span>
+                          <span className="font-medium">
+                            {review.product.name}
+                          </span>
                         </div>
                       </>
                     )}

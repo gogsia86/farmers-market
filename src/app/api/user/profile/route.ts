@@ -15,7 +15,7 @@ import bcrypt from "bcryptjs";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 /**
  * 🔍 GET - Retrieve Current User Profile
@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
             message: "You must be logged in to view profile",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -88,7 +88,7 @@ export async function GET(request: NextRequest) {
             message: "User not found",
           },
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -135,10 +135,13 @@ export async function GET(request: NextRequest) {
         success: false,
         error: {
           code: "PROFILE_FETCH_ERROR",
-          message: error instanceof Error ? error.message : "Failed to retrieve profile",
+          message:
+            error instanceof Error
+              ? error.message
+              : "Failed to retrieve profile",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -159,35 +162,41 @@ export async function PATCH(request: NextRequest) {
             message: "You must be logged in to update profile",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
     const body = await request.json();
 
     // Validation schema
-    const UpdateProfileSchema = z.object({
-      firstName: z.string().min(1).max(100).optional(),
-      lastName: z.string().min(1).max(100).optional(),
-      name: z.string().min(1).max(255).optional(),
-      phone: z.string().regex(/^\+?[1-9]\d{1,14}$/).optional().nullable(),
-      avatar: z.string().url().max(500).optional().nullable(),
-      email: z.string().email().max(255).optional(),
-      currentPassword: z.string().optional(),
-      newPassword: z.string().min(8).max(100).optional(),
-    }).refine(
-      (data) => {
-        // If changing password, current password is required
-        if (data.newPassword && !data.currentPassword) {
-          return false;
-        }
-        return true;
-      },
-      {
-        message: "Current password is required to set a new password",
-        path: ["currentPassword"],
-      }
-    );
+    const UpdateProfileSchema = z
+      .object({
+        firstName: z.string().min(1).max(100).optional(),
+        lastName: z.string().min(1).max(100).optional(),
+        name: z.string().min(1).max(255).optional(),
+        phone: z
+          .string()
+          .regex(/^\+?[1-9]\d{1,14}$/)
+          .optional()
+          .nullable(),
+        avatar: z.string().url().max(500).optional().nullable(),
+        email: z.string().email().max(255).optional(),
+        currentPassword: z.string().optional(),
+        newPassword: z.string().min(8).max(100).optional(),
+      })
+      .refine(
+        (data) => {
+          // If changing password, current password is required
+          if (data.newPassword && !data.currentPassword) {
+            return false;
+          }
+          return true;
+        },
+        {
+          message: "Current password is required to set a new password",
+          path: ["currentPassword"],
+        },
+      );
 
     const validation = UpdateProfileSchema.safeParse(body);
     if (!validation.success) {
@@ -200,11 +209,12 @@ export async function PATCH(request: NextRequest) {
             details: validation.error.errors,
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    const { currentPassword, newPassword, email, ...profileUpdates } = validation.data;
+    const { currentPassword, newPassword, email, ...profileUpdates } =
+      validation.data;
 
     // Get current user
     const currentUser = await database.user.findUnique({
@@ -225,7 +235,7 @@ export async function PATCH(request: NextRequest) {
             message: "User not found",
           },
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -242,14 +252,14 @@ export async function PATCH(request: NextRequest) {
               message: "Cannot change password for OAuth accounts",
             },
           },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
       // Verify current password
       const isPasswordValid = await bcrypt.compare(
         currentPassword,
-        currentUser.password
+        currentUser.password,
       );
 
       if (!isPasswordValid) {
@@ -261,7 +271,7 @@ export async function PATCH(request: NextRequest) {
               message: "Current password is incorrect",
             },
           },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -286,7 +296,7 @@ export async function PATCH(request: NextRequest) {
               message: "This email is already in use",
             },
           },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -338,10 +348,11 @@ export async function PATCH(request: NextRequest) {
         success: false,
         error: {
           code: "PROFILE_UPDATE_ERROR",
-          message: error instanceof Error ? error.message : "Failed to update profile",
+          message:
+            error instanceof Error ? error.message : "Failed to update profile",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

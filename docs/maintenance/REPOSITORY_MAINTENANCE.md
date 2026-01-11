@@ -27,6 +27,7 @@ This guide provides best practices and procedures for maintaining a clean, organ
 ### Root Directory Rules
 
 **✅ ALLOWED in Root:**
+
 - `README.md` - Main project documentation
 - `CHANGELOG.md` - Version history
 - `CONTRIBUTING.md` - Contribution guidelines
@@ -36,6 +37,7 @@ This guide provides best practices and procedures for maintaining a clean, organ
 - CI/CD configs (`.github/`, `.gitlab-ci.yml`)
 
 **❌ NOT ALLOWED in Root:**
+
 - Individual fix/implementation summaries
 - Temporary documentation
 - Log files
@@ -70,6 +72,7 @@ docs/
 ## 🚫 Files That Should NEVER Be Committed
 
 ### Log Files
+
 ```
 *.log
 *-output.txt
@@ -80,6 +83,7 @@ dev-server.log
 ```
 
 ### Build Artifacts
+
 ```
 .next/
 .turbo/
@@ -91,6 +95,7 @@ coverage/
 ```
 
 ### Test Results
+
 ```
 test-results/
 playwright-report/
@@ -98,6 +103,7 @@ playwright-report/
 ```
 
 ### Environment Files
+
 ```
 .env.local
 .env.production
@@ -105,6 +111,7 @@ playwright-report/
 ```
 
 ### OS-Specific Files
+
 ```
 .DS_Store
 Thumbs.db
@@ -112,6 +119,7 @@ desktop.ini
 ```
 
 ### Editor-Specific (optional to ignore)
+
 ```
 .vscode/*
 !.vscode/extensions.json
@@ -128,12 +136,14 @@ Perform this checklist at the end of each month:
 ### Week 1: Review and Organize
 
 - [ ] **Review root directory**
+
   ```bash
   ls -la | grep "\.md$" | wc -l
   # Should be ≤ 5 essential MD files
   ```
 
 - [ ] **Check for log files**
+
   ```bash
   find . -maxdepth 1 -name "*.log" -o -name "*-output.txt"
   # Should return nothing
@@ -147,12 +157,14 @@ Perform this checklist at the end of each month:
 ### Week 2: Archive Old Content
 
 - [ ] **Archive completed documentation**
+
   ```bash
   # Move to .archive/old-docs/
   mv OLD_DOC.md .archive/old-docs/
   ```
 
 - [ ] **Archive old validation reports**
+
   ```bash
   mv validation-report-*.json .archive/validation-reports/
   ```
@@ -163,11 +175,13 @@ Perform this checklist at the end of each month:
 ### Week 3: Clean Generated Files
 
 - [ ] **Remove build artifacts**
+
   ```bash
   rm -rf .next .turbo coverage .jest-cache
   ```
 
 - [ ] **Clean test results**
+
   ```bash
   rm -rf test-results playwright-report .playwright
   ```
@@ -186,6 +200,7 @@ Perform this checklist at the end of each month:
   - Ensure `docs/README.md` is current
 
 - [ ] **Run cleanup script**
+
   ```bash
   bash cleanup-repo-improved.sh --auto
   ```
@@ -203,12 +218,14 @@ Perform this checklist at the end of each month:
 Before every commit, verify:
 
 - [ ] **No log files staged**
+
   ```bash
   git diff --cached --name-only | grep "\.log$"
   # Should return nothing
   ```
 
 - [ ] **No test output files**
+
   ```bash
   git diff --cached --name-only | grep -E "(test-results|coverage)"
   # Should return nothing
@@ -220,6 +237,7 @@ Before every commit, verify:
   - Not in root (unless essential)
 
 - [ ] **Commit message follows convention**
+
   ```
   type(scope): description
 
@@ -231,6 +249,7 @@ Before every commit, verify:
 ## 🔧 Cleanup Commands
 
 ### Quick Cleanup
+
 ```bash
 # Remove all log files
 find . -maxdepth 1 -name "*.log" -delete
@@ -243,6 +262,7 @@ rm -rf .next .turbo coverage
 ```
 
 ### Full Cleanup
+
 ```bash
 # Run automated cleanup script
 bash cleanup-repo-improved.sh --dry-run  # Preview changes
@@ -250,6 +270,7 @@ bash cleanup-repo-improved.sh --auto     # Execute cleanup
 ```
 
 ### Check Repository Health
+
 ```bash
 # Count root MD files (should be ≤ 5)
 find . -maxdepth 1 -name "*.md" -type f | wc -l
@@ -269,6 +290,7 @@ git status --ignored
 ## 📊 Repository Health Metrics
 
 ### Excellent Health ⭐⭐⭐
+
 - Root MD files: ≤ 5
 - Log files: 0
 - Build artifacts: None committed
@@ -276,6 +298,7 @@ git status --ignored
 - .gitignore: Comprehensive
 
 ### Good Health ⭐⭐
+
 - Root MD files: 6-10
 - Log files: 0
 - Build artifacts: None committed
@@ -283,6 +306,7 @@ git status --ignored
 - .gitignore: Good
 
 ### Needs Attention ⭐
+
 - Root MD files: 11-20
 - Log files: Present
 - Build artifacts: Some committed
@@ -290,6 +314,7 @@ git status --ignored
 - .gitignore: Incomplete
 
 ### Poor Health ❌
+
 - Root MD files: 20+
 - Log files: Multiple
 - Build artifacts: Committed
@@ -303,18 +328,21 @@ git status --ignored
 ### Documentation
 
 1. **Name files descriptively**
+
    ```
    ✅ CART_OPTIMIZATION_GUIDE.md
    ❌ guide.md
    ```
 
 2. **Use consistent naming**
+
    ```
    ✅ FEATURE_NAME_TYPE.md (e.g., CART_ANALYSIS.md)
    ❌ random-names.md
    ```
 
 3. **Include metadata**
+
    ```markdown
    # Document Title
 
@@ -331,11 +359,13 @@ git status --ignored
 ### File Organization
 
 1. **Create new subdirectories when needed**
+
    ```bash
    mkdir -p docs/new-category
    ```
 
 2. **Use README.md for directory index**
+
    ```
    docs/guides/README.md - List all guides
    ```
@@ -352,11 +382,13 @@ git status --ignored
 ### Version Control
 
 1. **Commit cleanup separately**
+
    ```bash
    git commit -m "chore: cleanup documentation"
    ```
 
 2. **Review before pushing**
+
    ```bash
    git status
    git diff --staged
@@ -377,6 +409,7 @@ git status --ignored
 **Problem:** Root directory cluttered with documentation.
 
 **Solution:**
+
 ```bash
 # Move to appropriate docs subdirectory
 mv ANALYSIS_DOC.md docs/analysis/
@@ -389,6 +422,7 @@ mv FIX_DOC.md docs/fixes/
 **Problem:** `.log` files in git history.
 
 **Prevention:**
+
 ```bash
 # Add to .gitignore
 echo "*.log" >> .gitignore
@@ -398,6 +432,7 @@ git reset HEAD *.log
 ```
 
 **If already committed:**
+
 ```bash
 # Remove from index but keep locally
 git rm --cached *.log
@@ -408,6 +443,7 @@ git rm --cached *.log
 **Problem:** Repository growing too large.
 
 **Solution:**
+
 ```bash
 # Check what's taking space
 git rev-list --objects --all | \
@@ -426,6 +462,7 @@ git lfs track "*.jpg"
 **Problem:** Old docs cluttering structure.
 
 **Solution:**
+
 ```bash
 # Archive old documentation
 mkdir -p .archive/old-docs/2024-Q4
@@ -439,6 +476,7 @@ mv OLD_DOC.md .archive/old-docs/2024-Q4/
 ### Git Hooks
 
 Create `.git/hooks/pre-commit`:
+
 ```bash
 #!/bin/bash
 
@@ -461,6 +499,7 @@ done < <(git diff --cached --name-only)
 ### CI/CD Checks
 
 Add to `.github/workflows/repo-health.yml`:
+
 ```yaml
 name: Repository Health Check
 
@@ -533,5 +572,5 @@ mv NEW_GUIDE.md docs/guides/           # Put in correct location
 
 ---
 
-*Last reviewed: January 2025*
-*Next review: February 2025*
+_Last reviewed: January 2025_
+_Next review: February 2025_

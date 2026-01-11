@@ -1,4 +1,5 @@
 # 🌾 FARMERS MARKET PLATFORM
+
 ## Investor Presentation
 
 **Connecting Farmers Directly with Consumers Through Technology**
@@ -76,6 +77,7 @@ A comprehensive three-sided marketplace platform that serves:
 ### Core Value Propositions
 
 #### For Farmers
+
 - **Zero Setup Cost**: Complete e-commerce solution ready to use
 - **Low Commission**: Configurable rates (5-15% vs 20-30% for competitors)
 - **Full Control**: Manage products, pricing, inventory, and orders
@@ -85,6 +87,7 @@ A comprehensive three-sided marketplace platform that serves:
 - **Mobile Management**: Manage farm operations from any device
 
 #### For Consumers
+
 - **Convenient Access**: Shop 24/7 from home with delivery options
 - **Product Discovery**: Advanced search with filters (organic, local, in-season)
 - **Trust & Transparency**: Verified farm certifications and practices
@@ -94,6 +97,7 @@ A comprehensive three-sided marketplace platform that serves:
 - **Wishlist & Favorites**: Save favorite farms and products
 
 #### For Platform Owners
+
 - **Recurring Revenue**: Commission on all transactions
 - **Scalable Infrastructure**: Support thousands of farms on single instance
 - **Low Maintenance**: Modern tech stack with automated operations
@@ -109,38 +113,39 @@ A comprehensive three-sided marketplace platform that serves:
 
 ```yaml
 Frontend:
-  - Next.js 15 (App Router)        # Latest React framework
-  - TypeScript 5.9 (strict mode)   # Type-safe development
-  - Tailwind CSS 4                 # Modern styling
-  - React 19                       # Latest React features
+  - Next.js 15 (App Router) # Latest React framework
+  - TypeScript 5.9 (strict mode) # Type-safe development
+  - Tailwind CSS 4 # Modern styling
+  - React 19 # Latest React features
 
 Backend:
-  - Next.js API Routes             # Serverless architecture
-  - Prisma 7 ORM                   # Type-safe database access
-  - PostgreSQL 16                  # Production-grade database
-  - Redis                          # High-performance caching
+  - Next.js API Routes # Serverless architecture
+  - Prisma 7 ORM # Type-safe database access
+  - PostgreSQL 16 # Production-grade database
+  - Redis # High-performance caching
 
 Payment & Commerce:
-  - Stripe Connect                 # Split payments & payouts
-  - Stripe Checkout                # Secure payment processing
-  - Webhook handling               # Automated payment events
+  - Stripe Connect # Split payments & payouts
+  - Stripe Checkout # Secure payment processing
+  - Webhook handling # Automated payment events
 
 Infrastructure:
-  - Vercel Edge Network            # Global CDN & hosting
-  - Cloudinary                     # Image optimization & CDN
-  - SendGrid                       # Transactional emails
-  - Sentry                         # Error monitoring
+  - Vercel Edge Network # Global CDN & hosting
+  - Cloudinary # Image optimization & CDN
+  - SendGrid # Transactional emails
+  - Sentry # Error monitoring
 
 Security:
-  - NextAuth v5                    # Authentication
-  - Role-based access control      # Authorization
-  - Zod validation                 # Input validation
-  - CSRF protection                # Security headers
+  - NextAuth v5 # Authentication
+  - Role-based access control # Authorization
+  - Zod validation # Input validation
+  - CSRF protection # Security headers
 ```
 
 ### Architecture Highlights
 
 #### Multi-Layer Caching
+
 ```
 Request Flow:
 1. L1 Cache (In-Memory)    <5ms   - 75% hit rate
@@ -152,12 +157,14 @@ Result: 85% cache hit rate, 10x performance improvement
 ```
 
 #### Clean Architecture
+
 - **Repository Pattern**: Separation of data access and business logic
 - **Service Layer**: Centralized business rules and validation
 - **API Standardization**: Consistent request/response formats
 - **Error Handling**: Comprehensive error tracking and reporting
 
 #### Database Design
+
 - **50+ Tables**: Complete domain modeling
 - **Type Safety**: Prisma-generated types throughout codebase
 - **Migrations**: Version-controlled schema changes
@@ -187,14 +194,14 @@ Response Time:     <150ms average
 
 ### Performance Metrics
 
-| Metric | Target | Current | Status |
-|--------|--------|---------|--------|
-| Page Load (First) | <3s | ~2.5s | ✅ Excellent |
-| Page Load (Cached) | <1s | <800ms | ✅ Excellent |
-| API Response | <500ms | 100-300ms | ✅ Excellent |
-| Database Queries | <100ms | 50-200ms | ✅ Good |
-| Cache Hit Rate | >80% | ~85% | ✅ Excellent |
-| Uptime | >99.9% | 99.95% | ✅ Excellent |
+| Metric             | Target | Current   | Status       |
+| ------------------ | ------ | --------- | ------------ |
+| Page Load (First)  | <3s    | ~2.5s     | ✅ Excellent |
+| Page Load (Cached) | <1s    | <800ms    | ✅ Excellent |
+| API Response       | <500ms | 100-300ms | ✅ Excellent |
+| Database Queries   | <100ms | 50-200ms  | ✅ Good      |
+| Cache Hit Rate     | >80%   | ~85%      | ✅ Excellent |
+| Uptime             | >99.9% | 99.95%    | ✅ Excellent |
 
 ---
 
@@ -203,6 +210,7 @@ Response Time:     <150ms average
 ### For Platform Administrators
 
 #### Dashboard & Analytics
+
 - Real-time platform metrics and KPIs
 - Revenue tracking and financial reporting
 - User growth and engagement analytics
@@ -210,6 +218,7 @@ Response Time:     <150ms average
 - Transaction history and commission tracking
 
 #### User Management
+
 - Multi-role user system (Admin, Farmer, Consumer)
 - User verification and approval workflows
 - Account suspension and moderation tools
@@ -217,6 +226,7 @@ Response Time:     <150ms average
 - Bulk user operations
 
 #### Farm Management
+
 - Farm verification and approval process
 - Certification validation (Organic, Non-GMO, etc.)
 - Farm profile moderation
@@ -224,6 +234,7 @@ Response Time:     <150ms average
 - Support ticket management
 
 #### Configuration
+
 - Platform-wide settings and branding
 - Commission rate configuration
 - Payment gateway setup
@@ -231,6 +242,7 @@ Response Time:     <150ms average
 - Feature toggles and A/B testing
 
 #### Financial Management
+
 - Automated commission calculations
 - Payout scheduling and management
 - Refund processing
@@ -240,6 +252,7 @@ Response Time:     <150ms average
 ### For Farmers
 
 #### Farm Profile Management
+
 - Complete farm information and story
 - Photo gallery (up to 20 images)
 - Certification badges (Organic, Biodynamic, etc.)
@@ -249,6 +262,7 @@ Response Time:     <150ms average
 - Social media integration
 
 #### Product Management
+
 - Unlimited product listings
 - Rich product descriptions
 - Multiple images per product (up to 5)
@@ -259,6 +273,7 @@ Response Time:     <150ms average
 - Pricing and discount management
 
 #### Order Management
+
 - Real-time order notifications
 - Order processing workflow
 - Fulfillment tracking
@@ -268,6 +283,7 @@ Response Time:     <150ms average
 - Refund and cancellation handling
 
 #### Inventory Management
+
 - Real-time stock tracking
 - Low stock alerts
 - Automated inventory updates
@@ -277,6 +293,7 @@ Response Time:     <150ms average
 - Multi-location inventory
 
 #### Financial Dashboard
+
 - Sales analytics and trends
 - Revenue tracking
 - Payout history
@@ -286,6 +303,7 @@ Response Time:     <150ms average
 - Payment method management
 
 #### Customer Engagement
+
 - Review and rating management
 - Direct messaging with customers
 - Email marketing tools
@@ -296,6 +314,7 @@ Response Time:     <150ms average
 ### For Consumers
 
 #### Product Discovery
+
 - Advanced search with filters
   - Category (vegetables, fruits, dairy, etc.)
   - Distance from location
@@ -308,6 +327,7 @@ Response Time:     <150ms average
 - New farm and product alerts
 
 #### Shopping Experience
+
 - Persistent shopping cart
 - Guest checkout option
 - Saved payment methods
@@ -317,6 +337,7 @@ Response Time:     <150ms average
 - Gift options
 
 #### Account Management
+
 - Profile management
 - Order history
 - Saved favorites and wishlists
@@ -326,6 +347,7 @@ Response Time:     <150ms average
 - Account security settings
 
 #### Order Tracking
+
 - Real-time order status
 - Shipment tracking
 - Delivery notifications
@@ -334,6 +356,7 @@ Response Time:     <150ms average
 - Order history
 
 #### Reviews & Ratings
+
 - Product reviews
 - Farm ratings
 - Photo uploads
@@ -341,6 +364,7 @@ Response Time:     <150ms average
 - Review management
 
 #### Communication
+
 - Direct messaging with farmers
 - Order-related inquiries
 - Product questions
@@ -354,13 +378,16 @@ Response Time:     <150ms average
 ### Revenue Streams
 
 #### Primary Revenue
+
 **Transaction Commissions**: 5-15% per transaction
+
 - Default: 10% platform fee
 - Configurable per farm or category
 - Volume-based discounts available
 - Transparent fee structure
 
 #### Secondary Revenue
+
 - **Premium Farm Listings**: Featured placement ($50-200/month)
 - **Marketing Tools**: Email campaigns, promoted products
 - **Analytics Pro**: Advanced reporting and insights
@@ -421,16 +448,19 @@ LTV:CAC Ratio:          7.2x
 ### Market Size
 
 **Total Addressable Market (TAM)**
+
 - Global food market: $1.2 trillion
 - E-commerce food sales: $250 billion
 - Direct-to-consumer segment: $47 billion
 
 **Serviceable Addressable Market (SAM)**
+
 - North American farmers markets: $2 billion
 - Online direct farm sales: $12 billion
 - Combined SAM: $14 billion
 
 **Serviceable Obtainable Market (SOM)**
+
 - Year 1 Target: $6M (0.04% of SAM)
 - Year 3 Target: $240M (1.7% of SAM)
 - Year 5 Target: $1.2B (8.6% of SAM)
@@ -462,6 +492,7 @@ LTV:CAC Ratio:          7.2x
 #### Direct Competitors
 
 **LocalHarvest**
+
 - Est. 2001, directory-focused
 - Limited e-commerce features
 - Outdated technology
@@ -469,12 +500,14 @@ LTV:CAC Ratio:          7.2x
 - Our Advantage: Modern tech, complete solution
 
 **Farmigo** (defunct 2020)
+
 - Failed due to complexity
 - B2B focus
 - High operational overhead
 - Our Advantage: B2C focus, automated operations
 
 **Barn2Door**
+
 - Focused on CSA subscriptions
 - Limited marketplace features
 - Higher costs ($50-200/month + commission)
@@ -483,18 +516,21 @@ LTV:CAC Ratio:          7.2x
 #### Indirect Competitors
 
 **Farmers Markets (Physical)**
+
 - Limited hours and locations
 - Weather-dependent
 - No online convenience
 - Our Advantage: 24/7 access, wider reach
 
 **Instacart/Amazon Fresh**
+
 - Focus on grocery chains
 - Limited local farm products
 - High commission (30%+)
 - Our Advantage: Farm-focused, lower fees
 
 **Direct Farm Websites**
+
 - Individual farms building own sites
 - High development costs
 - No marketplace discovery
@@ -519,6 +555,7 @@ LTV:CAC Ratio:          7.2x
 **Target**: 50-100 farms, 1,000 customers
 
 **Strategy**:
+
 - Partner with 3-5 established farmers markets
 - Offer free platform access for first 6 months
 - Focus on one metropolitan area
@@ -526,6 +563,7 @@ LTV:CAC Ratio:          7.2x
 - Customer acquisition through farm partnerships
 
 **Marketing**:
+
 - Direct outreach to farmers market managers
 - Farm visits and demos
 - Social media campaigns
@@ -533,6 +571,7 @@ LTV:CAC Ratio:          7.2x
 - Community event sponsorships
 
 **Metrics**:
+
 - 100 active farms
 - 10,000 products listed
 - 1,000 active customers
@@ -544,6 +583,7 @@ LTV:CAC Ratio:          7.2x
 **Target**: 500 farms, 25,000 customers
 
 **Strategy**:
+
 - Expand to 5 additional metro areas
 - Implement tiered pricing (free/pro/enterprise)
 - Develop farm success stories
@@ -551,6 +591,7 @@ LTV:CAC Ratio:          7.2x
 - Launch premium features
 
 **Marketing**:
+
 - Case studies and testimonials
 - Regional food publication partnerships
 - Farmer-to-farmer referrals
@@ -558,6 +599,7 @@ LTV:CAC Ratio:          7.2x
 - Paid digital advertising
 
 **Metrics**:
+
 - 500 active farms
 - 50,000 products listed
 - 25,000 active customers
@@ -569,6 +611,7 @@ LTV:CAC Ratio:          7.2x
 **Target**: 2,000+ farms, 200,000+ customers
 
 **Strategy**:
+
 - National platform availability
 - White label partnerships
 - API ecosystem for integrations
@@ -576,6 +619,7 @@ LTV:CAC Ratio:          7.2x
 - Enterprise features for large farms
 
 **Marketing**:
+
 - National PR campaign
 - Strategic partnerships (food delivery, meal kits)
 - Affiliate program
@@ -583,6 +627,7 @@ LTV:CAC Ratio:          7.2x
 - Thought leadership content
 
 **Metrics**:
+
 - 2,000+ active farms
 - 200,000+ products listed
 - 200,000+ active customers
@@ -592,12 +637,14 @@ LTV:CAC Ratio:          7.2x
 ### Customer Acquisition Strategy
 
 #### Farmer Acquisition
+
 - **Cost**: $50/farm (low)
 - **Channels**: Direct outreach, referrals, events
 - **Onboarding**: White-glove for first 100 farms
 - **Retention**: 95% target (low churn)
 
 #### Consumer Acquisition
+
 - **Cost**: $15/customer (moderate)
 - **Channels**: Social media, SEO, farm partnerships
 - **Activation**: First order incentive ($10 off)
@@ -612,6 +659,7 @@ LTV:CAC Ratio:          7.2x
 **Seeking**: $2-5 Million Series A
 
 **Use of Funds**:
+
 ```
 Engineering & Product:     40%  ($800K-2M)
   - Team expansion (5-10 engineers)
@@ -673,11 +721,13 @@ IRR:                215%
 ### Exit Strategy
 
 **Primary Exit Options**:
+
 1. **Strategic Acquisition**: Food delivery, grocery, ag-tech companies
 2. **IPO**: At scale ($100M+ revenue)
 3. **Private Equity**: Growth equity at $50M+ revenue
 
 **Potential Acquirers**:
+
 - Food delivery: DoorDash, Uber Eats, Grubhub
 - Grocery: Whole Foods, Kroger, Albertsons
 - Ag-tech: Indigo Ag, FarmLogs, Granular
@@ -690,6 +740,7 @@ IRR:                215%
 ### Current Team
 
 **Technical Leadership**
+
 - Enterprise-grade architecture designed for scale
 - Modern full-stack development expertise
 - 85% production-ready codebase completed
@@ -698,6 +749,7 @@ IRR:                215%
 ### Hiring Plan (Post-Funding)
 
 **Year 1**
+
 - CTO (Full-time)
 - 3-5 Full-stack Engineers
 - 2 Product Managers
@@ -707,6 +759,7 @@ IRR:                215%
 - 1 Marketing Manager
 
 **Year 2**
+
 - VP Engineering
 - 5-10 Additional Engineers
 - 2 Data Scientists
@@ -717,6 +770,7 @@ IRR:                215%
 ### Advisory Board (To Be Established)
 
 **Seeking Advisors In**:
+
 - Agricultural industry expertise
 - E-commerce and marketplace scaling
 - Food safety and regulatory compliance
@@ -730,6 +784,7 @@ IRR:                215%
 ### Current Status
 
 **Platform Development**: ✅ **85% Complete**
+
 ```
 ✅ Core Infrastructure       100%
 ✅ Authentication System      100%
@@ -746,6 +801,7 @@ IRR:                215%
 ```
 
 **Code Quality Metrics**:
+
 - Type Safety: 98% (strict TypeScript)
 - Test Coverage: 45% (growing)
 - Documentation: 90% (comprehensive)
@@ -753,6 +809,7 @@ IRR:                215%
 - Security: 80% (hardened)
 
 **Technology Maturity**:
+
 - Database: 50+ tables, fully normalized
 - API: 100+ endpoints, RESTful
 - Caching: Multi-layer (85% hit rate)
@@ -761,12 +818,14 @@ IRR:                215%
 ### Key Milestones Achieved
 
 **Q4 2024**
+
 - ✅ Initial platform architecture
 - ✅ Database schema design
 - ✅ Authentication system
 - ✅ Basic farm and product management
 
 **Q1 2025**
+
 - ✅ Payment integration (Stripe)
 - ✅ Order management system
 - ✅ Admin dashboard
@@ -774,6 +833,7 @@ IRR:                215%
 - ✅ Performance optimization
 
 **Q2 2025 (Current)**
+
 - ✅ Repository pattern implementation
 - ✅ Security hardening
 - ✅ API standardization
@@ -783,6 +843,7 @@ IRR:                215%
 ### Upcoming Milestones
 
 **Q3 2025**
+
 - Beta launch with 10-20 farms
 - First 100 customer transactions
 - Mobile app development
@@ -790,6 +851,7 @@ IRR:                215%
 - Farmer feedback iteration
 
 **Q4 2025**
+
 - Public launch (50-100 farms)
 - 1,000 registered customers
 - $500K GMV
@@ -797,6 +859,7 @@ IRR:                215%
 - Analytics dashboard v2
 
 **Q1 2026**
+
 - Regional expansion (5 markets)
 - 500 active farms
 - 25,000 customers
@@ -849,12 +912,14 @@ IRR:                215%
 ### 2025 - Foundation
 
 **Q2 2025** (Current)
+
 - ✅ Complete core platform development
 - ⏳ Security audit and penetration testing
 - ⏳ Beta deployment and testing
 - ⏳ Initial farmer onboarding
 
 **Q3 2025**
+
 - Beta launch (10-20 farms)
 - Customer acquisition testing
 - Payment flow validation
@@ -862,6 +927,7 @@ IRR:                215%
 - Marketing materials creation
 
 **Q4 2025**
+
 - Public launch
 - First 100 farms onboarded
 - 1,000 customers acquired
@@ -871,6 +937,7 @@ IRR:                215%
 ### 2026 - Growth
 
 **Q1 2026**
+
 - Regional expansion (5 markets)
 - Mobile apps (iOS/Android) launch
 - Advanced analytics dashboard
@@ -878,6 +945,7 @@ IRR:                215%
 - Referral system implementation
 
 **Q2 2026**
+
 - 500 farms milestone
 - 25,000 customers
 - API ecosystem launch
@@ -885,6 +953,7 @@ IRR:                215%
 - Marketing automation v2
 
 **Q3 2026**
+
 - National availability
 - 1,000 farms milestone
 - 100,000 customers
@@ -892,6 +961,7 @@ IRR:                215%
 - Enterprise features
 
 **Q4 2026**
+
 - 2,000 farms milestone
 - 200,000 customers
 - Mobile app v2
@@ -901,6 +971,7 @@ IRR:                215%
 ### 2027 - Scale
 
 **Q1-Q2 2027**
+
 - International expansion planning
 - Strategic partnerships
 - Acquisition opportunities
@@ -908,6 +979,7 @@ IRR:                215%
 - Advanced B2B features
 
 **Q3-Q4 2027**
+
 - 5,000+ farms
 - 500,000+ customers
 - $500M+ GMV
@@ -921,6 +993,7 @@ IRR:                215%
 ### Current Metrics
 
 **Platform Metrics**
+
 - Lines of Code: 50,000+
 - Database Tables: 50+
 - API Endpoints: 100+
@@ -928,6 +1001,7 @@ IRR:                215%
 - Type Safety: 98%
 
 **Performance Metrics**
+
 - Page Load Time: <2.5s
 - API Response: 100-300ms
 - Cache Hit Rate: 85%
@@ -937,6 +1011,7 @@ IRR:                215%
 ### Target Business Metrics
 
 **Year 1**
+
 - Active Farms: 100
 - Active Customers: 1,000
 - Monthly Orders: 500
@@ -946,6 +1021,7 @@ IRR:                215%
 - Customer Retention: 60%
 
 **Year 2**
+
 - Active Farms: 500
 - Active Customers: 25,000
 - Monthly Orders: 15,000
@@ -955,6 +1031,7 @@ IRR:                215%
 - Customer Retention: 70%
 
 **Year 3**
+
 - Active Farms: 2,000
 - Active Customers: 200,000
 - Monthly Orders: 100,000
@@ -966,6 +1043,7 @@ IRR:                215%
 ### Health Metrics (Ongoing)
 
 **Farm Health**
+
 - Active farms (listing products): >90%
 - Avg products per farm: >50
 - Order fulfillment rate: >95%
@@ -973,6 +1051,7 @@ IRR:                215%
 - Churn rate: <5% annually
 
 **Customer Health**
+
 - Monthly active users: >30%
 - Repeat purchase rate: >40%
 - Cart abandonment: <70%
@@ -980,6 +1059,7 @@ IRR:                215%
 - NPS Score: >50
 
 **Platform Health**
+
 - Uptime: >99.9%
 - API response time: <300ms
 - Error rate: <0.1%
@@ -1039,6 +1119,7 @@ Still <1% of TAM - Massive runway
 We are currently raising a **$2-5M Series A** round to scale operations and expand to 2,000+ farms over the next 24 months.
 
 **For Investment Discussion**:
+
 - Schedule a demo and platform walkthrough
 - Review detailed financial models
 - Discuss technical architecture
@@ -1048,6 +1129,7 @@ We are currently raising a **$2-5M Series A** round to scale operations and expa
 ### Platform Demo
 
 We offer comprehensive platform demonstrations covering:
+
 - Complete user journey (admin, farmer, consumer)
 - Technical architecture deep-dive
 - Business metrics dashboard
@@ -1081,9 +1163,10 @@ Week 8:     Funding close
 
 ### A. Detailed Financial Model
 
-*(Available upon request - 5-year monthly projections)*
+_(Available upon request - 5-year monthly projections)_
 
 **Includes**:
+
 - Revenue projections by stream
 - Operating expense breakdown
 - Headcount planning
@@ -1095,9 +1178,10 @@ Week 8:     Funding close
 
 ### B. Technical Documentation
 
-*(Available in repository)*
+_(Available in repository)_
 
 **Includes**:
+
 - Architecture diagrams
 - Database schema
 - API documentation
@@ -1109,9 +1193,10 @@ Week 8:     Funding close
 
 ### C. Market Research
 
-*(Available upon request)*
+_(Available upon request)_
 
 **Includes**:
+
 - Market size analysis
 - Consumer surveys
 - Farmer interviews
@@ -1122,9 +1207,10 @@ Week 8:     Funding close
 
 ### D. Legal & Compliance
 
-*(Available upon request)*
+_(Available upon request)_
 
 **Includes**:
+
 - Terms of service
 - Privacy policy
 - Payment processing compliance
@@ -1140,6 +1226,7 @@ Week 8:     Funding close
 The **Farmers Market Platform** represents a unique opportunity to invest in a proven, production-ready technology solution addressing a $47 billion market with strong growth trends and weak competition.
 
 Our platform combines:
+
 - ✅ **Technical Excellence**: Enterprise-grade, scalable architecture
 - ✅ **Market Timing**: Accelerating consumer demand for local food
 - ✅ **Business Model**: High margins, multiple revenue streams
@@ -1154,10 +1241,10 @@ We're not building a concept—we're scaling a working platform with clear unit 
 
 **Thank you for your consideration.**
 
-*For inquiries, please contact the founding team to schedule a comprehensive platform demonstration and investment discussion.*
+_For inquiries, please contact the founding team to schedule a comprehensive platform demonstration and investment discussion._
 
 ---
 
-*Document Version: 1.0*
-*Last Updated: January 2025*
-*Confidential - For Investment Discussion Purposes Only*
+_Document Version: 1.0_
+_Last Updated: January 2025_
+_Confidential - For Investment Discussion Purposes Only_

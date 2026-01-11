@@ -115,13 +115,26 @@ export default function EnvCheckPage() {
   const criticalVars = ["NEXTAUTH_SECRET", "NEXTAUTH_URL", "DATABASE_URL"];
   const authVars = ["NEXTAUTH_SECRET", "NEXTAUTH_URL", "NEXT_PUBLIC_APP_URL"];
   const databaseVars = ["DATABASE_URL"];
-  const buildVars = ["NODE_ENV", "TURBOPACK", "SENTRY_UPLOAD_DRY_RUN", "NEXT_DISABLE_SOURCEMAPS"];
-  const sentryVars = ["SENTRY_DSN", "NEXT_PUBLIC_SENTRY_DSN", "SENTRY_AUTH_TOKEN"];
+  const buildVars = [
+    "NODE_ENV",
+    "TURBOPACK",
+    "SENTRY_UPLOAD_DRY_RUN",
+    "NEXT_DISABLE_SOURCEMAPS",
+  ];
+  const sentryVars = [
+    "SENTRY_DSN",
+    "NEXT_PUBLIC_SENTRY_DSN",
+    "SENTRY_AUTH_TOKEN",
+  ];
   const redisVars = ["REDIS_HOST", "REDIS_PORT", "REDIS_PASSWORD"];
-  const stripeVars = ["STRIPE_SECRET_KEY", "STRIPE_PUBLISHABLE_KEY", "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY"];
+  const stripeVars = [
+    "STRIPE_SECRET_KEY",
+    "STRIPE_PUBLISHABLE_KEY",
+    "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY",
+  ];
 
   const getVarsByCategory = (category: string[]) => {
-    return category.map(varName => ({
+    return category.map((varName) => ({
       name: varName,
       status: data.variables[varName] || { exists: false },
     }));
@@ -153,13 +166,20 @@ export default function EnvCheckPage() {
           {data.vercel.isVercel && (
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
               <div className="flex items-center">
-                <svg className="w-6 h-6 text-blue-600 mr-3" fill="currentColor" viewBox="0 0 24 24">
+                <svg
+                  className="w-6 h-6 text-blue-600 mr-3"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   <path d="M12 2L2 19.5h20L12 2z" />
                 </svg>
                 <div>
-                  <div className="font-semibold text-blue-900">Running on Vercel</div>
+                  <div className="font-semibold text-blue-900">
+                    Running on Vercel
+                  </div>
                   <div className="text-sm text-blue-700">
-                    Environment: {data.vercel.env || "unknown"} | URL: {data.vercel.url}
+                    Environment: {data.vercel.env || "unknown"} | URL:{" "}
+                    {data.vercel.url}
                   </div>
                 </div>
               </div>
@@ -186,11 +206,17 @@ export default function EnvCheckPage() {
                 {data.summary.totalMissing}
               </div>
             </div>
-            <div className={`rounded-lg p-4 ${data.summary.percentageSet === 100 ? 'bg-green-50' : 'bg-yellow-50'}`}>
-              <div className={`text-sm mb-1 ${data.summary.percentageSet === 100 ? 'text-green-600' : 'text-yellow-600'}`}>
+            <div
+              className={`rounded-lg p-4 ${data.summary.percentageSet === 100 ? "bg-green-50" : "bg-yellow-50"}`}
+            >
+              <div
+                className={`text-sm mb-1 ${data.summary.percentageSet === 100 ? "text-green-600" : "text-yellow-600"}`}
+              >
                 Completion
               </div>
-              <div className={`text-3xl font-bold ${data.summary.percentageSet === 100 ? 'text-green-900' : 'text-yellow-900'}`}>
+              <div
+                className={`text-3xl font-bold ${data.summary.percentageSet === 100 ? "text-green-900" : "text-yellow-900"}`}
+              >
                 {data.summary.percentageSet}%
               </div>
             </div>
@@ -252,7 +278,9 @@ export default function EnvCheckPage() {
         {/* Recommendations */}
         {data.recommendations.length > 0 && (
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg shadow-xl p-6">
-            <h2 className="text-xl font-bold text-yellow-900 mb-4">💡 Recommendations</h2>
+            <h2 className="text-xl font-bold text-yellow-900 mb-4">
+              💡 Recommendations
+            </h2>
             <ul className="space-y-2">
               {data.recommendations.map((rec: any, idx: any) => (
                 <li key={idx} className="flex items-start text-yellow-800">
@@ -342,7 +370,11 @@ interface VariableCategoryProps {
   critical: boolean;
 }
 
-function VariableCategory({ title, variables, critical }: VariableCategoryProps) {
+function VariableCategory({
+  title,
+  variables,
+  critical,
+}: VariableCategoryProps) {
   return (
     <div className="bg-white rounded-lg shadow-xl p-6">
       <h2 className="text-xl font-bold text-gray-900 mb-4">{title}</h2>
@@ -350,12 +382,13 @@ function VariableCategory({ title, variables, critical }: VariableCategoryProps)
         {variables.map((variable: any) => (
           <div
             key={variable.name}
-            className={`flex items-center justify-between p-4 rounded-lg border-2 ${variable.status.exists
-              ? "bg-green-50 border-green-200"
-              : critical
-                ? "bg-red-50 border-red-200"
-                : "bg-gray-50 border-gray-200"
-              }`}
+            className={`flex items-center justify-between p-4 rounded-lg border-2 ${
+              variable.status.exists
+                ? "bg-green-50 border-green-200"
+                : critical
+                  ? "bg-red-50 border-red-200"
+                  : "bg-gray-50 border-gray-200"
+            }`}
           >
             <div className="flex items-center flex-1">
               {variable.status.exists ? (
@@ -374,8 +407,9 @@ function VariableCategory({ title, variables, critical }: VariableCategoryProps)
                 </svg>
               ) : (
                 <svg
-                  className={`w-6 h-6 mr-3 flex-shrink-0 ${critical ? "text-red-600" : "text-gray-400"
-                    }`}
+                  className={`w-6 h-6 mr-3 flex-shrink-0 ${
+                    critical ? "text-red-600" : "text-gray-400"
+                  }`}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -394,11 +428,14 @@ function VariableCategory({ title, variables, critical }: VariableCategoryProps)
                 </div>
                 {variable.status.exists && variable.status.masked && (
                   <div className="text-xs text-gray-600 mt-1">
-                    Value: {variable.status.masked} ({variable.status.length} chars)
+                    Value: {variable.status.masked} ({variable.status.length}{" "}
+                    chars)
                   </div>
                 )}
                 {!variable.status.exists && (
-                  <div className={`text-xs mt-1 ${critical ? "text-red-600" : "text-gray-500"}`}>
+                  <div
+                    className={`text-xs mt-1 ${critical ? "text-red-600" : "text-gray-500"}`}
+                  >
                     Not set
                   </div>
                 )}
@@ -411,10 +448,11 @@ function VariableCategory({ title, variables, critical }: VariableCategoryProps)
                 </span>
               ) : (
                 <span
-                  className={`px-3 py-1 text-xs font-semibold rounded-full ${critical
-                    ? "bg-red-200 text-red-800"
-                    : "bg-gray-200 text-gray-600"
-                    }`}
+                  className={`px-3 py-1 text-xs font-semibold rounded-full ${
+                    critical
+                      ? "bg-red-200 text-red-800"
+                      : "bg-gray-200 text-gray-600"
+                  }`}
                 >
                   MISSING
                 </span>

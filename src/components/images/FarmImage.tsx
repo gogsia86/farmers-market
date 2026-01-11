@@ -19,7 +19,10 @@ interface FarmImageProps {
  * Get the best available image for a farm
  * Priority: bannerUrl > logoUrl > images[0] > null
  */
-function getBestFarmImage(farm: FarmImageProps["farm"], variant: FarmImageProps["variant"]): string | null {
+function getBestFarmImage(
+  farm: FarmImageProps["farm"],
+  variant: FarmImageProps["variant"],
+): string | null {
   if (variant === "logo" && farm.logoUrl) {
     return farm.logoUrl;
   }
@@ -31,7 +34,8 @@ function getBestFarmImage(farm: FarmImageProps["farm"], variant: FarmImageProps[
   // For card and thumbnail, prefer banner then logo
   if (farm.bannerUrl) return farm.bannerUrl;
   if (farm.logoUrl) return farm.logoUrl;
-  if (farm.images && farm.images.length > 0 && farm.images[0]) return farm.images[0];
+  if (farm.images && farm.images.length > 0 && farm.images[0])
+    return farm.images[0];
 
   return null;
 }
@@ -87,14 +91,15 @@ export function FarmImage({
         <div className="flex h-full w-full items-center justify-center">
           <div className="text-center">
             <div
-              className={`${variant === "hero"
-                ? "text-9xl"
-                : variant === "card"
-                  ? "text-6xl"
-                  : variant === "thumbnail"
-                    ? "text-3xl"
-                    : "text-4xl"
-                }`}
+              className={`${
+                variant === "hero"
+                  ? "text-9xl"
+                  : variant === "card"
+                    ? "text-6xl"
+                    : variant === "thumbnail"
+                      ? "text-3xl"
+                      : "text-4xl"
+              }`}
             >
               🌾
             </div>
@@ -112,17 +117,25 @@ export function FarmImage({
   // Show optimized image
   return (
     <div
-      className={`relative overflow-hidden ${variant !== "thumbnail" && variant !== "logo" ? aspectRatioClasses[variant] : ""
-        } ${className}`}
+      className={`relative overflow-hidden ${
+        variant !== "thumbnail" && variant !== "logo"
+          ? aspectRatioClasses[variant]
+          : ""
+      } ${className}`}
     >
       <Image
-        src={imageUrl ?? '/images/farm-placeholder.jpg'}
+        src={imageUrl ?? "/images/farm-placeholder.jpg"}
         alt={`${farm.name} - Farm Photo`}
         fill={variant !== "thumbnail" && variant !== "logo"}
-        width={variant === "thumbnail" ? 96 : variant === "logo" ? 80 : undefined}
-        height={variant === "thumbnail" ? 96 : variant === "logo" ? 80 : undefined}
-        className={`object-cover transition-transform duration-300 ${variant === "card" ? "group-hover:scale-105" : ""
-          }`}
+        width={
+          variant === "thumbnail" ? 96 : variant === "logo" ? 80 : undefined
+        }
+        height={
+          variant === "thumbnail" ? 96 : variant === "logo" ? 80 : undefined
+        }
+        className={`object-cover transition-transform duration-300 ${
+          variant === "card" ? "group-hover:scale-105" : ""
+        }`}
         sizes={imageSizes}
         priority={priority}
         quality={85}
@@ -142,7 +155,10 @@ interface FarmImageGalleryProps {
   additionalPhotos?: string[];
 }
 
-export function FarmImageGallery({ farm, additionalPhotos = [] }: FarmImageGalleryProps) {
+export function FarmImageGallery({
+  farm,
+  additionalPhotos = [],
+}: FarmImageGalleryProps) {
   // Collect all available photos
   const allPhotos = [
     ...(farm.bannerUrl ? [farm.bannerUrl] : []),
@@ -178,7 +194,7 @@ export function FarmImageGallery({ farm, additionalPhotos = [] }: FarmImageGalle
       {/* Primary Photo */}
       <div className="relative h-96 w-full overflow-hidden rounded-t-lg">
         <Image
-          src={primaryPhoto ?? '/images/farm-placeholder.jpg'}
+          src={primaryPhoto ?? "/images/farm-placeholder.jpg"}
           alt={`${farm.name} - Main Photo`}
           fill
           className="object-cover"
@@ -197,7 +213,7 @@ export function FarmImageGallery({ farm, additionalPhotos = [] }: FarmImageGalle
               className="relative h-24 overflow-hidden rounded-md"
             >
               <Image
-                src={photo ?? '/images/farm-placeholder.jpg'}
+                src={photo ?? "/images/farm-placeholder.jpg"}
                 alt={`${farm.name} - Photo ${index + 2}`}
                 fill
                 className="object-cover transition-transform hover:scale-110"
@@ -231,7 +247,11 @@ interface FarmLogoAvatarProps {
   className?: string;
 }
 
-export function FarmLogoAvatar({ farm, size = "md", className = "" }: FarmLogoAvatarProps) {
+export function FarmLogoAvatar({
+  farm,
+  size = "md",
+  className = "",
+}: FarmLogoAvatarProps) {
   const sizeClasses = {
     sm: "h-8 w-8",
     md: "h-12 w-12",
@@ -255,7 +275,9 @@ export function FarmLogoAvatar({ farm, size = "md", className = "" }: FarmLogoAv
   }
 
   return (
-    <div className={`relative overflow-hidden rounded-full ${sizeClasses[size]} ${className}`}>
+    <div
+      className={`relative overflow-hidden rounded-full ${sizeClasses[size]} ${className}`}
+    >
       <Image
         src={farm.logoUrl}
         alt={`${farm.name} logo`}

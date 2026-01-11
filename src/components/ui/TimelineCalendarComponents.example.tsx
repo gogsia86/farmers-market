@@ -196,7 +196,10 @@ const mockHarvestPlans: HarvestPlan[] = [
     notes: "Silver Queen variety",
     stage: "planting",
     season: "SUMMER",
-    weatherConsiderations: ["Requires consistent moisture", "Watch for earworm"],
+    weatherConsiderations: [
+      "Requires consistent moisture",
+      "Watch for earworm",
+    ],
   },
   {
     id: "4",
@@ -231,7 +234,9 @@ const mockHarvestPlans: HarvestPlan[] = [
 // ============================================================================
 
 export function Example1_QuantumTimeline() {
-  const [selectedEvent, setSelectedEvent] = useState<TimelineEvent | null>(null);
+  const [selectedEvent, setSelectedEvent] = useState<TimelineEvent | null>(
+    null,
+  );
 
   return (
     <div className="space-y-6 p-6">
@@ -404,8 +409,7 @@ export function Example3_DateRangeSelector() {
         </div>
         {(range1.start || range1.end) && (
           <div className="mt-2 text-sm text-gray-600">
-            Selected:{" "}
-            {range1.start?.toLocaleDateString() || "Not set"} -{" "}
+            Selected: {range1.start?.toLocaleDateString() || "Not set"} -{" "}
             {range1.end?.toLocaleDateString() || "Not set"}
           </div>
         )}
@@ -473,7 +477,9 @@ export function Example4_EventScheduler() {
 
   const handleEventUpdate = (id: string, updates: Partial<ScheduledEvent>) => {
     setEvents(
-      events.map((event: any) => (event.id === id ? { ...event, ...updates } : event))
+      events.map((event: any) =>
+        event.id === id ? { ...event, ...updates } : event,
+      ),
     );
   };
 
@@ -525,7 +531,9 @@ export function Example5_HarvestPlanner() {
 
   const handlePlanUpdate = (id: string, updates: Partial<HarvestPlan>) => {
     setPlans(
-      plans.map((plan: any) => (plan.id === id ? { ...plan, ...updates } : plan))
+      plans.map((plan: any) =>
+        plan.id === id ? { ...plan, ...updates } : plan,
+      ),
     );
   };
 
@@ -566,7 +574,7 @@ export function Example5_HarvestPlanner() {
 
 export function Example6_CombinedUsage() {
   const [selectedView, setSelectedView] = useState<"timeline" | "calendar">(
-    "timeline"
+    "timeline",
   );
   const [dateRange, setDateRange] = useState<DateRange>({
     start: null,
@@ -613,20 +621,22 @@ export function Example6_CombinedUsage() {
           <button
             type="button"
             onClick={() => setSelectedView("timeline")}
-            className={`rounded-lg px-4 py-2 text-sm font-medium ${selectedView === "timeline"
+            className={`rounded-lg px-4 py-2 text-sm font-medium ${
+              selectedView === "timeline"
                 ? "bg-green-600 text-white"
                 : "bg-gray-100 text-gray-700"
-              }`}
+            }`}
           >
             Timeline View
           </button>
           <button
             type="button"
             onClick={() => setSelectedView("calendar")}
-            className={`rounded-lg px-4 py-2 text-sm font-medium ${selectedView === "calendar"
+            className={`rounded-lg px-4 py-2 text-sm font-medium ${
+              selectedView === "calendar"
                 ? "bg-green-600 text-white"
                 : "bg-gray-100 text-gray-700"
-              }`}
+            }`}
           >
             Calendar View
           </button>
@@ -778,10 +788,11 @@ export default function TimelineCalendarExamples() {
               <button
                 key={example.id}
                 onClick={() => setActiveExample(example.id)}
-                className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${activeExample === example.id
+                className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                  activeExample === example.id
                     ? "bg-green-600 text-white"
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                  }`}
+                }`}
               >
                 {example.name}
               </button>

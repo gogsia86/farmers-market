@@ -32,13 +32,13 @@ import {
   validationErrorResponse,
 } from "@/lib/api/response-handlers";
 import { auth } from "@/lib/auth";
-import { CacheKeys, CacheTTL, multiLayerCache } from "@/lib/cache/multi-layer.cache";
-import { createLogger } from "@/lib/monitoring/logger";
 import {
-  API_RATE_LIMIT,
-  checkRateLimit,
-  getClientIp,
-} from "@/lib/rate-limit";
+  CacheKeys,
+  CacheTTL,
+  multiLayerCache,
+} from "@/lib/cache/multi-layer.cache";
+import { createLogger } from "@/lib/monitoring/logger";
+import { API_RATE_LIMIT, checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { farmService } from "@/lib/services/farm.service";
 import {
   CreateFarmSchema,
@@ -91,7 +91,7 @@ export async function GET(request: NextRequest) {
 
       // Rate limit response includes Retry-After header automatically
       const response = await import("@/lib/api/response-handlers").then((m) =>
-        m.rateLimitResponse(rateLimit.resetTime, ctx)
+        m.rateLimitResponse(rateLimit.resetTime, ctx),
       );
       return response;
     }
@@ -126,7 +126,7 @@ export async function GET(request: NextRequest) {
     // Build cache key from query parameters
     const cacheKey = CacheKeys.farmsList(
       Number(query.page),
-      JSON.stringify(query)
+      JSON.stringify(query),
     );
 
     // Try to get from cache first
@@ -152,7 +152,7 @@ export async function GET(request: NextRequest) {
           pageSize: cached.pageSize,
           totalItems: cached.total,
         },
-        ctx
+        ctx,
       );
     }
 
@@ -187,7 +187,7 @@ export async function GET(request: NextRequest) {
         pageSize: result.pageSize,
         totalItems: result.total,
       },
-      ctx
+      ctx,
     );
   } catch (error) {
     logger.error("Failed to get farms", {
@@ -234,7 +234,7 @@ export async function POST(request: NextRequest) {
       });
 
       const response = await import("@/lib/api/response-handlers").then((m) =>
-        m.rateLimitResponse(rateLimit.resetTime, ctx)
+        m.rateLimitResponse(rateLimit.resetTime, ctx),
       );
       return response;
     }
@@ -249,7 +249,11 @@ export async function POST(request: NextRequest) {
     const user = session.user as any;
 
     // Check authorization (only farmers and admins can create farms)
-    if (user.role !== "FARMER" && user.role !== "ADMIN" && user.role !== "SUPER_ADMIN") {
+    if (
+      user.role !== "FARMER" &&
+      user.role !== "ADMIN" &&
+      user.role !== "SUPER_ADMIN"
+    ) {
       logger.warn("Unauthorized farm creation attempt", {
         ...ctx,
         userId: user.id,
@@ -257,7 +261,7 @@ export async function POST(request: NextRequest) {
       });
       return forbiddenResponse(
         "Only farmers and administrators can create farms",
-        ctx
+        ctx,
       );
     }
 

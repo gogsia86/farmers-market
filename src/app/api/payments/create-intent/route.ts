@@ -5,7 +5,7 @@ import { checkoutService } from "@/lib/services/checkout.service";
 import { stripeService } from "@/lib/services/stripe.service";
 import { NextRequest, NextResponse } from "next/server";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 // ============================================================================
 // TYPES
@@ -45,10 +45,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           success: false,
           error: {
             code: "MISSING_REQUIRED_FIELDS",
-            message: "Missing required fields: checkoutSessionId, userId, customerEmail",
+            message:
+              "Missing required fields: checkoutSessionId, userId, customerEmail",
           },
         } as ApiResponse,
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -64,7 +65,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
             message: "Checkout session not found or expired",
           },
         } as ApiResponse,
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -78,7 +79,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
             message: "Checkout session does not belong to user",
           },
         } as ApiResponse,
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -95,7 +96,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
             message: "Total amount must be greater than 0",
           },
         } as ApiResponse,
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -139,7 +140,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           },
         },
       } as ApiResponse,
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     logger.error("Create payment intent error:", {
@@ -157,7 +158,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
               : "Failed to create payment intent",
         },
       } as ApiResponse,
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -176,6 +177,6 @@ export async function OPTIONS(request: NextRequest): Promise<NextResponse> {
         "Access-Control-Allow-Methods": "POST, OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type, Authorization",
       },
-    }
+    },
   );
 }

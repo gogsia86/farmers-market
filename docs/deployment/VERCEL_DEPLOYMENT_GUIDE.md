@@ -129,6 +129,7 @@ Set environment variables for different environments:
 ### Method 1: Automatic Deployment (Recommended)
 
 1. **Connect GitHub Repository**
+
    ```bash
    # Visit: https://vercel.com/new
    # Select your GitHub repository
@@ -191,17 +192,20 @@ git push origin feature-branch
 ### Issue 1: Build Fails - "DATABASE_URL not found"
 
 **Symptom:**
+
 ```
 Error: Environment variable not found: DATABASE_URL
 ```
 
 **Solution:**
+
 1. Add `DATABASE_URL` in Vercel Dashboard → Settings → Environment Variables
 2. Ensure it's set for "Production" environment
 3. Redeploy: `vercel --prod` or push to main branch
 
 **Alternative Fix:**
 The build script automatically handles missing DATABASE_URL with a placeholder. If you still see this error, check:
+
 ```bash
 # In vercel.json, ensure:
 {
@@ -216,12 +220,14 @@ The build script automatically handles missing DATABASE_URL with a placeholder. 
 ### Issue 2: Build Fails - "Turbopack not supported"
 
 **Symptom:**
+
 ```
 Error: `turbo.createProject` is not supported by the wasm bindings
 ```
 
 **Solution:**
 ✅ Already fixed in `next.config.mjs`:
+
 ```javascript
 experimental: {
   turbo: false,  // Disabled for Vercel
@@ -229,6 +235,7 @@ experimental: {
 ```
 
 If still occurring:
+
 1. Clear build cache: Vercel Dashboard → Deployments → Three dots → Clear Cache
 2. Redeploy
 
@@ -237,11 +244,13 @@ If still occurring:
 ### Issue 3: Build Fails - "Out of Memory"
 
 **Symptom:**
+
 ```
 FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory
 ```
 
 **Solution:**
+
 1. Optimize bundle size (already configured in `webpack.config.mjs`)
 2. Add build override in `vercel.json`:
    ```json
@@ -259,12 +268,14 @@ FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memor
 ### Issue 4: Runtime Error - "Prisma Client not generated"
 
 **Symptom:**
+
 ```
 Error: @prisma/client did not initialize yet
 ```
 
 **Solution:**
 ✅ Already fixed in build command:
+
 ```json
 {
   "buildCommand": "prisma generate && next build"
@@ -272,6 +283,7 @@ Error: @prisma/client did not initialize yet
 ```
 
 If still occurring:
+
 1. Check `package.json` postinstall script:
    ```json
    {
@@ -286,18 +298,22 @@ If still occurring:
 ### Issue 5: NextAuth Session Issues
 
 **Symptom:**
+
 - Users can't log in
 - Session expires immediately
 - "Invalid credentials" on valid login
 
 **Solution:**
+
 1. Verify `NEXTAUTH_SECRET` is at least 32 characters:
+
    ```bash
    # Generate a secure secret:
    openssl rand -base64 32
    ```
 
 2. Verify `NEXTAUTH_URL` matches your domain:
+
    ```bash
    # For production
    NEXTAUTH_URL="https://your-domain.vercel.app"
@@ -313,11 +329,13 @@ If still occurring:
 ### Issue 6: API Routes Return 500 Error
 
 **Symptom:**
+
 ```
 Internal Server Error
 ```
 
 **Solution:**
+
 1. Check Vercel Function Logs:
    - Dashboard → Deployments → Click deployment → Functions tab
    - Look for detailed error messages
@@ -338,17 +356,20 @@ Internal Server Error
 ### Issue 7: Images Not Loading
 
 **Symptom:**
+
 - Product images show broken
 - Upload fails
 
 **Solution:**
+
 1. Configure image domains in `next.config.mjs`:
+
    ```javascript
    images: {
      remotePatterns: [
-       { protocol: 'https', hostname: '*.cloudinary.com' },
-       { protocol: 'https', hostname: '*.vercel-storage.com' },
-     ]
+       { protocol: "https", hostname: "*.cloudinary.com" },
+       { protocol: "https", hostname: "*.vercel-storage.com" },
+     ];
    }
    ```
 
@@ -361,16 +382,20 @@ Internal Server Error
 ### Issue 8: Stripe Webhooks Not Working
 
 **Symptom:**
+
 - Orders stuck in pending
 - Payments not confirming
 
 **Solution:**
+
 1. Update webhook endpoint in Stripe Dashboard:
+
    ```
    https://your-domain.vercel.app/api/webhooks/stripe
    ```
 
 2. Copy webhook signing secret to environment variables:
+
    ```bash
    STRIPE_WEBHOOK_SECRET="whsec_..."
    ```
@@ -385,17 +410,21 @@ Internal Server Error
 ### Issue 9: Slow Cold Starts
 
 **Symptom:**
+
 - First request takes 10+ seconds
 - API routes timeout
 
 **Solution:**
+
 1. Enable Edge Runtime for API routes (where possible):
+
    ```typescript
    // app/api/your-route/route.ts
-   export const runtime = 'edge';
+   export const runtime = "edge";
    ```
 
 2. Implement caching:
+
    ```typescript
    export const revalidate = 60; // Cache for 60 seconds
    ```
@@ -407,12 +436,15 @@ Internal Server Error
 ### Issue 10: Database Connection Limit Exceeded
 
 **Symptom:**
+
 ```
 Error: Too many database connections
 ```
 
 **Solution:**
+
 1. Use connection pooling (already configured):
+
    ```typescript
    // lib/database/index.ts
    export const database = new PrismaClient({
@@ -435,29 +467,34 @@ Error: Too many database connections
 After successful deployment, verify:
 
 ### 1. Homepage Loads
+
 ```bash
 curl -I https://your-domain.vercel.app
 # Should return 200 OK
 ```
 
 ### 2. API Health Check
+
 ```bash
 curl https://your-domain.vercel.app/api/health
 # Should return: {"status":"ok"}
 ```
 
 ### 3. Database Connection
+
 ```bash
 curl https://your-domain.vercel.app/api/health/db
 # Should return: {"database":"connected"}
 ```
 
 ### 4. Authentication
+
 - Navigate to `/login`
 - Test login with valid credentials
 - Verify session persists after refresh
 
 ### 5. Core Features
+
 - [ ] Browse products
 - [ ] Add to cart
 - [ ] Complete checkout (test mode)
@@ -465,6 +502,7 @@ curl https://your-domain.vercel.app/api/health/db
 - [ ] Create new farm
 
 ### 6. Monitoring
+
 - Check Vercel Analytics Dashboard
 - Verify Sentry error tracking
 - Monitor function execution times
@@ -534,6 +572,7 @@ vercel promote <deployment-url> --prod
 ### Bundle Optimization
 
 Already configured in `webpack.config.mjs`:
+
 - ✅ Code splitting by route
 - ✅ Vendor chunk separation
 - ✅ Tree shaking enabled
@@ -549,7 +588,7 @@ export const revalidate = 3600;
 export const revalidate = 300;
 
 // API routes - No cache
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 ```
 
 ---
@@ -574,16 +613,19 @@ Before going to production:
 ## 📞 Support & Resources
 
 ### Vercel Resources
+
 - [Vercel Documentation](https://vercel.com/docs)
 - [Next.js 15 Guide](https://nextjs.org/docs)
 - [Vercel Community](https://github.com/vercel/vercel/discussions)
 
 ### Project-Specific
+
 - Check `DEPLOYMENT_CHECKLIST.md` for pre-deployment tasks
 - Review `QUICK_START_GUIDE.md` for local setup
 - See `README.md` for architecture overview
 
 ### Getting Help
+
 1. Check Vercel Function Logs first
 2. Review Sentry error tracking
 3. Search GitHub issues
@@ -595,14 +637,14 @@ Before going to production:
 
 Monitor these after deployment:
 
-| Metric | Target | Critical |
-|--------|--------|----------|
-| Build Time | < 5 minutes | < 10 minutes |
-| Cold Start | < 2 seconds | < 5 seconds |
-| Page Load | < 3 seconds | < 5 seconds |
-| API Response | < 500ms | < 2 seconds |
-| Error Rate | < 0.1% | < 1% |
-| Uptime | > 99.9% | > 99% |
+| Metric       | Target      | Critical     |
+| ------------ | ----------- | ------------ |
+| Build Time   | < 5 minutes | < 10 minutes |
+| Cold Start   | < 2 seconds | < 5 seconds  |
+| Page Load    | < 3 seconds | < 5 seconds  |
+| API Response | < 500ms     | < 2 seconds  |
+| Error Rate   | < 0.1%      | < 1%         |
+| Uptime       | > 99.9%     | > 99%        |
 
 ---
 
@@ -665,6 +707,7 @@ Before marking deployment as complete:
 Your Farmers Market Platform is now live on Vercel!
 
 Monitor the first 24 hours closely and check:
+
 - Error rates in Sentry
 - Function execution times in Vercel
 - User feedback for any issues

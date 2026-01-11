@@ -30,60 +30,60 @@ All errors follow this structure:
 
 ## Error Codes by Category
 
-### Authentication & Authorization (AUTH_*)
+### Authentication & Authorization (AUTH\_\*)
 
-| Code | HTTP Status | Description | Solution |
-|------|-------------|-------------|----------|
-| `AUTHENTICATION_REQUIRED` | 401 | User must be authenticated | Sign in and include JWT token |
-| `INVALID_TOKEN` | 401 | JWT token is invalid or malformed | Obtain a new token |
-| `TOKEN_EXPIRED` | 401 | JWT token has expired | Refresh your token |
-| `INSUFFICIENT_PERMISSIONS` | 403 | User lacks required permissions | Contact admin for permissions |
-| `FORBIDDEN_RESOURCE` | 403 | Access to resource denied | Verify ownership or permissions |
+| Code                       | HTTP Status | Description                       | Solution                        |
+| -------------------------- | ----------- | --------------------------------- | ------------------------------- |
+| `AUTHENTICATION_REQUIRED`  | 401         | User must be authenticated        | Sign in and include JWT token   |
+| `INVALID_TOKEN`            | 401         | JWT token is invalid or malformed | Obtain a new token              |
+| `TOKEN_EXPIRED`            | 401         | JWT token has expired             | Refresh your token              |
+| `INSUFFICIENT_PERMISSIONS` | 403         | User lacks required permissions   | Contact admin for permissions   |
+| `FORBIDDEN_RESOURCE`       | 403         | Access to resource denied         | Verify ownership or permissions |
 
-### Validation (VALIDATION_*)
+### Validation (VALIDATION\_\*)
 
-| Code | HTTP Status | Description | Solution |
-|------|-------------|-------------|----------|
-| `VALIDATION_ERROR` | 400 | Input validation failed | Check `details` for field errors |
-| `INVALID_INPUT` | 400 | Invalid input data | Verify request format |
-| `MISSING_REQUIRED_FIELD` | 400 | Required field missing | Include all required fields |
-| `INVALID_EMAIL_FORMAT` | 400 | Email format invalid | Use valid email format |
-| `INVALID_DATE_FORMAT` | 400 | Date format invalid | Use ISO 8601 format |
+| Code                     | HTTP Status | Description             | Solution                         |
+| ------------------------ | ----------- | ----------------------- | -------------------------------- |
+| `VALIDATION_ERROR`       | 400         | Input validation failed | Check `details` for field errors |
+| `INVALID_INPUT`          | 400         | Invalid input data      | Verify request format            |
+| `MISSING_REQUIRED_FIELD` | 400         | Required field missing  | Include all required fields      |
+| `INVALID_EMAIL_FORMAT`   | 400         | Email format invalid    | Use valid email format           |
+| `INVALID_DATE_FORMAT`    | 400         | Date format invalid     | Use ISO 8601 format              |
 
-### Resources (RESOURCE_*)
+### Resources (RESOURCE\_\*)
 
-| Code | HTTP Status | Description | Solution |
-|------|-------------|-------------|----------|
-| `RESOURCE_NOT_FOUND` | 404 | Resource doesn't exist | Verify resource ID |
-| `DUPLICATE_RESOURCE` | 409 | Resource already exists | Use unique identifier |
-| `RESOURCE_CONFLICT` | 409 | Resource state conflict | Resolve conflict first |
-| `RESOURCE_LOCKED` | 423 | Resource is locked | Wait or request unlock |
+| Code                 | HTTP Status | Description             | Solution               |
+| -------------------- | ----------- | ----------------------- | ---------------------- |
+| `RESOURCE_NOT_FOUND` | 404         | Resource doesn't exist  | Verify resource ID     |
+| `DUPLICATE_RESOURCE` | 409         | Resource already exists | Use unique identifier  |
+| `RESOURCE_CONFLICT`  | 409         | Resource state conflict | Resolve conflict first |
+| `RESOURCE_LOCKED`    | 423         | Resource is locked      | Wait or request unlock |
 
-### Business Logic (BUSINESS_*)
+### Business Logic (BUSINESS\_\*)
 
-| Code | HTTP Status | Description | Solution |
-|------|-------------|-------------|----------|
-| `INSUFFICIENT_STOCK` | 422 | Product out of stock | Reduce quantity or wait |
-| `FARM_ALREADY_EXISTS` | 409 | User already has a farm | Delete existing farm first |
-| `INVALID_ORDER_STATUS` | 422 | Invalid status transition | Check order lifecycle |
-| `PAYMENT_FAILED` | 402 | Payment processing failed | Verify payment method |
-| `DELIVERY_UNAVAILABLE` | 422 | Delivery not available | Check delivery area |
+| Code                   | HTTP Status | Description               | Solution                   |
+| ---------------------- | ----------- | ------------------------- | -------------------------- |
+| `INSUFFICIENT_STOCK`   | 422         | Product out of stock      | Reduce quantity or wait    |
+| `FARM_ALREADY_EXISTS`  | 409         | User already has a farm   | Delete existing farm first |
+| `INVALID_ORDER_STATUS` | 422         | Invalid status transition | Check order lifecycle      |
+| `PAYMENT_FAILED`       | 402         | Payment processing failed | Verify payment method      |
+| `DELIVERY_UNAVAILABLE` | 422         | Delivery not available    | Check delivery area        |
 
-### Rate Limiting (RATE_*)
+### Rate Limiting (RATE\_\*)
 
-| Code | HTTP Status | Description | Solution |
-|------|-------------|-------------|----------|
-| `RATE_LIMIT_EXCEEDED` | 429 | Too many requests | Wait for reset time |
-| `QUOTA_EXCEEDED` | 429 | API quota exceeded | Upgrade plan or wait |
+| Code                  | HTTP Status | Description        | Solution             |
+| --------------------- | ----------- | ------------------ | -------------------- |
+| `RATE_LIMIT_EXCEEDED` | 429         | Too many requests  | Wait for reset time  |
+| `QUOTA_EXCEEDED`      | 429         | API quota exceeded | Upgrade plan or wait |
 
-### Server Errors (SERVER_*)
+### Server Errors (SERVER\_\*)
 
-| Code | HTTP Status | Description | Solution |
-|------|-------------|-------------|----------|
-| `INTERNAL_ERROR` | 500 | Unexpected server error | Retry or contact support |
-| `DATABASE_ERROR` | 500 | Database error | Retry or contact support |
-| `EXTERNAL_SERVICE_ERROR` | 503 | Third-party service error | Retry later |
-| `SERVICE_UNAVAILABLE` | 503 | Service maintenance | Wait for maintenance completion |
+| Code                     | HTTP Status | Description               | Solution                        |
+| ------------------------ | ----------- | ------------------------- | ------------------------------- |
+| `INTERNAL_ERROR`         | 500         | Unexpected server error   | Retry or contact support        |
+| `DATABASE_ERROR`         | 500         | Database error            | Retry or contact support        |
+| `EXTERNAL_SERVICE_ERROR` | 503         | Third-party service error | Retry later                     |
+| `SERVICE_UNAVAILABLE`    | 503         | Service maintenance       | Wait for maintenance completion |
 
 ---
 
@@ -92,6 +92,7 @@ All errors follow this structure:
 ### 1. Invalid Authentication Token
 
 **Error:**
+
 ```json
 {
   "success": false,
@@ -103,6 +104,7 @@ All errors follow this structure:
 ```
 
 **Solution:**
+
 - Verify token is not expired
 - Check token format is correct
 - Obtain a new token via `/api/auth/signin`
@@ -112,6 +114,7 @@ All errors follow this structure:
 ### 2. Validation Error
 
 **Error:**
+
 ```json
 {
   "success": false,
@@ -128,6 +131,7 @@ All errors follow this structure:
 ```
 
 **Solution:**
+
 - Check each field in `details`
 - Fix validation issues
 - Resubmit request
@@ -137,6 +141,7 @@ All errors follow this structure:
 ### 3. Resource Not Found
 
 **Error:**
+
 ```json
 {
   "success": false,
@@ -151,6 +156,7 @@ All errors follow this structure:
 ```
 
 **Solution:**
+
 - Verify the resource ID
 - Ensure resource exists
 - Check if resource was deleted
@@ -160,6 +166,7 @@ All errors follow this structure:
 ### 4. Rate Limit Exceeded
 
 **Error:**
+
 ```json
 {
   "success": false,
@@ -176,6 +183,7 @@ All errors follow this structure:
 ```
 
 **Solution:**
+
 - Wait for `retryAfter` seconds
 - Implement exponential backoff
 - Consider upgrading API plan
@@ -187,7 +195,7 @@ All errors follow this structure:
 ### 1. Always Check Success Flag
 
 ```typescript
-const response = await fetch('/api/farms');
+const response = await fetch("/api/farms");
 const result = await response.json();
 
 if (!result.success) {
@@ -202,21 +210,21 @@ if (!result.success) {
 ```typescript
 if (!result.success) {
   switch (result.error.code) {
-    case 'AUTHENTICATION_REQUIRED':
+    case "AUTHENTICATION_REQUIRED":
       // Redirect to login
-      router.push('/login');
+      router.push("/login");
       break;
-    
-    case 'VALIDATION_ERROR':
+
+    case "VALIDATION_ERROR":
       // Show field errors
       showFieldErrors(result.error.details);
       break;
-    
-    case 'RATE_LIMIT_EXCEEDED':
+
+    case "RATE_LIMIT_EXCEEDED":
       // Retry after delay
       setTimeout(() => retry(), result.error.details.retryAfter * 1000);
       break;
-    
+
     default:
       // Generic error handling
       showErrorMessage(result.error.message);
@@ -228,11 +236,11 @@ if (!result.success) {
 
 ```typescript
 if (!result.success) {
-  logger.error('API Error', {
+  logger.error("API Error", {
     code: result.error.code,
     message: result.error.message,
     requestId: result.meta.requestId,
-    timestamp: result.meta.timestamp
+    timestamp: result.meta.timestamp,
   });
 }
 ```
@@ -241,17 +249,17 @@ if (!result.success) {
 
 ## HTTP Status Code Mapping
 
-| Status Code | Meaning | Common Error Codes |
-|-------------|---------|-------------------|
-| **400** | Bad Request | `VALIDATION_ERROR`, `INVALID_INPUT` |
-| **401** | Unauthorized | `AUTHENTICATION_REQUIRED`, `INVALID_TOKEN` |
-| **403** | Forbidden | `INSUFFICIENT_PERMISSIONS`, `FORBIDDEN_RESOURCE` |
-| **404** | Not Found | `RESOURCE_NOT_FOUND` |
-| **409** | Conflict | `DUPLICATE_RESOURCE`, `RESOURCE_CONFLICT` |
-| **422** | Unprocessable | `BUSINESS_LOGIC_ERROR`, `INSUFFICIENT_STOCK` |
-| **429** | Too Many Requests | `RATE_LIMIT_EXCEEDED`, `QUOTA_EXCEEDED` |
-| **500** | Server Error | `INTERNAL_ERROR`, `DATABASE_ERROR` |
-| **503** | Service Unavailable | `SERVICE_UNAVAILABLE`, `EXTERNAL_SERVICE_ERROR` |
+| Status Code | Meaning             | Common Error Codes                               |
+| ----------- | ------------------- | ------------------------------------------------ |
+| **400**     | Bad Request         | `VALIDATION_ERROR`, `INVALID_INPUT`              |
+| **401**     | Unauthorized        | `AUTHENTICATION_REQUIRED`, `INVALID_TOKEN`       |
+| **403**     | Forbidden           | `INSUFFICIENT_PERMISSIONS`, `FORBIDDEN_RESOURCE` |
+| **404**     | Not Found           | `RESOURCE_NOT_FOUND`                             |
+| **409**     | Conflict            | `DUPLICATE_RESOURCE`, `RESOURCE_CONFLICT`        |
+| **422**     | Unprocessable       | `BUSINESS_LOGIC_ERROR`, `INSUFFICIENT_STOCK`     |
+| **429**     | Too Many Requests   | `RATE_LIMIT_EXCEEDED`, `QUOTA_EXCEEDED`          |
+| **500**     | Server Error        | `INTERNAL_ERROR`, `DATABASE_ERROR`               |
+| **503**     | Service Unavailable | `SERVICE_UNAVAILABLE`, `EXTERNAL_SERVICE_ERROR`  |
 
 ---
 

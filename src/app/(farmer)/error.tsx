@@ -19,7 +19,8 @@ interface ErrorProps {
 
 export default function FarmerError({ error, reset }: ErrorProps) {
   useEffect(() => {
-    logger.error("Farmer route error", { error: error.message,
+    logger.error("Farmer route error", {
+      error: error.message,
       digest: error.digest,
       stack: error.stack,
       context: "farmer-routes",
@@ -126,7 +127,8 @@ export default function FarmerError({ error, reset }: ErrorProps) {
             {error.digest && (
               <>
                 {" • "}
-                Error ID: <code className="bg-muted px-1 rounded">{error.digest}</code>
+                Error ID:{" "}
+                <code className="bg-muted px-1 rounded">{error.digest}</code>
               </>
             )}
           </p>
@@ -135,7 +137,8 @@ export default function FarmerError({ error, reset }: ErrorProps) {
         {/* Agricultural Consciousness */}
         <div className="mt-4 text-center">
           <p className="text-xs text-muted-foreground/70">
-            🌱 Every harvest faces challenges - we're here to help you through them
+            🌱 Every harvest faces challenges - we're here to help you through
+            them
           </p>
         </div>
       </div>

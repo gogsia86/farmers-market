@@ -9,7 +9,7 @@ import { notificationService } from "@/lib/services/notification.service";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 // ============================================================================
 // Validation Schemas
@@ -44,12 +44,12 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
             message: "Authentication required",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
     const preferences = await notificationService.getUserPreferences(
-      session.user.id
+      session.user.id,
     );
 
     return NextResponse.json({
@@ -71,7 +71,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
               : "Failed to fetch notification preferences",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -93,7 +93,7 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
             message: "Authentication required",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -110,17 +110,17 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
             details: validation.error.flatten(),
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     await notificationService.updateUserPreferences(
       session.user.id,
-      validation.data
+      validation.data,
     );
 
     const updatedPreferences = await notificationService.getUserPreferences(
-      session.user.id
+      session.user.id,
     );
 
     return NextResponse.json({
@@ -142,7 +142,7 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
               : "Failed to update notification preferences",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

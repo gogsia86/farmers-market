@@ -127,7 +127,9 @@ export function getPerformanceStats(windowMs: number = 60000) {
   const recentDbQueries = metrics.database.filter(
     (m) => m.timestamp > windowStart,
   );
-  const recentMemory = metrics.memory.filter((m: any) => m.timestamp > windowStart);
+  const recentMemory = metrics.memory.filter(
+    (m: any) => m.timestamp > windowStart,
+  );
 
   // Calculate request stats
   const requestStats = {

@@ -63,12 +63,8 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/health",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "health"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["health"]
             },
             "description": "Check API health status and database connectivity"
           },
@@ -81,12 +77,8 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/version",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "version"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["version"]
             },
             "description": "Get API version information"
           },
@@ -129,13 +121,8 @@
             },
             "url": {
               "raw": "{{base_url}}/auth/register",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "auth",
-                "register"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register"]
             },
             "description": "Register a new user account"
           },
@@ -176,13 +163,8 @@
             },
             "url": {
               "raw": "{{base_url}}/auth/login",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "auth",
-                "login"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
             },
             "description": "Login with email and password"
           },
@@ -195,13 +177,8 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/auth/me",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "auth",
-                "me"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["auth", "me"]
             },
             "description": "Get current authenticated user information"
           },
@@ -230,13 +207,8 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/auth/refresh",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "auth",
-                "refresh"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["auth", "refresh"]
             },
             "description": "Refresh authentication token"
           },
@@ -249,13 +221,8 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/auth/logout",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "auth",
-                "logout"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["auth", "logout"]
             },
             "description": "Logout current user"
           },
@@ -273,12 +240,8 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/farms?page=1&limit=20&status=ACTIVE",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "farms"
-              ],
+              "host": ["{{base_url}}"],
+              "path": ["farms"],
               "query": [
                 {
                   "key": "page",
@@ -345,12 +308,8 @@
             },
             "url": {
               "raw": "{{base_url}}/farms",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "farms"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["farms"]
             },
             "description": "Create a new farm (requires FARMER role)"
           },
@@ -363,13 +322,8 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/farms/{{farm_id}}",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "farms",
-                "{{farm_id}}"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["farms", "{{farm_id}}"]
             },
             "description": "Get detailed information about a specific farm"
           },
@@ -391,13 +345,8 @@
             },
             "url": {
               "raw": "{{base_url}}/farms/{{farm_id}}",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "farms",
-                "{{farm_id}}"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["farms", "{{farm_id}}"]
             },
             "description": "Update farm information (requires ownership)"
           },
@@ -410,13 +359,8 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/farms/{{farm_id}}",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "farms",
-                "{{farm_id}}"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["farms", "{{farm_id}}"]
             },
             "description": "Delete a farm (requires ownership or admin role)"
           },
@@ -429,13 +373,8 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/farms/search?q=organic&state=CA&certifications=ORGANIC&limit=10",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "farms",
-                "search"
-              ],
+              "host": ["{{base_url}}"],
+              "path": ["farms", "search"],
               "query": [
                 {
                   "key": "q",
@@ -471,12 +410,8 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/products?page=1&limit=20&inStock=true",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "products"
-              ],
+              "host": ["{{base_url}}"],
+              "path": ["products"],
               "query": [
                 {
                   "key": "page",
@@ -538,12 +473,8 @@
             },
             "url": {
               "raw": "{{base_url}}/products",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "products"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["products"]
             },
             "description": "Create a new product (requires farm ownership)"
           },
@@ -556,13 +487,8 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/products/{{product_id}}",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "products",
-                "{{product_id}}"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["products", "{{product_id}}"]
             },
             "description": "Get detailed information about a specific product"
           },
@@ -584,13 +510,8 @@
             },
             "url": {
               "raw": "{{base_url}}/products/{{product_id}}",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "products",
-                "{{product_id}}"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["products", "{{product_id}}"]
             },
             "description": "Update product information (requires ownership)"
           },
@@ -603,13 +524,8 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/products/{{product_id}}",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "products",
-                "{{product_id}}"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["products", "{{product_id}}"]
             },
             "description": "Delete a product (requires ownership)"
           },
@@ -622,14 +538,8 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/farms/{{farm_id}}/products?page=1&limit=20",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "farms",
-                "{{farm_id}}",
-                "products"
-              ],
+              "host": ["{{base_url}}"],
+              "path": ["farms", "{{farm_id}}", "products"],
               "query": [
                 {
                   "key": "page",
@@ -657,12 +567,8 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/cart",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "cart"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["cart"]
             },
             "description": "Get current user's shopping cart"
           },
@@ -684,13 +590,8 @@
             },
             "url": {
               "raw": "{{base_url}}/cart/items",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "cart",
-                "items"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["cart", "items"]
             },
             "description": "Add a product to the shopping cart"
           },
@@ -712,14 +613,8 @@
             },
             "url": {
               "raw": "{{base_url}}/cart/items/{{product_id}}",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "cart",
-                "items",
-                "{{product_id}}"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["cart", "items", "{{product_id}}"]
             },
             "description": "Update quantity of a cart item"
           },
@@ -732,14 +627,8 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/cart/items/{{product_id}}",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "cart",
-                "items",
-                "{{product_id}}"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["cart", "items", "{{product_id}}"]
             },
             "description": "Remove a product from the cart"
           },
@@ -752,12 +641,8 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/cart",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "cart"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["cart"]
             },
             "description": "Clear all items from the cart"
           },
@@ -775,12 +660,8 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/orders?page=1&limit=10&status=PENDING",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "orders"
-              ],
+              "host": ["{{base_url}}"],
+              "path": ["orders"],
               "query": [
                 {
                   "key": "page",
@@ -833,12 +714,8 @@
             },
             "url": {
               "raw": "{{base_url}}/orders",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "orders"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["orders"]
             },
             "description": "Create an order from current cart items"
           },
@@ -851,13 +728,8 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/orders/{{order_id}}",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "orders",
-                "{{order_id}}"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["orders", "{{order_id}}"]
             },
             "description": "Get detailed information about a specific order"
           },
@@ -879,14 +751,8 @@
             },
             "url": {
               "raw": "{{base_url}}/orders/{{order_id}}/cancel",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "orders",
-                "{{order_id}}",
-                "cancel"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["orders", "{{order_id}}", "cancel"]
             },
             "description": "Cancel an order (only if status allows)"
           },
@@ -908,14 +774,8 @@
             },
             "url": {
               "raw": "{{base_url}}/orders/{{order_id}}/status",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "orders",
-                "{{order_id}}",
-                "status"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["orders", "{{order_id}}", "status"]
             },
             "description": "Update order status (requires farm ownership)"
           },
@@ -942,13 +802,8 @@
             },
             "url": {
               "raw": "{{base_url}}/payments/intent",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "payments",
-                "intent"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["payments", "intent"]
             },
             "description": "Create a Stripe payment intent for an order"
           },
@@ -970,13 +825,8 @@
             },
             "url": {
               "raw": "{{base_url}}/payments/confirm",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "payments",
-                "confirm"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["payments", "confirm"]
             },
             "description": "Confirm a payment was successful"
           },
@@ -989,13 +839,8 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/payments/{{order_id}}",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "payments",
-                "{{order_id}}"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["payments", "{{order_id}}"]
             },
             "description": "Get payment status for an order"
           },
@@ -1017,13 +862,8 @@
             },
             "url": {
               "raw": "{{base_url}}/payments/refund",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "payments",
-                "refund"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["payments", "refund"]
             },
             "description": "Issue a refund for an order (admin or farm owner)"
           },
@@ -1049,13 +889,8 @@
             },
             "url": {
               "raw": "{{base_url}}/webhooks/stripe",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "webhooks",
-                "stripe"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["webhooks", "stripe"]
             },
             "description": "Handle Stripe webhook events"
           },
@@ -1082,12 +917,8 @@
             },
             "url": {
               "raw": "{{base_url}}/reviews",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "reviews"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["reviews"]
             },
             "description": "Create a review for a product"
           },
@@ -1100,14 +931,8 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/products/{{product_id}}/reviews?page=1&limit=10",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "products",
-                "{{product_id}}",
-                "reviews"
-              ],
+              "host": ["{{base_url}}"],
+              "path": ["products", "{{product_id}}", "reviews"],
               "query": [
                 {
                   "key": "page",
@@ -1139,13 +964,8 @@
             },
             "url": {
               "raw": "{{base_url}}/reviews/:reviewId",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "reviews",
-                ":reviewId"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["reviews", ":reviewId"]
             },
             "description": "Update a review (requires ownership)"
           },
@@ -1158,13 +978,8 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/reviews/:reviewId",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "reviews",
-                ":reviewId"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["reviews", ":reviewId"]
             },
             "description": "Delete a review (requires ownership or admin)"
           },
@@ -1182,12 +997,8 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/favorites",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "favorites"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["favorites"]
             },
             "description": "Get current user's favorite farms and products"
           },
@@ -1209,12 +1020,8 @@
             },
             "url": {
               "raw": "{{base_url}}/favorites",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "favorites"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["favorites"]
             },
             "description": "Add a farm or product to favorites"
           },
@@ -1227,13 +1034,8 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/favorites/:favoriteId",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "favorites",
-                ":favoriteId"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["favorites", ":favoriteId"]
             },
             "description": "Remove an item from favorites"
           },
@@ -1251,12 +1053,8 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/search?q=organic&type=ALL&limit=20",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "search"
-              ],
+              "host": ["{{base_url}}"],
+              "path": ["search"],
               "query": [
                 {
                   "key": "q",
@@ -1289,13 +1087,8 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/admin/users?page=1&limit=50&role=FARMER",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "admin",
-                "users"
-              ],
+              "host": ["{{base_url}}"],
+              "path": ["admin", "users"],
               "query": [
                 {
                   "key": "page",
@@ -1323,15 +1116,8 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/admin/farms/{{farm_id}}/approve",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "admin",
-                "farms",
-                "{{farm_id}}",
-                "approve"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["admin", "farms", "{{farm_id}}", "approve"]
             },
             "description": "Approve a pending farm (admin only)"
           },
@@ -1353,15 +1139,8 @@
             },
             "url": {
               "raw": "{{base_url}}/admin/users/:userId/suspend",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "admin",
-                "users",
-                ":userId",
-                "suspend"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["admin", "users", ":userId", "suspend"]
             },
             "description": "Suspend a user account (admin only)"
           },
@@ -1374,13 +1153,8 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/admin/stats",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "admin",
-                "stats"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["admin", "stats"]
             },
             "description": "Get platform-wide statistics (admin only)"
           },

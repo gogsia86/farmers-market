@@ -39,7 +39,8 @@ export const HealthChecksModule: any = {
         {
           id: "health-homepage",
           name: "Homepage Load",
-          description: "Verify homepage loads successfully with expected content",
+          description:
+            "Verify homepage loads successfully with expected content",
           category: "CRITICAL",
           timeout: 15000,
           retries: 2,
@@ -49,13 +50,13 @@ export const HealthChecksModule: any = {
             // Navigate to homepage with retry logic
             await page.goto("/", {
               waitUntil: "domcontentloaded",
-              timeout: 10000
+              timeout: 10000,
             });
 
             // Wait for body to be visible
             await page.waitForSelector("body", {
               state: "visible",
-              timeout: 5000
+              timeout: 5000,
             });
 
             const loadTime = Date.now() - startTime;
@@ -70,15 +71,15 @@ export const HealthChecksModule: any = {
             expect(bodyVisible).toBe(true);
 
             // Check for main navigation
-            const hasNav = await page.locator(
-              'nav, [role="navigation"], header nav'
-            ).count();
+            const hasNav = await page
+              .locator('nav, [role="navigation"], header nav')
+              .count();
             expect(hasNav).toBeGreaterThan(0);
 
             // Verify no critical errors
-            const hasError = await page.locator(
-              'text=/500|internal server error|something went wrong/i'
-            ).count();
+            const hasError = await page
+              .locator("text=/500|internal server error|something went wrong/i")
+              .count();
             expect(hasError).toBe(0);
 
             return {
@@ -86,10 +87,10 @@ export const HealthChecksModule: any = {
                 title,
                 loadTime,
                 hasNavigation: hasNav > 0,
-                performance: loadTime < 3000 ? "good" : "needs-improvement"
-              }
+                performance: loadTime < 3000 ? "good" : "needs-improvement",
+              },
             };
-          }
+          },
         },
 
         {
@@ -124,10 +125,10 @@ export const HealthChecksModule: any = {
               data: {
                 status: data.status,
                 responseTime: response.headers()["x-response-time"] || "N/A",
-                connected: isConnected
-              }
+                connected: isConnected,
+              },
             };
-          }
+          },
         },
 
         {
@@ -161,10 +162,10 @@ export const HealthChecksModule: any = {
               data: {
                 available: response.ok(),
                 status: response.status(),
-                providers
-              }
+                providers,
+              },
             };
-          }
+          },
         },
 
         {
@@ -202,12 +203,12 @@ export const HealthChecksModule: any = {
                 status: data.status,
                 timestamp: data.timestamp,
                 uptime: data.uptime,
-                healthy: hasValidStatus
-              }
+                healthy: hasValidStatus,
+              },
             };
-          }
-        }
-      ]
+          },
+        },
+      ],
     },
 
     {
@@ -225,7 +226,7 @@ export const HealthChecksModule: any = {
           async run(page: Page) {
             // Check farms API
             const response = await page.request.get("/api/farms", {
-              params: { page: "1", limit: "10" }
+              params: { page: "1", limit: "10" },
             });
 
             expect(response.status()).toBeLessThan(500);
@@ -233,17 +234,19 @@ export const HealthChecksModule: any = {
             let farmCount = 0;
             if (response.ok()) {
               const data = await response.json();
-              farmCount = Array.isArray(data) ? data.length : data.farms?.length || 0;
+              farmCount = Array.isArray(data)
+                ? data.length
+                : data.farms?.length || 0;
             }
 
             return {
               data: {
                 status: response.status(),
                 available: response.ok(),
-                farmCount
-              }
+                farmCount,
+              },
             };
-          }
+          },
         },
 
         {
@@ -256,7 +259,7 @@ export const HealthChecksModule: any = {
           async run(page: Page) {
             // Check products API
             const response = await page.request.get("/api/products", {
-              params: { page: "1", limit: "10" }
+              params: { page: "1", limit: "10" },
             });
 
             expect(response.status()).toBeLessThan(500);
@@ -264,17 +267,19 @@ export const HealthChecksModule: any = {
             let productCount = 0;
             if (response.ok()) {
               const data = await response.json();
-              productCount = Array.isArray(data) ? data.length : data.products?.length || 0;
+              productCount = Array.isArray(data)
+                ? data.length
+                : data.products?.length || 0;
             }
 
             return {
               data: {
                 status: response.status(),
                 available: response.ok(),
-                productCount
-              }
+                productCount,
+              },
             };
-          }
+          },
         },
 
         {
@@ -292,17 +297,19 @@ export const HealthChecksModule: any = {
             let categoryCount = 0;
             if (response.ok()) {
               const data = await response.json();
-              categoryCount = Array.isArray(data) ? data.length : data.categories?.length || 0;
+              categoryCount = Array.isArray(data)
+                ? data.length
+                : data.categories?.length || 0;
             }
 
             return {
               data: {
                 status: response.status(),
                 available: response.ok(),
-                categoryCount
-              }
+                categoryCount,
+              },
             };
-          }
+          },
         },
 
         {
@@ -314,7 +321,7 @@ export const HealthChecksModule: any = {
           retries: 2,
           async run(page: Page) {
             const response = await page.request.get("/api/search", {
-              params: { q: "tomato", type: "products" }
+              params: { q: "tomato", type: "products" },
             });
 
             expect(response.status()).toBeLessThan(500);
@@ -329,12 +336,12 @@ export const HealthChecksModule: any = {
               data: {
                 status: response.status(),
                 available: response.ok(),
-                resultsCount
-              }
+                resultsCount,
+              },
             };
-          }
-        }
-      ]
+          },
+        },
+      ],
     },
 
     {
@@ -354,7 +361,7 @@ export const HealthChecksModule: any = {
 
             await page.goto("/", {
               waitUntil: "load",
-              timeout: 10000
+              timeout: 10000,
             });
 
             const loadTime = Date.now() - startTime;
@@ -362,11 +369,17 @@ export const HealthChecksModule: any = {
             // Performance thresholds
             const isGood = loadTime < 2000;
             const isAcceptable = loadTime < 5000;
-            const rating = isGood ? "good" : isAcceptable ? "acceptable" : "poor";
+            const rating = isGood
+              ? "good"
+              : isAcceptable
+                ? "acceptable"
+                : "poor";
 
             // Soft assertion - log warning if slow but don't fail
             if (!isAcceptable) {
-              console.warn(`⚠️  Page load time (${loadTime}ms) exceeds acceptable threshold (5000ms)`);
+              console.warn(
+                `⚠️  Page load time (${loadTime}ms) exceeds acceptable threshold (5000ms)`,
+              );
             }
 
             return {
@@ -374,10 +387,10 @@ export const HealthChecksModule: any = {
                 loadTime,
                 rating,
                 isGood,
-                isAcceptable
-              }
+                isAcceptable,
+              },
             };
-          }
+          },
         },
 
         {
@@ -391,16 +404,12 @@ export const HealthChecksModule: any = {
             const measurements: Record<string, number> = {};
 
             // Test multiple endpoints
-            const endpoints = [
-              "/api/health",
-              "/api/farms",
-              "/api/products"
-            ];
+            const endpoints = ["/api/health", "/api/farms", "/api/products"];
 
             for (const endpoint of endpoints) {
               const start = Date.now();
               const response = await page.request.get(endpoint, {
-                params: { limit: "5" }
+                params: { limit: "5" },
               });
               const duration = Date.now() - start;
 
@@ -411,17 +420,23 @@ export const HealthChecksModule: any = {
               Object.values(measurements).reduce((a: any, b: any) => a + b, 0) /
               Object.keys(measurements).length;
 
-            const allFast = Object.values(measurements).every(t => t < 1000);
-            const allAcceptable = Object.values(measurements).every(t => t < 3000);
+            const allFast = Object.values(measurements).every((t) => t < 1000);
+            const allAcceptable = Object.values(measurements).every(
+              (t) => t < 3000,
+            );
 
             return {
               data: {
                 measurements,
                 avgResponseTime,
-                rating: allFast ? "good" : allAcceptable ? "acceptable" : "poor"
-              }
+                rating: allFast
+                  ? "good"
+                  : allAcceptable
+                    ? "acceptable"
+                    : "poor",
+              },
             };
-          }
+          },
         },
 
         {
@@ -441,7 +456,9 @@ export const HealthChecksModule: any = {
             const scriptCount = await page.locator("script[src]").count();
 
             // Count stylesheets
-            const linkCount = await page.locator('link[rel="stylesheet"]').count();
+            const linkCount = await page
+              .locator('link[rel="stylesheet"]')
+              .count();
 
             // Check if main assets loaded
             const hasImages = imageCount > 0;
@@ -453,12 +470,12 @@ export const HealthChecksModule: any = {
                 imageCount,
                 scriptCount,
                 linkCount,
-                assetsLoaded: hasImages || hasScripts || hasStyles
-              }
+                assetsLoaded: hasImages || hasScripts || hasStyles,
+              },
             };
-          }
-        }
-      ]
+          },
+        },
+      ],
     },
 
     {
@@ -484,10 +501,10 @@ export const HealthChecksModule: any = {
               data: {
                 up: isUp,
                 status: response.status(),
-                timestamp: new Date().toISOString()
-              }
+                timestamp: new Date().toISOString(),
+              },
             };
-          }
+          },
         },
 
         {
@@ -503,7 +520,7 @@ export const HealthChecksModule: any = {
               "/products",
               "/marketplace",
               "/login",
-              "/register"
+              "/register",
             ];
 
             const results: Record<string, boolean> = {};
@@ -512,7 +529,7 @@ export const HealthChecksModule: any = {
               try {
                 const response = await page.goto(path, {
                   waitUntil: "domcontentloaded",
-                  timeout: 5000
+                  timeout: 5000,
                 });
                 results[path] = response?.ok() || false;
               } catch {
@@ -520,8 +537,10 @@ export const HealthChecksModule: any = {
               }
             }
 
-            const allAccessible = Object.values(results).every(v => v);
-            const accessibleCount = Object.values(results).filter(v => v).length;
+            const allAccessible = Object.values(results).every((v) => v);
+            const accessibleCount = Object.values(results).filter(
+              (v) => v,
+            ).length;
 
             expect(accessibleCount).toBeGreaterThan(0);
 
@@ -530,14 +549,14 @@ export const HealthChecksModule: any = {
                 results,
                 allAccessible,
                 accessibleCount,
-                totalPaths: criticalPaths.length
-              }
+                totalPaths: criticalPaths.length,
+              },
             };
-          }
-        }
-      ]
-    }
-  ]
+          },
+        },
+      ],
+    },
+  ],
 };
 
 export default HealthChecksModule;

@@ -6,9 +6,15 @@
  * test structure while maintaining compatibility with the existing engine.
  */
 
-import { logger } from '../../monitoring/logger';
-import type { ModuleExecutionContext } from '../core/bot-engine';
-import type { BotModule, BotResult, TestContext, TestModule, TestResult } from '../types';
+import { logger } from "../../monitoring/logger";
+import type { ModuleExecutionContext } from "../core/bot-engine";
+import type {
+  BotModule,
+  BotResult,
+  TestContext,
+  TestModule,
+  TestResult,
+} from "../types";
 
 /**
  * Convert a TestModule (with suites) to a BotModule (with execute function)
@@ -39,14 +45,16 @@ export function adaptTestModule(testModule: TestModule): BotModule {
         const page = await context.browserManager.getPage();
 
         if (!page) {
-          throw new Error('Browser page not available');
+          throw new Error("Browser page not available");
         }
 
         // Set base URL from config - ensure it's set
-        const baseUrl = context.config.baseUrl || 'http://localhost:3001';
+        const baseUrl = context.config.baseUrl || "http://localhost:3001";
 
         // Set base URL on page context for relative navigation
-        page.context().setDefaultNavigationTimeout(context.config.browser.timeout || 60000);
+        page
+          .context()
+          .setDefaultNavigationTimeout(context.config.browser.timeout || 60000);
 
         // Execute each suite
         for (const suite of testModule.suites || []) {
@@ -76,14 +84,18 @@ export function adaptTestModule(testModule: TestModule): BotModule {
               // Monkey-patch page.goto to automatically prepend baseUrl for relative paths
               const originalGoto = page.goto.bind(page);
               page.goto = async (url: string, options?: any) => {
-                const fullUrl = url.startsWith('http') ? url : `${baseUrl}${url}`;
+                const fullUrl = url.startsWith("http")
+                  ? url
+                  : `${baseUrl}${url}`;
                 return originalGoto(fullUrl, options);
               };
 
               // Monkey-patch request.get to automatically prepend baseUrl for relative paths
               const originalGet = page.request.get.bind(page.request);
               page.request.get = async (url: string, options?: any) => {
-                const fullUrl = url.startsWith('http') ? url : `${baseUrl}${url}`;
+                const fullUrl = url.startsWith("http")
+                  ? url
+                  : `${baseUrl}${url}`;
                 return originalGet(fullUrl, options);
               };
 
@@ -96,28 +108,33 @@ export function adaptTestModule(testModule: TestModule): BotModule {
               results.push({
                 testId: test.id,
                 testName: test.name,
-                status: 'PASSED',
+                status: "PASSED",
                 duration: testDuration,
                 timestamp: new Date().toISOString(),
               });
 
-              logger.info(`[${testModule.id}] ✓ ${test.name} (${testDuration}ms)`);
-
+              logger.info(
+                `[${testModule.id}] ✓ ${test.name} (${testDuration}ms)`,
+              );
             } catch (error) {
               const testDuration = Date.now() - testStartTime;
-              const errorMessage = error instanceof Error ? error.message : String(error);
+              const errorMessage =
+                error instanceof Error ? error.message : String(error);
               failedTests++;
 
               results.push({
                 testId: test.id,
                 testName: test.name,
-                status: 'FAILED',
+                status: "FAILED",
                 error: errorMessage,
                 duration: testDuration,
                 timestamp: new Date().toISOString(),
               });
 
-              logger.error(`[${testModule.id}] ✗ ${test.name} (${testDuration}ms)`, error as Error);
+              logger.error(
+                `[${testModule.id}] ✗ ${test.name} (${testDuration}ms)`,
+                error as Error,
+              );
 
               // Stop on failure if configured
               if (suite.stopOnFailure) {
@@ -134,13 +151,14 @@ export function adaptTestModule(testModule: TestModule): BotModule {
         }
 
         const duration = Date.now() - startTime;
-        const successRate = totalTests > 0 ? (passedTests / totalTests) * 100 : 0;
+        const successRate =
+          totalTests > 0 ? (passedTests / totalTests) * 100 : 0;
 
         // Return success result
         return {
           moduleId: testModule.id,
           moduleName: testModule.name,
-          status: failedTests === 0 ? 'success' : 'failed',
+          status: failedTests === 0 ? "success" : "failed",
           timestamp: new Date().toISOString(),
           duration,
           details: {
@@ -152,17 +170,20 @@ export function adaptTestModule(testModule: TestModule): BotModule {
             results,
           },
         };
-
       } catch (error) {
         const duration = Date.now() - startTime;
-        const errorMessage = error instanceof Error ? error.message : String(error);
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
 
-        logger.error(`[${testModule.id}] Module execution failed:`, error as Error);
+        logger.error(
+          `[${testModule.id}] Module execution failed:`,
+          error as Error,
+        );
 
         return {
           moduleId: testModule.id,
           moduleName: testModule.name,
-          status: 'failed',
+          status: "failed",
           error: errorMessage,
           timestamp: new Date().toISOString(),
           duration,
@@ -190,7 +211,7 @@ export function adaptTestModules(testModules: TestModule[]): BotModule[] {
  * Check if a module is already in BotModule format (has execute function)
  */
 export function isBotModule(module: any): module is BotModule {
-  return typeof module?.execute === 'function';
+  return typeof module?.execute === "function";
 }
 
 /**
@@ -212,5 +233,5 @@ export function ensureBotModule(module: TestModule | BotModule): BotModule {
     return adaptTestModule(module);
   }
 
-  throw new Error(`Invalid module format: ${(module as any)?.id || 'unknown'}`);
+  throw new Error(`Invalid module format: ${(module as any)?.id || "unknown"}`);
 }

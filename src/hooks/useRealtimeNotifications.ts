@@ -245,7 +245,9 @@ export function useRealtimeNotifications(
   // Mark notification as read
   const markAsRead = useCallback(async (notificationId: string) => {
     setNotifications((prev) =>
-      prev.map((n: any) => (n.id === notificationId ? { ...n, read: true } : n)),
+      prev.map((n: any) =>
+        n.id === notificationId ? { ...n, read: true } : n,
+      ),
     );
 
     // Sync with server
@@ -280,7 +282,9 @@ export function useRealtimeNotifications(
 
   // Remove notification
   const removeNotification = useCallback(async (notificationId: string) => {
-    setNotifications((prev) => prev.filter((n: any) => n.id !== notificationId));
+    setNotifications((prev) =>
+      prev.filter((n: any) => n.id !== notificationId),
+    );
 
     // Sync with server
     try {

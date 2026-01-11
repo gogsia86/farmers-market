@@ -91,9 +91,7 @@
       "get": {
         "summary": "Health check",
         "description": "Check API health status and database connectivity",
-        "tags": [
-          "Health"
-        ],
+        "tags": ["Health"],
         "responses": {
           "200": {
             "description": "System is healthy",
@@ -148,9 +146,7 @@
       "get": {
         "summary": "List farms",
         "description": "Get paginated list of farms with optional filters",
-        "tags": [
-          "Farms"
-        ],
+        "tags": ["Farms"],
         "parameters": [
           {
             "name": "page",
@@ -176,12 +172,7 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": [
-                "ACTIVE",
-                "PENDING",
-                "SUSPENDED",
-                "ARCHIVED"
-              ]
+              "enum": ["ACTIVE", "PENDING", "SUSPENDED", "ARCHIVED"]
             }
           },
           {
@@ -247,9 +238,7 @@
       "post": {
         "summary": "Create farm",
         "description": "Create a new farm (requires FARMER role)",
-        "tags": [
-          "Farms"
-        ],
+        "tags": ["Farms"],
         "security": [
           {
             "sessionAuth": []
@@ -307,9 +296,7 @@
       "get": {
         "summary": "Get farm by ID",
         "description": "Retrieve detailed information about a specific farm",
-        "tags": [
-          "Farms"
-        ],
+        "tags": ["Farms"],
         "parameters": [
           {
             "name": "id",
@@ -354,9 +341,7 @@
       "put": {
         "summary": "Update farm",
         "description": "Update farm details (requires ownership or ADMIN role)",
-        "tags": [
-          "Farms"
-        ],
+        "tags": ["Farms"],
         "security": [
           {
             "sessionAuth": []
@@ -418,9 +403,7 @@
       "delete": {
         "summary": "Delete farm",
         "description": "Delete a farm (requires ownership or ADMIN role)",
-        "tags": [
-          "Farms"
-        ],
+        "tags": ["Farms"],
         "security": [
           {
             "sessionAuth": []
@@ -456,9 +439,7 @@
       "get": {
         "summary": "List products",
         "description": "Get paginated list of products with filters",
-        "tags": [
-          "Products"
-        ],
+        "tags": ["Products"],
         "parameters": [
           {
             "name": "page",
@@ -518,12 +499,7 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": [
-                "price",
-                "name",
-                "createdAt",
-                "popularity"
-              ],
+              "enum": ["price", "name", "createdAt", "popularity"],
               "default": "createdAt"
             }
           },
@@ -532,10 +508,7 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": [
-                "asc",
-                "desc"
-              ],
+              "enum": ["asc", "desc"],
               "default": "desc"
             }
           }
@@ -575,9 +548,7 @@
       "post": {
         "summary": "Create product",
         "description": "Create a new product (requires FARMER role)",
-        "tags": [
-          "Products"
-        ],
+        "tags": ["Products"],
         "security": [
           {
             "sessionAuth": []
@@ -628,9 +599,7 @@
       "get": {
         "summary": "Get product by ID",
         "description": "Retrieve detailed product information",
-        "tags": [
-          "Products"
-        ],
+        "tags": ["Products"],
         "parameters": [
           {
             "name": "id",
@@ -668,9 +637,7 @@
       "put": {
         "summary": "Update product",
         "description": "Update product details",
-        "tags": [
-          "Products"
-        ],
+        "tags": ["Products"],
         "security": [
           {
             "sessionAuth": []
@@ -720,9 +687,7 @@
       "delete": {
         "summary": "Delete product",
         "description": "Delete a product",
-        "tags": [
-          "Products"
-        ],
+        "tags": ["Products"],
         "security": [
           {
             "sessionAuth": []
@@ -758,9 +723,7 @@
       "get": {
         "summary": "Get user cart",
         "description": "Retrieve current user's shopping cart",
-        "tags": [
-          "Cart"
-        ],
+        "tags": ["Cart"],
         "security": [
           {
             "sessionAuth": []
@@ -795,9 +758,7 @@
       "post": {
         "summary": "Add item to cart",
         "description": "Add a product to the shopping cart",
-        "tags": [
-          "Cart"
-        ],
+        "tags": ["Cart"],
         "security": [
           {
             "sessionAuth": []
@@ -809,10 +770,7 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": [
-                  "productId",
-                  "quantity"
-                ],
+                "required": ["productId", "quantity"],
                 "properties": {
                   "productId": {
                     "type": "string"
@@ -861,9 +819,7 @@
       "put": {
         "summary": "Update cart item",
         "description": "Update quantity of a cart item",
-        "tags": [
-          "Cart"
-        ],
+        "tags": ["Cart"],
         "security": [
           {
             "sessionAuth": []
@@ -885,9 +841,7 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": [
-                  "quantity"
-                ],
+                "required": ["quantity"],
                 "properties": {
                   "quantity": {
                     "type": "integer",
@@ -922,9 +876,7 @@
       "delete": {
         "summary": "Remove cart item",
         "description": "Remove an item from the cart",
-        "tags": [
-          "Cart"
-        ],
+        "tags": ["Cart"],
         "security": [
           {
             "sessionAuth": []
@@ -966,9 +918,7 @@
       "get": {
         "summary": "List orders",
         "description": "Get user's orders or all orders (for admin)",
-        "tags": [
-          "Orders"
-        ],
+        "tags": ["Orders"],
         "security": [
           {
             "sessionAuth": []
@@ -1042,9 +992,7 @@
       "post": {
         "summary": "Create order",
         "description": "Create a new order from cart",
-        "tags": [
-          "Orders"
-        ],
+        "tags": ["Orders"],
         "security": [
           {
             "sessionAuth": []
@@ -1086,9 +1034,7 @@
       "get": {
         "summary": "Get order by ID",
         "description": "Retrieve order details",
-        "tags": [
-          "Orders"
-        ],
+        "tags": ["Orders"],
         "security": [
           {
             "sessionAuth": []
@@ -1133,9 +1079,7 @@
       "get": {
         "summary": "Global search",
         "description": "Search across farms and products",
-        "tags": [
-          "Search"
-        ],
+        "tags": ["Search"],
         "parameters": [
           {
             "name": "q",
@@ -1151,11 +1095,7 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": [
-                "all",
-                "farms",
-                "products"
-              ],
+              "enum": ["all", "farms", "products"],
               "default": "all"
             }
           },
@@ -1211,10 +1151,7 @@
       "get": {
         "summary": "Get platform analytics",
         "description": "Retrieve platform-wide analytics (admin only)",
-        "tags": [
-          "Admin",
-          "Analytics"
-        ],
+        "tags": ["Admin", "Analytics"],
         "security": [
           {
             "sessionAuth": []
@@ -1270,9 +1207,7 @@
       "post": {
         "summary": "Verify farm",
         "description": "Approve or reject farm verification (admin only)",
-        "tags": [
-          "Admin"
-        ],
+        "tags": ["Admin"],
         "security": [
           {
             "sessionAuth": []
@@ -1284,20 +1219,14 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": [
-                  "farmId",
-                  "status"
-                ],
+                "required": ["farmId", "status"],
                 "properties": {
                   "farmId": {
                     "type": "string"
                   },
                   "status": {
                     "type": "string",
-                    "enum": [
-                      "APPROVED",
-                      "REJECTED"
-                    ]
+                    "enum": ["APPROVED", "REJECTED"]
                   },
                   "rejectionReason": {
                     "type": "string"
@@ -1342,10 +1271,7 @@
     "schemas": {
       "Error": {
         "type": "object",
-        "required": [
-          "success",
-          "error"
-        ],
+        "required": ["success", "error"],
         "properties": {
           "success": {
             "type": "boolean",
@@ -1407,11 +1333,7 @@
       },
       "Farm": {
         "type": "object",
-        "required": [
-          "id",
-          "name",
-          "status"
-        ],
+        "required": ["id", "name", "status"],
         "properties": {
           "id": {
             "type": "string",
@@ -1430,20 +1352,11 @@
           },
           "status": {
             "type": "string",
-            "enum": [
-              "ACTIVE",
-              "PENDING",
-              "SUSPENDED",
-              "ARCHIVED"
-            ]
+            "enum": ["ACTIVE", "PENDING", "SUSPENDED", "ARCHIVED"]
           },
           "verificationStatus": {
             "type": "string",
-            "enum": [
-              "PENDING",
-              "APPROVED",
-              "REJECTED"
-            ]
+            "enum": ["PENDING", "APPROVED", "REJECTED"]
           },
           "location": {
             "type": "object",
@@ -1580,21 +1493,13 @@
           },
           "status": {
             "type": "string",
-            "enum": [
-              "ACTIVE",
-              "SUSPENDED"
-            ]
+            "enum": ["ACTIVE", "SUSPENDED"]
           }
         }
       },
       "Product": {
         "type": "object",
-        "required": [
-          "id",
-          "name",
-          "price",
-          "farmId"
-        ],
+        "required": ["id", "name", "price", "farmId"],
         "properties": {
           "id": {
             "type": "string"
@@ -1651,11 +1556,7 @@
       },
       "CreateProductRequest": {
         "type": "object",
-        "required": [
-          "name",
-          "price",
-          "farmId"
-        ],
+        "required": ["name", "price", "farmId"],
         "properties": {
           "name": {
             "type": "string"
@@ -1830,10 +1731,7 @@
       },
       "CreateOrderRequest": {
         "type": "object",
-        "required": [
-          "deliveryAddressId",
-          "paymentMethodId"
-        ],
+        "required": ["deliveryAddressId", "paymentMethodId"],
         "properties": {
           "deliveryAddressId": {
             "type": "string"

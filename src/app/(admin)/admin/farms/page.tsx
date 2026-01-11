@@ -89,17 +89,20 @@ export default function AdminFarmsPage() {
 
     // Status filter
     if (filter !== "ALL") {
-      filtered = filtered.filter(farm => farm.verificationStatus === filter);
+      filtered = filtered.filter((farm) => farm.verificationStatus === filter);
     }
 
     // Search filter
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(farm =>
-        farm.name.toLowerCase().includes(query) ||
-        farm.owner.email.toLowerCase().includes(query) ||
-        (farm.owner.firstName && farm.owner.firstName.toLowerCase().includes(query)) ||
-        (farm.owner.lastName && farm.owner.lastName.toLowerCase().includes(query))
+      filtered = filtered.filter(
+        (farm) =>
+          farm.name.toLowerCase().includes(query) ||
+          farm.owner.email.toLowerCase().includes(query) ||
+          (farm.owner.firstName &&
+            farm.owner.firstName.toLowerCase().includes(query)) ||
+          (farm.owner.lastName &&
+            farm.owner.lastName.toLowerCase().includes(query)),
       );
     }
 
@@ -126,7 +129,11 @@ export default function AdminFarmsPage() {
     }
   };
 
-  const handleVerification = async (farmId: string, action: "approve" | "reject", reason?: string) => {
+  const handleVerification = async (
+    farmId: string,
+    action: "approve" | "reject",
+    reason?: string,
+  ) => {
     try {
       setActionLoading(farmId);
 
@@ -152,7 +159,9 @@ export default function AdminFarmsPage() {
       await fetchFarms();
 
       // Show success message (could use toast notification here)
-      alert(`Farm ${action === "approve" ? "approved" : "rejected"} successfully!`);
+      alert(
+        `Farm ${action === "approve" ? "approved" : "rejected"} successfully!`,
+      );
     } catch (err) {
       alert(err instanceof Error ? err.message : "An error occurred");
     } finally {
@@ -173,7 +182,10 @@ export default function AdminFarmsPage() {
     }
   };
 
-  if (status === "loading" || (status === "authenticated" && session?.user?.role !== "ADMIN")) {
+  if (
+    status === "loading" ||
+    (status === "authenticated" && session?.user?.role !== "ADMIN")
+  ) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
@@ -201,21 +213,23 @@ export default function AdminFarmsPage() {
             </div>
           </div>
           <div className="bg-white rounded-lg shadow p-6">
-            <div className="text-sm font-medium text-gray-500">Pending Review</div>
+            <div className="text-sm font-medium text-gray-500">
+              Pending Review
+            </div>
             <div className="text-2xl font-bold text-yellow-600 mt-2">
-              {farms.filter(f => f.verificationStatus === "PENDING").length}
+              {farms.filter((f) => f.verificationStatus === "PENDING").length}
             </div>
           </div>
           <div className="bg-white rounded-lg shadow p-6">
             <div className="text-sm font-medium text-gray-500">Verified</div>
             <div className="text-2xl font-bold text-green-600 mt-2">
-              {farms.filter(f => f.verificationStatus === "VERIFIED").length}
+              {farms.filter((f) => f.verificationStatus === "VERIFIED").length}
             </div>
           </div>
           <div className="bg-white rounded-lg shadow p-6">
             <div className="text-sm font-medium text-gray-500">Rejected</div>
             <div className="text-2xl font-bold text-red-600 mt-2">
-              {farms.filter(f => f.verificationStatus === "REJECTED").length}
+              {farms.filter((f) => f.verificationStatus === "REJECTED").length}
             </div>
           </div>
         </div>
@@ -225,14 +239,17 @@ export default function AdminFarmsPage() {
           <div className="flex flex-col sm:flex-row gap-4">
             {/* Status Filter */}
             <div className="flex gap-2">
-              {(["ALL", "PENDING", "VERIFIED", "REJECTED"] as FilterStatus[]).map((status: any) => (
+              {(
+                ["ALL", "PENDING", "VERIFIED", "REJECTED"] as FilterStatus[]
+              ).map((status: any) => (
                 <button
                   key={status}
                   onClick={() => setFilter(status)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${filter === status
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    filter === status
                       ? "bg-green-600 text-white"
                       : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                    }`}
+                  }`}
                 >
                   {status.charAt(0) + status.slice(1).toLowerCase()}
                 </button>
@@ -310,12 +327,13 @@ export default function AdminFarmsPage() {
                           {farm.name}
                         </h3>
                         <span
-                          className={`px-3 py-1 rounded-full text-xs font-medium ${farm.verificationStatus === "VERIFIED"
+                          className={`px-3 py-1 rounded-full text-xs font-medium ${
+                            farm.verificationStatus === "VERIFIED"
                               ? "bg-green-100 text-green-800"
                               : farm.verificationStatus === "PENDING"
                                 ? "bg-yellow-100 text-yellow-800"
                                 : "bg-red-100 text-red-800"
-                            }`}
+                          }`}
                         >
                           {farm.verificationStatus}
                         </span>
@@ -386,7 +404,8 @@ export default function AdminFarmsPage() {
                             />
                           </svg>
                           <span>
-                            {farm.location.city}, {farm.location.state} {farm.location.zipCode}
+                            {farm.location.city}, {farm.location.state}{" "}
+                            {farm.location.zipCode}
                           </span>
                         </div>
                       )}
@@ -395,7 +414,8 @@ export default function AdminFarmsPage() {
                       {farm.rejectionReason && (
                         <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg">
                           <p className="text-sm text-red-800">
-                            <strong>Rejection Reason:</strong> {farm.rejectionReason}
+                            <strong>Rejection Reason:</strong>{" "}
+                            {farm.rejectionReason}
                           </p>
                         </div>
                       )}
@@ -403,11 +423,13 @@ export default function AdminFarmsPage() {
                       {/* Timestamps */}
                       <div className="flex gap-4 text-xs text-gray-400 mt-3">
                         <span>
-                          Created: {new Date(farm.createdAt).toLocaleDateString()}
+                          Created:{" "}
+                          {new Date(farm.createdAt).toLocaleDateString()}
                         </span>
                         {farm.verifiedAt && (
                           <span>
-                            Verified: {new Date(farm.verifiedAt).toLocaleDateString()}
+                            Verified:{" "}
+                            {new Date(farm.verifiedAt).toLocaleDateString()}
                           </span>
                         )}
                       </div>

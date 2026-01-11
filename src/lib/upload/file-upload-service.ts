@@ -8,7 +8,7 @@ import { existsSync } from "fs";
 import { mkdir, writeFile } from "fs/promises";
 import { join } from "path";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 interface UploadResult {
   success: boolean;
@@ -57,8 +57,8 @@ class FileUploadService {
       logger.info("✅ Upload directories ready");
     } catch (error) {
       logger.error("❌ Error creating upload directories:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
     }
   }
 
@@ -153,8 +153,8 @@ class FileUploadService {
       };
     } catch (error) {
       logger.error("❌ File upload error:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
       return {
         success: false,
         error: "Failed to upload file",

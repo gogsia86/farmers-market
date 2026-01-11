@@ -8,18 +8,18 @@
  * npm run seed:test-user
  */
 
-require('dotenv').config();
+require("dotenv").config();
 
-const { PrismaClient } = require('@prisma/client');
-const { hash } = require('bcryptjs');
+const { PrismaClient } = require("@prisma/client");
+const { hash } = require("bcryptjs");
 
 const prisma = new PrismaClient();
 
 async function seedTestUser() {
-  console.log('🌱 Seeding test user for bot tests...');
+  console.log("🌱 Seeding test user for bot tests...");
 
-  const testEmail = 'test@farmersmarket.com';
-  const testPassword = 'testpassword123';
+  const testEmail = "test@farmersmarket.com";
+  const testPassword = "testpassword123";
 
   try {
     // Check if user already exists
@@ -39,10 +39,10 @@ async function seedTestUser() {
         where: { email: testEmail },
         data: {
           password: hashedPassword,
-          status: 'ACTIVE',
+          status: "ACTIVE",
         },
       });
-      console.log('   Password updated and status set to ACTIVE ✅');
+      console.log("   Password updated and status set to ACTIVE ✅");
 
       return existingUser;
     }
@@ -54,21 +54,21 @@ async function seedTestUser() {
       data: {
         email: testEmail,
         password: hashedPassword,
-        firstName: 'Test',
-        lastName: 'User',
-        role: 'CONSUMER',
-        status: 'ACTIVE',
+        firstName: "Test",
+        lastName: "User",
+        role: "CONSUMER",
+        status: "ACTIVE",
         emailVerified: new Date(),
-        phone: '+1234567890',
-        address: '123 Test Street',
-        city: 'Test City',
-        state: 'CA',
-        zipCode: '12345',
-        country: 'USA',
+        phone: "+1234567890",
+        address: "123 Test Street",
+        city: "Test City",
+        state: "CA",
+        zipCode: "12345",
+        country: "USA",
       },
     });
 
-    console.log('✅ Test user created successfully!');
+    console.log("✅ Test user created successfully!");
     console.log(`   Email: ${testUser.email}`);
     console.log(`   Password: ${testPassword}`);
     console.log(`   User ID: ${testUser.id}`);
@@ -77,7 +77,7 @@ async function seedTestUser() {
 
     return testUser;
   } catch (error) {
-    console.error('❌ Error seeding test user:', error);
+    console.error("❌ Error seeding test user:", error);
     throw error;
   }
 }
@@ -85,19 +85,19 @@ async function seedTestUser() {
 async function main() {
   try {
     await seedTestUser();
-    console.log('');
-    console.log('🎉 Test user seed completed!');
-    console.log('');
-    console.log('Test credentials:');
-    console.log('  Email: test@farmersmarket.com');
-    console.log('  Password: testpassword123');
-    console.log('');
-    console.log('You can now run bot tests with:');
-    console.log('  npm run bot test cart-checkout');
-    console.log('  npm run bot test:all');
-    console.log('');
+    console.log("");
+    console.log("🎉 Test user seed completed!");
+    console.log("");
+    console.log("Test credentials:");
+    console.log("  Email: test@farmersmarket.com");
+    console.log("  Password: testpassword123");
+    console.log("");
+    console.log("You can now run bot tests with:");
+    console.log("  npm run bot test cart-checkout");
+    console.log("  npm run bot test:all");
+    console.log("");
   } catch (error) {
-    console.error('Failed to seed test user:', error);
+    console.error("Failed to seed test user:", error);
     process.exit(1);
   } finally {
     await prisma.$disconnect();

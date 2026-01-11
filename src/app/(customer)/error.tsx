@@ -19,7 +19,8 @@ interface ErrorProps {
 
 export default function CustomerError({ error, reset }: ErrorProps) {
   useEffect(() => {
-    logger.error("Customer route error", { error: error.message,
+    logger.error("Customer route error", {
+      error: error.message,
       digest: error.digest,
       stack: error.stack,
       context: "customer-routes",
@@ -126,7 +127,8 @@ export default function CustomerError({ error, reset }: ErrorProps) {
             {error.digest && (
               <>
                 {" • "}
-                Error ID: <code className="bg-muted px-1 rounded">{error.digest}</code>
+                Error ID:{" "}
+                <code className="bg-muted px-1 rounded">{error.digest}</code>
               </>
             )}
           </p>

@@ -19,52 +19,47 @@ import type {
   SpinnerSize,
   SpinnerVariant,
 } from "@/lib/loading/types";
-import {
-  getCurrentSeason,
-  getSeasonalColors,
-} from "@/lib/loading/utils";
+import { getCurrentSeason, getSeasonalColors } from "@/lib/loading/utils";
 import { cn } from "@/lib/utils";
 
 // ============================================================================
 // SPINNER VARIANTS
 // ============================================================================
 
-const spinnerVariants = cva(
-  "inline-block animate-spin",
-  {
-    variants: {
-      size: {
-        xs: "w-3 h-3",
-        sm: "w-4 h-4",
-        md: "w-6 h-6",
-        lg: "w-8 h-8",
-        xl: "w-12 h-12",
-      },
-      color: {
-        primary: "text-primary",
-        secondary: "text-secondary",
-        accent: "text-accent",
-        muted: "text-muted-foreground",
-        success: "text-green-600",
-        warning: "text-amber-600",
-        error: "text-red-600",
-      },
+const spinnerVariants = cva("inline-block animate-spin", {
+  variants: {
+    size: {
+      xs: "w-3 h-3",
+      sm: "w-4 h-4",
+      md: "w-6 h-6",
+      lg: "w-8 h-8",
+      xl: "w-12 h-12",
     },
-    defaultVariants: {
-      size: "md",
-      color: "primary",
+    color: {
+      primary: "text-primary",
+      secondary: "text-secondary",
+      accent: "text-accent",
+      muted: "text-muted-foreground",
+      success: "text-green-600",
+      warning: "text-amber-600",
+      error: "text-red-600",
     },
-  }
-);
+  },
+  defaultVariants: {
+    size: "md",
+    color: "primary",
+  },
+});
 
 // ============================================================================
 // BASE LOADING SPINNER
 // ============================================================================
 
 export interface LoadingSpinnerProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-  Partial<SpinnerConfig>,
-  Omit<VariantProps<typeof spinnerVariants>, "color"> {
+  extends
+    React.HTMLAttributes<HTMLDivElement>,
+    Partial<SpinnerConfig>,
+    Omit<VariantProps<typeof spinnerVariants>, "color"> {
   variant?: SpinnerVariant;
   size?: SpinnerSize;
   color?: string;
@@ -98,7 +93,7 @@ export const LoadingSpinner = React.forwardRef<
       style,
       ...props
     },
-    ref
+    ref,
   ) => {
     const spinnerStyle: React.CSSProperties = {
       ...style,
@@ -156,7 +151,7 @@ export const LoadingSpinner = React.forwardRef<
         <span className="sr-only">{label}</span>
       </div>
     );
-  }
+  },
 );
 
 LoadingSpinner.displayName = "LoadingSpinner";
@@ -203,7 +198,7 @@ function DotsSpinner({
       ))}
     </div>
   );
-};
+}
 
 // ============================================================================
 // BARS SPINNER
@@ -247,7 +242,7 @@ function BarsSpinner({
       ))}
     </div>
   );
-};
+}
 
 // ============================================================================
 // CIRCLE SPINNER
@@ -298,12 +293,13 @@ function CircleSpinner({
         stroke={color}
         strokeWidth={strokeWidth}
         strokeLinecap="round"
-        d={`M ${dimension / 2} ${strokeWidth / 2} a ${(dimension - strokeWidth) / 2
-          } ${(dimension - strokeWidth) / 2} 0 0 1 0 ${dimension - strokeWidth}`}
+        d={`M ${dimension / 2} ${strokeWidth / 2} a ${
+          (dimension - strokeWidth) / 2
+        } ${(dimension - strokeWidth) / 2} 0 0 1 0 ${dimension - strokeWidth}`}
       />
     </svg>
   );
-};
+}
 
 // ============================================================================
 // PULSE SPINNER
@@ -353,7 +349,7 @@ function PulseSpinner({
       />
     </div>
   );
-};
+}
 
 // ============================================================================
 // AGRICULTURAL SPINNER
@@ -399,7 +395,7 @@ function AgriculturalSpinner({
       <div
         className={cn(
           "absolute inset-0 rounded-full animate-ping opacity-20",
-          `bg-gradient-to-br ${colors.gradient}`
+          `bg-gradient-to-br ${colors.gradient}`,
         )}
         style={{
           animationDuration: `${speed * 2}s`,
@@ -407,7 +403,7 @@ function AgriculturalSpinner({
       />
     </div>
   );
-};
+}
 
 // ============================================================================
 // CENTERED LOADING SPINNER
@@ -443,7 +439,7 @@ export const CenteredLoadingSpinner = React.forwardRef<
       className,
       ...props
     },
-    ref
+    ref,
   ) => {
     return (
       <div
@@ -453,7 +449,7 @@ export const CenteredLoadingSpinner = React.forwardRef<
           fullScreen && "fixed inset-0 z-50",
           !fullScreen && "w-full h-full min-h-[200px]",
           backdrop && "bg-black/20 backdrop-blur-sm",
-          className
+          className,
         )}
         {...props}
       >
@@ -465,7 +461,7 @@ export const CenteredLoadingSpinner = React.forwardRef<
         )}
       </div>
     );
-  }
+  },
 );
 
 CenteredLoadingSpinner.displayName = "CenteredLoadingSpinner";
@@ -502,7 +498,7 @@ export const InlineLoadingSpinner = React.forwardRef<
       className,
       ...props
     },
-    ref
+    ref,
   ) => {
     return (
       <div
@@ -510,7 +506,7 @@ export const InlineLoadingSpinner = React.forwardRef<
         className={cn(
           "inline-flex items-center gap-2",
           position === "right" && "flex-row-reverse",
-          className
+          className,
         )}
         {...props}
       >
@@ -518,7 +514,7 @@ export const InlineLoadingSpinner = React.forwardRef<
         {text && <span className="text-sm">{text}</span>}
       </div>
     );
-  }
+  },
 );
 
 InlineLoadingSpinner.displayName = "InlineLoadingSpinner";
@@ -559,15 +555,20 @@ export const ButtonLoadingSpinner = React.forwardRef<
       className,
       ...props
     },
-    ref
+    ref,
   ) => {
     return (
-      <div ref={ref} className={cn("inline-flex items-center gap-2", className)}>
-        {isLoading && <LoadingSpinner variant={variant} size={size} {...props} />}
+      <div
+        ref={ref}
+        className={cn("inline-flex items-center gap-2", className)}
+      >
+        {isLoading && (
+          <LoadingSpinner variant={variant} size={size} {...props} />
+        )}
         {children && <span>{children}</span>}
       </div>
     );
-  }
+  },
 );
 
 ButtonLoadingSpinner.displayName = "ButtonLoadingSpinner";
@@ -608,7 +609,7 @@ export const OverlayLoadingSpinner = React.forwardRef<
       className,
       ...props
     },
-    ref
+    ref,
   ) => {
     return (
       <div
@@ -617,7 +618,7 @@ export const OverlayLoadingSpinner = React.forwardRef<
           "absolute inset-0 z-40 flex flex-col items-center justify-center gap-4",
           !transparent && "bg-white/80 dark:bg-gray-900/80",
           blur && "backdrop-blur-sm",
-          className
+          className,
         )}
         {...props}
       >
@@ -629,7 +630,7 @@ export const OverlayLoadingSpinner = React.forwardRef<
         )}
       </div>
     );
-  }
+  },
 );
 
 OverlayLoadingSpinner.displayName = "OverlayLoadingSpinner";

@@ -6,7 +6,7 @@
  * @route /marketplace/products
  */
 
-import { redirect } from 'next/navigation';
+import { redirect } from "next/navigation";
 
 export default async function MarketplaceProductsPage({
   searchParams,
@@ -22,7 +22,7 @@ export default async function MarketplaceProductsPage({
   Object.entries(params).forEach(([key, value]) => {
     if (value) {
       if (Array.isArray(value)) {
-        value.forEach(v => urlParams.append(key, v));
+        value.forEach((v) => urlParams.append(key, v));
       } else {
         urlParams.append(key, value);
       }
@@ -30,12 +30,12 @@ export default async function MarketplaceProductsPage({
   });
 
   const queryString = urlParams.toString();
-  const redirectUrl = queryString ? `/products?${queryString}` : '/products';
+  const redirectUrl = queryString ? `/products?${queryString}` : "/products";
 
   redirect(redirectUrl);
 }
 
 export const metadata = {
-  title: 'Products | Farmers Market Platform',
-  description: 'Browse all fresh, locally-grown produce from verified farmers',
+  title: "Products | Farmers Market Platform",
+  description: "Browse all fresh, locally-grown produce from verified farmers",
 };

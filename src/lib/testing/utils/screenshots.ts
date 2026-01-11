@@ -10,17 +10,17 @@
  * - Cleanup and retention policies
  */
 
-import { logger } from '@/lib/monitoring/logger';
-import { existsSync } from 'fs';
-import { mkdir, readdir, unlink, writeFile } from 'fs/promises';
-import { join } from 'path';
-import { Page } from 'playwright';
+import { logger } from "@/lib/monitoring/logger";
+import { existsSync } from "fs";
+import { mkdir, readdir, unlink, writeFile } from "fs/promises";
+import { join } from "path";
+import { Page } from "playwright";
 
 export interface ScreenshotOptions {
   outputDir?: string;
   fullPage?: boolean;
   quality?: number;
-  format?: 'png' | 'jpeg';
+  format?: "png" | "jpeg";
   clip?: {
     x: number;
     y: number;
@@ -28,7 +28,7 @@ export interface ScreenshotOptions {
     height: number;
   };
   mask?: string[]; // Selectors to mask
-  animations?: 'disabled' | 'allow';
+  animations?: "disabled" | "allow";
 }
 
 export interface ScreenshotMetadata {
@@ -41,7 +41,7 @@ export interface ScreenshotMetadata {
     width: number;
     height: number;
   };
-  type: 'failure' | 'success' | 'debug' | 'comparison';
+  type: "failure" | "success" | "debug" | "comparison";
   fileSize?: number;
 }
 
@@ -57,7 +57,7 @@ export class ScreenshotManager {
   private screenshotCount = 0;
   private metadata: ScreenshotMetadata[] = [];
 
-  constructor(outputDir: string = './test-results/screenshots') {
+  constructor(outputDir: string = "./test-results/screenshots") {
     this.outputDir = outputDir;
   }
 
@@ -67,23 +67,23 @@ export class ScreenshotManager {
   async capture(
     page: Page,
     name: string,
-    options?: ScreenshotOptions
+    options?: ScreenshotOptions,
   ): Promise<ScreenshotResult> {
     try {
       await this.ensureOutputDirectory();
 
-      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-      const filename = `${name}-${timestamp}.${options?.format || 'png'}`;
+      const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+      const filename = `${name}-${timestamp}.${options?.format || "png"}`;
       const filepath = join(options?.outputDir || this.outputDir, filename);
 
       // Prepare screenshot options
       const screenshotOptions: any = {
         path: filepath,
         fullPage: options?.fullPage !== false,
-        type: options?.format || 'png'
+        type: options?.format || "png",
       };
 
-      if (options?.quality && options.format === 'jpeg') {
+      if (options?.quality && options.format === "jpeg") {
         screenshotOptions.quality = options.quality;
       }
 
@@ -93,7 +93,7 @@ export class ScreenshotManager {
 
       if (options?.mask && options.mask.length > 0) {
         screenshotOptions.mask = await Promise.all(
-          options.mask.map(selector => page.locator(selector))
+          options.mask.map((selector) => page.locator(selector)),
         );
       }
 
@@ -115,7 +115,7 @@ export class ScreenshotManager {
         moduleId: name,
         url: page.url(),
         viewport,
-        type: 'debug'
+        type: "debug",
       };
 
       this.metadata.push(metadata);
@@ -126,15 +126,16 @@ export class ScreenshotManager {
       return {
         success: true,
         path: filepath,
-        metadata
+        metadata,
       };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      logger.error('[ScreenshotManager] Failed to capture screenshot:', error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      logger.error("[ScreenshotManager] Failed to capture screenshot:", error);
 
       return {
         success: false,
-        error: errorMessage
+        error: errorMessage,
       };
     }
   }
@@ -145,33 +146,39 @@ export class ScreenshotManager {
   async captureFailure(
     page: Page,
     testName: string,
-    errorMessage?: string
+    errorMessage?: string,
   ): Promise<ScreenshotResult> {
     try {
       const result = await this.capture(page, `failure-${testName}`, {
-        fullPage: true
+        fullPage: true,
       });
 
       if (result.metadata) {
-        result.metadata.type = 'failure';
+        result.metadata.type = "failure";
       }
 
       // Also save the error message
       if (errorMessage && result.path) {
-        const errorPath = result.path.replace(/\.(png|jpeg)$/, '.error.txt');
-        await writeFile(errorPath, errorMessage, 'utf-8');
+        const errorPath = result.path.replace(/\.(png|jpeg)$/, ".error.txt");
+        await writeFile(errorPath, errorMessage, "utf-8");
       }
 
-      logger.warn(`[ScreenshotManager] Captured failure screenshot: ${result.path}`);
+      logger.warn(
+        `[ScreenshotManager] Captured failure screenshot: ${result.path}`,
+      );
 
       return result;
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      logger.error('[ScreenshotManager] Failed to capture failure screenshot:', error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      logger.error(
+        "[ScreenshotManager] Failed to capture failure screenshot:",
+        error,
+      );
 
       return {
         success: false,
-        error: errorMessage
+        error: errorMessage,
       };
     }
   }
@@ -181,14 +188,14 @@ export class ScreenshotManager {
    */
   async captureSuccess(
     page: Page,
-    testName: string
+    testName: string,
   ): Promise<ScreenshotResult> {
     const result = await this.capture(page, `success-${testName}`, {
-      fullPage: false
+      fullPage: false,
     });
 
     if (result.metadata) {
-      result.metadata.type = 'success';
+      result.metadata.type = "success";
     }
 
     return result;
@@ -200,24 +207,24 @@ export class ScreenshotManager {
   async captureElement(
     page: Page,
     selector: string,
-    name: string
+    name: string,
   ): Promise<ScreenshotResult> {
     try {
       await this.ensureOutputDirectory();
 
       const element = await page.waitForSelector(selector, {
-        state: 'visible',
-        timeout: 5000
+        state: "visible",
+        timeout: 5000,
       });
 
       if (!element) {
         return {
           success: false,
-          error: `Element "${selector}" not found`
+          error: `Element "${selector}" not found`,
         };
       }
 
-      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+      const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
       const filename = `element-${name}-${timestamp}.png`;
       const filepath = join(this.outputDir, filename);
 
@@ -232,25 +239,31 @@ export class ScreenshotManager {
         moduleId: name,
         url: page.url(),
         viewport,
-        type: 'debug'
+        type: "debug",
       };
 
       this.metadata.push(metadata);
 
-      logger.debug(`[ScreenshotManager] Captured element screenshot: ${filepath}`);
+      logger.debug(
+        `[ScreenshotManager] Captured element screenshot: ${filepath}`,
+      );
 
       return {
         success: true,
         path: filepath,
-        metadata
+        metadata,
       };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      logger.error('[ScreenshotManager] Failed to capture element screenshot:', error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      logger.error(
+        "[ScreenshotManager] Failed to capture element screenshot:",
+        error,
+      );
 
       return {
         success: false,
-        error: errorMessage
+        error: errorMessage,
       };
     }
   }
@@ -262,13 +275,13 @@ export class ScreenshotManager {
     page: Page,
     sequenceName: string,
     count: number,
-    intervalMs: number = 1000
+    intervalMs: number = 1000,
   ): Promise<ScreenshotResult[]> {
     const results: ScreenshotResult[] = [];
 
     for (let i = 0; i < count; i++) {
       const result = await this.capture(page, `${sequenceName}-${i + 1}`, {
-        fullPage: false
+        fullPage: false,
       });
 
       results.push(result);
@@ -287,7 +300,7 @@ export class ScreenshotManager {
   async captureComparison(
     page: Page,
     name: string,
-    baselinePath?: string
+    baselinePath?: string,
   ): Promise<ScreenshotResult & { isDifferent?: boolean; diffPath?: string }> {
     const result = await this.capture(page, `comparison-${name}`);
 
@@ -296,7 +309,7 @@ export class ScreenshotManager {
     }
 
     if (result.metadata) {
-      result.metadata.type = 'comparison';
+      result.metadata.type = "comparison";
     }
 
     // If baseline exists, perform comparison
@@ -304,7 +317,9 @@ export class ScreenshotManager {
       try {
         // Note: Actual pixel-by-pixel comparison would require additional library
         // (e.g., pixelmatch, looks-same). This is a placeholder for the structure.
-        logger.info('[ScreenshotManager] Baseline comparison would happen here');
+        logger.info(
+          "[ScreenshotManager] Baseline comparison would happen here",
+        );
 
         // Placeholder: In real implementation, use image comparison library
         const isDifferent = false; // Would be result of comparison
@@ -312,10 +327,12 @@ export class ScreenshotManager {
         return {
           ...result,
           isDifferent,
-          diffPath: isDifferent ? result.path.replace('.png', '-diff.png') : undefined
+          diffPath: isDifferent
+            ? result.path.replace(".png", "-diff.png")
+            : undefined,
         };
       } catch (error) {
-        logger.error('[ScreenshotManager] Comparison failed:', error);
+        logger.error("[ScreenshotManager] Comparison failed:", error);
       }
     }
 
@@ -327,7 +344,7 @@ export class ScreenshotManager {
    */
   async captureViewport(page: Page, name: string): Promise<ScreenshotResult> {
     return await this.capture(page, `viewport-${name}`, {
-      fullPage: false
+      fullPage: false,
     });
   }
 
@@ -337,17 +354,17 @@ export class ScreenshotManager {
   async captureWithAnnotations(
     page: Page,
     name: string,
-    highlightSelectors: string[]
+    highlightSelectors: string[],
   ): Promise<ScreenshotResult> {
     try {
       // Add highlights to elements
       await page.evaluate((selectors) => {
-        selectors.forEach(selector => {
+        selectors.forEach((selector) => {
           const elements = document.querySelectorAll(selector);
-          elements.forEach(el => {
+          elements.forEach((el) => {
             if (el instanceof HTMLElement) {
-              el.style.outline = '3px solid red';
-              el.style.outlineOffset = '2px';
+              el.style.outline = "3px solid red";
+              el.style.outlineOffset = "2px";
             }
           });
         });
@@ -357,12 +374,12 @@ export class ScreenshotManager {
 
       // Remove highlights
       await page.evaluate((selectors) => {
-        selectors.forEach(selector => {
+        selectors.forEach((selector) => {
           const elements = document.querySelectorAll(selector);
-          elements.forEach(el => {
+          elements.forEach((el) => {
             if (el instanceof HTMLElement) {
-              el.style.outline = '';
-              el.style.outlineOffset = '';
+              el.style.outline = "";
+              el.style.outlineOffset = "";
             }
           });
         });
@@ -370,10 +387,11 @@ export class ScreenshotManager {
 
       return result;
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
       return {
         success: false,
-        error: errorMessage
+        error: errorMessage,
       };
     }
   }
@@ -384,18 +402,18 @@ export class ScreenshotManager {
   async captureAfterScroll(
     page: Page,
     selector: string,
-    name: string
+    name: string,
   ): Promise<ScreenshotResult> {
     try {
       const element = await page.waitForSelector(selector, {
-        state: 'attached',
-        timeout: 5000
+        state: "attached",
+        timeout: 5000,
       });
 
       if (!element) {
         return {
           success: false,
-          error: `Element "${selector}" not found`
+          error: `Element "${selector}" not found`,
         };
       }
 
@@ -405,10 +423,11 @@ export class ScreenshotManager {
 
       return await this.capture(page, `scroll-${name}`);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
       return {
         success: false,
-        error: errorMessage
+        error: errorMessage,
       };
     }
   }
@@ -432,16 +451,16 @@ export class ScreenshotManager {
    */
   async saveMetadata(): Promise<void> {
     try {
-      const metadataPath = join(this.outputDir, 'screenshots-metadata.json');
+      const metadataPath = join(this.outputDir, "screenshots-metadata.json");
       await writeFile(
         metadataPath,
         JSON.stringify(this.metadata, null, 2),
-        'utf-8'
+        "utf-8",
       );
 
       logger.info(`[ScreenshotManager] Saved metadata: ${metadataPath}`);
     } catch (error) {
-      logger.error('[ScreenshotManager] Failed to save metadata:', error);
+      logger.error("[ScreenshotManager] Failed to save metadata:", error);
     }
   }
 
@@ -459,14 +478,18 @@ export class ScreenshotManager {
         const filepath = join(this.outputDir, file);
 
         // Skip metadata file
-        if (file === 'screenshots-metadata.json') {
+        if (file === "screenshots-metadata.json") {
           continue;
         }
 
         // Check file age (from filename timestamp)
-        const timestampMatch = file.match(/(\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2})/);
+        const timestampMatch = file.match(
+          /(\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2})/,
+        );
         if (timestampMatch) {
-          const timestamp = new Date(timestampMatch[1].replace(/-/g, ':').replace('T', 'T'));
+          const timestamp = new Date(
+            timestampMatch[1].replace(/-/g, ":").replace("T", "T"),
+          );
           const age = now - timestamp.getTime();
 
           if (age > maxAge) {
@@ -476,11 +499,13 @@ export class ScreenshotManager {
         }
       }
 
-      logger.info(`[ScreenshotManager] Cleaned up ${deletedCount} old screenshots`);
+      logger.info(
+        `[ScreenshotManager] Cleaned up ${deletedCount} old screenshots`,
+      );
 
       return deletedCount;
     } catch (error) {
-      logger.error('[ScreenshotManager] Cleanup failed:', error);
+      logger.error("[ScreenshotManager] Cleanup failed:", error);
       return 0;
     }
   }
@@ -502,11 +527,13 @@ export class ScreenshotManager {
       this.metadata = [];
       this.screenshotCount = 0;
 
-      logger.info(`[ScreenshotManager] Cleared all screenshots (${deletedCount} files)`);
+      logger.info(
+        `[ScreenshotManager] Cleared all screenshots (${deletedCount} files)`,
+      );
 
       return deletedCount;
     } catch (error) {
-      logger.error('[ScreenshotManager] Failed to clear screenshots:', error);
+      logger.error("[ScreenshotManager] Failed to clear screenshots:", error);
       return 0;
     }
   }
@@ -518,8 +545,11 @@ export class ScreenshotManager {
     try {
       await mkdir(this.outputDir, { recursive: true });
     } catch (error) {
-      if ((error as any).code !== 'EEXIST') {
-        logger.error('[ScreenshotManager] Failed to create output directory:', error);
+      if ((error as any).code !== "EEXIST") {
+        logger.error(
+          "[ScreenshotManager] Failed to create output directory:",
+          error,
+        );
         throw error;
       }
     }
@@ -529,9 +559,7 @@ export class ScreenshotManager {
 /**
  * Create a screenshot manager instance
  */
-export function createScreenshotManager(
-  outputDir?: string
-): ScreenshotManager {
+export function createScreenshotManager(outputDir?: string): ScreenshotManager {
   return new ScreenshotManager(outputDir);
 }
 
@@ -541,7 +569,7 @@ export function createScreenshotManager(
 export async function takeScreenshot(
   page: Page,
   name: string,
-  options?: ScreenshotOptions
+  options?: ScreenshotOptions,
 ): Promise<string | null> {
   const manager = new ScreenshotManager(options?.outputDir);
   const result = await manager.capture(page, name, options);
@@ -555,7 +583,7 @@ export async function takeScreenshot(
 export async function takeFailureScreenshot(
   page: Page,
   testName: string,
-  error?: string
+  error?: string,
 ): Promise<string | null> {
   const manager = new ScreenshotManager();
   const result = await manager.captureFailure(page, testName, error);
@@ -566,9 +594,7 @@ export async function takeFailureScreenshot(
 /**
  * Screenshot decorator for automatic capture on failure
  */
-export function withScreenshotOnFailure(
-  testFn: (page: Page) => Promise<void>
-) {
+export function withScreenshotOnFailure(testFn: (page: Page) => Promise<void>) {
   return async (page: Page) => {
     try {
       await testFn(page);
@@ -576,8 +602,8 @@ export function withScreenshotOnFailure(
       const manager = new ScreenshotManager();
       await manager.captureFailure(
         page,
-        'test-failure',
-        error instanceof Error ? error.message : String(error)
+        "test-failure",
+        error instanceof Error ? error.message : String(error),
       );
       throw error;
     }
@@ -591,7 +617,7 @@ export async function screenshotIf(
   page: Page,
   condition: boolean,
   name: string,
-  options?: ScreenshotOptions
+  options?: ScreenshotOptions,
 ): Promise<string | null> {
   if (!condition) {
     return null;

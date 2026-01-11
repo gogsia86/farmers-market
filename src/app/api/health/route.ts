@@ -9,16 +9,16 @@
  * @route GET /api/health/cache
  */
 
-import { multiLayerCache } from '@/lib/cache/multi-layer.cache';
-import { database } from '@/lib/database';
-import { logger } from '@/lib/monitoring/logger';
-import { NextRequest, NextResponse } from 'next/server';
+import { multiLayerCache } from "@/lib/cache/multi-layer.cache";
+import { database } from "@/lib/database";
+import { logger } from "@/lib/monitoring/logger";
+import { NextRequest, NextResponse } from "next/server";
 
 // ============================================================================
 // TYPES
 // ============================================================================
 
-type HealthStatus = 'healthy' | 'degraded' | 'unhealthy';
+type HealthStatus = "healthy" | "degraded" | "unhealthy";
 
 interface HealthCheckResult {
   status: HealthStatus;
@@ -58,7 +58,9 @@ interface HealthCheckResult {
 /**
  * Check database connectivity and performance
  */
-async function checkDatabase(): Promise<HealthCheckResult['checks']['database']> {
+async function checkDatabase(): Promise<
+  HealthCheckResult["checks"]["database"]
+> {
   const start = Date.now();
 
   try {
@@ -69,37 +71,37 @@ async function checkDatabase(): Promise<HealthCheckResult['checks']['database']>
     // Latency thresholds
     if (latency > 1000) {
       return {
-        status: 'degraded',
+        status: "degraded",
         latency,
-        message: 'Database response time is slow',
+        message: "Database response time is slow",
       };
     }
 
     if (latency > 5000) {
       return {
-        status: 'unhealthy',
+        status: "unhealthy",
         latency,
-        message: 'Database response time is critical',
+        message: "Database response time is critical",
       };
     }
 
     return {
-      status: 'healthy',
+      status: "healthy",
       latency,
-      message: 'Database is responsive',
+      message: "Database is responsive",
     };
   } catch (error) {
-    logger.error('Database health check failed', {
-      error: error instanceof Error ? error.message : 'Unknown error',
+    logger.error("Database health check failed", {
+      error: error instanceof Error ? error.message : "Unknown error",
     });
 
     return {
-      status: 'unhealthy',
+      status: "unhealthy",
       latency: Date.now() - start,
-      message: 'Database connection failed',
+      message: "Database connection failed",
       details:
-        process.env.NODE_ENV === 'development'
-          ? { error: error instanceof Error ? error.message : 'Unknown error' }
+        process.env.NODE_ENV === "development"
+          ? { error: error instanceof Error ? error.message : "Unknown error" }
           : undefined,
     };
   }
@@ -108,12 +110,12 @@ async function checkDatabase(): Promise<HealthCheckResult['checks']['database']>
 /**
  * Check cache system health
  */
-async function checkCache(): Promise<HealthCheckResult['checks']['cache']> {
+async function checkCache(): Promise<HealthCheckResult["checks"]["cache"]> {
   const start = Date.now();
 
   try {
     // Test cache read/write
-    const testKey = 'health-check-test';
+    const testKey = "health-check-test";
     const testValue = { timestamp: Date.now() };
 
     await multiLayerCache.set(testKey, testValue, { ttl: 10 });
@@ -123,9 +125,9 @@ async function checkCache(): Promise<HealthCheckResult['checks']['cache']> {
 
     if (!retrieved) {
       return {
-        status: 'degraded',
+        status: "degraded",
         latency,
-        message: 'Cache read/write test failed',
+        message: "Cache read/write test failed",
       };
     }
 
@@ -135,32 +137,38 @@ async function checkCache(): Promise<HealthCheckResult['checks']['cache']> {
     // Latency thresholds
     if (latency > 100) {
       return {
-        status: 'degraded',
+        status: "degraded",
         latency,
-        message: 'Cache response time is slow',
-        details: process.env.NODE_ENV === 'development' ? (stats as unknown as Record<string, unknown>) : undefined,
+        message: "Cache response time is slow",
+        details:
+          process.env.NODE_ENV === "development"
+            ? (stats as unknown as Record<string, unknown>)
+            : undefined,
       };
     }
 
     return {
-      status: 'healthy',
+      status: "healthy",
       latency,
-      message: 'Cache is responsive',
-      details: process.env.NODE_ENV === 'development' ? (stats as unknown as Record<string, unknown>) : undefined,
+      message: "Cache is responsive",
+      details:
+        process.env.NODE_ENV === "development"
+          ? (stats as unknown as Record<string, unknown>)
+          : undefined,
     };
   } catch (error) {
-    logger.warn('Cache health check failed - treating as degraded', {
-      error: error instanceof Error ? error.message : 'Unknown error',
+    logger.warn("Cache health check failed - treating as degraded", {
+      error: error instanceof Error ? error.message : "Unknown error",
     });
 
     // Cache failure is degraded, not unhealthy - app can work without cache
     return {
-      status: 'degraded',
+      status: "degraded",
       latency: Date.now() - start,
-      message: 'Cache system unavailable or degraded',
+      message: "Cache system unavailable or degraded",
       details:
-        process.env.NODE_ENV === 'development'
-          ? { error: error instanceof Error ? error.message : 'Unknown error' }
+        process.env.NODE_ENV === "development"
+          ? { error: error instanceof Error ? error.message : "Unknown error" }
           : undefined,
     };
   }
@@ -169,19 +177,19 @@ async function checkCache(): Promise<HealthCheckResult['checks']['cache']> {
 /**
  * Check system resources
  */
-function checkSystem(): HealthCheckResult['checks']['system'] {
+function checkSystem(): HealthCheckResult["checks"]["system"] {
   try {
     const memoryUsage = process.memoryUsage();
     const totalMemory = memoryUsage.heapTotal;
     const usedMemory = memoryUsage.heapUsed;
     const memoryPercentage = (usedMemory / totalMemory) * 100;
 
-    let status: HealthStatus = 'healthy';
+    let status: HealthStatus = "healthy";
 
     if (memoryPercentage > 90) {
-      status = 'unhealthy';
+      status = "unhealthy";
     } else if (memoryPercentage > 80) {
-      status = 'degraded';
+      status = "degraded";
     }
 
     return {
@@ -194,12 +202,12 @@ function checkSystem(): HealthCheckResult['checks']['system'] {
       uptime: Math.round(process.uptime()),
     };
   } catch (error) {
-    logger.error('System health check failed', {
-      error: error instanceof Error ? error.message : 'Unknown error',
+    logger.error("System health check failed", {
+      error: error instanceof Error ? error.message : "Unknown error",
     });
 
     return {
-      status: 'unhealthy',
+      status: "unhealthy",
     };
   }
 }
@@ -208,33 +216,34 @@ function checkSystem(): HealthCheckResult['checks']['system'] {
  * Determine overall health status based on individual checks
  * Database is critical, cache and system are less critical
  */
-function determineOverallStatus(checks: HealthCheckResult['checks']): HealthStatus {
+function determineOverallStatus(
+  checks: HealthCheckResult["checks"],
+): HealthStatus {
   // Database unhealthy = system unhealthy
-  if (checks.database?.status === 'unhealthy') {
-    return 'unhealthy';
+  if (checks.database?.status === "unhealthy") {
+    return "unhealthy";
   }
 
   // System critically degraded = unhealthy
-  if (checks.system?.status === 'unhealthy') {
-    return 'unhealthy';
+  if (checks.system?.status === "unhealthy") {
+    return "unhealthy";
   }
 
   // Database degraded OR any other issue = degraded
-  if (checks.database?.status === 'degraded') {
-    return 'degraded';
+  if (checks.database?.status === "degraded") {
+    return "degraded";
   }
 
   // Cache or system degraded = overall degraded (but app can run)
-  const statuses = [
-    checks.cache?.status,
-    checks.system?.status,
-  ].filter(Boolean) as HealthStatus[];
+  const statuses = [checks.cache?.status, checks.system?.status].filter(
+    Boolean,
+  ) as HealthStatus[];
 
-  if (statuses.includes('unhealthy') || statuses.includes('degraded')) {
-    return 'degraded';
+  if (statuses.includes("unhealthy") || statuses.includes("degraded")) {
+    return "degraded";
   }
 
-  return 'healthy';
+  return "healthy";
 }
 
 // ============================================================================
@@ -250,28 +259,28 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
   try {
     // Database-only health check (support both /db and /database paths)
-    if (pathname === '/api/health/db' || pathname === '/api/health/database') {
+    if (pathname === "/api/health/db" || pathname === "/api/health/database") {
       const dbCheckResult = await checkDatabase();
       return NextResponse.json(
         {
-          status: dbCheckResult?.status || 'unhealthy',
+          status: dbCheckResult?.status || "unhealthy",
           timestamp: new Date().toISOString(),
           database: dbCheckResult,
         },
-        { status: dbCheckResult?.status === 'healthy' ? 200 : 503 }
+        { status: dbCheckResult?.status === "healthy" ? 200 : 503 },
       );
     }
 
     // Cache-only health check
-    if (pathname === '/api/health/cache') {
+    if (pathname === "/api/health/cache") {
       const cacheCheckResult = await checkCache();
       return NextResponse.json(
         {
-          status: cacheCheckResult?.status || 'unhealthy',
+          status: cacheCheckResult?.status || "unhealthy",
           timestamp: new Date().toISOString(),
           cache: cacheCheckResult,
         },
-        { status: cacheCheckResult?.status === 'healthy' ? 200 : 503 }
+        { status: cacheCheckResult?.status === "healthy" ? 200 : 503 },
       );
     }
 
@@ -283,19 +292,28 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       Promise.resolve(checkSystem()),
     ]);
 
-    const checks: HealthCheckResult['checks'] = {
-      database: dbCheck.status === 'fulfilled' ? dbCheck.value : {
-        status: 'unhealthy',
-        message: 'Database check failed',
-      },
-      cache: cacheCheck.status === 'fulfilled' ? cacheCheck.value : {
-        status: 'degraded',
-        message: 'Cache check failed',
-      },
-      system: systemCheck.status === 'fulfilled' ? systemCheck.value : {
-        status: 'degraded',
-        message: 'System check failed',
-      },
+    const checks: HealthCheckResult["checks"] = {
+      database:
+        dbCheck.status === "fulfilled"
+          ? dbCheck.value
+          : {
+              status: "unhealthy",
+              message: "Database check failed",
+            },
+      cache:
+        cacheCheck.status === "fulfilled"
+          ? cacheCheck.value
+          : {
+              status: "degraded",
+              message: "Cache check failed",
+            },
+      system:
+        systemCheck.status === "fulfilled"
+          ? systemCheck.value
+          : {
+              status: "degraded",
+              message: "System check failed",
+            },
     };
 
     const overallStatus = determineOverallStatus(checks);
@@ -304,18 +322,18 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       status: overallStatus,
       timestamp: new Date().toISOString(),
       checks,
-      version: process.env.npm_package_version || '1.0.0',
-      environment: process.env.NODE_ENV || 'production',
+      version: process.env.npm_package_version || "1.0.0",
+      environment: process.env.NODE_ENV || "production",
     };
 
     // Log degraded or unhealthy status
-    if (overallStatus !== 'healthy') {
-      logger.warn('Health check returned non-healthy status', {
+    if (overallStatus !== "healthy") {
+      logger.warn("Health check returned non-healthy status", {
         status: overallStatus,
         checks: {
-          database: dbCheck?.status || 'unknown',
-          cache: cacheCheck?.status || 'unknown',
-          system: systemCheck?.status || 'unknown',
+          database: dbCheck?.status || "unknown",
+          cache: cacheCheck?.status || "unknown",
+          system: systemCheck?.status || "unknown",
         },
       });
     }
@@ -323,38 +341,38 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     // Determine HTTP status code
     // - 200: healthy or degraded (system is functional)
     // - 503: unhealthy (system cannot serve requests)
-    const httpStatus = overallStatus === 'unhealthy' ? 503 : 200;
+    const httpStatus = overallStatus === "unhealthy" ? 503 : 200;
 
     return NextResponse.json(result, {
       status: httpStatus,
       headers: {
-        'Cache-Control': 'no-store, no-cache, must-revalidate',
+        "Cache-Control": "no-store, no-cache, must-revalidate",
       },
     });
   } catch (error) {
-    logger.error('Health check failed', {
-      error: error instanceof Error ? error.message : 'Unknown error',
+    logger.error("Health check failed", {
+      error: error instanceof Error ? error.message : "Unknown error",
       stack: error instanceof Error ? error.stack : undefined,
     });
 
     return NextResponse.json(
       {
-        status: 'unhealthy',
+        status: "unhealthy",
         timestamp: new Date().toISOString(),
-        message: 'Health check failed',
+        message: "Health check failed",
         error:
-          process.env.NODE_ENV === 'development'
+          process.env.NODE_ENV === "development"
             ? error instanceof Error
               ? error.message
-              : 'Unknown error'
+              : "Unknown error"
             : undefined,
       },
       {
         status: 503,
         headers: {
-          'Cache-Control': 'no-store, no-cache, must-revalidate',
+          "Cache-Control": "no-store, no-cache, must-revalidate",
         },
-      }
+      },
     );
   }
 }
@@ -370,14 +388,14 @@ export async function HEAD(): Promise<NextResponse> {
     return new NextResponse(null, {
       status: 200,
       headers: {
-        'Cache-Control': 'no-store, no-cache, must-revalidate',
+        "Cache-Control": "no-store, no-cache, must-revalidate",
       },
     });
   } catch (error) {
     return new NextResponse(null, {
       status: 503,
       headers: {
-        'Cache-Control': 'no-store, no-cache, must-revalidate',
+        "Cache-Control": "no-store, no-cache, must-revalidate",
       },
     });
   }
@@ -387,6 +405,6 @@ export async function HEAD(): Promise<NextResponse> {
 // EXPORT ROUTE CONFIG
 // ============================================================================
 
-export const runtime = 'nodejs';
-export const dynamic = 'force-dynamic';
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 export const revalidate = 0;

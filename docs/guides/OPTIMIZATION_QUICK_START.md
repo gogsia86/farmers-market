@@ -121,23 +121,25 @@ npm run bot test new-pages -- --baseUrl=http://localhost:3001 --headless
 
 Open browser DevTools → Performance tab → Record page load
 
-| Metric | Target | How to Check |
-|--------|--------|--------------|
-| **First Contentful Paint (FCP)** | < 0.9s | DevTools → Performance → FCP |
-| **Largest Contentful Paint (LCP)** | < 1.5s | DevTools → Performance → LCP |
-| **Total Page Load** | < 1.0s | DevTools → Network → Load time |
-| **Payload Size** | < 200KB | DevTools → Network → Size column |
-| **Database Queries** | ≤ 3 | Server logs |
+| Metric                             | Target  | How to Check                     |
+| ---------------------------------- | ------- | -------------------------------- |
+| **First Contentful Paint (FCP)**   | < 0.9s  | DevTools → Performance → FCP     |
+| **Largest Contentful Paint (LCP)** | < 1.5s  | DevTools → Performance → LCP     |
+| **Total Page Load**                | < 1.0s  | DevTools → Network → Load time   |
+| **Payload Size**                   | < 200KB | DevTools → Network → Size column |
+| **Database Queries**               | ≤ 3     | Server logs                      |
 
 ### **Expected Results**
 
 **First Load (Cold - No Cache):**
+
 - ~800ms total load time
 - ~180KB payload
 - 3 database queries
 - Cache populated
 
 **Second Load (Warm - Cache Hit):**
+
 - ~100-200ms total load time
 - ~180KB payload (same)
 - 0 database queries
@@ -191,6 +193,7 @@ NEXTAUTH_SECRET=...
 ### **Issue: Tests Timing Out**
 
 **Solution:**
+
 ```bash
 # Increase timeout for first run (cache warming)
 npm run bot test new-pages -- --baseUrl=http://localhost:3001 --timeout=60000
@@ -202,6 +205,7 @@ npm run bot test new-pages -- --baseUrl=http://localhost:3001
 ### **Issue: "Redis connection failed"**
 
 **Solution:**
+
 ```bash
 # Check Redis is running
 redis-cli ping
@@ -216,6 +220,7 @@ export CACHE_ENABLED=false
 ### **Issue: "Database query slow"**
 
 **Solution:**
+
 ```bash
 # Check database indexes
 npx prisma db execute --sql "ANALYZE;"
@@ -230,6 +235,7 @@ npm run dev
 ### **Issue: Stale data showing**
 
 **Solution:**
+
 ```bash
 # Clear all caches
 redis-cli flushdb
@@ -376,18 +382,21 @@ Before considering optimization complete, verify:
 After completing this quick start, you should see:
 
 **Performance:**
+
 - ⚡ 75% faster page loads
 - 📦 60% smaller payloads
 - 🗄️ 80% fewer database queries
 - 🚀 85%+ cache hit rate
 
 **User Experience:**
+
 - 😊 Instant page loads on cache hits
 - 📱 Better mobile performance
 - 🎯 Higher conversion rates
 - ⭐ Improved user satisfaction
 
 **Technical:**
+
 - ✅ Type-safe implementation
 - ✅ Comprehensive error handling
 - ✅ Structured logging
@@ -410,6 +419,7 @@ After completing this quick start, you should see:
 5. Run tests in verbose mode
 
 **Quick Debugging:**
+
 ```bash
 # Check everything at once
 echo "Redis:" && redis-cli ping && \

@@ -1,7 +1,7 @@
 // src/lib/payment/paypal.ts
 import type { PayPalOrderData } from "@/types/payment.types";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 const PAYPAL_API_BASE =
   process.env.NODE_ENV === "production"

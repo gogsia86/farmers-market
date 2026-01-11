@@ -47,19 +47,25 @@ npm run db:reset         # Reset database and reseed
 ### Development Servers
 
 #### `npm run dev`
+
 **Default development server with Turbopack (recommended)**
+
 ```bash
 next dev --turbo -p 3001
 ```
+
 - Uses Turbopack for fastest HMR
 - Runs on port 3001
 - Memory limit: 16GB (handles large codebase)
 
 #### `npm run dev:webpack`
+
 **Fallback development server with Webpack**
+
 ```bash
 next dev --webpack -p 3001
 ```
+
 - Use when Turbopack has issues
 - Better debugging in some edge cases
 - Slightly slower HMR
@@ -67,27 +73,36 @@ next dev --webpack -p 3001
 ### Production
 
 #### `npm run build`
+
 **Production build (used by Vercel)**
+
 ```bash
 prisma generate && next build
 ```
+
 - Generates Prisma Client
 - Builds optimized production bundle
 - Runs type-checking via `prebuild` locally
 
 #### `npm run start`
+
 **Start production server locally**
+
 ```bash
 next start -p 3001
 ```
+
 - Requires `npm run build` first
 - Test production behavior locally
 
 #### `npm run build:analyze`
+
 **Production build with bundle analysis**
+
 ```bash
 cross-env ANALYZE=true next build --webpack
 ```
+
 - Generates bundle size report
 - Opens visualization in browser
 - Use to optimize bundle size
@@ -99,95 +114,128 @@ cross-env ANALYZE=true next build --webpack
 ### Unit Tests (Jest)
 
 #### `npm test`
+
 **Run all unit tests**
+
 ```bash
 jest --maxWorkers=6
 ```
+
 - Parallelized across 6 workers
 - Tests in `src/__tests__/`
 
 #### `npm run test:watch`
+
 **Run tests in watch mode**
+
 ```bash
 jest --watch --maxWorkers=4
 ```
+
 - Re-runs tests on file changes
 - Reduced workers for interactive mode
 
 #### `npm run test:coverage`
+
 **Generate coverage report**
+
 ```bash
 jest --coverage --maxWorkers=6
 ```
+
 - Generates HTML report in `coverage/`
 - Shows line/branch coverage
 
 ### E2E Tests (Playwright)
 
 #### `npm run test:e2e`
+
 **Run E2E tests headless**
+
 ```bash
 playwright test --workers=6
 ```
+
 - Runs all Playwright tests
 - Parallelized across 6 workers
 
 #### `npm run test:e2e:ui`
+
 **Run E2E tests with UI**
+
 ```bash
 playwright test --ui
 ```
+
 - Interactive test explorer
 - Best for debugging
 
 #### `npm run test:e2e:headed`
+
 **Run E2E tests with visible browser**
+
 ```bash
 playwright test --headed --workers=4
 ```
+
 - See tests execute in real browser
 - Slower, use for debugging
 
 ### Advanced Testing Shortcuts
 
 #### `npm run test:visual`
+
 **Visual regression tests**
+
 ```bash
 playwright test tests/visual --workers=6
 ```
+
 - Compares screenshots
 - Detects visual changes
 
 #### `npm run test:mobile`
+
 **Mobile device tests**
+
 ```bash
 playwright test tests/mobile --workers=4
 ```
+
 - Tests mobile viewports
 - iOS and Android emulation
 
 #### `npm run test:a11y`
+
 **Accessibility tests**
+
 ```bash
 playwright test tests/accessibility --workers=6
 ```
+
 - WCAG 2.1 compliance
 - Keyboard navigation
 - Screen reader compatibility
 
 #### `npm run test:load`
+
 **Load testing with k6**
+
 ```bash
 k6 run tests/load/comprehensive-load-test.ts
 ```
+
 - Stress tests API endpoints
 - Simulates concurrent users
 
 #### `npm run test:security`
+
 **Security vulnerability scan**
+
 ```bash
 jest tests/security --runInBand
 ```
+
 - SQL injection tests
 - XSS vulnerability checks
 - CSRF protection validation
@@ -199,19 +247,25 @@ jest tests/security --runInBand
 ### Migrations
 
 #### `npm run db:migrate`
+
 **Create and apply migration**
+
 ```bash
 prisma migrate dev
 ```
+
 - Creates migration file
 - Applies to database
 - Updates Prisma Client
 
 #### `npm run db:push`
+
 **Push schema changes without migration**
+
 ```bash
 prisma db push
 ```
+
 - Quick prototyping
 - No migration file created
 - Use in development only
@@ -219,37 +273,49 @@ prisma db push
 ### Seeding
 
 #### `npm run db:seed`
+
 **Seed database with test data**
+
 ```bash
 prisma db seed
 ```
+
 - Runs `prisma/seed.ts`
 - Populates test users, farms, products
 
 #### `npm run db:seed:basic`
+
 **Basic seed for local testing**
+
 ```bash
 tsx prisma/seed-basic.ts
 ```
+
 - Minimal data set
 - Faster than full seed
 
 ### Management
 
 #### `npm run db:studio`
+
 **Open Prisma Studio**
+
 ```bash
 prisma studio
 ```
+
 - Visual database browser
 - Edit data in UI
 - Opens on http://localhost:5555
 
 #### `npm run db:reset`
+
 **Reset database completely**
+
 ```bash
 prisma db push --force-reset && npm run db:seed
 ```
+
 - ⚠️ **DESTRUCTIVE**: Drops all data
 - Recreates schema
 - Runs seed script
@@ -261,55 +327,73 @@ prisma db push --force-reset && npm run db:seed
 ### Linting
 
 #### `npm run lint`
+
 **Lint all code**
+
 ```bash
 eslint . --ext .js,.jsx,.ts,.tsx
 ```
+
 - Checks JavaScript/TypeScript files
 - Reports errors and warnings
 
 #### `npm run lint:fix`
+
 **Auto-fix linting issues**
+
 ```bash
 eslint . --ext .js,.jsx,.ts,.tsx --fix
 ```
+
 - Fixes auto-fixable issues
 - Reports remaining problems
 
 ### Formatting
 
 #### `npm run format`
+
 **Format all code with Prettier**
+
 ```bash
 prettier --write .
 ```
+
 - Formats all supported files
 - Consistent code style
 
 #### `npm run format:check`
+
 **Check formatting without changes**
+
 ```bash
 prettier --check .
 ```
+
 - CI-safe check
 - Exits with error if formatting needed
 
 ### Type Checking
 
 #### `npm run type-check`
+
 **Validate TypeScript types**
+
 ```bash
 tsc --noEmit
 ```
+
 - Checks all TypeScript files
 - No output files generated
 - Reports type errors
 
 #### `npm run type-check:watch`
+
 **Watch mode type checking**
+
 ```bash
 tsc --noEmit --watch
 ```
+
 - Re-checks on file changes
 - Continuous feedback
 
@@ -320,19 +404,25 @@ tsc --noEmit --watch
 ### Vercel
 
 #### `npm run vercel-build`
+
 **Vercel production build command**
+
 ```bash
 prisma generate && next build
 ```
+
 - Called automatically by Vercel
 - Generates Prisma Client
 - Builds Next.js app
 
 #### `npm run vercel:preflight`
+
 **Pre-deployment validation**
+
 ```bash
 node scripts/vercel-preflight.js
 ```
+
 - Validates environment
 - Checks dependencies
 - Ensures build readiness
@@ -340,18 +430,24 @@ node scripts/vercel-preflight.js
 ### Build Hooks
 
 #### `postinstall`
+
 **Auto-runs after `npm install`**
+
 ```bash
 prisma generate || echo 'Prisma generate skipped'
 ```
+
 - Generates Prisma Client
 - Fails gracefully in CI
 
 #### `prebuild`
+
 **Runs before `npm run build`**
+
 ```bash
 tsc --noEmit || exit 0
 ```
+
 - Type-checks in development
 - Skipped in CI/Vercel
 
@@ -362,31 +458,41 @@ tsc --noEmit || exit 0
 ### Basic Operations
 
 #### `npm run docker:build`
+
 **Build production Docker image**
+
 ```bash
 docker build -t farmers-market:latest -f docker/Dockerfile .
 ```
 
 #### `npm run docker:up`
+
 **Start all services**
+
 ```bash
 docker-compose up -d
 ```
 
 #### `npm run docker:down`
+
 **Stop all services**
+
 ```bash
 docker-compose down
 ```
 
 #### `npm run docker:logs`
+
 **View logs from all services**
+
 ```bash
 docker-compose logs -f
 ```
 
 #### `npm run docker:clean`
+
 **Clean up Docker resources**
+
 ```bash
 docker-compose down -v && docker system prune -f
 ```
@@ -633,6 +739,7 @@ npm install --legacy-peer-deps
 ### Scripts Used in GitHub Actions
 
 **ci.yml workflow uses**:
+
 - `npm run lint`
 - `npm run format:check`
 - `npm run type-check`
@@ -640,11 +747,13 @@ npm install --legacy-peer-deps
 - `npm run test:coverage`
 
 **e2e-tests.yml workflow uses**:
+
 - `npm run test:e2e`
 - `npm run test:visual` (optional)
 - `npm run test:mobile` (optional)
 
 **Vercel deployment uses**:
+
 - `npm run vercel-build` (or just `npm run build`)
 
 ### Running CI Checks Locally
@@ -662,15 +771,18 @@ npm run quality
 ## 🎓 Learning Resources
 
 ### Next.js 16 + Turbopack
+
 - [Next.js Documentation](https://nextjs.org/docs)
 - [Turbopack Documentation](https://turbo.build/pack/docs)
 
 ### Testing
+
 - [Jest Documentation](https://jestjs.io/)
 - [Playwright Documentation](https://playwright.dev/)
 - [k6 Documentation](https://k6.io/docs/)
 
 ### Database
+
 - [Prisma Documentation](https://www.prisma.io/docs)
 - [PostgreSQL Documentation](https://www.postgresql.org/docs/)
 
@@ -679,6 +791,7 @@ npm run quality
 ## 🚨 Troubleshooting
 
 ### "Module not found" errors
+
 ```bash
 rm -rf node_modules package-lock.json
 npm cache clean --force
@@ -686,11 +799,13 @@ npm install --legacy-peer-deps
 ```
 
 ### Prisma Client errors
+
 ```bash
 npx prisma generate
 ```
 
 ### Port 3001 already in use
+
 ```bash
 # Windows
 npx kill-port 3001
@@ -700,12 +815,14 @@ lsof -ti:3001 | xargs kill -9
 ```
 
 ### Type errors in build
+
 ```bash
 npm run type-check
 # Fix reported errors, then rebuild
 ```
 
 ### Docker issues
+
 ```bash
 docker-compose down -v
 docker system prune -a --volumes -f

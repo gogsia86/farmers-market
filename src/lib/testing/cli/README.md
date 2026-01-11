@@ -29,24 +29,28 @@ cli/
 ## Key Features
 
 ### Command Execution
+
 - Single module/suite execution
 - Batch execution with filters
 - Continuous monitoring mode
 - Manual workflow dispatch
 
 ### Configuration
+
 - Multiple presets (quick, mvp, ci, debug, monitoring)
 - Environment variable support
 - CLI flag overrides
 - Filter system (tags, categories, modules)
 
 ### Reporting
+
 - Multiple formats (JSON, Markdown, HTML, Console)
 - Automatic generation after runs
 - Artifact storage for CI/CD
 - Historical data tracking
 
 ### CI/CD Integration
+
 - GitHub Actions workflow included
 - Matrix testing strategy
 - Artifact upload (reports, screenshots)
@@ -55,14 +59,24 @@ cli/
 ## CLI Implementation
 
 ### Main Entry Point
+
 ```typescript
 // scripts/bot-cli.js
-const { spawn } = require('child_process');
-const cliPath = path.join(__dirname, '..', 'src', 'lib', 'testing', 'cli', 'index.ts');
-spawn('npx', ['tsx', cliPath, ...args], { stdio: 'inherit', shell: true });
+const { spawn } = require("child_process");
+const cliPath = path.join(
+  __dirname,
+  "..",
+  "src",
+  "lib",
+  "testing",
+  "cli",
+  "index.ts",
+);
+spawn("npx", ["tsx", cliPath, ...args], { stdio: "inherit", shell: true });
 ```
 
 ### Command Parser
+
 ```typescript
 parseArgs() {
   // Parses positional args and flags
@@ -71,6 +85,7 @@ parseArgs() {
 ```
 
 ### Configuration Builder
+
 ```typescript
 getConfig(options: CLIOptions): BotConfig {
   const preset = options.flags.preset || 'mvp';
@@ -81,6 +96,7 @@ getConfig(options: CLIOptions): BotConfig {
 ```
 
 ### Test Execution
+
 ```typescript
 async runTest(options: CLIOptions) {
   const runner = createTestRunner(config, filter);
@@ -93,50 +109,64 @@ async runTest(options: CLIOptions) {
 ## Available Commands
 
 ### Core Commands
+
 - `bot help` - Show help information
 - `bot info` - Show framework information
 - `bot list [modules|suites]` - List available tests
 
 ### Test Execution
+
 - `bot test <module|suite>` - Run specific test
 - `bot test:all` - Run all tests
 - `bot test:health` - Run health checks
 - `bot test:critical` - Run critical tests
 
 ### Monitoring
+
 - `bot monitor <suite>` - Start continuous monitoring
 
 ### Reporting
+
 - `bot report` - View/generate reports
 
 ## Configuration Presets
 
 ### Quick
+
 Fast validation with minimal retries:
+
 ```bash
 npm run bot test health -- --preset=quick
 ```
 
 ### MVP (Default)
+
 Balanced validation with standard settings:
+
 ```bash
 npm run bot test health -- --preset=mvp
 ```
 
 ### CI
+
 CI/CD optimized (headless, retries, continue on failure):
+
 ```bash
 npm run bot:test:all -- --preset=ci
 ```
 
 ### Debug
+
 Debug mode (headed, verbose, no retries):
+
 ```bash
 npm run bot test health -- --preset=debug
 ```
 
 ### Monitoring
+
 Continuous monitoring with alerts:
+
 ```bash
 npm run bot monitor health -- --preset=monitoring
 ```
@@ -144,6 +174,7 @@ npm run bot monitor health -- --preset=monitoring
 ## CLI Flags
 
 ### Execution Flags
+
 - `--preset=<name>` - Configuration preset
 - `--headless` - Run in headless mode
 - `--headed` - Run with visible browser
@@ -151,21 +182,25 @@ npm run bot monitor health -- --preset=monitoring
 - `--quiet` - Suppress non-essential output
 
 ### Filter Flags
+
 - `--filter=<json>` - Filter tests (JSON)
 - `--tags=<list>` - Filter by tags (comma-separated)
 - `--category=<cat>` - Filter by category
 
 ### Output Flags
+
 - `--format=<fmt>` - Report format (json, markdown, html, console)
 - `--output=<dir>` - Output directory for reports
 
 ### Behavior Flags
+
 - `--interval=<sec>` - Monitoring interval (default: 60)
 - `--continue-on-failure` - Continue after failures
 
 ## Examples
 
 ### Basic Execution
+
 ```bash
 # Run health checks
 npm run bot test health
@@ -178,6 +213,7 @@ npm run bot test health -- --headed
 ```
 
 ### Advanced Filtering
+
 ```bash
 # Filter by tags
 npm run bot test:all -- --tags=smoke,critical
@@ -190,6 +226,7 @@ npm run bot test:all -- --filter='{"tags":["smoke"],"exclude":{"moduleIds":["slo
 ```
 
 ### Monitoring
+
 ```bash
 # Start monitoring (60s interval)
 npm run bot monitor health
@@ -199,6 +236,7 @@ npm run bot monitor health -- --interval=30
 ```
 
 ### CI/CD
+
 ```bash
 # Run in CI mode
 npm run bot:test:critical -- --preset=ci
@@ -210,6 +248,7 @@ npm run bot test health -- --format=json,markdown,html
 ## Output
 
 ### Console Output
+
 ```
 🤖 Starting test run...
 
@@ -235,6 +274,7 @@ Success Rate: 92.31%
 ```
 
 ### Report Files
+
 ```
 reports/
 ├── test-run-1673780400000.json      # Machine-readable
@@ -244,6 +284,7 @@ reports/
 ```
 
 ### Screenshots
+
 ```
 screenshots/
 ├── health-checks-1673780400000.png
@@ -260,17 +301,20 @@ screenshots/
 ## Error Handling
 
 ### Graceful Failures
+
 - Catches and logs execution errors
 - Generates reports even on failure
 - Cleanup resources properly
 - Meaningful error messages
 
 ### Timeout Handling
+
 - Per-test timeouts configurable
 - Global timeout override via environment
 - Screenshot capture on timeout
 
 ### Retry Logic
+
 - Configurable retry count (preset-dependent)
 - Exponential backoff supported
 - Retry logging and tracking
@@ -278,6 +322,7 @@ screenshots/
 ## Integration
 
 ### GitHub Actions
+
 ```yaml
 - name: Run UBF tests
   run: npm run bot:test:critical -- --preset=ci
@@ -291,6 +336,7 @@ screenshots/
 ```
 
 ### GitLab CI
+
 ```yaml
 test:
   script:
@@ -302,6 +348,7 @@ test:
 ```
 
 ### Jenkins
+
 ```groovy
 stage('Test') {
     steps {
@@ -313,23 +360,26 @@ stage('Test') {
 ## Development
 
 ### Adding Commands
+
 ```typescript
 // cli/index.ts
 switch (options.command) {
-  case 'my-command':
+  case "my-command":
     await myCommandHandler(options);
     break;
 }
 ```
 
 ### Adding Flags
+
 ```typescript
-if (options.flags['my-flag']) {
-  config.myOption = options.flags['my-flag'];
+if (options.flags["my-flag"]) {
+  config.myOption = options.flags["my-flag"];
 }
 ```
 
 ### Adding Presets
+
 ```typescript
 // config/bot-config.ts
 export const MY_PRESET_CONFIG: BotConfig = {
@@ -340,6 +390,7 @@ export const MY_PRESET_CONFIG: BotConfig = {
 ## Testing
 
 ### Manual Testing
+
 ```bash
 # Test help
 npm run bot:help
@@ -352,6 +403,7 @@ npm run bot test health -- --preset=debug
 ```
 
 ### Validation
+
 ```bash
 # Verify all commands work
 npm run bot:help
@@ -364,6 +416,7 @@ npm run bot:test:health
 ## Troubleshooting
 
 ### Command Not Found
+
 ```bash
 # Ensure bot-cli.js is executable
 chmod +x scripts/bot-cli.js
@@ -373,6 +426,7 @@ npm run bot:help
 ```
 
 ### Module Not Found
+
 ```bash
 # List available modules
 npm run bot:list
@@ -382,6 +436,7 @@ npm run bot test health-checks
 ```
 
 ### Timeout Errors
+
 ```bash
 # Increase timeout
 TIMEOUT=60000 npm run bot test health
@@ -399,6 +454,7 @@ npm run bot test health -- --preset=debug
 ## Support
 
 For issues, questions, or contributions:
+
 - Open an issue on GitHub
 - Contact the testing team
 - See [CONTRIBUTING.md](../../../CONTRIBUTING.md)

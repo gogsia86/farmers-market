@@ -18,7 +18,7 @@
 import { database } from "@/lib/database";
 import type { PrismaClient } from "@prisma/client";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 /**
  * Options for repository operations
@@ -165,7 +165,9 @@ export abstract class BaseRepository<
       const filteredOptions = this.filterOptions(options);
       Object.assign(queryOptions, filteredOptions);
 
-      const entity = await (db as any)[this.model.name].findUnique(queryOptions);
+      const entity = await (db as any)[this.model.name].findUnique(
+        queryOptions,
+      );
 
       return entity as TEntity | null;
     } catch (error) {
@@ -234,7 +236,9 @@ export abstract class BaseRepository<
       const filteredOptions = this.filterOptions(options);
       Object.assign(queryOptions, filteredOptions);
 
-      const entities = await (db as any)[this.model.name].findMany(queryOptions);
+      const entities = await (db as any)[this.model.name].findMany(
+        queryOptions,
+      );
 
       this.logOperation("findMany", {
         count: entities.length,
@@ -310,7 +314,9 @@ export abstract class BaseRepository<
     try {
       const db = options.tx || this.db;
       const queryOptions: any = { where, data };
-      const result = await (db as any)[this.model.name].updateMany(queryOptions);
+      const result = await (db as any)[this.model.name].updateMany(
+        queryOptions,
+      );
 
       this.logOperation("updateMany", {
         count: result.count,
@@ -363,7 +369,9 @@ export abstract class BaseRepository<
     try {
       const db = options.tx || this.db;
       const queryOptions: any = { where };
-      const result = await (db as any)[this.model.name].deleteMany(queryOptions);
+      const result = await (db as any)[this.model.name].deleteMany(
+        queryOptions,
+      );
 
       this.logOperation("deleteMany", {
         count: result.count,

@@ -8,7 +8,10 @@ import type { Product } from "@prisma/client";
 import Image from "next/image";
 
 interface ProductImageProps {
-  product: Pick<Product, "id" | "name" | "primaryPhotoUrl" | "images" | "organic" | "featured">;
+  product: Pick<
+    Product,
+    "id" | "name" | "primaryPhotoUrl" | "images" | "organic" | "featured"
+  >;
   variant?: "hero" | "card" | "thumbnail" | "grid";
   className?: string;
   priority?: boolean;
@@ -20,9 +23,12 @@ interface ProductImageProps {
  * Get the best available image for a product
  * Priority: primaryPhotoUrl > images[0] > null
  */
-function getBestProductImage(product: ProductImageProps["product"]): string | null {
+function getBestProductImage(
+  product: ProductImageProps["product"],
+): string | null {
   if (product.primaryPhotoUrl) return product.primaryPhotoUrl;
-  if (product.images && product.images.length > 0 && product.images[0]) return product.images[0];
+  if (product.images && product.images.length > 0 && product.images[0])
+    return product.images[0];
   return null;
 }
 
@@ -92,11 +98,11 @@ export function ProductImage({
         className={`relative overflow-hidden bg-gradient-to-br from-green-50 to-emerald-50 ${aspectRatioClasses[variant]} ${className}`}
       >
         <div className="flex h-full w-full items-center justify-center">
-          <span className={emojiSizes[variant]}>{getProductEmoji(product)}</span>
+          <span className={emojiSizes[variant]}>
+            {getProductEmoji(product)}
+          </span>
         </div>
-        {showBadges && (
-          <ProductBadges product={product} />
-        )}
+        {showBadges && <ProductBadges product={product} />}
       </div>
     );
   }
@@ -104,8 +110,9 @@ export function ProductImage({
   // Show optimized image
   return (
     <div
-      className={`relative overflow-hidden ${variant !== "thumbnail" ? aspectRatioClasses[variant] : ""
-        } ${className}`}
+      className={`relative overflow-hidden ${
+        variant !== "thumbnail" ? aspectRatioClasses[variant] : ""
+      } ${className}`}
     >
       <Image
         src={imageUrl}
@@ -113,15 +120,16 @@ export function ProductImage({
         fill={variant !== "thumbnail"}
         width={variant === "thumbnail" ? 96 : undefined}
         height={variant === "thumbnail" ? 96 : undefined}
-        className={`object-cover transition-transform duration-300 ${variant === "card" || variant === "grid" ? "group-hover:scale-105" : ""
-          }`}
+        className={`object-cover transition-transform duration-300 ${
+          variant === "card" || variant === "grid"
+            ? "group-hover:scale-105"
+            : ""
+        }`}
         sizes={imageSizes}
         priority={priority}
         quality={85}
       />
-      {showBadges && (
-        <ProductBadges product={product} />
-      )}
+      {showBadges && <ProductBadges product={product} />}
     </div>
   );
 }
@@ -161,11 +169,17 @@ function ProductBadges({ product }: ProductBadgesProps) {
  * Shows primary image + grid of additional photos
  */
 interface ProductImageGalleryProps {
-  product: Pick<Product, "id" | "name" | "primaryPhotoUrl" | "images" | "organic" | "featured">;
+  product: Pick<
+    Product,
+    "id" | "name" | "primaryPhotoUrl" | "images" | "organic" | "featured"
+  >;
   additionalPhotos?: string[];
 }
 
-export function ProductImageGallery({ product, additionalPhotos = [] }: ProductImageGalleryProps) {
+export function ProductImageGallery({
+  product,
+  additionalPhotos = [],
+}: ProductImageGalleryProps) {
   // Collect all available photos
   const allPhotos = [
     ...(product.primaryPhotoUrl ? [product.primaryPhotoUrl] : []),
@@ -187,7 +201,9 @@ export function ProductImageGallery({ product, additionalPhotos = [] }: ProductI
           <div className="flex h-full items-center justify-center">
             <div className="text-center">
               <div className="mb-4 text-9xl">{getProductEmoji(product)}</div>
-              <p className="text-xl font-semibold text-gray-700">{product.name}</p>
+              <p className="text-xl font-semibold text-gray-700">
+                {product.name}
+              </p>
             </div>
           </div>
           <ProductBadges product={product} />
@@ -201,7 +217,7 @@ export function ProductImageGallery({ product, additionalPhotos = [] }: ProductI
       {/* Primary Photo */}
       <div className="relative h-96 w-full overflow-hidden rounded-t-lg">
         <Image
-          src={primaryPhoto ?? '/images/product-placeholder.jpg'}
+          src={primaryPhoto ?? "/images/product-placeholder.jpg"}
           alt={`${product.name} - Main Photo`}
           fill
           className="object-cover"
@@ -249,12 +265,19 @@ export function ProductImageGallery({ product, additionalPhotos = [] }: ProductI
  * Small thumbnail for product lists, cart items, etc.
  */
 interface ProductThumbnailProps {
-  product: Pick<Product, "id" | "name" | "primaryPhotoUrl" | "images" | "organic" | "featured">;
+  product: Pick<
+    Product,
+    "id" | "name" | "primaryPhotoUrl" | "images" | "organic" | "featured"
+  >;
   size?: "sm" | "md" | "lg";
   className?: string;
 }
 
-export function ProductThumbnail({ product, size = "md", className = "" }: ProductThumbnailProps) {
+export function ProductThumbnail({
+  product,
+  size = "md",
+  className = "",
+}: ProductThumbnailProps) {
   const imageUrl = getBestProductImage(product);
 
   const sizeClasses = {
@@ -280,7 +303,9 @@ export function ProductThumbnail({ product, size = "md", className = "" }: Produ
   }
 
   return (
-    <div className={`relative overflow-hidden rounded-md ${sizeClasses[size]} ${className}`}>
+    <div
+      className={`relative overflow-hidden rounded-md ${sizeClasses[size]} ${className}`}
+    >
       <Image
         src={imageUrl}
         alt={product.name}
@@ -299,16 +324,22 @@ export function ProductThumbnail({ product, size = "md", className = "" }: Produ
  * Interactive carousel for cycling through product images
  * Client component for interactivity
  */
-"use client";
+("use client");
 
 import { useState } from "react";
 
 interface ProductImageCarouselProps {
-  product: Pick<Product, "id" | "name" | "primaryPhotoUrl" | "images" | "organic" | "featured">;
+  product: Pick<
+    Product,
+    "id" | "name" | "primaryPhotoUrl" | "images" | "organic" | "featured"
+  >;
   additionalPhotos?: string[];
 }
 
-export function ProductImageCarousel({ product, additionalPhotos = [] }: ProductImageCarouselProps) {
+export function ProductImageCarousel({
+  product,
+  additionalPhotos = [],
+}: ProductImageCarouselProps) {
   const allPhotos = [
     ...(product.primaryPhotoUrl ? [product.primaryPhotoUrl] : []),
     ...product.images,
@@ -323,7 +354,9 @@ export function ProductImageCarousel({ product, additionalPhotos = [] }: Product
         <div className="flex h-full items-center justify-center">
           <div className="text-center">
             <div className="mb-4 text-9xl">{getProductEmoji(product)}</div>
-            <p className="text-xl font-semibold text-gray-700">{product.name}</p>
+            <p className="text-xl font-semibold text-gray-700">
+              {product.name}
+            </p>
           </div>
         </div>
         <ProductBadges product={product} />
@@ -348,7 +381,7 @@ export function ProductImageCarousel({ product, additionalPhotos = [] }: Product
       {/* Main Image */}
       <div className="relative h-96 w-full overflow-hidden rounded-lg">
         <Image
-          src={allPhotos[currentIndex] ?? '/images/product-placeholder.jpg'}
+          src={allPhotos[currentIndex] ?? "/images/product-placeholder.jpg"}
           alt={`${product.name} - Image ${currentIndex + 1}`}
           fill
           className="object-cover"
@@ -366,8 +399,18 @@ export function ProductImageCarousel({ product, additionalPhotos = [] }: Product
               className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white transition-all hover:bg-black/70"
               aria-label="Previous image"
             >
-              <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              <svg
+                className="h-6 w-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
               </svg>
             </button>
             <button
@@ -375,8 +418,18 @@ export function ProductImageCarousel({ product, additionalPhotos = [] }: Product
               className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white transition-all hover:bg-black/70"
               aria-label="Next image"
             >
-              <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              <svg
+                className="h-6 w-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
               </svg>
             </button>
           </>
@@ -397,10 +450,11 @@ export function ProductImageCarousel({ product, additionalPhotos = [] }: Product
             <button
               key={index}
               onClick={() => goToSlide(index)}
-              className={`relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-md transition-all ${index === currentIndex
-                ? "ring-2 ring-green-600 ring-offset-2"
-                : "opacity-60 hover:opacity-100"
-                }`}
+              className={`relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-md transition-all ${
+                index === currentIndex
+                  ? "ring-2 ring-green-600 ring-offset-2"
+                  : "opacity-60 hover:opacity-100"
+              }`}
             >
               <Image
                 src={photo}

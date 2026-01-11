@@ -1,4 +1,5 @@
 # 🤖 Unified Bot Framework (UBF)
+
 **Farmers Market Platform - Consolidated Testing & Monitoring System**
 
 Version: 1.0.0
@@ -30,12 +31,12 @@ The Unified Bot Framework consolidates 4 separate testing bots into a single, mo
 
 ### What Was Consolidated
 
-| Old Bot | Lines | Purpose | Status |
-|---------|-------|---------|--------|
-| MVP Validation Bot | 2,186 | End-to-end MVP testing | ✅ Migrated |
-| MVP Automation Bot | 946 | Automated user journeys | ✅ Migrated |
-| Website Checker Bot | 1,023 | Health monitoring | ✅ Migrated |
-| Divine Monitoring Bot | 620 | Workflow orchestration | ✅ Enhanced |
+| Old Bot               | Lines | Purpose                 | Status      |
+| --------------------- | ----- | ----------------------- | ----------- |
+| MVP Validation Bot    | 2,186 | End-to-end MVP testing  | ✅ Migrated |
+| MVP Automation Bot    | 946   | Automated user journeys | ✅ Migrated |
+| Website Checker Bot   | 1,023 | Health monitoring       | ✅ Migrated |
+| Divine Monitoring Bot | 620   | Workflow orchestration  | ✅ Enhanced |
 
 ### What We Built
 
@@ -187,22 +188,22 @@ npm run bot -- monitor --interval=60
 
 ### 🎭 Execution Modes
 
-| Mode | Description | Use Case |
-|------|-------------|----------|
-| **Single** | Run one test module | Development, debugging |
-| **Suite** | Run predefined test suite | MVP validation, CI/CD |
-| **Continuous** | Run tests on interval | Health monitoring, uptime |
-| **Scheduled** | Cron-based execution | Nightly builds, reports |
+| Mode           | Description               | Use Case                  |
+| -------------- | ------------------------- | ------------------------- |
+| **Single**     | Run one test module       | Development, debugging    |
+| **Suite**      | Run predefined test suite | MVP validation, CI/CD     |
+| **Continuous** | Run tests on interval     | Health monitoring, uptime |
+| **Scheduled**  | Cron-based execution      | Nightly builds, reports   |
 
 ### 🎨 Configuration Presets
 
-| Preset | Description | Headless | Parallel | Screenshots |
-|--------|-------------|----------|----------|-------------|
-| **quick** | Fast critical tests | ✅ | ❌ | Failures only |
-| **mvp** | Complete validation | ✅ | ❌ | All tests |
-| **monitoring** | Health checks | ✅ | ❌ | Failures only |
-| **cicd** | CI/CD optimized | ✅ | ✅ | Failures only |
-| **debug** | Development mode | ❌ | ❌ | All + traces |
+| Preset         | Description         | Headless | Parallel | Screenshots   |
+| -------------- | ------------------- | -------- | -------- | ------------- |
+| **quick**      | Fast critical tests | ✅       | ❌       | Failures only |
+| **mvp**        | Complete validation | ✅       | ❌       | All tests     |
+| **monitoring** | Health checks       | ✅       | ❌       | Failures only |
+| **cicd**       | CI/CD optimized     | ✅       | ✅       | Failures only |
+| **debug**      | Development mode    | ❌       | ❌       | All + traces  |
 
 ### 📊 Report Formats
 
@@ -214,18 +215,21 @@ npm run bot -- monitor --interval=60
 ### 🧩 Test Modules
 
 #### Authentication
+
 - `auth-login` - User login flow
 - `auth-register-farmer` - Farmer registration
 - `auth-register-customer` - Customer registration
 - `auth-logout` - Logout flow
 
 #### Marketplace
+
 - `marketplace-browse` - Product browsing
 - `marketplace-search` - Search functionality
 - `marketplace-filter` - Category filtering
 - `marketplace-product-detail` - Product page
 
 #### Shopping Cart
+
 - `cart-add` - Add items to cart
 - `cart-update` - Update quantities
 - `cart-remove` - Remove items
@@ -233,6 +237,7 @@ npm run bot -- monitor --interval=60
 - `cart-payment` - Stripe payment
 
 #### Farmer Dashboard
+
 - `farmer-registration` - Complete farmer onboarding
 - `farmer-farm-setup` - Farm profile creation
 - `farmer-product-create` - Add new products
@@ -240,11 +245,13 @@ npm run bot -- monitor --interval=60
 - `farmer-orders` - View order dashboard
 
 #### Admin Dashboard
+
 - `admin-farm-approval` - Approve pending farms
 - `admin-user-management` - Manage users
 - `admin-order-management` - Manage orders
 
 #### Health & Performance
+
 - `health-check` - System health endpoint
 - `health-database` - Database connectivity
 - `health-api` - API endpoint validation
@@ -252,6 +259,7 @@ npm run bot -- monitor --interval=60
 - `performance-api-response` - API response times
 
 #### Security & Compliance
+
 - `security-headers` - Security header validation
 - `security-https` - HTTPS enforcement
 - `security-auth` - Authentication checks
@@ -367,33 +375,33 @@ npm run bot -- help test
 ### Programmatic API
 
 ```typescript
-import { BotFramework } from '@/lib/testing';
-import { createConfig } from '@/lib/testing/config/bot-config';
+import { BotFramework } from "@/lib/testing";
+import { createConfig } from "@/lib/testing/config/bot-config";
 
 // Create bot instance
 const bot = new BotFramework(
-  createConfig('mvp', {
-    baseUrl: 'http://localhost:3001',
+  createConfig("mvp", {
+    baseUrl: "http://localhost:3001",
     modules: {
-      include: ['auth', 'marketplace', 'cart'],
+      include: ["auth", "marketplace", "cart"],
     },
-  })
+  }),
 );
 
 // Initialize
 await bot.initialize();
 
 // Run specific module
-const result = await bot.runModule('auth-login');
+const result = await bot.runModule("auth-login");
 
 // Run test suite
-const report = await bot.runSuite('mvp');
+const report = await bot.runSuite("mvp");
 
 // Start continuous monitoring
 await bot.monitor({
   interval: 60000, // 60 seconds
   onFailure: (result) => {
-    console.error('Test failed:', result);
+    console.error("Test failed:", result);
   },
 });
 
@@ -409,9 +417,9 @@ await bot.cleanup();
 
 ```typescript
 const config: BotConfig = {
-  name: 'Unified Bot Framework',
-  version: '1.0.0',
-  baseUrl: 'http://localhost:3001',
+  name: "Unified Bot Framework",
+  version: "1.0.0",
+  baseUrl: "http://localhost:3001",
 
   browser: {
     headless: true,
@@ -421,7 +429,7 @@ const config: BotConfig = {
   },
 
   execution: {
-    mode: 'suite',
+    mode: "suite",
     parallel: false,
     maxConcurrency: 1,
     retries: 2,
@@ -431,8 +439,8 @@ const config: BotConfig = {
 
   reporting: {
     enabled: true,
-    formats: ['json', 'markdown', 'console'],
-    outputDir: './bot-reports',
+    formats: ["json", "markdown", "console"],
+    outputDir: "./bot-reports",
     screenshotOnFailure: true,
     screenshotOnSuccess: false,
     fullPageScreenshot: true,
@@ -440,7 +448,7 @@ const config: BotConfig = {
   },
 
   logging: {
-    level: 'info',
+    level: "info",
     console: true,
     file: false,
   },
@@ -450,17 +458,17 @@ const config: BotConfig = {
 ### Custom Configuration
 
 ```typescript
-import { createConfig } from '@/lib/testing/config/bot-config';
+import { createConfig } from "@/lib/testing/config/bot-config";
 
 // Start with preset and override
-const config = createConfig('mvp', {
-  baseUrl: 'https://staging.example.com',
+const config = createConfig("mvp", {
+  baseUrl: "https://staging.example.com",
   browser: {
     headless: false, // Visible browser
-    slowMo: 500,     // Slow down actions
+    slowMo: 500, // Slow down actions
   },
   reporting: {
-    formats: ['json', 'html', 'markdown'],
+    formats: ["json", "html", "markdown"],
     saveTraces: true,
   },
 });
@@ -504,14 +512,14 @@ BOT_LOG_FILE=true
 ```typescript
 // src/lib/testing/modules/example/my-test.ts
 
-import type { TestModule, TestContext, TestResult } from '@/lib/testing/types';
+import type { TestModule, TestContext, TestResult } from "@/lib/testing/types";
 
 export const myTestModule: TestModule = {
-  id: 'example-my-test',
-  name: 'My Custom Test',
-  description: 'Description of what this test does',
-  category: 'MARKETPLACE',
-  priority: 'HIGH',
+  id: "example-my-test",
+  name: "My Custom Test",
+  description: "Description of what this test does",
+  category: "MARKETPLACE",
+  priority: "HIGH",
   enabled: true,
   timeout: 30000,
   retries: 2,
@@ -521,22 +529,22 @@ export const myTestModule: TestModule = {
 
     try {
       // Your test logic here
-      await context.utils.navigate('/products');
+      await context.utils.navigate("/products");
       await context.page.waitForSelector('[data-testid="product-card"]');
 
       const productCount = await context.page.$$eval(
         '[data-testid="product-card"]',
-        (els) => els.length
+        (els) => els.length,
       );
 
       if (productCount === 0) {
-        throw new Error('No products found');
+        throw new Error("No products found");
       }
 
       // Take screenshot on success if configured
       let screenshot: string | undefined;
       if (context.config.reporting.screenshotOnSuccess) {
-        screenshot = await context.utils.takeScreenshot('my-test-success');
+        screenshot = await context.utils.takeScreenshot("my-test-success");
       }
 
       return {
@@ -545,17 +553,16 @@ export const myTestModule: TestModule = {
         name: this.name,
         category: this.category,
         priority: this.priority,
-        status: 'PASSED',
+        status: "PASSED",
         startTime,
         endTime: new Date(),
         duration: Date.now() - startTime.getTime(),
         message: `Found ${productCount} products`,
         screenshots: screenshot ? [screenshot] : [],
       };
-
     } catch (error) {
       // Take screenshot on failure
-      const screenshot = await context.utils.takeScreenshot('my-test-failure');
+      const screenshot = await context.utils.takeScreenshot("my-test-failure");
 
       return {
         id: `${this.id}-${Date.now()}`,
@@ -563,11 +570,11 @@ export const myTestModule: TestModule = {
         name: this.name,
         category: this.category,
         priority: this.priority,
-        status: 'FAILED',
+        status: "FAILED",
         startTime,
         endTime: new Date(),
         duration: Date.now() - startTime.getTime(),
-        message: 'Test failed',
+        message: "Test failed",
         error: error instanceof Error ? error.message : String(error),
         errorStack: error instanceof Error ? error.stack : undefined,
         screenshots: [screenshot],
@@ -577,11 +584,11 @@ export const myTestModule: TestModule = {
 
   // Optional lifecycle hooks
   async beforeAll(context: TestContext) {
-    context.log.info('Preparing test environment...');
+    context.log.info("Preparing test environment...");
   },
 
   async afterAll(context: TestContext) {
-    context.log.info('Cleaning up...');
+    context.log.info("Cleaning up...");
   },
 };
 ```
@@ -591,7 +598,7 @@ export const myTestModule: TestModule = {
 ```typescript
 // src/lib/testing/modules/index.ts
 
-import { myTestModule } from './example/my-test';
+import { myTestModule } from "./example/my-test";
 
 export const ALL_MODULES = [
   // ... existing modules
@@ -606,6 +613,7 @@ export const ALL_MODULES = [
 ### Phase 1: Preparation (Week 1)
 
 #### ✅ Completed
+
 - [x] Core architecture designed
 - [x] Type system created (`types.ts`)
 - [x] Browser manager implemented (`core/browser-manager.ts`)
@@ -615,6 +623,7 @@ export const ALL_MODULES = [
 - [x] CLI interface developed (`scripts/bot-cli.ts`)
 
 #### 🚧 Next Steps
+
 1. **Create core bot engine** (`core/bot-engine.ts`)
 2. **Implement test runner** (`core/test-runner.ts`)
 3. **Build report generator** (`core/report-generator.ts`)
@@ -624,6 +633,7 @@ export const ALL_MODULES = [
 ### Phase 2: Module Migration (Week 2-3)
 
 #### Priority 1: Critical Workflows
+
 - [ ] `auth/login.ts` - User login
 - [ ] `auth/registration.ts` - User registration
 - [ ] `marketplace/browse.ts` - Product browsing
@@ -632,12 +642,14 @@ export const ALL_MODULES = [
 - [ ] `health/api-checks.ts` - Health endpoints
 
 #### Priority 2: Core Features
+
 - [ ] `farmer/registration.ts` - Farmer onboarding
 - [ ] `farmer/product-management.ts` - Product CRUD
 - [ ] `admin/farm-approval.ts` - Farm approval
 - [ ] `marketplace/search.ts` - Search functionality
 
 #### Priority 3: Extended Features
+
 - [ ] `farmer/order-dashboard.ts` - Order management
 - [ ] `admin/user-management.ts` - User admin
 - [ ] `performance/page-load.ts` - Performance metrics
@@ -701,27 +713,27 @@ npm run bot -- test mvp  # Uses all new modules
 
 ```typescript
 class BotFramework {
-  constructor(config: BotConfig)
+  constructor(config: BotConfig);
 
   // Lifecycle
-  async initialize(): Promise<void>
-  async cleanup(): Promise<void>
+  async initialize(): Promise<void>;
+  async cleanup(): Promise<void>;
 
   // Execution
-  async runModule(moduleId: string): Promise<TestResult>
-  async runModules(moduleIds: string[]): Promise<TestResult[]>
-  async runSuite(suiteId: string): Promise<BotReport>
-  async runAll(): Promise<BotReport>
+  async runModule(moduleId: string): Promise<TestResult>;
+  async runModules(moduleIds: string[]): Promise<TestResult[]>;
+  async runSuite(suiteId: string): Promise<BotReport>;
+  async runAll(): Promise<BotReport>;
 
   // Monitoring
-  async monitor(options: MonitoringOptions): Promise<void>
-  async stopMonitoring(): Promise<void>
+  async monitor(options: MonitoringOptions): Promise<void>;
+  async stopMonitoring(): Promise<void>;
 
   // Utilities
-  listModules(): TestModule[]
-  listSuites(): TestSuite[]
-  getConfig(): BotConfig
-  updateConfig(updates: Partial<BotConfig>): void
+  listModules(): TestModule[];
+  listSuites(): TestSuite[];
+  getConfig(): BotConfig;
+  updateConfig(updates: Partial<BotConfig>): void;
 }
 ```
 
@@ -730,39 +742,39 @@ class BotFramework {
 ```typescript
 interface TestContext {
   // Core
-  moduleId: string
-  runId: string
-  config: BotConfig
+  moduleId: string;
+  runId: string;
+  config: BotConfig;
 
   // Browser
-  browser: Browser
-  context: BrowserContext
-  page: Page
+  browser: Browser;
+  context: BrowserContext;
+  page: Page;
 
   // Data & State
-  testData: TestData
-  state: Record<string, any>
+  testData: TestData;
+  state: Record<string, any>;
 
   // Utilities
   utils: {
-    navigate: (url: string) => Promise<void>
-    waitForNavigation: () => Promise<void>
-    fillForm: (selector: string, value: string) => Promise<void>
-    clickAndWait: (selector: string) => Promise<void>
-    takeScreenshot: (name: string) => Promise<string>
-    waitFor: (ms: number) => Promise<void>
-    retry: <T>(fn: () => Promise<T>, attempts?: number) => Promise<T>
-  }
+    navigate: (url: string) => Promise<void>;
+    waitForNavigation: () => Promise<void>;
+    fillForm: (selector: string, value: string) => Promise<void>;
+    clickAndWait: (selector: string) => Promise<void>;
+    takeScreenshot: (name: string) => Promise<string>;
+    waitFor: (ms: number) => Promise<void>;
+    retry: <T>(fn: () => Promise<T>, attempts?: number) => Promise<T>;
+  };
 
   // Logging
   log: {
-    debug: (message: string, data?: any) => void
-    info: (message: string, data?: any) => void
-    warn: (message: string, data?: any) => void
-    error: (message: string, data?: any) => void
-    success: (message: string, data?: any) => void
-    step: (message: string, data?: any) => void
-  }
+    debug: (message: string, data?: any) => void;
+    info: (message: string, data?: any) => void;
+    warn: (message: string, data?: any) => void;
+    error: (message: string, data?: any) => void;
+    success: (message: string, data?: any) => void;
+    step: (message: string, data?: any) => void;
+  };
 }
 ```
 
@@ -791,21 +803,23 @@ npm run bot -- monitor --interval=60 --threshold=10
 ### Example 4: Programmatic Usage
 
 ```typescript
-import { BotFramework } from '@/lib/testing';
-import { createConfig } from '@/lib/testing/config/bot-config';
+import { BotFramework } from "@/lib/testing";
+import { createConfig } from "@/lib/testing/config/bot-config";
 
 async function runTests() {
   const bot = new BotFramework(
-    createConfig('mvp', {
-      baseUrl: 'http://localhost:3001',
-    })
+    createConfig("mvp", {
+      baseUrl: "http://localhost:3001",
+    }),
   );
 
   await bot.initialize();
-  const report = await bot.runSuite('mvp');
+  const report = await bot.runSuite("mvp");
   await bot.cleanup();
 
-  console.log(`Tests completed: ${report.summary.passed}/${report.summary.totalTests} passed`);
+  console.log(
+    `Tests completed: ${report.summary.passed}/${report.summary.totalTests} passed`,
+  );
 }
 
 runTests();
@@ -818,7 +832,7 @@ const bot = new BotFramework(config);
 await bot.initialize();
 
 // Run specific modules in sequence
-const modules = ['auth-login', 'marketplace-browse', 'cart-add'];
+const modules = ["auth-login", "marketplace-browse", "cart-add"];
 for (const moduleId of modules) {
   const result = await bot.runModule(moduleId);
   console.log(`${moduleId}: ${result.status}`);
@@ -836,32 +850,35 @@ await bot.cleanup();
 #### Issue: "Browser not initialized"
 
 **Solution:**
+
 ```typescript
 // Always initialize before running tests
 await bot.initialize();
-await bot.runModule('auth-login');
+await bot.runModule("auth-login");
 await bot.cleanup();
 ```
 
 #### Issue: "Selector not found"
 
 **Solution:**
+
 ```typescript
 // Check selector in selectors.ts
-import { SELECTORS } from '@/lib/testing/utils/selectors';
+import { SELECTORS } from "@/lib/testing/utils/selectors";
 console.log(SELECTORS.auth.emailInput);
 
 // Or use fallback selectors
 const selector = fallbackSelector(
   '[data-testid="email"]',
   'input[type="email"]',
-  'input[name="email"]'
+  'input[name="email"]',
 );
 ```
 
 #### Issue: "Test timeout"
 
 **Solution:**
+
 ```bash
 # Increase timeout
 npm run bot -- test mvp --timeout=120000
@@ -873,6 +890,7 @@ BOT_TIMEOUT=120000 npm run bot -- test mvp
 #### Issue: "Screenshot directory not found"
 
 **Solution:**
+
 ```bash
 # Create directories
 mkdir -p bot-reports/screenshots
@@ -996,6 +1014,7 @@ npm run bot -- test --modules=your-new-module --preset=debug
 ### Version 1.0.0 (Current)
 
 **Foundation Phase - ✅ Complete**
+
 - ✅ Core type system (`types.ts`)
 - ✅ Browser manager (`core/browser-manager.ts`)
 - ✅ Test data generator (`utils/test-data.ts`)
@@ -1005,12 +1024,14 @@ npm run bot -- test --modules=your-new-module --preset=debug
 - ✅ Documentation
 
 **In Progress**
+
 - 🚧 Core bot engine
 - 🚧 Test runner
 - 🚧 Report generator
 - 🚧 Test module migration
 
 **Planned**
+
 - 📅 Full module migration (Week 2-3)
 - 📅 Integration testing (Week 4)
 - 📅 Old bot deprecation (Week 5)
@@ -1047,18 +1068,18 @@ npm run bot -- seed                    # Seed database
 
 ### Implementation Status
 
-| Component | Status | Progress |
-|-----------|--------|----------|
-| Types & Interfaces | ✅ Complete | 100% |
-| Browser Manager | ✅ Complete | 100% |
-| Test Data Generator | ✅ Complete | 100% |
-| Selectors | ✅ Complete | 100% |
-| Configuration | ✅ Complete | 100% |
-| CLI Interface | ✅ Complete | 100% |
-| Core Engine | 🚧 In Progress | 30% |
-| Test Runner | 🚧 In Progress | 20% |
-| Report Generator | 🚧 In Progress | 20% |
-| Test Modules | 📅 Planned | 0% |
+| Component           | Status         | Progress |
+| ------------------- | -------------- | -------- |
+| Types & Interfaces  | ✅ Complete    | 100%     |
+| Browser Manager     | ✅ Complete    | 100%     |
+| Test Data Generator | ✅ Complete    | 100%     |
+| Selectors           | ✅ Complete    | 100%     |
+| Configuration       | ✅ Complete    | 100%     |
+| CLI Interface       | ✅ Complete    | 100%     |
+| Core Engine         | 🚧 In Progress | 30%      |
+| Test Runner         | 🚧 In Progress | 20%      |
+| Report Generator    | 🚧 In Progress | 20%      |
+| Test Modules        | 📅 Planned     | 0%       |
 
 ### Upcoming Features
 

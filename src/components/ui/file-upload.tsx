@@ -50,7 +50,7 @@ const fileUploadVariants = cva(
       uploadSize: "default",
       state: "idle",
     },
-  }
+  },
 );
 
 // ============================================================================
@@ -67,8 +67,9 @@ export interface UploadedFile {
 }
 
 export interface FileUploadProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChange">,
-  VariantProps<typeof fileUploadVariants> {
+  extends
+    Omit<React.HTMLAttributes<HTMLDivElement>, "onChange">,
+    VariantProps<typeof fileUploadVariants> {
   maxFiles?: number;
   maxSize?: number; // in bytes
   accept?: Record<string, string[]>;
@@ -107,7 +108,7 @@ const FileUpload = React.forwardRef<HTMLDivElement, FileUploadProps>(
       consciousness = "STANDARD",
       ...props
     },
-    ref
+    ref,
   ) => {
     const [files, setFiles] = React.useState<UploadedFile[]>(value);
     const [error, setError] = React.useState<string | null>(null);
@@ -164,7 +165,7 @@ const FileUpload = React.forwardRef<HTMLDivElement, FileUploadProps>(
             const uploadingFiles = updatedFiles.map((f: any) =>
               newFiles.find((nf: any) => nf.id === f.id)
                 ? { ...f, status: "uploading" as const }
-                : f
+                : f,
             );
             setFiles(uploadingFiles);
             onChange?.(uploadingFiles);
@@ -176,7 +177,7 @@ const FileUpload = React.forwardRef<HTMLDivElement, FileUploadProps>(
             const successFiles = updatedFiles.map((f: any) =>
               newFiles.find((nf: any) => nf.id === f.id)
                 ? { ...f, status: "success" as const, progress: 100 }
-                : f
+                : f,
             );
             setFiles(successFiles);
             onChange?.(successFiles);
@@ -185,18 +186,18 @@ const FileUpload = React.forwardRef<HTMLDivElement, FileUploadProps>(
             const errorFiles = updatedFiles.map((f: any) =>
               newFiles.find((nf: any) => nf.id === f.id)
                 ? {
-                  ...f,
-                  status: "error" as const,
-                  error: err instanceof Error ? err.message : "Upload failed",
-                }
-                : f
+                    ...f,
+                    status: "error" as const,
+                    error: err instanceof Error ? err.message : "Upload failed",
+                  }
+                : f,
             );
             setFiles(errorFiles);
             onChange?.(errorFiles);
           }
         }
       },
-      [files, maxFiles, onChange, onUpload]
+      [files, maxFiles, onChange, onUpload],
     );
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -220,7 +221,9 @@ const FileUpload = React.forwardRef<HTMLDivElement, FileUploadProps>(
 
       try {
         const updatedFiles = files.map((f: any) =>
-          f.id === id ? { ...f, status: "uploading" as const, error: undefined } : f
+          f.id === id
+            ? { ...f, status: "uploading" as const, error: undefined }
+            : f,
         );
         setFiles(updatedFiles);
         onChange?.(updatedFiles);
@@ -228,7 +231,7 @@ const FileUpload = React.forwardRef<HTMLDivElement, FileUploadProps>(
         await onUpload([file.file]);
 
         const successFiles = files.map((f: any) =>
-          f.id === id ? { ...f, status: "success" as const, progress: 100 } : f
+          f.id === id ? { ...f, status: "success" as const, progress: 100 } : f,
         );
         setFiles(successFiles);
         onChange?.(successFiles);
@@ -236,11 +239,11 @@ const FileUpload = React.forwardRef<HTMLDivElement, FileUploadProps>(
         const errorFiles = files.map((f: any) =>
           f.id === id
             ? {
-              ...f,
-              status: "error" as const,
-              error: err instanceof Error ? err.message : "Upload failed",
-            }
-            : f
+                ...f,
+                status: "error" as const,
+                error: err instanceof Error ? err.message : "Upload failed",
+              }
+            : f,
         );
         setFiles(errorFiles);
         onChange?.(errorFiles);
@@ -265,14 +268,10 @@ const FileUpload = React.forwardRef<HTMLDivElement, FileUploadProps>(
               fileUploadVariants({
                 variant: error ? "error" : variant,
                 uploadSize,
-                state: disabled
-                  ? "disabled"
-                  : isDragActive
-                    ? "active"
-                    : "idle",
+                state: disabled ? "disabled" : isDragActive ? "active" : "idle",
               }),
               consciousnessStyles[consciousness],
-              "cursor-pointer"
+              "cursor-pointer",
             )}
           >
             <input {...getInputProps()} />
@@ -283,7 +282,7 @@ const FileUpload = React.forwardRef<HTMLDivElement, FileUploadProps>(
                   "rounded-full p-3 transition-all duration-200",
                   isDragActive
                     ? "bg-primary text-primary-foreground scale-110"
-                    : "bg-gray-100 text-gray-600"
+                    : "bg-gray-100 text-gray-600",
                 )}
               >
                 <Upload className="h-6 w-6" />
@@ -363,7 +362,7 @@ const FileUpload = React.forwardRef<HTMLDivElement, FileUploadProps>(
         )}
       </div>
     );
-  }
+  },
 );
 FileUpload.displayName = "FileUpload";
 
@@ -404,7 +403,7 @@ function FilePreview({
     <div
       className={cn(
         "relative flex items-center gap-3 p-3 rounded-lg border transition-all duration-200",
-        statusColors[file.status]
+        statusColors[file.status],
       )}
     >
       {/* Preview or Icon */}
@@ -473,7 +472,7 @@ function FilePreview({
       </div>
     </div>
   );
-};
+}
 
 // ============================================================================
 // UTILITIES
@@ -493,8 +492,10 @@ const formatFileSize = (bytes: number): string => {
 // AGRICULTURAL FILE UPLOAD (DIVINE PATTERN)
 // ============================================================================
 
-export interface AgriculturalFileUploadProps
-  extends Omit<FileUploadProps, "consciousness"> {
+export interface AgriculturalFileUploadProps extends Omit<
+  FileUploadProps,
+  "consciousness"
+> {
   farmId?: string;
   productId?: string;
   category?: "product" | "farm" | "certification" | "document";

@@ -5,7 +5,7 @@
  * Single source of truth for all UI element selectors across the platform
  */
 
-import type { PageSelectors } from '../types';
+import type { PageSelectors } from "../types";
 
 // ============================================================================
 // COMPLETE SELECTOR MAP
@@ -20,9 +20,12 @@ export const SELECTORS: PageSelectors = {
     footer: 'footer, [role="contentinfo"]',
     navigation: 'nav, [role="navigation"]',
     logo: 'a[href="/"], img[alt*="logo" i], .logo',
-    loginButton: 'a[href*="login"], button:has-text("Log In"), button:has-text("Sign In")',
-    signupButton: 'a[href*="signup"], a[href*="register"], button:has-text("Sign Up"), button:has-text("Register")',
-    userMenu: '[data-testid="user-menu"], .user-menu, button:has-text("Account")',
+    loginButton:
+      'a[href*="login"], button:has-text("Log In"), button:has-text("Sign In")',
+    signupButton:
+      'a[href*="signup"], a[href*="register"], button:has-text("Sign Up"), button:has-text("Register")',
+    userMenu:
+      '[data-testid="user-menu"], .user-menu, button:has-text("Account")',
     searchInput: 'input[type="search"], input[placeholder*="Search" i]',
   },
 
@@ -31,23 +34,32 @@ export const SELECTORS: PageSelectors = {
   // ==========================================================================
   auth: {
     // Form inputs
-    emailInput: 'input[type="email"], input[name="email"], input[id*="email" i]',
-    passwordInput: 'input[type="password"], input[name="password"], input[id*="password" i]',
-    firstNameInput: 'input[name="firstName"], input[name="firstname"], input[id*="firstname" i], input[placeholder*="First Name" i]',
-    lastNameInput: 'input[name="lastName"], input[name="lastname"], input[id*="lastname" i], input[placeholder*="Last Name" i]',
+    emailInput:
+      'input[type="email"], input[name="email"], input[id*="email" i]',
+    passwordInput:
+      'input[type="password"], input[name="password"], input[id*="password" i]',
+    firstNameInput:
+      'input[name="firstName"], input[name="firstname"], input[id*="firstname" i], input[placeholder*="First Name" i]',
+    lastNameInput:
+      'input[name="lastName"], input[name="lastname"], input[id*="lastname" i], input[placeholder*="Last Name" i]',
 
     // Buttons and actions
-    submitButton: 'button[type="submit"], button:has-text("Submit"), button:has-text("Continue"), button:has-text("Sign Up"), button:has-text("Log In")',
+    submitButton:
+      'button[type="submit"], button:has-text("Submit"), button:has-text("Continue"), button:has-text("Sign Up"), button:has-text("Log In")',
 
     // Messages
-    errorMessage: '.error, [role="alert"], .alert-error, .text-red-500, [class*="error"]',
-    successMessage: '.success, .alert-success, .text-green-500, [class*="success"]',
+    errorMessage:
+      '.error, [role="alert"], .alert-error, .text-red-500, [class*="error"]',
+    successMessage:
+      '.success, .alert-success, .text-green-500, [class*="success"]',
 
     // Role selection
-    roleSelector: 'input[name="role"], select[name="role"], [data-testid="role-selector"]',
+    roleSelector:
+      'input[name="role"], select[name="role"], [data-testid="role-selector"]',
 
     // Terms and conditions
-    agreeCheckbox: 'input[type="checkbox"][name*="agree" i], input[type="checkbox"][name*="terms" i]',
+    agreeCheckbox:
+      'input[type="checkbox"][name*="agree" i], input[type="checkbox"][name*="terms" i]',
   },
 
   // ==========================================================================
@@ -55,19 +67,26 @@ export const SELECTORS: PageSelectors = {
   // ==========================================================================
   marketplace: {
     // Product grid
-    productGrid: '[data-testid="product-grid"], .product-grid, .products-container, main section',
+    productGrid:
+      '[data-testid="product-grid"], .product-grid, .products-container, main section',
     productCard: '[data-testid="product-card"], .product-card, article',
-    productImage: '[data-testid="product-image"], .product-image, img[alt*="product" i]',
+    productImage:
+      '[data-testid="product-image"], .product-image, img[alt*="product" i]',
     productName: '[data-testid="product-name"], .product-name, h2, h3',
-    productPrice: '[data-testid="product-price"], .product-price, .price, [class*="price"]',
+    productPrice:
+      '[data-testid="product-price"], .product-price, .price, [class*="price"]',
 
     // Actions
-    addToCartButton: 'button:has-text("Add to Cart"), button:has-text("Add"), [data-testid="add-to-cart"]',
+    addToCartButton:
+      'button:has-text("Add to Cart"), button:has-text("Add"), [data-testid="add-to-cart"]',
 
     // Search and filters
-    searchInput: 'input[type="search"], input[placeholder*="Search" i], [data-testid="search-input"]',
-    categoryFilter: 'select[name="category"], [data-testid="category-filter"], button:has-text("Category")',
-    sortDropdown: 'select[name="sort"], [data-testid="sort-dropdown"], button:has-text("Sort")',
+    searchInput:
+      'input[type="search"], input[placeholder*="Search" i], [data-testid="search-input"]',
+    categoryFilter:
+      'select[name="category"], [data-testid="category-filter"], button:has-text("Category")',
+    sortDropdown:
+      'select[name="sort"], [data-testid="sort-dropdown"], button:has-text("Sort")',
   },
 
   // ==========================================================================
@@ -75,20 +94,25 @@ export const SELECTORS: PageSelectors = {
   // ==========================================================================
   cart: {
     // Cart icon and badge
-    cartIcon: 'a[href*="cart"], button:has-text("Cart"), [data-testid="cart-icon"], svg[class*="cart"]',
+    cartIcon:
+      'a[href*="cart"], button:has-text("Cart"), [data-testid="cart-icon"], svg[class*="cart"]',
     cartBadge: '[data-testid="cart-badge"], .cart-badge, .badge',
 
     // Cart items
     cartItems: '[data-testid="cart-items"], .cart-items',
     cartItem: '[data-testid="cart-item"], .cart-item',
-    removeButton: 'button:has-text("Remove"), [data-testid="remove-item"], button[aria-label*="Remove" i]',
-    quantityInput: 'input[type="number"], input[name*="quantity" i], [data-testid="quantity-input"]',
+    removeButton:
+      'button:has-text("Remove"), [data-testid="remove-item"], button[aria-label*="Remove" i]',
+    quantityInput:
+      'input[type="number"], input[name*="quantity" i], [data-testid="quantity-input"]',
 
     // Cart actions
-    checkoutButton: 'button:has-text("Checkout"), a[href*="checkout"], [data-testid="checkout-button"]',
+    checkoutButton:
+      'button:has-text("Checkout"), a[href*="checkout"], [data-testid="checkout-button"]',
 
     // Cart state
-    emptyCartMessage: 'text=/empty/i, text=/no items/i, [data-testid="empty-cart"]',
+    emptyCartMessage:
+      'text=/empty/i, text=/no items/i, [data-testid="empty-cart"]',
     totalPrice: '[data-testid="total-price"], .total-price, .cart-total',
   },
 
@@ -97,25 +121,34 @@ export const SELECTORS: PageSelectors = {
   // ==========================================================================
   farmer: {
     // Farm setup
-    farmNameInput: 'input[name="name"], input[name="farmName"], input[placeholder*="Farm Name" i]',
-    farmDescriptionInput: 'textarea[name="description"], [data-testid="farm-description"]',
+    farmNameInput:
+      'input[name="name"], input[name="farmName"], input[placeholder*="Farm Name" i]',
+    farmDescriptionInput:
+      'textarea[name="description"], [data-testid="farm-description"]',
     farmAddressInput: 'input[name="address"], input[placeholder*="Address" i]',
 
     // Product management
-    productNameInput: 'input[name="name"], input[name="productName"], input[placeholder*="Product Name" i]',
-    productPriceInput: 'input[name="price"], input[type="number"][placeholder*="Price" i]',
-    productStockInput: 'input[name="stock"], input[name="quantity"], input[name="quantityAvailable"]',
-    productCategorySelect: 'select[name="category"], [data-testid="category-select"]',
+    productNameInput:
+      'input[name="name"], input[name="productName"], input[placeholder*="Product Name" i]',
+    productPriceInput:
+      'input[name="price"], input[type="number"][placeholder*="Price" i]',
+    productStockInput:
+      'input[name="stock"], input[name="quantity"], input[name="quantityAvailable"]',
+    productCategorySelect:
+      'select[name="category"], [data-testid="category-select"]',
 
     // Image upload
     imageUploadInput: 'input[type="file"], [data-testid="image-upload"]',
 
     // Actions
-    saveButton: 'button[type="submit"], button:has-text("Save"), button:has-text("Create"), button:has-text("Update")',
+    saveButton:
+      'button[type="submit"], button:has-text("Save"), button:has-text("Create"), button:has-text("Update")',
 
     // Navigation tabs
-    ordersTab: 'a[href*="orders"], button:has-text("Orders"), [data-testid="orders-tab"]',
-    productsTab: 'a[href*="products"], button:has-text("Products"), [data-testid="products-tab"]',
+    ordersTab:
+      'a[href*="orders"], button:has-text("Orders"), [data-testid="orders-tab"]',
+    productsTab:
+      'a[href*="products"], button:has-text("Products"), [data-testid="products-tab"]',
   },
 
   // ==========================================================================
@@ -123,12 +156,16 @@ export const SELECTORS: PageSelectors = {
   // ==========================================================================
   admin: {
     // Navigation tabs
-    farmsTab: 'a[href*="farms"], button:has-text("Farms"), [data-testid="farms-tab"]',
-    usersTab: 'a[href*="users"], button:has-text("Users"), [data-testid="users-tab"]',
-    ordersTab: 'a[href*="orders"], button:has-text("Orders"), [data-testid="orders-tab"]',
+    farmsTab:
+      'a[href*="farms"], button:has-text("Farms"), [data-testid="farms-tab"]',
+    usersTab:
+      'a[href*="users"], button:has-text("Users"), [data-testid="users-tab"]',
+    ordersTab:
+      'a[href*="orders"], button:has-text("Orders"), [data-testid="orders-tab"]',
 
     // Farm approval
-    pendingFarms: '[data-testid="pending-farms"], .pending-farms, [data-status="pending"]',
+    pendingFarms:
+      '[data-testid="pending-farms"], .pending-farms, [data-status="pending"]',
     approveButton: 'button:has-text("Approve"), [data-testid="approve-button"]',
     rejectButton: 'button:has-text("Reject"), [data-testid="reject-button"]',
 
@@ -146,7 +183,7 @@ export const SELECTORS: PageSelectors = {
  * Get selector by path (e.g., "common.header")
  */
 export function getSelector(path: string): string | string[] {
-  const parts = path.split('.');
+  const parts = path.split(".");
   let current: any = SELECTORS;
 
   for (const part of parts) {
@@ -164,7 +201,7 @@ export function getSelector(path: string): string | string[] {
  */
 export function combineSelectors(...selectors: (string | string[])[]): string {
   const flattened = selectors.flat();
-  return flattened.join(', ');
+  return flattened.join(", ");
 }
 
 /**
@@ -199,7 +236,7 @@ export function ariaLabelSelector(label: string): string {
  * Try multiple selectors in order (returns first that exists)
  */
 export function fallbackSelector(...selectors: string[]): string {
-  return selectors.join(', ');
+  return selectors.join(", ");
 }
 
 // ============================================================================
@@ -307,14 +344,14 @@ export function validateSelectors(): {
 } {
   const missing: string[] = [];
 
-  function checkObject(obj: any, path: string = '') {
+  function checkObject(obj: any, path: string = "") {
     for (const key in obj) {
       const currentPath = path ? `${path}.${key}` : key;
       const value = obj[key];
 
-      if (typeof value === 'object' && !Array.isArray(value)) {
+      if (typeof value === "object" && !Array.isArray(value)) {
         checkObject(value, currentPath);
-      } else if (value === undefined || value === null || value === '') {
+      } else if (value === undefined || value === null || value === "") {
         missing.push(currentPath);
       }
     }
@@ -334,12 +371,12 @@ export function validateSelectors(): {
 export function getAllSelectors(): Record<string, string | string[]> {
   const flat: Record<string, string | string[]> = {};
 
-  function flatten(obj: any, prefix: string = '') {
+  function flatten(obj: any, prefix: string = "") {
     for (const key in obj) {
       const value = obj[key];
       const newKey = prefix ? `${prefix}.${key}` : key;
 
-      if (typeof value === 'object' && !Array.isArray(value)) {
+      if (typeof value === "object" && !Array.isArray(value)) {
         flatten(value, newKey);
       } else {
         flat[newKey] = value;

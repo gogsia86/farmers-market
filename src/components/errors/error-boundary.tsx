@@ -123,8 +123,7 @@ export class ErrorBoundary extends Component<
 
     // Check cooldown
     if (lastRecoveryAttempt) {
-      const timeSinceLastAttempt =
-        Date.now() - lastRecoveryAttempt.getTime();
+      const timeSinceLastAttempt = Date.now() - lastRecoveryAttempt.getTime();
       if (timeSinceLastAttempt < recoveryCooldown) {
         return false;
       }
@@ -226,18 +225,21 @@ function DefaultErrorFallback({ error, onReset }: DefaultErrorFallbackProps) {
 
         <p className="text-gray-600 mb-4">{error.userDetails.message}</p>
 
-        {error.userDetails.suggestions && error.userDetails.suggestions.length > 0 && (
-          <div className="mb-4">
-            <p className="text-sm font-medium text-gray-700 mb-2">
-              Suggestions:
-            </p>
-            <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
-              {error.userDetails.suggestions.map((suggestion: any, index: any) => (
-                <li key={index}>{suggestion}</li>
-              ))}
-            </ul>
-          </div>
-        )}
+        {error.userDetails.suggestions &&
+          error.userDetails.suggestions.length > 0 && (
+            <div className="mb-4">
+              <p className="text-sm font-medium text-gray-700 mb-2">
+                Suggestions:
+              </p>
+              <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
+                {error.userDetails.suggestions.map(
+                  (suggestion: any, index: any) => (
+                    <li key={index}>{suggestion}</li>
+                  ),
+                )}
+              </ul>
+            </div>
+          )}
 
         <div className="flex gap-3">
           <button
@@ -247,7 +249,7 @@ function DefaultErrorFallback({ error, onReset }: DefaultErrorFallbackProps) {
             Try Again
           </button>
           <button
-            onClick={() => window.location.href = "/"}
+            onClick={() => (window.location.href = "/")}
             className="flex-1 bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300 transition-colors font-medium"
           >
             Go Home
@@ -268,7 +270,7 @@ function DefaultErrorFallback({ error, onReset }: DefaultErrorFallbackProps) {
                   severity: error.severity,
                 },
                 null,
-                2
+                2,
               )}
             </pre>
           </details>
@@ -282,8 +284,10 @@ function DefaultErrorFallback({ error, onReset }: DefaultErrorFallbackProps) {
 // AGRICULTURAL ERROR BOUNDARY (Divine Pattern)
 // ============================================================================
 
-export interface AgriculturalErrorBoundaryProps
-  extends Omit<ErrorBoundaryProps, "fallback"> {
+export interface AgriculturalErrorBoundaryProps extends Omit<
+  ErrorBoundaryProps,
+  "fallback"
+> {
   /** Season context */
   season?: string;
   /** Farm ID context */
@@ -304,18 +308,22 @@ export class AgriculturalErrorBoundary extends Component<
   render(): ReactNode {
     const { season, farmId, fallback, ...boundaryProps } = this.props;
 
-    const agriculturalFallback = fallback || ((error: AppError, reset: () => void) => (
-      <AgriculturalErrorFallback
-        error={error}
-        onReset={reset}
-        season={season}
-        farmId={farmId}
-      />
-    ));
+    const agriculturalFallback =
+      fallback ||
+      ((error: AppError, reset: () => void) => (
+        <AgriculturalErrorFallback
+          error={error}
+          onReset={reset}
+          season={season}
+          farmId={farmId}
+        />
+      ));
 
     return (
       <ErrorBoundary
-        ref={(ref) => { this.boundary = ref; }}
+        ref={(ref) => {
+          this.boundary = ref;
+        }}
         {...boundaryProps}
         fallback={agriculturalFallback}
         onError={(error, errorInfo) => {
@@ -388,18 +396,21 @@ function AgriculturalErrorFallback({
           </div>
         )}
 
-        {error.userDetails.suggestions && error.userDetails.suggestions.length > 0 && (
-          <div className="mb-4">
-            <p className="text-sm font-medium text-gray-700 mb-2">
-              🌱 Suggested Actions:
-            </p>
-            <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
-              {error.userDetails.suggestions.map((suggestion: any, index: any) => (
-                <li key={index}>{suggestion}</li>
-              ))}
-            </ul>
-          </div>
-        )}
+        {error.userDetails.suggestions &&
+          error.userDetails.suggestions.length > 0 && (
+            <div className="mb-4">
+              <p className="text-sm font-medium text-gray-700 mb-2">
+                🌱 Suggested Actions:
+              </p>
+              <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
+                {error.userDetails.suggestions.map(
+                  (suggestion: any, index: any) => (
+                    <li key={index}>{suggestion}</li>
+                  ),
+                )}
+              </ul>
+            </div>
+          )}
 
         <div className="flex gap-3">
           <button
@@ -409,7 +420,7 @@ function AgriculturalErrorFallback({
             🔄 Try Again
           </button>
           <button
-            onClick={() => window.location.href = "/farms"}
+            onClick={() => (window.location.href = "/farms")}
             className="flex-1 bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300 transition-colors font-medium"
           >
             🏠 Browse Farms
@@ -449,12 +460,15 @@ export function RouteErrorBoundary({
             {showBreadcrumb && route && (
               <div className="mb-4 text-sm text-gray-500">
                 <span>Home</span>
-                {route.split("/").filter(Boolean).map((segment: any, index: any) => (
-                  <span key={index}>
-                    {" / "}
-                    <span className="capitalize">{segment}</span>
-                  </span>
-                ))}
+                {route
+                  .split("/")
+                  .filter(Boolean)
+                  .map((segment: any, index: any) => (
+                    <span key={index}>
+                      {" / "}
+                      <span className="capitalize">{segment}</span>
+                    </span>
+                  ))}
               </div>
             )}
             <DefaultErrorFallback error={error} onReset={reset} />

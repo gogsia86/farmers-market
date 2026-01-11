@@ -110,8 +110,9 @@ export default async function NewProductPage() {
               </h3>
               <div className="mt-2 text-sm text-yellow-700">
                 <p>
-                  Your farm is currently pending verification. You can create products now,
-                  but they won't be visible to customers until your farm is approved by an admin.
+                  Your farm is currently pending verification. You can create
+                  products now, but they won't be visible to customers until
+                  your farm is approved by an admin.
                 </p>
               </div>
             </div>
@@ -126,10 +127,17 @@ export default async function NewProductPage() {
 
       {/* Help Text */}
       <div className="mt-6 rounded-lg bg-blue-50 p-4">
-        <h3 className="text-sm font-medium text-blue-900">💡 Tips for Creating Products</h3>
+        <h3 className="text-sm font-medium text-blue-900">
+          💡 Tips for Creating Products
+        </h3>
         <ul className="mt-2 list-inside list-disc space-y-1 text-sm text-blue-700">
-          <li>Use clear, descriptive names that customers can easily search for</li>
-          <li>Include detailed descriptions with growing methods and characteristics</li>
+          <li>
+            Use clear, descriptive names that customers can easily search for
+          </li>
+          <li>
+            Include detailed descriptions with growing methods and
+            characteristics
+          </li>
           <li>Set competitive prices based on your local market</li>
           <li>Keep inventory quantities accurate to avoid overselling</li>
           <li>Add high-quality images to attract more customers</li>

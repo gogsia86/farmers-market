@@ -597,7 +597,6 @@ Average Processing Time: <3s
 PCI-DSS Compliance: Level 1
 Test Coverage: >85
 Documentation: Complete
-
 User Experience:
   - Checkout completion rate: >75
   - Payment failures: <1%

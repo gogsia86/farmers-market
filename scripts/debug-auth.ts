@@ -105,7 +105,9 @@ async function main() {
       console.log("   1. Re-run seed script to reset passwords:");
       console.log("      npm run seed:basic");
       console.log("   2. Or manually update password in database");
-      console.log("   3. Check if bcrypt version matches between seed and auth");
+      console.log(
+        "   3. Check if bcrypt version matches between seed and auth",
+      );
     } else {
       console.log("   ✅ Everything looks good!");
       console.log("   If login still fails, check:");

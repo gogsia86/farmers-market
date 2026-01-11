@@ -26,7 +26,7 @@ export {
   type SkeletonGroupProps,
   type SkeletonProps,
   type TableSkeletonProps,
-  type TextSkeletonProps
+  type TextSkeletonProps,
 } from "./Skeleton";
 
 // ============================================================================
@@ -43,7 +43,7 @@ export {
   type CenteredLoadingSpinnerProps,
   type InlineLoadingSpinnerProps,
   type LoadingSpinnerProps,
-  type OverlayLoadingSpinnerProps
+  type OverlayLoadingSpinnerProps,
 } from "./LoadingSpinner";
 
 // ============================================================================
@@ -63,7 +63,7 @@ export {
   type MultiProgressProps,
   type MultiProgressSegment,
   type ProgressRingProps,
-  type StepProgressProps
+  type StepProgressProps,
 } from "./ProgressIndicator";
 
 // ============================================================================
@@ -88,7 +88,7 @@ export {
   type SkeletonSuspenseBoundaryProps,
   type SuspenseBoundaryProps,
   type SuspenseListBoundaryProps,
-  type SuspenseWithErrorBoundaryProps
+  type SuspenseWithErrorBoundaryProps,
 } from "./SuspenseBoundary";
 
 // ============================================================================
@@ -105,4 +105,3 @@ export { default as Spinner } from "./LoadingSpinner";
 export { default as Progress } from "./ProgressIndicator";
 export { default } from "./Skeleton";
 export { default as Suspense } from "./SuspenseBoundary";
-

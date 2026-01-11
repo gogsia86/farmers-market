@@ -14,19 +14,36 @@
  * @route /marketplace
  */
 
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
-import { farmService } from '@/lib/services/farm.service';
-import { productService } from '@/lib/services/product.service';
-import type { Farm } from '@prisma/client';
-import Link from 'next/link';
-import { cache, Suspense } from 'react';
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { farmService } from "@/lib/services/farm.service";
+import { productService } from "@/lib/services/product.service";
+import type { Farm } from "@prisma/client";
+import Link from "next/link";
+import { cache, Suspense } from "react";
 
 // Type for farm listing item
 type FarmListingItem = Pick<
   Farm,
-  "id" | "name" | "slug" | "description" | "city" | "state" | "logoUrl" | "bannerUrl" | "images" | "verificationStatus" | "averageRating" | "reviewCount"
+  | "id"
+  | "name"
+  | "slug"
+  | "description"
+  | "city"
+  | "state"
+  | "logoUrl"
+  | "bannerUrl"
+  | "images"
+  | "verificationStatus"
+  | "averageRating"
+  | "reviewCount"
 > & {
   _count?: {
     products: number;
@@ -69,7 +86,11 @@ const getMarketplaceStats = cache(async () => {
   try {
     // These stats could be cached separately with longer TTL
     const [productsResult, farmsResult] = await Promise.all([
-      productService.getProductsForListing({ inStock: true, limit: 1, page: 1 }),
+      productService.getProductsForListing({
+        inStock: true,
+        limit: 1,
+        page: 1,
+      }),
       farmService.getFarmsForListing({ verifiedOnly: true, limit: 1, page: 1 }),
     ]);
 
@@ -78,7 +99,7 @@ const getMarketplaceStats = cache(async () => {
       farmCount: farmsResult.total,
     };
   } catch (error) {
-    console.error('Failed to fetch marketplace stats:', error);
+    console.error("Failed to fetch marketplace stats:", error);
     return { productCount: 0, farmCount: 0 };
   }
 });
@@ -127,8 +148,12 @@ async function FeaturedProducts() {
   if (products.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-muted-foreground">No products available at the moment.</p>
-        <p className="text-sm text-muted-foreground mt-2">Check back soon for fresh produce!</p>
+        <p className="text-muted-foreground">
+          No products available at the moment.
+        </p>
+        <p className="text-sm text-muted-foreground mt-2">
+          Check back soon for fresh produce!
+        </p>
       </div>
     );
   }
@@ -158,14 +183,18 @@ async function FeaturedProducts() {
               )}
             </CardHeader>
             <CardContent className="pt-4">
-              <h3 className="font-semibold text-lg mb-1 line-clamp-1">{product.name}</h3>
+              <h3 className="font-semibold text-lg mb-1 line-clamp-1">
+                {product.name}
+              </h3>
               <p className="text-sm text-muted-foreground mb-2 line-clamp-1">
                 {product.farm.name}
               </p>
               <div className="flex items-center justify-between">
                 <span className="text-lg font-bold text-primary">
                   ${product.price.toFixed(2)}
-                  {product.unit && <span className="text-sm font-normal">/{product.unit}</span>}
+                  {product.unit && (
+                    <span className="text-sm font-normal">/{product.unit}</span>
+                  )}
                 </span>
               </div>
             </CardContent>
@@ -182,7 +211,9 @@ async function FeaturedFarms() {
   if (farms.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-muted-foreground">No farms available at the moment.</p>
+        <p className="text-muted-foreground">
+          No farms available at the moment.
+        </p>
       </div>
     );
   }
@@ -220,9 +251,10 @@ async function FeaturedFarms() {
               )}
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">
-                  {farm._count?.products || 0} product{(farm._count?.products || 0) !== 1 ? 's' : ''}
+                  {farm._count?.products || 0} product
+                  {(farm._count?.products || 0) !== 1 ? "s" : ""}
                 </span>
-                {farm.verificationStatus === 'VERIFIED' && (
+                {farm.verificationStatus === "VERIFIED" && (
                   <span className="text-green-600 font-medium">✓ Verified</span>
                 )}
               </div>
@@ -276,7 +308,8 @@ export default async function MarketplacePage() {
           🌾 Farmers Market Platform
         </h1>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-6">
-          Discover fresh, locally-grown produce directly from farmers in your area
+          Discover fresh, locally-grown produce directly from farmers in your
+          area
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button asChild size="lg">
@@ -351,7 +384,8 @@ export default async function MarketplacePage() {
       <section className="mt-16 text-center py-12 bg-muted rounded-lg">
         <h2 className="text-3xl font-bold mb-4">Are You a Farmer?</h2>
         <p className="text-muted-foreground mb-6 max-w-xl mx-auto">
-          Join our community of local farmers and start selling your fresh produce directly to customers
+          Join our community of local farmers and start selling your fresh
+          produce directly to customers
         </p>
         <Button asChild size="lg">
           <Link href="/register?role=farmer">Register Your Farm</Link>
@@ -365,11 +399,12 @@ export default async function MarketplacePage() {
 // METADATA
 // ============================================================================
 
-import type { Metadata } from 'next';
+import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: 'Marketplace | Farmers Market Platform',
-  description: 'Discover fresh, locally-grown produce directly from farmers in your area',
+  title: "Marketplace | Farmers Market Platform",
+  description:
+    "Discover fresh, locally-grown produce directly from farmers in your area",
 };
 
 // Metadata is already defined at top with revalidate

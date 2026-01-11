@@ -58,7 +58,7 @@ export class InvoicePDFService {
    */
   static async generateInvoice(
     invoiceData: InvoiceData,
-    options: InvoiceOptions = {}
+    options: InvoiceOptions = {},
   ): Promise<Blob> {
     const {
       includeHeader = true,
@@ -126,7 +126,7 @@ export class InvoicePDFService {
    */
   static async downloadInvoice(
     invoiceData: InvoiceData,
-    filename?: string
+    filename?: string,
   ): Promise<void> {
     const { order } = invoiceData;
     const defaultFilename = `invoice-${order.orderNumber}-${new Date().toISOString().split("T")[0]}.pdf`;
@@ -146,7 +146,7 @@ export class InvoicePDFService {
    * Generate invoice as base64 string (for email attachments)
    */
   static async generateInvoiceBase64(
-    invoiceData: InvoiceData
+    invoiceData: InvoiceData,
   ): Promise<string> {
     const blob = await this.generateInvoice(invoiceData);
     return new Promise((resolve, reject) => {
@@ -176,7 +176,7 @@ export class InvoicePDFService {
   private static addHeader(
     doc: jsPDF,
     order: InvoiceData["order"],
-    yPos: number
+    yPos: number,
   ): number {
     // Logo/Branding Area
     doc.setFontSize(this.FONTS.title);
@@ -203,7 +203,7 @@ export class InvoicePDFService {
   private static addOrderInfo(
     doc: jsPDF,
     order: InvoiceData["order"],
-    yPos: number
+    yPos: number,
   ): number {
     // Background box
     doc.setFillColor(this.COLORS.lightGray);
@@ -229,7 +229,7 @@ export class InvoicePDFService {
         day: "numeric",
       }),
       60,
-      yPos + 10
+      yPos + 10,
     );
 
     // Right column
@@ -249,7 +249,7 @@ export class InvoicePDFService {
   private static addPartyInfo(
     doc: jsPDF,
     order: InvoiceData["order"],
-    yPos: number
+    yPos: number,
   ): number {
     doc.setFontSize(this.FONTS.subheading);
     doc.setFont("helvetica", "bold");
@@ -260,7 +260,9 @@ export class InvoicePDFService {
     doc.setFontSize(this.FONTS.body);
     doc.setFont("helvetica", "normal");
 
-    const customerName = `${order.customer.firstName || ""} ${order.customer.lastName || ""}`.trim() || "Customer";
+    const customerName =
+      `${order.customer.firstName || ""} ${order.customer.lastName || ""}`.trim() ||
+      "Customer";
     doc.text(customerName, 20, yPos + 5);
 
     if (order.customer.email) {
@@ -319,7 +321,7 @@ export class InvoicePDFService {
   private static addItemsTable(
     doc: jsPDF,
     order: InvoiceData["order"],
-    yPos: number
+    yPos: number,
   ): number {
     // Table header
     doc.setFillColor(this.COLORS.primary);
@@ -384,7 +386,7 @@ export class InvoicePDFService {
   private static addTotals(
     doc: jsPDF,
     order: InvoiceData["order"],
-    yPos: number
+    yPos: number,
   ): number {
     const totalsX = 140;
     const valuesX = 170;
@@ -440,7 +442,7 @@ export class InvoicePDFService {
   private static addPaymentInfo(
     doc: jsPDF,
     order: InvoiceData["order"],
-    yPos: number
+    yPos: number,
   ): number {
     doc.setFillColor(this.COLORS.lightGray);
     doc.rect(20, yPos - 3, 170, 20, "F");
@@ -464,7 +466,7 @@ export class InvoicePDFService {
       doc.text(
         new Date(order.paidAt).toLocaleDateString("en-US"),
         155,
-        yPos + 8
+        yPos + 8,
       );
     }
 
@@ -484,30 +486,24 @@ export class InvoicePDFService {
     doc.setFont("helvetica", "normal");
 
     // Footer text
-    doc.text(
-      "Thank you for supporting local agriculture! 🌾",
-      105,
-      footerY,
-      { align: "center" }
-    );
+    doc.text("Thank you for supporting local agriculture! 🌾", 105, footerY, {
+      align: "center",
+    });
 
     doc.text(
       "For questions, contact support@farmersmarket.com",
       105,
       footerY + 5,
-      { align: "center" }
+      { align: "center" },
     );
 
     // Page number
     const pageCount = doc.getNumberOfPages();
     for (let i = 1; i <= pageCount; i++) {
       doc.setPage(i);
-      doc.text(
-        `Page ${i} of ${pageCount}`,
-        190,
-        footerY + 10,
-        { align: "right" }
-      );
+      doc.text(`Page ${i} of ${pageCount}`, 190, footerY + 10, {
+        align: "right",
+      });
     }
   }
 
@@ -517,7 +513,7 @@ export class InvoicePDFService {
   private static wrapText(
     doc: jsPDF,
     text: string,
-    maxWidth: number
+    maxWidth: number,
   ): string[] {
     const words = text.split(" ");
     const lines: string[] = [];

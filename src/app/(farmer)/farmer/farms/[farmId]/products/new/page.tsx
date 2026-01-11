@@ -86,9 +86,7 @@ export default async function NewProductPage({ params }: PageProps) {
     return (
       <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="rounded-lg bg-yellow-50 p-6 text-center">
-          <h2 className="text-2xl font-bold text-yellow-900">
-            Access Denied
-          </h2>
+          <h2 className="text-2xl font-bold text-yellow-900">Access Denied</h2>
           <p className="mt-2 text-yellow-700">
             You don't have permission to add products to this farm.
           </p>
@@ -108,9 +106,7 @@ export default async function NewProductPage({ params }: PageProps) {
     return (
       <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="rounded-lg bg-yellow-50 p-6 text-center">
-          <h2 className="text-2xl font-bold text-yellow-900">
-            Farm Inactive
-          </h2>
+          <h2 className="text-2xl font-bold text-yellow-900">Farm Inactive</h2>
           <p className="mt-2 text-yellow-700">
             You cannot add products to an inactive or suspended farm. Please
             contact support if you believe this is an error.
@@ -190,9 +186,7 @@ export default async function NewProductPage({ params }: PageProps) {
           💡 Tips for Creating Great Products
         </h3>
         <ul className="mt-2 space-y-1 text-sm text-gray-600">
-          <li>
-            • Use clear, descriptive names that customers will search for
-          </li>
+          <li>• Use clear, descriptive names that customers will search for</li>
           <li>
             • Include detailed descriptions about taste, growing methods, and
             uses

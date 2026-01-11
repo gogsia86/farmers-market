@@ -16,7 +16,7 @@ import type {
 import { SlackNotifier } from "./slack.notifier";
 import { DiscordNotifier } from "./discord.notifier";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 // ============================================================================
 // TYPES
@@ -347,7 +347,8 @@ export class NotificationManager {
       logger.info(
         slackResult.success
           ? "✅ Slack: Connected"
-          : `❌ Slack: ${slackResult.error}`);
+          : `❌ Slack: ${slackResult.error}`,
+      );
     } else {
       logger.info("⏭️  Slack: Disabled (SLACK_WEBHOOK_URL not configured)");
     }
@@ -365,7 +366,8 @@ export class NotificationManager {
       logger.info(
         discordResult.success
           ? "✅ Discord: Connected"
-          : `❌ Discord: ${discordResult.error}`);
+          : `❌ Discord: ${discordResult.error}`,
+      );
     } else {
       logger.info("⏭️  Discord: Disabled (DISCORD_WEBHOOK_URL not configured)");
     }

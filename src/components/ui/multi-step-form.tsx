@@ -59,7 +59,7 @@ export const useMultiStepForm = () => {
   const context = React.useContext(MultiStepFormContext);
   if (!context) {
     throw new Error(
-      "useMultiStepForm must be used within a MultiStepFormProvider"
+      "useMultiStepForm must be used within a MultiStepFormProvider",
     );
   }
   return context;
@@ -86,7 +86,7 @@ export function MultiStepFormProvider({
 }: MultiStepFormProviderProps) {
   const [currentStep, setCurrentStep] = React.useState(initialStep);
   const [completedSteps, setCompletedSteps] = React.useState<Set<number>>(
-    new Set()
+    new Set(),
   );
   const [errors, setErrors] = React.useState<Map<number, string>>(new Map());
 
@@ -95,17 +95,20 @@ export function MultiStepFormProvider({
   const canGoPrevious = currentStep > 0;
   const canGoNext = currentStep < steps.length - 1;
 
-  const setStepError = React.useCallback((step: number, error: string | null) => {
-    setErrors((prev) => {
-      const newErrors = new Map(prev);
-      if (error) {
-        newErrors.set(step, error);
-      } else {
-        newErrors.delete(step);
-      }
-      return newErrors;
-    });
-  }, []);
+  const setStepError = React.useCallback(
+    (step: number, error: string | null) => {
+      setErrors((prev) => {
+        const newErrors = new Map(prev);
+        if (error) {
+          newErrors.set(step, error);
+        } else {
+          newErrors.delete(step);
+        }
+        return newErrors;
+      });
+    },
+    [],
+  );
 
   const goToStep = React.useCallback(
     (step: number) => {
@@ -114,7 +117,7 @@ export function MultiStepFormProvider({
         onStepChange?.(step);
       }
     },
-    [steps.length, onStepChange]
+    [steps.length, onStepChange],
   );
 
   const nextStep = React.useCallback(async () => {
@@ -134,7 +137,7 @@ export function MultiStepFormProvider({
       } catch (error) {
         setStepError(
           currentStep,
-          error instanceof Error ? error.message : "Validation failed"
+          error instanceof Error ? error.message : "Validation failed",
         );
         return;
       }
@@ -206,14 +209,16 @@ const stepIndicatorVariants = cva(
       status: "pending",
       size: "default",
     },
-  }
+  },
 );
 
 // ============================================================================
 // STEP INDICATOR COMPONENT
 // ============================================================================
 
-interface StepIndicatorProps extends VariantProps<typeof stepIndicatorVariants> {
+interface StepIndicatorProps extends VariantProps<
+  typeof stepIndicatorVariants
+> {
   step: FormStep;
   stepNumber: number;
   isCurrent: boolean;
@@ -245,7 +250,7 @@ function StepIndicator({
     <div
       className={cn(
         "flex flex-col items-center gap-2 cursor-pointer group",
-        className
+        className,
       )}
       onClick={onClick}
     >
@@ -270,7 +275,7 @@ function StepIndicator({
                 ? "text-green-600"
                 : hasError
                   ? "text-red-600"
-                  : "text-gray-600 group-hover:text-gray-900"
+                  : "text-gray-600 group-hover:text-gray-900",
           )}
         >
           {step.title}
@@ -329,7 +334,7 @@ export function StepsProgress({
                 ? `w-8 ${consciousnessColors[consciousness || "STANDARD"]}`
                 : completedSteps.has(index)
                   ? "w-2 bg-green-500"
-                  : "w-2 bg-gray-300"
+                  : "w-2 bg-gray-300",
             )}
           />
         ))}
@@ -347,7 +352,7 @@ export function StepsProgress({
           <div
             className={cn(
               "h-full transition-all duration-300",
-              consciousnessColors[consciousness || "STANDARD"]
+              consciousnessColors[consciousness || "STANDARD"],
             )}
             style={{
               width: `${((currentStep + 1) / steps.length) * 100}%`,
@@ -364,7 +369,7 @@ export function StepsProgress({
         orientation === "horizontal"
           ? "flex items-start justify-between"
           : "flex flex-col space-y-4",
-        className
+        className,
       )}
     >
       {steps.map((step: any, index: any) => (
@@ -376,7 +381,8 @@ export function StepsProgress({
             isCompleted={completedSteps.has(index)}
             hasError={errors.has(index)}
             onClick={
-              allowStepClick && (completedSteps.has(index) || index < currentStep)
+              allowStepClick &&
+              (completedSteps.has(index) || index < currentStep)
                 ? () => goToStep(index)
                 : undefined
             }
@@ -387,7 +393,7 @@ export function StepsProgress({
                 "flex items-center justify-center",
                 orientation === "horizontal"
                   ? "flex-1 mx-2 mt-5 h-0.5"
-                  : "ml-5 w-0.5 h-8"
+                  : "ml-5 w-0.5 h-8",
               )}
             >
               <div
@@ -395,7 +401,7 @@ export function StepsProgress({
                   "h-full w-full transition-all duration-300",
                   completedSteps.has(index)
                     ? consciousnessColors[consciousness || "STANDARD"]
-                    : "bg-gray-300"
+                    : "bg-gray-300",
                 )}
               />
             </div>
@@ -415,10 +421,7 @@ interface StepContentProps {
   className?: string;
 }
 
-export function StepContent({
-  children,
-  className,
-}: StepContentProps) {
+export function StepContent({ children, className }: StepContentProps) {
   const { currentStep, steps, errors } = useMultiStepForm();
   const currentStepDef = steps[currentStep] || steps[0];
   const error = errors.get(currentStep);
@@ -448,7 +451,7 @@ export function StepContent({
       <div>{children}</div>
     </div>
   );
-};
+}
 
 // ============================================================================
 // STEP NAVIGATION COMPONENT
@@ -490,7 +493,7 @@ export function StepNavigation({
     <div
       className={cn(
         "flex items-center justify-between pt-6 mt-6 border-t",
-        className
+        className,
       )}
     >
       <div>
@@ -509,11 +512,7 @@ export function StepNavigation({
 
       <div className="flex items-center gap-3">
         {showNext && (
-          <Button
-            type="button"
-            onClick={handleNext}
-            disabled={isSubmitting}
-          >
+          <Button type="button" onClick={handleNext} disabled={isSubmitting}>
             {isSubmitting ? (
               <>
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -532,7 +531,7 @@ export function StepNavigation({
       </div>
     </div>
   );
-};
+}
 
 // ============================================================================
 // MULTI-STEP FORM CONTAINER
@@ -550,8 +549,7 @@ export function MultiStepFormContainer({
   const { consciousness } = useMultiStepForm();
 
   const consciousnessStyles = {
-    DIVINE:
-      "bg-gradient-to-br from-purple-50 to-blue-50 border-purple-200",
+    DIVINE: "bg-gradient-to-br from-purple-50 to-blue-50 border-purple-200",
     AGRICULTURAL:
       "bg-gradient-to-br from-green-50 to-emerald-50 border-green-200",
     STANDARD: "bg-background border-gray-200",
@@ -562,13 +560,13 @@ export function MultiStepFormContainer({
       className={cn(
         "rounded-lg border p-6 shadow-sm",
         consciousnessStyles[consciousness || "STANDARD"],
-        className
+        className,
       )}
     >
       {children}
     </div>
   );
-};
+}
 
 // ============================================================================
 // AGRICULTURAL MULTI-STEP FORM (DIVINE PATTERN)
@@ -587,7 +585,7 @@ export function AgriculturalMultiStepForm({
   onComplete,
   children,
   initialStep = 0,
-  className
+  className,
 }: AgriculturalMultiStepFormProps) {
   return (
     <MultiStepFormProvider
@@ -604,7 +602,7 @@ export function AgriculturalMultiStepForm({
       </MultiStepFormContainer>
     </MultiStepFormProvider>
   );
-};
+}
 
 // ============================================================================
 // EXPORTS

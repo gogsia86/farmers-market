@@ -57,5 +57,5 @@ export default function AdminNotificationsLoading() {
         </div>
       </div>
     </div>
-  )
+  );
 }

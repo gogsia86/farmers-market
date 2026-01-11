@@ -22,7 +22,8 @@ interface ErrorProps {
 export default function Error({ error, reset }: ErrorProps) {
   useEffect(() => {
     // Log error to monitoring service
-    logger.error("Root application error", { error: error.message,
+    logger.error("Root application error", {
+      error: error.message,
       digest: error.digest,
       stack: error.stack,
       name: error.name,
@@ -97,11 +98,7 @@ export default function Error({ error, reset }: ErrorProps) {
 
         {/* Recovery Actions */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button
-            onClick={reset}
-            size="lg"
-            className="flex items-center gap-2"
-          >
+          <Button onClick={reset} size="lg" className="flex items-center gap-2">
             <RefreshCcw className="h-5 w-5" />
             Try Again
           </Button>

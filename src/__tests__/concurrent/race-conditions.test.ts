@@ -412,14 +412,16 @@ describe("🔄 Concurrent Operations: Inventory Management", () => {
         async (callback: any) => {
           const mockTx = {
             product: {
-              findUnique: jest.fn().mockImplementation(async ({ where }: any) => ({
-                id: where.id,
-                farmId: "farm-123",
-                name: `Product ${where.id}`,
-                farm: {
-                  ownerId: userId,
-                },
-              })),
+              findUnique: jest
+                .fn()
+                .mockImplementation(async ({ where }: any) => ({
+                  id: where.id,
+                  farmId: "farm-123",
+                  name: `Product ${where.id}`,
+                  farm: {
+                    ownerId: userId,
+                  },
+                })),
               update: jest.fn().mockImplementation(async ({ where }: any) => ({
                 id: where.id,
                 isActive: true,
@@ -489,7 +491,7 @@ describe("🔄 Concurrent Operations: Inventory Management", () => {
             slug: "test-farm",
             teamMembers: [], // Required by verifyProductAccess
           },
-        })
+        }),
       );
 
       // Mock findFirst for slug check (returns null = no conflict)
@@ -519,15 +521,27 @@ describe("🔄 Concurrent Operations: Inventory Management", () => {
       );
 
       const operations = [
-        productService.updateProduct("product-1", {
-          isActive: true,
-        } as any, userId),
-        productService.updateProduct("product-2", {
-          isActive: false,
-        } as any, userId),
-        productService.updateProduct("product-3", {
-          isFeatured: true,
-        } as any, userId),
+        productService.updateProduct(
+          "product-1",
+          {
+            isActive: true,
+          } as any,
+          userId,
+        ),
+        productService.updateProduct(
+          "product-2",
+          {
+            isActive: false,
+          } as any,
+          userId,
+        ),
+        productService.updateProduct(
+          "product-3",
+          {
+            isFeatured: true,
+          } as any,
+          userId,
+        ),
       ];
 
       const results = await Promise.allSettled(operations);

@@ -16,7 +16,16 @@
 import { CartBadge } from "@/components/features/cart/cart-badge";
 import { Button } from "@/components/ui/button";
 import type { UserRole } from "@/types/core-entities";
-import { LayoutDashboard, LogOut, Menu, Package, Settings, Store, User, X } from "lucide-react";
+import {
+  LayoutDashboard,
+  LogOut,
+  Menu,
+  Package,
+  Settings,
+  Store,
+  User,
+  X,
+} from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -92,10 +101,9 @@ export function Header() {
               <Link
                 key={item.name}
                 href={item.href}
-                className={`text-sm font-medium transition-colors hover:text-green-700 ${isActive(item.href)
-                  ? "text-green-700"
-                  : "text-gray-700"
-                  }`}
+                className={`text-sm font-medium transition-colors hover:text-green-700 ${
+                  isActive(item.href) ? "text-green-700" : "text-gray-700"
+                }`}
               >
                 {item.name}
               </Link>
@@ -218,12 +226,19 @@ export function Header() {
             ) : (
               <div className="hidden md:flex md:items-center md:space-x-2">
                 <Link href="/login">
-                  <Button variant="ghost" size="sm" className="text-gray-700 hover:text-green-700">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-gray-700 hover:text-green-700"
+                  >
                     Sign In
                   </Button>
                 </Link>
                 <Link href="/register">
-                  <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white">
+                  <Button
+                    size="sm"
+                    className="bg-green-600 hover:bg-green-700 text-white"
+                  >
                     Get Started
                   </Button>
                 </Link>
@@ -255,10 +270,11 @@ export function Header() {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`block rounded-lg px-3 py-2 text-base font-medium transition-colors ${isActive(item.href)
-                    ? "bg-green-50 text-green-700"
-                    : "text-gray-700 hover:bg-gray-50"
-                    }`}
+                  className={`block rounded-lg px-3 py-2 text-base font-medium transition-colors ${
+                    isActive(item.href)
+                      ? "bg-green-50 text-green-700"
+                      : "text-gray-700 hover:bg-gray-50"
+                  }`}
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   {item.name}

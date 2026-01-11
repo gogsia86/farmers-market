@@ -15,7 +15,7 @@ import {
   Snowflake,
   Sprout,
   Sun,
-  Wheat
+  Wheat,
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { BiodynamicCalendar, type CalendarEvent } from "./BiodynamicCalendar";
@@ -243,7 +243,8 @@ function PlanCard({ plan, onEdit, onDelete, readOnly }: PlanCardProps) {
   const SeasonIcon = getSeasonIcon(plan.season);
 
   const daysUntilHarvest = Math.ceil(
-    (plan.expectedHarvestDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
+    (plan.expectedHarvestDate.getTime() - new Date().getTime()) /
+      (1000 * 60 * 60 * 24),
   );
 
   return (
@@ -273,7 +274,7 @@ function PlanCard({ plan, onEdit, onDelete, readOnly }: PlanCardProps) {
         <span
           className={cn(
             "rounded-full border px-2.5 py-1 text-xs font-medium",
-            getStageColor(plan.stage)
+            getStageColor(plan.stage),
           )}
         >
           {plan.stage.replace("_", " ").toUpperCase()}
@@ -321,10 +322,13 @@ function PlanCard({ plan, onEdit, onDelete, readOnly }: PlanCardProps) {
               style={{
                 width: `${Math.min(
                   100,
-                  ((plan.expectedHarvestDate.getTime() - plan.plantingDate.getTime() -
-                    (plan.expectedHarvestDate.getTime() - new Date().getTime())) /
-                    (plan.expectedHarvestDate.getTime() - plan.plantingDate.getTime())) *
-                  100
+                  ((plan.expectedHarvestDate.getTime() -
+                    plan.plantingDate.getTime() -
+                    (plan.expectedHarvestDate.getTime() -
+                      new Date().getTime())) /
+                    (plan.expectedHarvestDate.getTime() -
+                      plan.plantingDate.getTime())) *
+                    100,
                 )}%`,
               }}
             />
@@ -367,14 +371,16 @@ function PlanCard({ plan, onEdit, onDelete, readOnly }: PlanCardProps) {
                   Weather Considerations
                 </div>
                 <div className="mt-1 flex flex-wrap gap-1">
-                  {plan.weatherConsiderations.map((consideration: any, i: any) => (
-                    <span
-                      key={i}
-                      className="rounded bg-blue-50 px-2 py-0.5 text-xs text-blue-700"
-                    >
-                      {consideration}
-                    </span>
-                  ))}
+                  {plan.weatherConsiderations.map(
+                    (consideration: any, i: any) => (
+                      <span
+                        key={i}
+                        className="rounded bg-blue-50 px-2 py-0.5 text-xs text-blue-700"
+                      >
+                        {consideration}
+                      </span>
+                    ),
+                  )}
                 </div>
               </div>
             )}
@@ -528,7 +534,8 @@ export function HarvestPlanner({
   const [currentView, setCurrentView] = useState(view);
   const [filterSeason, setFilterSeason] = useState<Season | "all">("all");
   const [filterStage, setFilterStage] = useState<GrowthStage | "all">("all");
-  const [currentSeason, setCurrentSeason] = useState<Season>(getCurrentSeason());
+  const [currentSeason, setCurrentSeason] =
+    useState<Season>(getCurrentSeason());
 
   // ==========================================================================
   // FILTERED PLANS
@@ -675,7 +682,7 @@ export function HarvestPlanner({
               "rounded-lg px-3 py-2 text-sm font-medium transition-colors",
               currentView === "list"
                 ? "bg-green-600 text-white"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200",
             )}
           >
             List
@@ -687,7 +694,7 @@ export function HarvestPlanner({
               "rounded-lg px-3 py-2 text-sm font-medium transition-colors",
               currentView === "calendar"
                 ? "bg-green-600 text-white"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200",
             )}
           >
             Calendar
@@ -758,14 +765,14 @@ export function HarvestPlanner({
                           "flex items-center justify-center gap-2 rounded-lg border p-2 text-xs font-medium transition-colors",
                           currentSeason === season
                             ? "border-green-600 bg-green-50 text-green-700"
-                            : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
+                            : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50",
                         )}
                       >
                         <SeasonIcon className="h-4 w-4" />
                         {season}
                       </button>
                     );
-                  }
+                  },
                 )}
               </div>
             </div>

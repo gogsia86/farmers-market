@@ -18,9 +18,9 @@
  * @reference .cursorrules - Claude Sonnet 4.5 Optimization Protocol
  */
 
-import { logger } from '@/lib/monitoring/logger';
-import { Redis } from 'ioredis';
-import { LRUCache } from 'lru-cache';
+import { logger } from "@/lib/monitoring/logger";
+import { Redis } from "ioredis";
+import { LRUCache } from "lru-cache";
 
 // ============================================================================
 // TYPES & INTERFACES
@@ -76,11 +76,11 @@ class L1Cache {
       updateAgeOnGet: true,
       updateAgeOnHas: true,
       dispose: (value, key) => {
-        logger.debug('L1 cache entry disposed', { key });
+        logger.debug("L1 cache entry disposed", { key });
       },
     });
 
-    logger.info('L1 cache initialized', { maxSize });
+    logger.info("L1 cache initialized", { maxSize });
   }
 
   get<T>(key: string): T | null {
@@ -152,7 +152,7 @@ class L1Cache {
       }
     }
 
-    logger.info('L1 cache pattern invalidation', { pattern, count });
+    logger.info("L1 cache pattern invalidation", { pattern, count });
     return count;
   }
 }
@@ -173,14 +173,14 @@ class L2Cache {
 
   private async initialize(): Promise<void> {
     if (!process.env.REDIS_HOST) {
-      logger.warn('Redis not configured - L2 cache disabled');
+      logger.warn("Redis not configured - L2 cache disabled");
       return;
     }
 
     try {
       this.redis = new Redis({
         host: process.env.REDIS_HOST,
-        port: parseInt(process.env.REDIS_PORT || '6379'),
+        port: parseInt(process.env.REDIS_PORT || "6379"),
         password: process.env.REDIS_PASSWORD,
         maxRetriesPerRequest: 3,
         enableReadyCheck: true,
@@ -191,24 +191,24 @@ class L2Cache {
         },
       });
 
-      this.redis.on('connect', () => {
+      this.redis.on("connect", () => {
         this.connected = true;
-        logger.info('L2 cache (Redis) connected');
+        logger.info("L2 cache (Redis) connected");
       });
 
-      this.redis.on('error', (error) => {
+      this.redis.on("error", (error) => {
         this.connected = false;
-        logger.error('L2 cache (Redis) error', { error: error.message });
+        logger.error("L2 cache (Redis) error", { error: error.message });
       });
 
-      this.redis.on('close', () => {
+      this.redis.on("close", () => {
         this.connected = false;
-        logger.warn('L2 cache (Redis) connection closed');
+        logger.warn("L2 cache (Redis) connection closed");
       });
 
       await this.redis.connect();
     } catch (error) {
-      logger.error('Failed to initialize L2 cache', { error });
+      logger.error("Failed to initialize L2 cache", { error });
       this.redis = null;
       this.connected = false;
     }
@@ -231,7 +231,7 @@ class L2Cache {
       this.hits++;
       return JSON.parse(value) as T;
     } catch (error) {
-      logger.error('L2 cache get error', { key, error });
+      logger.error("L2 cache get error", { key, error });
       this.misses++;
       return null;
     }
@@ -246,7 +246,7 @@ class L2Cache {
       const serialized = JSON.stringify(value);
       await this.redis.setex(key, ttl, serialized);
     } catch (error) {
-      logger.error('L2 cache set error', { key, error });
+      logger.error("L2 cache set error", { key, error });
     }
   }
 
@@ -258,7 +258,7 @@ class L2Cache {
     try {
       await this.redis.del(key);
     } catch (error) {
-      logger.error('L2 cache delete error', { key, error });
+      logger.error("L2 cache delete error", { key, error });
     }
   }
 
@@ -271,9 +271,9 @@ class L2Cache {
       await this.redis.flushdb();
       this.hits = 0;
       this.misses = 0;
-      logger.info('L2 cache cleared');
+      logger.info("L2 cache cleared");
     } catch (error) {
-      logger.error('L2 cache clear error', { error });
+      logger.error("L2 cache clear error", { error });
     }
   }
 
@@ -286,7 +286,7 @@ class L2Cache {
       const exists = await this.redis.exists(key);
       return exists === 1;
     } catch (error) {
-      logger.error('L2 cache has error', { key, error });
+      logger.error("L2 cache has error", { key, error });
       return false;
     }
   }
@@ -315,10 +315,13 @@ class L2Cache {
       }
 
       await this.redis.del(...keys);
-      logger.info('L2 cache pattern invalidation', { pattern, count: keys.length });
+      logger.info("L2 cache pattern invalidation", {
+        pattern,
+        count: keys.length,
+      });
       return keys.length;
     } catch (error) {
-      logger.error('L2 cache invalidate pattern error', { pattern, error });
+      logger.error("L2 cache invalidate pattern error", { pattern, error });
       return 0;
     }
   }
@@ -327,7 +330,7 @@ class L2Cache {
     if (this.redis) {
       await this.redis.quit();
       this.connected = false;
-      logger.info('L2 cache disconnected');
+      logger.info("L2 cache disconnected");
     }
   }
 }
@@ -340,13 +343,13 @@ export class MultiLayerCache {
   private l1: L1Cache;
   private l2: L2Cache;
   private defaultTTL = 3600; // 1 hour
-  private defaultNamespace = 'app';
+  private defaultNamespace = "app";
 
   constructor() {
     this.l1 = new L1Cache(10000);
     this.l2 = new L2Cache();
 
-    logger.info('Multi-layer cache service initialized');
+    logger.info("Multi-layer cache service initialized");
   }
 
   /**
@@ -359,7 +362,7 @@ export class MultiLayerCache {
     if (!options.skipL1) {
       const l1Value = this.l1.get<T>(fullKey);
       if (l1Value !== null) {
-        logger.debug('Cache hit (L1)', { key: fullKey });
+        logger.debug("Cache hit (L1)", { key: fullKey });
         return l1Value;
       }
     }
@@ -368,7 +371,7 @@ export class MultiLayerCache {
     if (!options.skipL2) {
       const l2Value = await this.l2.get<T>(fullKey);
       if (l2Value !== null) {
-        logger.debug('Cache hit (L2)', { key: fullKey });
+        logger.debug("Cache hit (L2)", { key: fullKey });
 
         // Warm L1 cache
         if (!options.skipL1) {
@@ -379,14 +382,18 @@ export class MultiLayerCache {
       }
     }
 
-    logger.debug('Cache miss', { key: fullKey });
+    logger.debug("Cache miss", { key: fullKey });
     return null;
   }
 
   /**
    * Set value in cache (stores in both L1 and L2)
    */
-  async set<T>(key: string, value: T, options: CacheOptions = {}): Promise<void> {
+  async set<T>(
+    key: string,
+    value: T,
+    options: CacheOptions = {},
+  ): Promise<void> {
     const fullKey = this.buildKey(key, options.namespace);
     const ttl = options.ttl || this.defaultTTL;
 
@@ -400,7 +407,7 @@ export class MultiLayerCache {
       await this.l2.set(fullKey, value, ttl);
     }
 
-    logger.debug('Cache set', { key: fullKey, ttl });
+    logger.debug("Cache set", { key: fullKey, ttl });
   }
 
   /**
@@ -412,7 +419,7 @@ export class MultiLayerCache {
     this.l1.delete(fullKey);
     await this.l2.delete(fullKey);
 
-    logger.debug('Cache delete', { key: fullKey });
+    logger.debug("Cache delete", { key: fullKey });
   }
 
   /**
@@ -421,7 +428,7 @@ export class MultiLayerCache {
   async clear(): Promise<void> {
     this.l1.clear();
     await this.l2.clear();
-    logger.info('All caches cleared');
+    logger.info("All caches cleared");
   }
 
   /**
@@ -463,13 +470,16 @@ export class MultiLayerCache {
   /**
    * Invalidate cache by pattern (regex)
    */
-  async invalidatePattern(pattern: string, options: CacheOptions = {}): Promise<void> {
+  async invalidatePattern(
+    pattern: string,
+    options: CacheOptions = {},
+  ): Promise<void> {
     const fullPattern = this.buildKey(pattern, options.namespace);
 
     const l1Count = this.l1.invalidatePattern(fullPattern);
     const l2Count = await this.l2.invalidatePattern(fullPattern);
 
-    logger.info('Cache invalidated by pattern', {
+    logger.info("Cache invalidated by pattern", {
       pattern: fullPattern,
       l1Count,
       l2Count,
@@ -519,7 +529,7 @@ export class MultiLayerCache {
    */
   async disconnect(): Promise<void> {
     await this.l2.disconnect();
-    logger.info('Multi-layer cache disconnected');
+    logger.info("Multi-layer cache disconnected");
   }
 }
 
@@ -538,7 +548,7 @@ export const CacheKeys = {
   farmBySlug: (slug: string) => `farm:slug:${slug}`,
   farmsByOwner: (ownerId: string) => `farms:owner:${ownerId}`,
   farmsList: (page: number, filters?: string) =>
-    `farms:list:${page}:${filters || 'all'}`,
+    `farms:list:${page}:${filters || "all"}`,
   farmsNearby: (lat: number, lng: number, radius: number) =>
     `farms:nearby:${lat}:${lng}:${radius}`,
 
@@ -551,8 +561,7 @@ export const CacheKeys = {
 
   // Order caching
   order: (id: string) => `order:${id}`,
-  userOrders: (userId: string, page: number) =>
-    `orders:user:${userId}:${page}`,
+  userOrders: (userId: string, page: number) => `orders:user:${userId}:${page}`,
 
   // User caching
   user: (id: string) => `user:${id}`,

@@ -14,7 +14,7 @@ import type { AppError } from "@/lib/errors/types";
 import { toAppError } from "@/lib/errors/types";
 import { useCallback, useState } from "react";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 // ============================================================================
 // ERROR HANDLER HOOK
@@ -62,13 +62,9 @@ export interface UseErrorHandlerReturn {
  * ```
  */
 export function useErrorHandler(
-  options: UseErrorHandlerOptions = {}
+  options: UseErrorHandlerOptions = {},
 ): UseErrorHandlerReturn {
-  const {
-    logErrors = true,
-    onError,
-    throwToBoundary = false,
-  } = options;
+  const { logErrors = true, onError, throwToBoundary = false } = options;
 
   const [error, setError] = useState<AppError | null>(null);
 
@@ -92,7 +88,7 @@ export function useErrorHandler(
         throw appError;
       }
     },
-    [logErrors, onError, throwToBoundary]
+    [logErrors, onError, throwToBoundary],
   );
 
   const clearError = useCallback(() => {
@@ -179,7 +175,7 @@ export function useErrorBoundary(): UseErrorBoundaryReturn {
     (error: unknown) => {
       throwError(error);
     },
-    [throwError]
+    [throwError],
   );
 
   const resetBoundary = useCallback(() => {
@@ -278,7 +274,7 @@ export function useErrorState(): UseErrorStateReturn {
     (type: string): boolean => {
       return state.error?.code === type;
     },
-    [state.error]
+    [state.error],
   );
 
   const isRetryable = state.error?.retryable ?? false;
@@ -353,14 +349,14 @@ export function useValidationError(): UseValidationErrorReturn {
     (field: string): boolean => {
       return field in errors;
     },
-    [errors]
+    [errors],
   );
 
   const getError = useCallback(
     (field: string): string | undefined => {
       return errors[field];
     },
-    [errors]
+    [errors],
   );
 
   const setError = useCallback((field: string, message: string) => {
@@ -442,7 +438,7 @@ export interface UseAgriculturalErrorReturn extends UseErrorHandlerReturn {
  * ```
  */
 export function useAgriculturalError(
-  options: UseAgriculturalErrorOptions = {}
+  options: UseAgriculturalErrorOptions = {},
 ): UseAgriculturalErrorReturn {
   const { season, farmId, logWithContext = true } = options;
 
@@ -466,7 +462,7 @@ export function useAgriculturalError(
         });
       }
     },
-    [logWithContext, agriculturalContext]
+    [logWithContext, agriculturalContext],
   );
 
   const clearError = useCallback(() => {

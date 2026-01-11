@@ -243,7 +243,12 @@ class MVPValidationBot {
    */
   private async warmupPages(): Promise<void> {
     log("🔥 Warming up critical pages...", "cyan");
-    const criticalPages = ["/login", "/register", "/products", "/register-farm"];
+    const criticalPages = [
+      "/login",
+      "/register",
+      "/products",
+      "/register-farm",
+    ];
 
     for (const path of criticalPages) {
       try {
@@ -254,7 +259,10 @@ class MVPValidationBot {
         log(`  ✅ ${path}`, "green");
         await delay(1000);
       } catch (error) {
-        log(`  ⚠️  ${path} - ${error instanceof Error ? error.message : String(error)}`, "yellow");
+        log(
+          `  ⚠️  ${path} - ${error instanceof Error ? error.message : String(error)}`,
+          "yellow",
+        );
       }
     }
 
@@ -268,7 +276,7 @@ class MVPValidationBot {
 
   private async waitForNavigation(): Promise<void> {
     if (!this.page) return;
-    await this.page.waitForLoadState("networkidle").catch(() => { });
+    await this.page.waitForLoadState("networkidle").catch(() => {});
     await delay(1000);
   }
 
@@ -309,7 +317,10 @@ class MVPValidationBot {
 
       await delay(1000); // Extra buffer
     } catch (error) {
-      log(`⚠️  Click warning for ${selector}: ${error instanceof Error ? error.message : String(error)}`, "yellow");
+      log(
+        `⚠️  Click warning for ${selector}: ${error instanceof Error ? error.message : String(error)}`,
+        "yellow",
+      );
       // Continue anyway
     }
   }
@@ -324,7 +335,10 @@ class MVPValidationBot {
       });
       await delay(2000);
     } catch (error) {
-      log(`⚠️  Navigation warning for ${url}: ${error instanceof Error ? error.message : String(error)}`, "yellow");
+      log(
+        `⚠️  Navigation warning for ${url}: ${error instanceof Error ? error.message : String(error)}`,
+        "yellow",
+      );
       // Continue anyway - page might be loaded enough
       await delay(1000);
     }
@@ -381,20 +395,24 @@ class MVPValidationBot {
 
       // Select farmer role (use JavaScript evaluation to avoid pointer interception)
       await this.page.evaluate(() => {
-        const farmerRadio = document.querySelector('[data-testid="role-farmer"]') as HTMLInputElement;
+        const farmerRadio = document.querySelector(
+          '[data-testid="role-farmer"]',
+        ) as HTMLInputElement;
         if (farmerRadio) {
           farmerRadio.checked = true;
-          farmerRadio.dispatchEvent(new Event('change', { bubbles: true }));
+          farmerRadio.dispatchEvent(new Event("change", { bubbles: true }));
         }
       });
       await delay(500);
 
       // Check the "agree to terms" checkbox (use JavaScript to avoid interception)
       await this.page.evaluate(() => {
-        const agreeCheckbox = document.querySelector('input[name="agreeToTerms"]') as HTMLInputElement;
+        const agreeCheckbox = document.querySelector(
+          'input[name="agreeToTerms"]',
+        ) as HTMLInputElement;
         if (agreeCheckbox) {
           agreeCheckbox.checked = true;
-          agreeCheckbox.dispatchEvent(new Event('change', { bubbles: true }));
+          agreeCheckbox.dispatchEvent(new Event("change", { bubbles: true }));
         }
       });
       await delay(300);
@@ -545,13 +563,13 @@ class MVPValidationBot {
       // Try to fill, but don't fail if already filled
       await this.page
         .fill('input[id*="ownerName"]', CONFIG.testData.farmer.name)
-        .catch(() => { });
+        .catch(() => {});
       await this.page
         .fill('input[type="email"]', CONFIG.testData.farmer.email)
-        .catch(() => { });
+        .catch(() => {});
       await this.page
         .fill('input[type="tel"]', "(503) 555-1234")
-        .catch(() => { });
+        .catch(() => {});
       await delay(500);
 
       // Click Next to go to step 4
@@ -562,7 +580,7 @@ class MVPValidationBot {
       log("  Step 4: Filling business info...", "cyan");
       await this.fillFormField('input[id*="businessLicense"]', "BL-12345");
       await this.fillFormField('input[id*="taxId"]', "12-3456789");
-      await this.page.check('input[type="checkbox"]').catch(() => { });
+      await this.page.check('input[type="checkbox"]').catch(() => {});
       await delay(500);
 
       // Click Next to review
@@ -744,33 +762,51 @@ class MVPValidationBot {
 
       // Wait for name field
       await this.page
-        .waitForSelector('[data-testid="product-name"], #name, input[name="name"]', { timeout: 10000 })
+        .waitForSelector(
+          '[data-testid="product-name"], #name, input[name="name"]',
+          { timeout: 10000 },
+        )
         .catch(() => {
           throw new Error(
             "Product name field not found - check if product form loaded",
           );
         });
 
-      await this.fillFormField('[data-testid="product-name"]', CONFIG.testData.product.name);
+      await this.fillFormField(
+        '[data-testid="product-name"]',
+        CONFIG.testData.product.name,
+      );
       await this.fillFormField(
         '[data-testid="product-description"]',
         CONFIG.testData.product.description,
       );
 
       // Select category dropdown
-      await this.page.selectOption('[data-testid="product-category"]', "VEGETABLES");
+      await this.page.selectOption(
+        '[data-testid="product-category"]',
+        "VEGETABLES",
+      );
       await delay(300);
 
       // Select unit dropdown
-      await this.page.selectOption('[data-testid="product-unit"]', CONFIG.testData.product.unit);
+      await this.page.selectOption(
+        '[data-testid="product-unit"]',
+        CONFIG.testData.product.unit,
+      );
       await delay(300);
 
       // Fill pricing fields
-      await this.fillFormField('[data-testid="product-price"]', CONFIG.testData.product.price);
+      await this.fillFormField(
+        '[data-testid="product-price"]',
+        CONFIG.testData.product.price,
+      );
       await delay(300);
 
       // Fill inventory quantity
-      await this.fillFormField('[data-testid="product-stock"]', CONFIG.testData.product.stock);
+      await this.fillFormField(
+        '[data-testid="product-stock"]',
+        CONFIG.testData.product.stock,
+      );
       await delay(300);
 
       // Check organic checkbox if available
@@ -807,7 +843,10 @@ class MVPValidationBot {
 
       await delay(1000);
       log("  Submitting product form...", "cyan");
-      await this.clickAndWait('[data-testid="product-submit"], button[type="submit"]', 3000);
+      await this.clickAndWait(
+        '[data-testid="product-submit"], button[type="submit"]',
+        3000,
+      );
 
       // Verify product created or check for validation errors
       const currentUrl = this.page.url();
@@ -855,7 +894,7 @@ class MVPValidationBot {
       // Try to edit product
       await this.page
         .click('button:has-text("Edit"), a:has-text("Edit")')
-        .catch(() => { });
+        .catch(() => {});
       await delay(2000);
 
       const screenshot = await takeScreenshot(
@@ -938,9 +977,7 @@ class MVPValidationBot {
       let gridCount = 0;
       if (productCount === 0) {
         log("  ℹ️  Checking for alternative product containers...", "cyan");
-        gridCount = await this.page
-          .locator('div[class*="grid"] > *')
-          .count();
+        gridCount = await this.page.locator('div[class*="grid"] > *').count();
         if (gridCount > 0) {
           log(`  📦 Found ${gridCount} items in grid layout`, "green");
         } else {
@@ -1030,7 +1067,10 @@ class MVPValidationBot {
       // Set a timeout for this entire test to prevent hanging
       const timeoutMs = 90000; // 90 seconds max
       const timeoutPromise = new Promise<never>((_, reject) => {
-        setTimeout(() => reject(new Error(`Cart test timed out after ${timeoutMs}ms`)), timeoutMs);
+        setTimeout(
+          () => reject(new Error(`Cart test timed out after ${timeoutMs}ms`)),
+          timeoutMs,
+        );
       });
 
       // Run test with timeout
@@ -1076,20 +1116,24 @@ class MVPValidationBot {
 
       // Select customer role (use JavaScript evaluation to avoid pointer interception)
       await this.page.evaluate(() => {
-        const consumerRadio = document.querySelector('[data-testid="role-consumer"]') as HTMLInputElement;
+        const consumerRadio = document.querySelector(
+          '[data-testid="role-consumer"]',
+        ) as HTMLInputElement;
         if (consumerRadio) {
           consumerRadio.checked = true;
-          consumerRadio.dispatchEvent(new Event('change', { bubbles: true }));
+          consumerRadio.dispatchEvent(new Event("change", { bubbles: true }));
         }
       });
       await delay(500);
 
       // Check the "agree to terms" checkbox (use JavaScript to avoid interception)
       await this.page.evaluate(() => {
-        const agreeCheckbox = document.querySelector('input[name="agreeToTerms"]') as HTMLInputElement;
+        const agreeCheckbox = document.querySelector(
+          'input[name="agreeToTerms"]',
+        ) as HTMLInputElement;
         if (agreeCheckbox) {
           agreeCheckbox.checked = true;
-          agreeCheckbox.dispatchEvent(new Event('change', { bubbles: true }));
+          agreeCheckbox.dispatchEvent(new Event("change", { bubbles: true }));
         }
       });
       await delay(300);
@@ -1194,11 +1238,21 @@ class MVPValidationBot {
       await delay(3000);
 
       // Check for success toast or error message
-      const toastSuccess = await this.page.locator('text=/added to cart/i').count().catch(() => 0);
-      const toastError = await this.page.locator('text=/failed|error/i').count().catch(() => 0);
+      const toastSuccess = await this.page
+        .locator("text=/added to cart/i")
+        .count()
+        .catch(() => 0);
+      const toastError = await this.page
+        .locator("text=/failed|error/i")
+        .count()
+        .catch(() => 0);
 
       if (toastError > 0) {
-        const errorText = await this.page.locator('text=/failed|error/i').first().textContent().catch(() => '');
+        const errorText = await this.page
+          .locator("text=/failed|error/i")
+          .first()
+          .textContent()
+          .catch(() => "");
         log(`  ⚠️  Add to cart error: ${errorText}`, "yellow");
       } else if (toastSuccess > 0) {
         log("✅ Product added to cart (toast confirmed)", "green");
@@ -1214,12 +1268,20 @@ class MVPValidationBot {
       try {
         await Promise.race([
           this.navigateAndWait(`${CONFIG.baseUrl}/cart`),
-          new Promise((_, reject) => setTimeout(() => reject(new Error('Cart navigation timeout')), 15000))
+          new Promise((_, reject) =>
+            setTimeout(
+              () => reject(new Error("Cart navigation timeout")),
+              15000,
+            ),
+          ),
         ]);
       } catch (navError) {
         log(`  ⚠️  Cart navigation warning: ${navError}`, "yellow");
         // Try direct navigation
-        await this.page.goto(`${CONFIG.baseUrl}/cart`, { waitUntil: 'domcontentloaded', timeout: 10000 });
+        await this.page.goto(`${CONFIG.baseUrl}/cart`, {
+          waitUntil: "domcontentloaded",
+          timeout: 10000,
+        });
       }
 
       await delay(3000);
@@ -1229,30 +1291,59 @@ class MVPValidationBot {
       // Verify cart has items - use more flexible selectors with timeout
       let cartItems = 0;
       try {
-        cartItems = await Promise.race([
-          this.page.locator('[data-testid="cart-item"], .cart-item, [class*="cart"] tr, [class*="cart"] article').count(),
-          new Promise<number>((resolve) => setTimeout(() => resolve(0), 5000))
-        ]) as number;
+        cartItems = (await Promise.race([
+          this.page
+            .locator(
+              '[data-testid="cart-item"], .cart-item, [class*="cart"] tr, [class*="cart"] article',
+            )
+            .count(),
+          new Promise<number>((resolve) => setTimeout(() => resolve(0), 5000)),
+        ])) as number;
       } catch {
         cartItems = 0;
       }
 
       if (cartItems === 0) {
         // Try alternate cart detection
-        const cartText = await this.page.locator('text=/item|product|cart/i').count().catch(() => 0);
-        const emptyCartText = await this.page.locator('text=/empty|no items/i').count().catch(() => 0);
+        const cartText = await this.page
+          .locator("text=/item|product|cart/i")
+          .count()
+          .catch(() => 0);
+        const emptyCartText = await this.page
+          .locator("text=/empty|no items/i")
+          .count()
+          .catch(() => 0);
 
         if (emptyCartText > 0) {
-          const screenshot = await takeScreenshot(this.page, 'empty-cart-explicit');
-          log("  ⚠️  Cart page shows 'empty' message - add to cart may have failed", "yellow");
-          throw new Error(`Cart is explicitly empty. Add to cart action likely failed. Screenshot: ${screenshot}`);
+          const screenshot = await takeScreenshot(
+            this.page,
+            "empty-cart-explicit",
+          );
+          log(
+            "  ⚠️  Cart page shows 'empty' message - add to cart may have failed",
+            "yellow",
+          );
+          throw new Error(
+            `Cart is explicitly empty. Add to cart action likely failed. Screenshot: ${screenshot}`,
+          );
         } else if (cartText === 0) {
-          const screenshot = await takeScreenshot(this.page, 'empty-cart-debug');
+          const screenshot = await takeScreenshot(
+            this.page,
+            "empty-cart-debug",
+          );
           log("  ⚠️  Cart appears empty - no product text found", "yellow");
-          throw new Error(`Cart is empty after adding product. Screenshot: ${screenshot}`);
+          throw new Error(
+            `Cart is empty after adding product. Screenshot: ${screenshot}`,
+          );
         } else {
-          log("  ℹ️  Cart page loaded but items not detected with selectors (found some cart-related text)", "cyan");
-          log("  ✅ Marking as partial success - cart page accessible", "green");
+          log(
+            "  ℹ️  Cart page loaded but items not detected with selectors (found some cart-related text)",
+            "cyan",
+          );
+          log(
+            "  ✅ Marking as partial success - cart page accessible",
+            "green",
+          );
         }
       } else {
         log(`🛒 Cart contains ${cartItems} item(s)`, "green");
@@ -1260,11 +1351,21 @@ class MVPValidationBot {
 
       // Try to proceed to checkout
       log("  🔍 Looking for checkout button...", "cyan");
-      const checkoutButton = await this.page.$('button:has-text("Checkout"), a:has-text("Checkout"), button:has-text("Proceed"), a:has-text("Proceed")').catch(() => null);
+      const checkoutButton = await this.page
+        .$(
+          'button:has-text("Checkout"), a:has-text("Checkout"), button:has-text("Proceed"), a:has-text("Proceed")',
+        )
+        .catch(() => null);
 
       if (!checkoutButton) {
-        log("  ⚠️  Checkout button not found - cart may be empty or page structure different", "yellow");
-        const screenshot = await takeScreenshot(this.page, 'no-checkout-button');
+        log(
+          "  ⚠️  Checkout button not found - cart may be empty or page structure different",
+          "yellow",
+        );
+        const screenshot = await takeScreenshot(
+          this.page,
+          "no-checkout-button",
+        );
 
         // Return partial success if we at least got to cart page
         return {
@@ -1273,7 +1374,8 @@ class MVPValidationBot {
           category: "CRITICAL",
           status: "PARTIAL",
           duration: Date.now() - start,
-          message: "Cart page accessible but checkout flow incomplete (likely cart is empty or add-to-cart failed)",
+          message:
+            "Cart page accessible but checkout flow incomplete (likely cart is empty or add-to-cart failed)",
           screenshot,
           timestamp: new Date().toISOString(),
         };
@@ -1354,10 +1456,10 @@ class MVPValidationBot {
       // Fill shipping/billing info
       await this.page
         .fill('input[name="address"]', CONFIG.testData.customer.address)
-        .catch(() => { });
+        .catch(() => {});
       await this.page
         .fill('input[name="phone"]', CONFIG.testData.customer.phone)
-        .catch(() => { });
+        .catch(() => {});
 
       await delay(1000);
 

@@ -64,7 +64,12 @@ interface EventFormProps {
   allowRecurring: boolean;
 }
 
-function EventForm({ event, onSave, onCancel, allowRecurring }: EventFormProps) {
+function EventForm({
+  event,
+  onSave,
+  onCancel,
+  allowRecurring,
+}: EventFormProps) {
   const [formData, setFormData] = useState<Partial<ScheduledEvent>>({
     title: event?.title || "",
     description: event?.description || "",
@@ -90,7 +95,11 @@ function EventForm({ event, onSave, onCancel, allowRecurring }: EventFormProps) 
       newErrors.startDate = "Start date is required";
     }
 
-    if (formData.endDate && formData.startDate && formData.endDate < formData.startDate) {
+    if (
+      formData.endDate &&
+      formData.startDate &&
+      formData.endDate < formData.startDate
+    ) {
       newErrors.endDate = "End date must be after start date";
     }
 
@@ -120,12 +129,10 @@ function EventForm({ event, onSave, onCancel, allowRecurring }: EventFormProps) 
         <input
           type="text"
           value={formData.title}
-          onChange={(e) =>
-            setFormData({ ...formData, title: e.target.value })
-          }
+          onChange={(e) => setFormData({ ...formData, title: e.target.value })}
           className={cn(
             "mt-1 w-full rounded-lg border px-3 py-2 text-sm focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-20",
-            errors.title && "border-red-500"
+            errors.title && "border-red-500",
           )}
           placeholder="e.g., Spring Planting"
         />
@@ -168,11 +175,11 @@ function EventForm({ event, onSave, onCancel, allowRecurring }: EventFormProps) 
             value={
               formData.startDate
                 ? new Date(
-                  formData.startDate.getTime() -
-                  formData.startDate.getTimezoneOffset() * 60000
-                )
-                  .toISOString()
-                  .slice(0, 16)
+                    formData.startDate.getTime() -
+                      formData.startDate.getTimezoneOffset() * 60000,
+                  )
+                    .toISOString()
+                    .slice(0, 16)
                 : ""
             }
             onChange={(e) =>
@@ -183,7 +190,7 @@ function EventForm({ event, onSave, onCancel, allowRecurring }: EventFormProps) 
             }
             className={cn(
               "mt-1 w-full rounded-lg border px-3 py-2 text-sm focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-20",
-              errors.startDate && "border-red-500"
+              errors.startDate && "border-red-500",
             )}
           />
           {errors.startDate && (
@@ -200,11 +207,11 @@ function EventForm({ event, onSave, onCancel, allowRecurring }: EventFormProps) 
             value={
               formData.endDate
                 ? new Date(
-                  formData.endDate.getTime() -
-                  formData.endDate.getTimezoneOffset() * 60000
-                )
-                  .toISOString()
-                  .slice(0, 16)
+                    formData.endDate.getTime() -
+                      formData.endDate.getTimezoneOffset() * 60000,
+                  )
+                    .toISOString()
+                    .slice(0, 16)
                 : ""
             }
             onChange={(e) =>
@@ -215,7 +222,7 @@ function EventForm({ event, onSave, onCancel, allowRecurring }: EventFormProps) 
             }
             className={cn(
               "mt-1 w-full rounded-lg border px-3 py-2 text-sm focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-20",
-              errors.endDate && "border-red-500"
+              errors.endDate && "border-red-500",
             )}
           />
           {errors.endDate && (
@@ -305,14 +312,10 @@ function EventForm({ event, onSave, onCancel, allowRecurring }: EventFormProps) 
 
       {/* Notes */}
       <div>
-        <label className="block text-sm font-medium text-gray-700">
-          Notes
-        </label>
+        <label className="block text-sm font-medium text-gray-700">Notes</label>
         <textarea
           value={formData.notes}
-          onChange={(e) =>
-            setFormData({ ...formData, notes: e.target.value })
-          }
+          onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
           rows={2}
           className="mt-1 w-full rounded-lg border px-3 py-2 text-sm focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-20"
           placeholder="Additional notes..."
@@ -405,7 +408,9 @@ export function EventScheduler({
     setShowEventForm(true);
   };
 
-  const handleSaveEvent = (event: Omit<ScheduledEvent, "id"> | ScheduledEvent) => {
+  const handleSaveEvent = (
+    event: Omit<ScheduledEvent, "id"> | ScheduledEvent,
+  ) => {
     if ("id" in event && onEventUpdate) {
       onEventUpdate(event.id, event);
     } else if (onEventCreate) {
@@ -416,7 +421,10 @@ export function EventScheduler({
   };
 
   const handleDeleteEvent = (id: string) => {
-    if (onEventDelete && confirm("Are you sure you want to delete this event?")) {
+    if (
+      onEventDelete &&
+      confirm("Are you sure you want to delete this event?")
+    ) {
       onEventDelete(id);
       setShowEventForm(false);
       setEditingEvent(null);
@@ -462,7 +470,7 @@ export function EventScheduler({
                 "rounded px-3 py-1.5 text-sm font-medium transition-colors",
                 currentView === "calendar"
                   ? "bg-green-600 text-white"
-                  : "text-gray-700 hover:bg-gray-100"
+                  : "text-gray-700 hover:bg-gray-100",
               )}
             >
               <Calendar className="h-4 w-4" />
@@ -474,7 +482,7 @@ export function EventScheduler({
                 "rounded px-3 py-1.5 text-sm font-medium transition-colors",
                 currentView === "timeline"
                   ? "bg-green-600 text-white"
-                  : "text-gray-700 hover:bg-gray-100"
+                  : "text-gray-700 hover:bg-gray-100",
               )}
             >
               <Clock className="h-4 w-4" />
@@ -486,7 +494,7 @@ export function EventScheduler({
                 "rounded px-3 py-1.5 text-sm font-medium transition-colors",
                 currentView === "split"
                   ? "bg-green-600 text-white"
-                  : "text-gray-700 hover:bg-gray-100"
+                  : "text-gray-700 hover:bg-gray-100",
               )}
             >
               <RefreshCw className="h-4 w-4" />

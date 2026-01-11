@@ -16,7 +16,7 @@ import { AzureMonitorTraceExporter } from "@azure/monitor-opentelemetry-exporter
 import { HttpInstrumentation } from "@opentelemetry/instrumentation-http";
 import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 let sdk: NodeSDK | null = null;
 
@@ -94,8 +94,8 @@ export function initializeTelemetry(): NodeSDK | null {
         logger.info("🔭 Telemetry: Shutdown complete");
       } catch (error) {
         logger.error("🔭 Telemetry: Error during shutdown:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+          error: error instanceof Error ? error.message : String(error),
+        });
       } finally {
         process.exit(0);
       }

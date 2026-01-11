@@ -467,7 +467,9 @@ export function hasRequiredScopes(
   }
 
   // Check if all required scopes are present
-  return requiredScopes.every((scope: any) => authResult.scopes!.includes(scope));
+  return requiredScopes.every((scope: any) =>
+    authResult.scopes!.includes(scope),
+  );
 }
 
 /**

@@ -1,4 +1,5 @@
 # 🚀 Vercel Database Setup Guide
+
 **Farmers Market Platform - Vercel Deployment with Test Database**
 
 Last Updated: 2026-01-09
@@ -14,11 +15,13 @@ This guide explains how to configure your Vercel deployment to use the same test
 ## 🎯 Database Strategy
 
 ### **Option 1: Use Local Test Database (Recommended for Testing)**
+
 - Connect Vercel preview deployments to your local test database
 - Allows testing against known data
 - Requires exposing local database to internet
 
 ### **Option 2: Use Cloud Database (Recommended for Production)**
+
 - Set up PostgreSQL on Vercel Postgres, Supabase, or Neon
 - Separate databases for preview and production
 - Better security and performance
@@ -94,6 +97,7 @@ SKIP_ENV_VALIDATION=true
 ```
 
 **Environment Selection:**
+
 - ✅ Preview
 - ✅ Development
 - ❌ Production (use separate database)
@@ -255,6 +259,7 @@ DIRECT_URL=postgresql://[user]:[password]@[host]/[database]?sslmode=require
 ### **Vercel IP Ranges**
 
 Add these to your firewall whitelist:
+
 ```
 76.76.21.0/24
 76.76.22.0/24
@@ -298,7 +303,7 @@ export default defineConfig({
   use: {
     baseURL: process.env.VERCEL_URL
       ? `https://${process.env.VERCEL_URL}`
-      : 'http://localhost:3001',
+      : "http://localhost:3001",
   },
 });
 ```
@@ -380,6 +385,7 @@ git push origin master
 ### **Issue: "Can't reach database server"**
 
 **Solution:**
+
 - Check ngrok/tunnel is running
 - Verify DATABASE_URL is correct
 - Check firewall allows connections
@@ -389,6 +395,7 @@ git push origin master
 
 **Solution:**
 Add `?sslmode=require` to DATABASE_URL:
+
 ```env
 DATABASE_URL=postgresql://user:pass@host:5432/db?sslmode=require
 ```
@@ -396,6 +403,7 @@ DATABASE_URL=postgresql://user:pass@host:5432/db?sslmode=require
 ### **Issue: "Authentication failed"**
 
 **Solution:**
+
 - Verify password is correct
 - Check user has access to database
 - Ensure database exists
@@ -404,6 +412,7 @@ DATABASE_URL=postgresql://user:pass@host:5432/db?sslmode=require
 ### **Issue: "Prisma Client not generated"**
 
 **Solution:**
+
 ```bash
 # Force regenerate
 npx prisma generate
@@ -415,6 +424,7 @@ vercel --force
 ### **Issue: "Migration failed"**
 
 **Solution:**
+
 ```bash
 # Reset migrations (CAUTION: destroys data)
 npx prisma migrate reset
@@ -456,6 +466,7 @@ echo "🚀 Deploy with: vercel --prod"
 ```
 
 Run:
+
 ```bash
 chmod +x .vercel-setup.sh
 ./.vercel-setup.sh
@@ -468,16 +479,19 @@ chmod +x .vercel-setup.sh
 For best results, use this setup:
 
 **Local Development:**
+
 - Database: `localhost:5433`
 - Credentials: From `.env.test`
 - Seeded data: Test accounts
 
 **Vercel Preview:**
+
 - Database: Supabase/Neon (separate from production)
 - Credentials: Same as local test database
 - Seeded data: Copy of test data
 
 **Vercel Production:**
+
 - Database: Vercel Postgres or Supabase Pro
 - Credentials: Unique production credentials
 - Seeded data: Minimal admin account only
@@ -487,11 +501,13 @@ For best results, use this setup:
 ## 📞 Support
 
 **Database Issues:**
+
 - Vercel Postgres: https://vercel.com/docs/storage/vercel-postgres
 - Supabase: https://supabase.com/docs
 - Neon: https://neon.tech/docs
 
 **Deployment Issues:**
+
 - Vercel Support: https://vercel.com/support
 - GitHub Issues: https://github.com/your-repo/issues
 
@@ -515,5 +531,5 @@ Before deploying:
 
 ---
 
-*Last Updated: January 9, 2026*
-*Version: 1.0*
+_Last Updated: January 9, 2026_
+_Version: 1.0_

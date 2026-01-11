@@ -89,6 +89,7 @@ npx playwright --version
 You'll need a test database instance. Options:
 
 **Option A: Cloud Database (Recommended)**
+
 ```bash
 # Use a cloud provider (e.g., Supabase, Railway, Neon)
 # Create a dedicated test database
@@ -96,6 +97,7 @@ You'll need a test database instance. Options:
 ```
 
 **Option B: Local Docker Database**
+
 ```bash
 # Run PostgreSQL in Docker
 docker run -d \
@@ -107,6 +109,7 @@ docker run -d \
 ```
 
 **Option C: GitHub Actions Service Container**
+
 ```yaml
 # Add to workflow (already configured in ubf-tests.yml)
 services:
@@ -133,11 +136,13 @@ Navigate to: **Repository Settings → Secrets and variables → Actions**
 #### 1. Database Secrets
 
 **`TEST_DATABASE_URL`**
+
 ```
 postgresql://username:password@host:5432/database_name?schema=public
 ```
 
 Example formats:
+
 ```bash
 # Cloud provider (Supabase)
 postgresql://postgres:password@db.xxxxxxxxxxxx.supabase.co:5432/postgres
@@ -155,17 +160,20 @@ postgresql://postgres:testpassword@localhost:5432/farmers_market_test
 #### 2. Authentication Secrets
 
 **`NEXTAUTH_SECRET`**
+
 ```bash
 # Generate a secure random string
 openssl rand -base64 32
 ```
 
 Example:
+
 ```
 dGhpc2lzYXZlcnlzZWN1cmVzZWNyZXRrZXlmb3JuZXh0YXV0aA==
 ```
 
 **`NEXTAUTH_URL`**
+
 ```
 http://localhost:3000
 ```
@@ -173,36 +181,43 @@ http://localhost:3000
 #### 3. Optional Secrets (if using external services)
 
 **`GOOGLE_CLIENT_ID`** (for OAuth tests)
+
 ```
 1234567890-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.apps.googleusercontent.com
 ```
 
 **`GOOGLE_CLIENT_SECRET`**
+
 ```
 GOCSPX-xxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
 **`SMTP_HOST`** (for email tests)
+
 ```
 smtp.gmail.com
 ```
 
 **`SMTP_PORT`**
+
 ```
 587
 ```
 
 **`SMTP_USER`**
+
 ```
 test@example.com
 ```
 
 **`SMTP_PASSWORD`**
+
 ```
 app-specific-password
 ```
 
 **`STRIPE_SECRET_KEY`** (for payment tests)
+
 ```
 sk_test_xxxxxxxxxxxxxxxxxxxx
 ```
@@ -256,6 +271,7 @@ env:
 ### Step 1: Verify Workflow File
 
 Ensure the workflow file exists:
+
 ```bash
 # Check if workflow exists
 ls -la .github/workflows/ubf-tests.yml
@@ -421,12 +437,12 @@ gh run download <run-id>
 
 Track these KPIs:
 
-| Metric | Target | Alert Threshold |
-|--------|--------|----------------|
-| Success Rate | ≥ 95% | < 90% |
-| Duration | < 15 min | > 20 min |
-| Critical Pass Rate | 100% | < 100% |
-| Flaky Test Rate | < 5% | > 10% |
+| Metric             | Target   | Alert Threshold |
+| ------------------ | -------- | --------------- |
+| Success Rate       | ≥ 95%    | < 90%           |
+| Duration           | < 15 min | > 20 min        |
+| Critical Pass Rate | 100%     | < 100%          |
+| Flaky Test Rate    | < 5%     | > 10%           |
 
 #### 3. Report Analysis
 
@@ -458,6 +474,7 @@ cat reports/latest.json | jq -r '
 #### Weekly Tasks
 
 1. **Review Failed Tests**
+
    ```bash
    # Get failure summary from last 7 days
    gh run list \
@@ -468,6 +485,7 @@ cat reports/latest.json | jq -r '
    ```
 
 2. **Check Artifact Storage**
+
    ```bash
    # List artifacts
    gh api repos/:owner/:repo/actions/artifacts | jq '
@@ -482,6 +500,7 @@ cat reports/latest.json | jq -r '
    ```
 
 3. **Update Dependencies**
+
    ```bash
    # Check for Playwright updates
    npm outdated @playwright/test
@@ -494,6 +513,7 @@ cat reports/latest.json | jq -r '
 #### Monthly Tasks
 
 1. **Review Test Coverage**
+
    ```bash
    # Run coverage report
    npm run bot:test:all -- --coverage
@@ -523,6 +543,7 @@ cat reports/latest.json | jq -r '
 #### Issue 1: Workflow Not Triggering
 
 **Symptoms:**
+
 - Push/PR doesn't start workflow
 - Scheduled runs not executing
 
@@ -545,6 +566,7 @@ gh workflow run ubf-tests.yml
 #### Issue 2: Database Connection Failures
 
 **Symptoms:**
+
 ```
 Error: P1001: Can't reach database server
 ```
@@ -552,11 +574,13 @@ Error: P1001: Can't reach database server
 **Solutions:**
 
 1. Verify secret is set:
+
    ```bash
    gh secret list | grep TEST_DATABASE_URL
    ```
 
 2. Test connection locally:
+
    ```bash
    psql "$TEST_DATABASE_URL" -c "SELECT 1;"
    ```
@@ -578,6 +602,7 @@ Error: P1001: Can't reach database server
 #### Issue 3: Application Won't Start
 
 **Symptoms:**
+
 ```
 Error: EADDRINUSE: address already in use :::3000
 ```
@@ -585,6 +610,7 @@ Error: EADDRINUSE: address already in use :::3000
 **Solutions:**
 
 1. Add port check:
+
    ```yaml
    - name: Check port availability
      run: |
@@ -607,6 +633,7 @@ Error: EADDRINUSE: address already in use :::3000
 #### Issue 4: Tests Timing Out
 
 **Symptoms:**
+
 ```
 Error: Test exceeded timeout of 30000ms
 ```
@@ -614,6 +641,7 @@ Error: Test exceeded timeout of 30000ms
 **Solutions:**
 
 1. Increase timeout in preset:
+
    ```typescript
    // src/lib/testing/presets/ci.preset.ts
    export const ciPreset: TestPreset = {
@@ -623,6 +651,7 @@ Error: Test exceeded timeout of 30000ms
    ```
 
 2. Add wait-on with longer timeout:
+
    ```yaml
    - name: Wait for app
      run: npx wait-on http://localhost:3000 --timeout 120000
@@ -647,6 +676,7 @@ Error: Test exceeded timeout of 30000ms
 #### Issue 5: Playwright Browser Installation Fails
 
 **Symptoms:**
+
 ```
 Error: browserType.launch: Executable doesn't exist
 ```
@@ -672,6 +702,7 @@ Error: browserType.launch: Executable doesn't exist
 #### Issue 6: Out of Memory
 
 **Symptoms:**
+
 ```
 FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory
 ```
@@ -682,18 +713,20 @@ FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memor
 - name: Run tests
   run: npm run bot:test:all
   env:
-    NODE_OPTIONS: '--max-old-space-size=4096'
+    NODE_OPTIONS: "--max-old-space-size=4096"
 ```
 
 #### Issue 7: Flaky Tests
 
 **Symptoms:**
+
 - Tests pass/fail inconsistently
 - Different results on re-run
 
 **Solutions:**
 
 1. Enable retries:
+
    ```typescript
    // In test configuration
    {
@@ -703,11 +736,12 @@ FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memor
    ```
 
 2. Add wait strategies:
+
    ```typescript
    // Wait for element to be stable
-   await page.waitForSelector('button', {
-     state: 'visible',
-     timeout: 10000
+   await page.waitForSelector("button", {
+     state: "visible",
+     timeout: 10000,
    });
    await page.waitForTimeout(500); // Stability delay
    ```
@@ -715,8 +749,8 @@ FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memor
 3. Use proper assertions:
    ```typescript
    // Instead of page.locator().click()
-   await expect(page.locator('button')).toBeVisible();
-   await page.locator('button').click();
+   await expect(page.locator("button")).toBeVisible();
+   await page.locator("button").click();
    ```
 
 ### Debug Mode
@@ -727,18 +761,20 @@ Enable detailed logging:
 - name: Run tests with debug
   run: npm run bot:test:critical -- --preset=ci --verbose
   env:
-    DEBUG: 'pw:api,pw:browser'
-    PWDEBUG: '1'
+    DEBUG: "pw:api,pw:browser"
+    PWDEBUG: "1"
 ```
 
 ### Getting Help
 
 1. **Check Logs**
+
    ```bash
    gh run view <run-id> --log
    ```
 
 2. **Download Artifacts**
+
    ```bash
    gh run download <run-id>
    ls -la screenshots/  # Check failure screenshots
@@ -780,9 +816,9 @@ Add custom reporting:
 export class CustomReporter implements Reporter {
   onTestComplete(result: TestResult) {
     // Send to external service
-    fetch('https://metrics.example.com/tests', {
-      method: 'POST',
-      body: JSON.stringify(result)
+    fetch("https://metrics.example.com/tests", {
+      method: "POST",
+      body: JSON.stringify(result),
     });
   }
 }
@@ -815,7 +851,7 @@ Track performance metrics:
   uses: 8398a7/action-slack@v3
   with:
     status: ${{ job.status }}
-    text: 'UBF Tests failed! Check the run for details.'
+    text: "UBF Tests failed! Check the run for details."
     webhook_url: ${{ secrets.SLACK_WEBHOOK }}
 ```
 
@@ -866,13 +902,14 @@ Your CI/CD is successfully set up when:
 
 ## 🔄 Version History
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0.0 | 2025-01-XX | Initial CI/CD setup guide |
+| Version | Date       | Changes                   |
+| ------- | ---------- | ------------------------- |
+| 1.0.0   | 2025-01-XX | Initial CI/CD setup guide |
 
 ---
 
 **Next Steps:**
+
 1. ✅ Configure secrets in GitHub
 2. ✅ Enable GitHub Actions
 3. ✅ Run manual test workflow

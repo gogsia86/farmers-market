@@ -19,7 +19,7 @@ export {
   useAnimationQuality,
   useAnimationSeason,
   useShouldUseSeasonalVariants,
-  useStaggerDelay
+  useStaggerDelay,
 } from "./AnimationContext";
 
 // ============================================================================
@@ -29,6 +29,5 @@ export {
 export type {
   AnimationContextValue,
   AnimationPreset,
-  AnimationProviderProps
+  AnimationProviderProps,
 } from "./AnimationContext";
-

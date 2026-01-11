@@ -17,14 +17,13 @@ import type { SuspenseBoundaryConfig } from "@/lib/loading/types";
 import { CenteredLoadingSpinner, LoadingSpinner } from "./LoadingSpinner";
 import { CardSkeleton, Skeleton } from "./Skeleton";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 // ============================================================================
 // BASE SUSPENSE BOUNDARY
 // ============================================================================
 
-export interface SuspenseBoundaryProps
-  extends Partial<SuspenseBoundaryConfig> {
+export interface SuspenseBoundaryProps extends Partial<SuspenseBoundaryConfig> {
   children: React.ReactNode;
   fallback?: React.ReactNode;
   className?: string;
@@ -54,7 +53,7 @@ export const SuspenseBoundary = React.forwardRef<
       onLoadingEnd,
       className,
     },
-    ref
+    ref,
   ) => {
     const [showFallback, setShowFallback] = React.useState(false);
     const startTimeRef = React.useRef<number>(0);
@@ -71,7 +70,7 @@ export const SuspenseBoundary = React.forwardRef<
       if (maxLoadingTime) {
         maxTimeoutRef.current = setTimeout(() => {
           logger.warn(
-            `Suspense boundary exceeded max loading time of ${maxLoadingTime}ms`
+            `Suspense boundary exceeded max loading time of ${maxLoadingTime}ms`,
           );
         }, maxLoadingTime);
       }
@@ -123,7 +122,7 @@ export const SuspenseBoundary = React.forwardRef<
         </React.Suspense>
       </div>
     );
-  }
+  },
 );
 
 SuspenseBoundary.displayName = "SuspenseBoundary";
@@ -138,11 +137,7 @@ interface SuspenseTrackerProps {
   onEnd?: () => void;
 }
 
-function SuspenseTracker({
-  children,
-  onStart,
-  onEnd,
-}: SuspenseTrackerProps) {
+function SuspenseTracker({ children, onStart, onEnd }: SuspenseTrackerProps) {
   React.useEffect(() => {
     onStart?.();
     return () => {
@@ -151,13 +146,16 @@ function SuspenseTracker({
   }, [onStart, onEnd]);
 
   return <>{children}</>;
-};
+}
 
 // ============================================================================
 // SUSPENSE WITH ERROR BOUNDARY
 // ============================================================================
 
-export interface SuspenseWithErrorBoundaryProps extends Omit<SuspenseBoundaryProps, 'onError'> {
+export interface SuspenseWithErrorBoundaryProps extends Omit<
+  SuspenseBoundaryProps,
+  "onError"
+> {
   errorFallback?: React.ReactNode;
   onError?: (error: Error, errorInfo: React.ErrorInfo) => void;
 }
@@ -180,15 +178,8 @@ export const SuspenseWithErrorBoundary = React.forwardRef<
   SuspenseWithErrorBoundaryProps
 >(
   (
-    {
-      children,
-      fallback,
-      errorFallback,
-      onError,
-      className,
-      ...suspenseProps
-    },
-    ref
+    { children, fallback, errorFallback, onError, className, ...suspenseProps },
+    ref,
   ) => {
     return (
       <ErrorBoundary
@@ -215,7 +206,7 @@ export const SuspenseWithErrorBoundary = React.forwardRef<
         </SuspenseBoundary>
       </ErrorBoundary>
     );
-  }
+  },
 );
 
 SuspenseWithErrorBoundary.displayName = "SuspenseWithErrorBoundary";
@@ -256,7 +247,7 @@ export const SuspenseListBoundary = React.forwardRef<
       fallback = <LoadingSpinner />,
       className,
     },
-    ref
+    ref,
   ) => {
     return (
       <div ref={ref} className={className}>
@@ -269,7 +260,7 @@ export const SuspenseListBoundary = React.forwardRef<
         ))}
       </div>
     );
-  }
+  },
 );
 
 SuspenseListBoundary.displayName = "SuspenseListBoundary";
@@ -309,7 +300,7 @@ export const LazySuspenseBoundary = React.forwardRef<
       className,
       ...suspenseProps
     },
-    ref
+    ref,
   ) => {
     return (
       <SuspenseBoundary
@@ -321,7 +312,7 @@ export const LazySuspenseBoundary = React.forwardRef<
         <Component {...componentProps} />
       </SuspenseBoundary>
     );
-  }
+  },
 );
 
 LazySuspenseBoundary.displayName = "LazySuspenseBoundary";
@@ -357,7 +348,7 @@ export const SkeletonSuspenseBoundary = React.forwardRef<
       className,
       ...suspenseProps
     },
-    ref
+    ref,
   ) => {
     const renderSkeleton = () => {
       switch (skeletonVariant) {
@@ -416,7 +407,7 @@ export const SkeletonSuspenseBoundary = React.forwardRef<
         {children}
       </SuspenseBoundary>
     );
-  }
+  },
 );
 
 SkeletonSuspenseBoundary.displayName = "SkeletonSuspenseBoundary";
@@ -425,8 +416,7 @@ SkeletonSuspenseBoundary.displayName = "SkeletonSuspenseBoundary";
 // AGRICULTURAL SUSPENSE BOUNDARY
 // ============================================================================
 
-export interface AgriculturalSuspenseBoundaryProps
-  extends SuspenseBoundaryProps {
+export interface AgriculturalSuspenseBoundaryProps extends SuspenseBoundaryProps {
   message?: string;
 }
 
@@ -451,7 +441,7 @@ export const AgriculturalSuspenseBoundary = React.forwardRef<
       className,
       ...suspenseProps
     },
-    ref
+    ref,
   ) => {
     return (
       <SuspenseBoundary
@@ -469,7 +459,7 @@ export const AgriculturalSuspenseBoundary = React.forwardRef<
         {children}
       </SuspenseBoundary>
     );
-  }
+  },
 );
 
 AgriculturalSuspenseBoundary.displayName = "AgriculturalSuspenseBoundary";
@@ -540,8 +530,7 @@ NestedSuspenseBoundary.displayName = "NestedSuspenseBoundary";
 // CONDITIONAL SUSPENSE BOUNDARY
 // ============================================================================
 
-export interface ConditionalSuspenseBoundaryProps
-  extends SuspenseBoundaryProps {
+export interface ConditionalSuspenseBoundaryProps extends SuspenseBoundaryProps {
   condition: boolean;
 }
 

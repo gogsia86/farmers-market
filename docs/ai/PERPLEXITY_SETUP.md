@@ -2,7 +2,7 @@
 
 **Date:** January 11, 2025  
 **Status:** ✅ CONFIGURED  
-**Integration Method:** OpenRouter API  
+**Integration Method:** OpenRouter API
 
 ---
 
@@ -71,9 +71,11 @@ OPENROUTER_SITE_URL=https://farmersmarket.com
 ## 🚀 Available Models
 
 ### Perplexity 70B Online
+
 **Model ID:** `perplexity/pplx-70b-online`
 
 **Capabilities:**
+
 - ✅ Real-time web search integration
 - ✅ Up-to-date information (current events, documentation)
 - ✅ 70 billion parameters for advanced reasoning
@@ -81,6 +83,7 @@ OPENROUTER_SITE_URL=https://farmersmarket.com
 - ✅ Excellent for research and documentation lookups
 
 **Best For:**
+
 - Current API documentation
 - Latest framework updates
 - Real-time debugging solutions
@@ -92,9 +95,11 @@ OPENROUTER_SITE_URL=https://farmersmarket.com
 ---
 
 ### Perplexity 7B Online
+
 **Model ID:** `perplexity/pplx-7b-online`
 
 **Capabilities:**
+
 - ✅ Real-time web search integration
 - ✅ Faster responses than 70B model
 - ✅ 7 billion parameters
@@ -102,6 +107,7 @@ OPENROUTER_SITE_URL=https://farmersmarket.com
 - ✅ Cost-effective for quick queries
 
 **Best For:**
+
 - Quick documentation lookups
 - Simple code examples
 - Package version checks
@@ -118,7 +124,7 @@ OPENROUTER_SITE_URL=https://farmersmarket.com
 
 ```typescript
 // Ask Perplexity to check the latest Next.js version
-"What is the latest stable version of Next.js and what are the major changes from version 14?"
+"What is the latest stable version of Next.js and what are the major changes from version 14?";
 
 // Perplexity will search online and provide current information
 ```
@@ -127,7 +133,7 @@ OPENROUTER_SITE_URL=https://farmersmarket.com
 
 ```typescript
 // Get up-to-date API documentation
-"What are the current best practices for React Server Components in Next.js 15?"
+"What are the current best practices for React Server Components in Next.js 15?";
 
 // Perplexity searches recent docs and provides accurate answers
 ```
@@ -136,7 +142,7 @@ OPENROUTER_SITE_URL=https://farmersmarket.com
 
 ```typescript
 // Research current trends
-"Compare Prisma ORM vs Drizzle ORM in 2025 - what are the pros and cons for a Next.js project?"
+"Compare Prisma ORM vs Drizzle ORM in 2025 - what are the pros and cons for a Next.js project?";
 
 // Perplexity provides current comparisons with recent benchmarks
 ```
@@ -145,7 +151,7 @@ OPENROUTER_SITE_URL=https://farmersmarket.com
 
 ```typescript
 // Get latest security recommendations
-"What are the current OWASP Top 10 recommendations for Next.js applications in 2025?"
+"What are the current OWASP Top 10 recommendations for Next.js applications in 2025?";
 
 // Perplexity searches for current security standards
 ```
@@ -160,7 +166,7 @@ Create a Perplexity service wrapper:
 
 ```typescript
 // lib/ai/perplexity.service.ts
-import { Configuration, OpenAIApi } from 'openai';
+import { Configuration, OpenAIApi } from "openai";
 
 export class PerplexityService {
   private client: OpenAIApi;
@@ -168,15 +174,18 @@ export class PerplexityService {
   constructor() {
     const configuration = new Configuration({
       apiKey: process.env.OPENROUTER_API_KEY,
-      basePath: 'https://openrouter.ai/api/v1',
+      basePath: "https://openrouter.ai/api/v1",
     });
     this.client = new OpenAIApi(configuration);
   }
 
-  async query(prompt: string, model: 'pplx-70b-online' | 'pplx-7b-online' = 'pplx-7b-online') {
+  async query(
+    prompt: string,
+    model: "pplx-70b-online" | "pplx-7b-online" = "pplx-7b-online",
+  ) {
     const response = await this.client.createChatCompletion({
       model: `perplexity/${model}`,
-      messages: [{ role: 'user', content: prompt }],
+      messages: [{ role: "user", content: prompt }],
       max_tokens: 128000,
       temperature: 0.7,
     });
@@ -186,23 +195,25 @@ export class PerplexityService {
 
   async researchTopic(topic: string): Promise<string> {
     const prompt = `Research the following topic and provide current, accurate information with sources: ${topic}`;
-    return await this.query(prompt, 'pplx-70b-online');
+    return await this.query(prompt, "pplx-70b-online");
   }
 
   async checkDocumentation(library: string, feature: string): Promise<string> {
     const prompt = `What is the current documentation for ${feature} in ${library}? Include code examples.`;
-    return await this.query(prompt, 'pplx-7b-online');
+    return await this.query(prompt, "pplx-7b-online");
   }
 
   async debugError(errorMessage: string, context: string): Promise<string> {
     const prompt = `I'm getting this error: "${errorMessage}" in the following context: ${context}. What are the current solutions and best practices?`;
-    return await this.query(prompt, 'pplx-70b-online');
+    return await this.query(prompt, "pplx-70b-online");
   }
 }
 
 // Usage
 const perplexity = new PerplexityService();
-const answer = await perplexity.researchTopic('Next.js 15 Server Actions best practices');
+const answer = await perplexity.researchTopic(
+  "Next.js 15 Server Actions best practices",
+);
 ```
 
 ---
@@ -211,8 +222,8 @@ const answer = await perplexity.researchTopic('Next.js 15 Server Actions best pr
 
 ```typescript
 // app/api/ai/perplexity/route.ts
-import { NextRequest, NextResponse } from 'next/server';
-import { PerplexityService } from '@/lib/ai/perplexity.service';
+import { NextRequest, NextResponse } from "next/server";
+import { PerplexityService } from "@/lib/ai/perplexity.service";
 
 export async function POST(req: NextRequest) {
   try {
@@ -227,10 +238,10 @@ export async function POST(req: NextRequest) {
       model: `perplexity/${model}`,
     });
   } catch (error) {
-    console.error('Perplexity API error:', error);
+    console.error("Perplexity API error:", error);
     return NextResponse.json(
-      { success: false, error: 'Failed to query Perplexity' },
-      { status: 500 }
+      { success: false, error: "Failed to query Perplexity" },
+      { status: 500 },
     );
   }
 }
@@ -275,10 +286,11 @@ Track your OpenRouter usage at: https://openrouter.ai/activity
    - Reduce to 10000-20000 for simple queries
 
 3. **Cache Results**
+
    ```typescript
    // Cache Perplexity responses to avoid repeat queries
    const cache = new Map<string, string>();
-   
+
    async function cachedQuery(query: string): Promise<string> {
      if (cache.has(query)) {
        return cache.get(query)!;
@@ -300,6 +312,7 @@ Track your OpenRouter usage at: https://openrouter.ai/activity
 ### When to Use Perplexity
 
 ✅ **DO Use For:**
+
 - Current package versions and documentation
 - Latest security vulnerabilities and fixes
 - Recent framework updates and migration guides
@@ -309,6 +322,7 @@ Track your OpenRouter usage at: https://openrouter.ai/activity
 - Breaking changes in dependencies
 
 ❌ **DON'T Use For:**
+
 - Code generation (use Claude/GPT-4 instead)
 - Static knowledge (use local models)
 - Simple calculations or logic
@@ -320,30 +334,34 @@ Track your OpenRouter usage at: https://openrouter.ai/activity
 ### Prompt Engineering Tips
 
 **1. Be Specific:**
+
 ```typescript
 // ❌ BAD
-"Tell me about Next.js"
+"Tell me about Next.js";
 
 // ✅ GOOD
-"What are the new features in Next.js 15 and how do they compare to Next.js 14?"
+"What are the new features in Next.js 15 and how do they compare to Next.js 14?";
 ```
 
 **2. Request Sources:**
+
 ```typescript
 // ✅ GOOD
-"What are the current best practices for API rate limiting in Next.js? Include sources and documentation links."
+"What are the current best practices for API rate limiting in Next.js? Include sources and documentation links.";
 ```
 
 **3. Specify Timeframe:**
+
 ```typescript
 // ✅ GOOD
-"What are the security vulnerabilities discovered in Prisma in 2024-2025? Include CVE numbers if available."
+"What are the security vulnerabilities discovered in Prisma in 2024-2025? Include CVE numbers if available.";
 ```
 
 **4. Ask for Code Examples:**
+
 ```typescript
 // ✅ GOOD
-"Show me a current example of implementing authentication with NextAuth v5 in Next.js 15, including TypeScript types."
+"Show me a current example of implementing authentication with NextAuth v5 in Next.js 15, including TypeScript types.";
 ```
 
 ---
@@ -353,31 +371,34 @@ Track your OpenRouter usage at: https://openrouter.ai/activity
 ### API Key Protection
 
 1. **Never Commit Keys:**
+
    ```bash
    # ✅ Keys in .env.local (gitignored)
    OPENROUTER_API_KEY=sk-or-v1-...
-   
+
    # ❌ Never in code
    const apiKey = "sk-or-v1-..."; // DON'T DO THIS
    ```
 
 2. **Use Environment Variables:**
+
    ```typescript
    // ✅ CORRECT
    const apiKey = process.env.OPENROUTER_API_KEY;
-   
+
    if (!apiKey) {
-     throw new Error('OPENROUTER_API_KEY is required');
+     throw new Error("OPENROUTER_API_KEY is required");
    }
    ```
 
 3. **Server-Side Only:**
+
    ```typescript
    // ✅ CORRECT - Server Component or API Route
-   import { PerplexityService } from '@/lib/ai/perplexity.service';
-   
+   import { PerplexityService } from "@/lib/ai/perplexity.service";
+
    // ❌ WRONG - Client Component
-   "use client"; // Never expose API keys to client!
+   ("use client"); // Never expose API keys to client!
    ```
 
 ---
@@ -388,21 +409,22 @@ Implement rate limiting to prevent abuse:
 
 ```typescript
 // lib/ai/rate-limiter.ts
-import { Ratelimit } from '@upstash/ratelimit';
-import { Redis } from '@upstash/redis';
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
 
 const ratelimit = new Ratelimit({
   redis: Redis.fromEnv(),
-  limiter: Ratelimit.slidingWindow(10, '1 m'), // 10 requests per minute
+  limiter: Ratelimit.slidingWindow(10, "1 m"), // 10 requests per minute
 });
 
 export async function checkRateLimit(identifier: string) {
-  const { success, limit, reset, remaining } = await ratelimit.limit(identifier);
-  
+  const { success, limit, reset, remaining } =
+    await ratelimit.limit(identifier);
+
   if (!success) {
     throw new Error(`Rate limit exceeded. Reset in ${reset}ms`);
   }
-  
+
   return { remaining, reset };
 }
 ```
@@ -415,22 +437,22 @@ export async function checkRateLimit(identifier: string) {
 
 ```typescript
 // tests/ai/perplexity.test.ts
-import { PerplexityService } from '@/lib/ai/perplexity.service';
+import { PerplexityService } from "@/lib/ai/perplexity.service";
 
-describe('PerplexityService', () => {
-  it('should query Perplexity API successfully', async () => {
+describe("PerplexityService", () => {
+  it("should query Perplexity API successfully", async () => {
     const perplexity = new PerplexityService();
-    const response = await perplexity.query('What is 2+2?');
-    
+    const response = await perplexity.query("What is 2+2?");
+
     expect(response).toBeDefined();
-    expect(typeof response).toBe('string');
+    expect(typeof response).toBe("string");
   });
 
-  it('should handle errors gracefully', async () => {
+  it("should handle errors gracefully", async () => {
     const perplexity = new PerplexityService();
-    
+
     await expect(
-      perplexity.query('') // Empty query
+      perplexity.query(""), // Empty query
     ).rejects.toThrow();
   });
 });
@@ -441,10 +463,10 @@ describe('PerplexityService', () => {
 ```typescript
 // tests/mocks/perplexity.mock.ts
 export const mockPerplexityService = {
-  query: jest.fn().mockResolvedValue('Mocked Perplexity response'),
-  researchTopic: jest.fn().mockResolvedValue('Mocked research'),
-  checkDocumentation: jest.fn().mockResolvedValue('Mocked docs'),
-  debugError: jest.fn().mockResolvedValue('Mocked solution'),
+  query: jest.fn().mockResolvedValue("Mocked Perplexity response"),
+  researchTopic: jest.fn().mockResolvedValue("Mocked research"),
+  checkDocumentation: jest.fn().mockResolvedValue("Mocked docs"),
+  debugError: jest.fn().mockResolvedValue("Mocked solution"),
 };
 ```
 
@@ -453,16 +475,19 @@ export const mockPerplexityService = {
 ## 📚 Additional Resources
 
 ### Official Documentation
+
 - **OpenRouter:** https://openrouter.ai/docs
 - **Perplexity AI:** https://docs.perplexity.ai
 - **API Reference:** https://openrouter.ai/docs/api-reference
 
 ### Community Resources
+
 - **OpenRouter Discord:** Join for support and updates
 - **Perplexity Blog:** Latest features and improvements
 - **GitHub Examples:** https://github.com/openrouter/examples
 
 ### Cost Calculator
+
 - **OpenRouter Pricing:** https://openrouter.ai/models/perplexity
 - **Usage Dashboard:** https://openrouter.ai/activity
 
@@ -473,6 +498,7 @@ export const mockPerplexityService = {
 ### Common Issues
 
 #### Issue 1: "Invalid API Key"
+
 ```bash
 Error: Invalid API key for OpenRouter
 
@@ -484,6 +510,7 @@ Solution:
 ```
 
 #### Issue 2: "Rate Limit Exceeded"
+
 ```bash
 Error: Rate limit exceeded
 
@@ -495,6 +522,7 @@ Solution:
 ```
 
 #### Issue 3: "Model Not Available"
+
 ```bash
 Error: Model perplexity/pplx-70b-online not found
 
@@ -506,6 +534,7 @@ Solution:
 ```
 
 #### Issue 4: "Timeout Error"
+
 ```bash
 Error: Request timeout
 
@@ -521,6 +550,7 @@ Solution:
 ## 🎯 Next Steps
 
 1. **Test Integration:**
+
    ```bash
    npm run dev
    # Test Perplexity queries in your application
@@ -568,11 +598,13 @@ Solution:
 ## 📞 Support
 
 ### Internal Support
+
 - **Documentation:** This file (`docs/ai/PERPLEXITY_SETUP.md`)
 - **Issues:** Create GitHub issue with label: `ai-integration`
 - **Team Chat:** #ai-tools Slack channel
 
 ### External Support
+
 - **OpenRouter Support:** support@openrouter.ai
 - **OpenRouter Discord:** https://discord.gg/openrouter
 - **Status Page:** https://status.openrouter.ai
@@ -582,6 +614,6 @@ Solution:
 **Status:** ✅ READY TO USE  
 **Last Updated:** January 11, 2025  
 **Configured By:** DevOps Team  
-**Version:** 1.0  
+**Version:** 1.0
 
 **Happy coding with Perplexity AI! 🚀**

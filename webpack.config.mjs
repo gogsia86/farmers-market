@@ -103,8 +103,8 @@ export const cacheGroups = {
  */
 export const externalsConfig = {
   // Exclude Bull queue from build (Redis dependency, server-only)
-  'bull': 'commonjs bull',
-  'ioredis': 'commonjs ioredis',
+  bull: "commonjs bull",
+  ioredis: "commonjs ioredis",
 };
 
 /**

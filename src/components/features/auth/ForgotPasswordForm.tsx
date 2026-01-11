@@ -46,7 +46,7 @@ export function ForgotPasswordForm() {
       setError(
         error instanceof Error
           ? error.message
-          : "An unexpected error occurred. Please try again."
+          : "An unexpected error occurred. Please try again.",
       );
     } finally {
       setIsLoading(false);
@@ -74,7 +74,9 @@ export function ForgotPasswordForm() {
                 />
               </svg>
             </div>
-            <h2 className="text-3xl font-bold text-gray-900">Check Your Email</h2>
+            <h2 className="text-3xl font-bold text-gray-900">
+              Check Your Email
+            </h2>
             <p className="text-gray-600 mt-2">
               We've sent password reset instructions to <strong>{email}</strong>
             </p>
@@ -99,8 +101,8 @@ export function ForgotPasswordForm() {
               <div className="text-sm text-green-800">
                 <p className="font-semibold mb-1">Email sent successfully!</p>
                 <p>
-                  Please check your inbox and follow the link to reset your password.
-                  The link will expire in 1 hour.
+                  Please check your inbox and follow the link to reset your
+                  password. The link will expire in 1 hour.
                 </p>
               </div>
             </div>

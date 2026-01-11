@@ -22,7 +22,7 @@ import {
   toAppError,
   ValidationError,
   type ErrorMetadata,
-  type ValidationErrorDetail
+  type ValidationErrorDetail,
 } from "./types";
 
 // ============================================================================
@@ -110,7 +110,7 @@ export function getHttpStatusCode(error: unknown): number {
 export async function handleFetchError(
   error: unknown,
   endpoint: string,
-  metadata?: Partial<ErrorMetadata>
+  metadata?: Partial<ErrorMetadata>,
 ): Promise<never> {
   if (error instanceof TypeError) {
     // Network error
@@ -156,7 +156,7 @@ export async function handleFetchError(
 export async function fetchWithErrorHandling<T = any>(
   input: RequestInfo | URL,
   init?: RequestInit,
-  metadata?: Partial<ErrorMetadata>
+  metadata?: Partial<ErrorMetadata>,
 ): Promise<T> {
   try {
     const response = await fetch(input, init);
@@ -206,7 +206,7 @@ const DEFAULT_RETRY_OPTIONS: Required<RetryOptions> = {
     }
     return false;
   },
-  onRetry: () => { },
+  onRetry: () => {},
 };
 
 /**
@@ -214,7 +214,7 @@ const DEFAULT_RETRY_OPTIONS: Required<RetryOptions> = {
  */
 export async function withRetry<T>(
   fn: () => Promise<T>,
-  options: RetryOptions = {}
+  options: RetryOptions = {},
 ): Promise<T> {
   const opts = { ...DEFAULT_RETRY_OPTIONS, ...options };
   let lastError: unknown;
@@ -261,7 +261,7 @@ function sleep(ms: number): Promise<void> {
  */
 export function createValidationError(
   zodError: any,
-  metadata?: Partial<ErrorMetadata>
+  metadata?: Partial<ErrorMetadata>,
 ): ValidationError {
   const validationErrors: ValidationErrorDetail[] = zodError.errors.map(
     (err: any) => ({
@@ -269,7 +269,7 @@ export function createValidationError(
       message: err.message,
       code: err.code,
       value: err.received,
-    })
+    }),
   );
 
   return new ValidationError({
@@ -299,7 +299,7 @@ export function handleZodError(error: unknown): never {
 export function handlePrismaError(
   error: unknown,
   operation?: string,
-  metadata?: Partial<ErrorMetadata>
+  metadata?: Partial<ErrorMetadata>,
 ): never {
   // Prisma error codes: https://www.prisma.io/docs/reference/api-reference/error-reference
   if (error && typeof error === "object" && "code" in error) {
@@ -362,7 +362,8 @@ export function handlePrismaError(
   }
 
   throw new DatabaseError({
-    message: error instanceof Error ? error.message : "Database operation failed",
+    message:
+      error instanceof Error ? error.message : "Database operation failed",
     operation,
     metadata,
     originalError: error as Error,
@@ -378,7 +379,7 @@ export function handlePrismaError(
  */
 export function handleStripeError(
   error: unknown,
-  metadata?: Partial<ErrorMetadata>
+  metadata?: Partial<ErrorMetadata>,
 ): never {
   if (error && typeof error === "object" && "type" in error) {
     const stripeError = error as {
@@ -398,13 +399,16 @@ export function handleStripeError(
         suggestions.push(
           "Try a different card",
           "Check your card details",
-          "Contact your bank"
+          "Contact your bank",
         );
         break;
 
       case "validation_error":
         userMessage = "Invalid payment information";
-        suggestions.push("Check your payment details", "Ensure all fields are filled");
+        suggestions.push(
+          "Check your payment details",
+          "Ensure all fields are filled",
+        );
         break;
 
       case "rate_limit_error":
@@ -451,7 +455,7 @@ export function handleStripeError(
  */
 export function handleAggregateErrors(
   errors: unknown[],
-  metadata?: Partial<ErrorMetadata>
+  metadata?: Partial<ErrorMetadata>,
 ): AppError {
   if (errors.length === 0) {
     throw new Error("No errors to aggregate");
@@ -465,10 +469,10 @@ export function handleAggregateErrors(
   const highestSeverity = appErrors.reduce(
     (max, err) =>
       Object.values(ErrorSeverity).indexOf(err.severity) >
-        Object.values(ErrorSeverity).indexOf(max)
+      Object.values(ErrorSeverity).indexOf(max)
         ? err.severity
         : max,
-    ErrorSeverity.INFO
+    ErrorSeverity.INFO,
   );
 
   return new AppError({
@@ -507,7 +511,7 @@ export function handleAggregateErrors(
 export async function safeExecute<T>(
   fn: () => Promise<T>,
   fallback: T,
-  onError?: (error: AppError) => void
+  onError?: (error: AppError) => void,
 ): Promise<T> {
   try {
     return await fn();
@@ -524,7 +528,7 @@ export async function safeExecute<T>(
  * Execute function safely and return result or error
  */
 export async function safeExecuteWithError<T>(
-  fn: () => Promise<T>
+  fn: () => Promise<T>,
 ): Promise<{ data: T; error: null } | { data: null; error: AppError }> {
   try {
     const data = await fn();
@@ -552,8 +556,8 @@ export function extractErrorContext(request: Request): Partial<ErrorMetadata> {
         Array.from(request.headers.entries()).filter(
           ([key]) =>
             !key.toLowerCase().includes("authorization") &&
-            !key.toLowerCase().includes("cookie")
-        )
+            !key.toLowerCase().includes("cookie"),
+        ),
       ),
     },
   };
@@ -572,7 +576,8 @@ export function sanitizeErrorForLogging(error: AppError): AppError {
 
   // Remove sensitive fields from context
   if (sanitizedMetadata.context) {
-    const { password, token, apiKey, secret, authorization, ...safeContext } = sanitizedMetadata.context;
+    const { password, token, apiKey, secret, authorization, ...safeContext } =
+      sanitizedMetadata.context;
     sanitizedMetadata.context = safeContext;
   }
 

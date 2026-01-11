@@ -17,7 +17,13 @@ export interface NexusPhaseMetadata {
   startTime: number;
   endTime?: number;
   duration?: number;
-  artifactType: 'CODE' | 'CONFIG' | 'DATA' | 'SCHEMA' | 'TEST' | 'DOCUMENTATION';
+  artifactType:
+    | "CODE"
+    | "CONFIG"
+    | "DATA"
+    | "SCHEMA"
+    | "TEST"
+    | "DOCUMENTATION";
   artifactSize: number;
   success: boolean;
   error?: string;
@@ -33,20 +39,25 @@ export interface NexusMissionMetadata {
   completedPhases: number;
   artifacts: string[];
   efficiency?: number; // phases per second
-  status: 'INITIALIZING' | 'EXECUTING' | 'COMPLETED' | 'FAILED' | 'BREACHED';
+  status: "INITIALIZING" | "EXECUTING" | "COMPLETED" | "FAILED" | "BREACHED";
   agriculturalContext?: {
-    season?: 'SPRING' | 'SUMMER' | 'FALL' | 'WINTER';
+    season?: "SPRING" | "SUMMER" | "FALL" | "WINTER";
     lunarPhase?: string;
     biodynamicAwareness: boolean;
   };
 }
 
 export interface ExecutionBreachCondition {
-  code: 'AUTH_FAILURE' | 'SYNTAX_IMPOSSIBILITY' | 'RESOURCE_EXHAUSTION' | 'NETWORK_PARTITION' | 'DATA_CORRUPTION';
+  code:
+    | "AUTH_FAILURE"
+    | "SYNTAX_IMPOSSIBILITY"
+    | "RESOURCE_EXHAUSTION"
+    | "NETWORK_PARTITION"
+    | "DATA_CORRUPTION";
   message: string;
   location?: string;
   resolution?: string;
-  severity: 'CRITICAL' | 'ERROR' | 'WARNING';
+  severity: "CRITICAL" | "ERROR" | "WARNING";
 }
 
 /**
@@ -64,7 +75,7 @@ export class ExecutionNexus {
   private breachConditions: ExecutionBreachCondition[] = [];
 
   // Singleton pattern
-  private constructor() { }
+  private constructor() {}
 
   public static getInstance(): ExecutionNexus {
     if (!ExecutionNexus.instance) {
@@ -84,10 +95,10 @@ export class ExecutionNexus {
     missionName: string,
     phaseCount: number,
     agriculturalContext?: {
-      season?: 'SPRING' | 'SUMMER' | 'FALL' | 'WINTER';
+      season?: "SPRING" | "SUMMER" | "FALL" | "WINTER";
       lunarPhase?: string;
       biodynamicAwareness?: boolean;
-    }
+    },
   ): void {
     const missionId = this.generateMissionId();
 
@@ -98,12 +109,12 @@ export class ExecutionNexus {
       phaseCount,
       completedPhases: 0,
       artifacts: [],
-      status: 'INITIALIZING',
+      status: "INITIALIZING",
       agriculturalContext: {
         season: agriculturalContext?.season,
         lunarPhase: agriculturalContext?.lunarPhase,
         biodynamicAwareness: agriculturalContext?.biodynamicAwareness ?? false,
-      }
+      },
     };
 
     this.phaseMetadata.clear();
@@ -113,7 +124,7 @@ export class ExecutionNexus {
     console.log(this.renderIgnitionBanner());
 
     // Update status to executing
-    this.currentMission.status = 'EXECUTING';
+    this.currentMission.status = "EXECUTING";
   }
 
   /**
@@ -126,24 +137,28 @@ export class ExecutionNexus {
   public transmitPhase(
     phaseNumber: number,
     artifact: string,
-    artifactType: NexusPhaseMetadata['artifactType'] = 'CODE'
+    artifactType: NexusPhaseMetadata["artifactType"] = "CODE",
   ): void {
     if (!this.currentMission) {
-      throw new Error('⚠️ [BREACH] :: NO_ACTIVE_MISSION - Call ignite() first');
+      throw new Error("⚠️ [BREACH] :: NO_ACTIVE_MISSION - Call ignite() first");
     }
 
     // Validate phase sequence
     if (phaseNumber !== this.currentMission.completedPhases + 1) {
       this.registerBreach({
-        code: 'DATA_CORRUPTION',
+        code: "DATA_CORRUPTION",
         message: `PHASE DESYNC: Expected ${this.currentMission.completedPhases + 1}, received ${phaseNumber}`,
-        severity: 'CRITICAL'
+        severity: "CRITICAL",
       });
-      throw new Error(`PHASE DESYNC: Expected ${this.currentMission.completedPhases + 1}, received ${phaseNumber}`);
+      throw new Error(
+        `PHASE DESYNC: Expected ${this.currentMission.completedPhases + 1}, received ${phaseNumber}`,
+      );
     }
 
     const now = performance.now();
-    const phaseStartTime = this.phaseMetadata.get(phaseNumber - 1)?.endTime || this.currentMission.startTimestamp;
+    const phaseStartTime =
+      this.phaseMetadata.get(phaseNumber - 1)?.endTime ||
+      this.currentMission.startTimestamp;
 
     const metadata: NexusPhaseMetadata = {
       phaseNumber,
@@ -153,7 +168,7 @@ export class ExecutionNexus {
       duration: now - phaseStartTime,
       artifactType,
       artifactSize: artifact.length,
-      success: true
+      success: true,
     };
 
     this.phaseMetadata.set(phaseNumber, metadata);
@@ -164,7 +179,7 @@ export class ExecutionNexus {
     // Render phase output
     console.log(this.renderPhaseOutput(metadata));
     console.log(artifact);
-    console.log('─'.repeat(80));
+    console.log("─".repeat(80));
 
     // Check if mission complete
     if (this.currentMission.completedPhases >= this.currentMission.phaseCount) {
@@ -181,7 +196,7 @@ export class ExecutionNexus {
     this.breachConditions.push(breach);
 
     if (this.currentMission) {
-      this.currentMission.status = 'BREACHED';
+      this.currentMission.status = "BREACHED";
     }
 
     console.error(this.renderBreachAlert(breach));
@@ -195,9 +210,13 @@ export class ExecutionNexus {
 
     const now = performance.now();
     this.currentMission.endTimestamp = now;
-    this.currentMission.totalDuration = now - this.currentMission.startTimestamp;
-    this.currentMission.efficiency = this.currentMission.phaseCount / (this.currentMission.totalDuration / 1000);
-    this.currentMission.status = this.breachConditions.length > 0 ? 'FAILED' : 'COMPLETED';
+    this.currentMission.totalDuration =
+      now - this.currentMission.startTimestamp;
+    this.currentMission.efficiency =
+      this.currentMission.phaseCount /
+      (this.currentMission.totalDuration / 1000);
+    this.currentMission.status =
+      this.breachConditions.length > 0 ? "FAILED" : "COMPLETED";
 
     console.log(this.renderTerminationBanner());
 
@@ -237,12 +256,13 @@ export class ExecutionNexus {
   }
 
   private renderIgnitionBanner(): string {
-    if (!this.currentMission) return '';
+    if (!this.currentMission) return "";
 
-    const { missionName, phaseCount, agriculturalContext } = this.currentMission;
+    const { missionName, phaseCount, agriculturalContext } =
+      this.currentMission;
     const seasonBadge = agriculturalContext?.season
       ? `🌾 SEASON: ${agriculturalContext.season}`
-      : '';
+      : "";
 
     return `
 ╔══════════════════════════════════════════════════════════════╗
@@ -250,24 +270,27 @@ export class ExecutionNexus {
 ╠══════════════════════════════════════════════════════════════╣
 ║ MISSION ID: ${this.currentMission.missionId.padEnd(45)} ║
 ║ PHASE COUNT: ${phaseCount.toString().padEnd(44)} ║
-${seasonBadge ? `║ ${seasonBadge.padEnd(60)} ║` : ''}
+${seasonBadge ? `║ ${seasonBadge.padEnd(60)} ║` : ""}
 ║ STATUS: EXECUTING                                            ║
 ╚══════════════════════════════════════════════════════════════╝
     `.trim();
   }
 
   private renderPhaseOutput(metadata: NexusPhaseMetadata): string {
-    const phaseLabel = `[${metadata.phaseNumber.toString().padStart(2, '0')}/${metadata.totalPhases.toString().padStart(2, '0')}]`;
+    const phaseLabel = `[${metadata.phaseNumber.toString().padStart(2, "0")}/${metadata.totalPhases.toString().padStart(2, "0")}]`;
     const duration = ((metadata.duration || 0) / 1000).toFixed(3);
     return `${phaseLabel} → ${duration}s`;
   }
 
   private renderTerminationBanner(): string {
-    if (!this.currentMission) return '';
+    if (!this.currentMission) return "";
 
-    const totalTime = ((this.currentMission.totalDuration || 0) / 1000).toFixed(3);
+    const totalTime = ((this.currentMission.totalDuration || 0) / 1000).toFixed(
+      3,
+    );
     const efficiency = (this.currentMission.efficiency || 0).toFixed(2);
-    const status = this.currentMission.status === 'COMPLETED' ? '✅ COMPLETED' : '⚠️ FAILED';
+    const status =
+      this.currentMission.status === "COMPLETED" ? "✅ COMPLETED" : "⚠️ FAILED";
 
     return `
 ╔══════════════════════════════════════════════════════════════╗
@@ -279,7 +302,7 @@ ${seasonBadge ? `║ ${seasonBadge.padEnd(60)} ║` : ''}
 ║ CHRONOLOGY: ${totalTime}s                                        ║
 ║ EFFICIENCY: ${efficiency} phases/sec                              ║
 ║ ARTIFACTS: ${this.artifactLog.length}                                                 ║
-${this.breachConditions.length > 0 ? `║ BREACHES: ${this.breachConditions.length}                                                  ║` : ''}
+${this.breachConditions.length > 0 ? `║ BREACHES: ${this.breachConditions.length}                                                  ║` : ""}
 ╚══════════════════════════════════════════════════════════════╝
     `.trim();
   }
@@ -291,8 +314,8 @@ ${this.breachConditions.length > 0 ? `║ BREACHES: ${this.breachConditions.leng
 ╠══════════════════════════════════════════════════════════════╣
 ║ SEVERITY: ${breach.severity.padEnd(47)} ║
 ║ MESSAGE: ${breach.message.padEnd(48)} ║
-${breach.location ? `║ LOCATION: ${breach.location.padEnd(47)} ║` : ''}
-${breach.resolution ? `║ RESOLUTION: ${breach.resolution.padEnd(45)} ║` : ''}
+${breach.location ? `║ LOCATION: ${breach.location.padEnd(47)} ║` : ""}
+${breach.resolution ? `║ RESOLUTION: ${breach.resolution.padEnd(45)} ║` : ""}
 ╚══════════════════════════════════════════════════════════════╝
     `.trim();
   }
@@ -305,11 +328,11 @@ ${breach.resolution ? `║ RESOLUTION: ${breach.resolution.padEnd(45)} ║` : ''
       phases: Array.from(this.phaseMetadata.entries()),
       artifacts: this.artifactLog,
       breaches: this.breachConditions,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     // Log to console for now (file system persistence would require Node.js fs module)
-    console.log('\n📝 EXECUTION LOG (JSON):');
+    console.log("\n📝 EXECUTION LOG (JSON):");
     console.log(JSON.stringify(logData, null, 2));
   }
 }
@@ -331,7 +354,7 @@ export function getNexus(): ExecutionNexus {
 export function igniteMission(
   missionName: string,
   phaseCount: number,
-  agriculturalContext?: Parameters<ExecutionNexus['ignite']>[2]
+  agriculturalContext?: Parameters<ExecutionNexus["ignite"]>[2],
 ): void {
   getNexus().ignite(missionName, phaseCount, agriculturalContext);
 }
@@ -342,7 +365,7 @@ export function igniteMission(
 export function transmitPhase(
   phaseNumber: number,
   artifact: string,
-  artifactType?: NexusPhaseMetadata['artifactType']
+  artifactType?: NexusPhaseMetadata["artifactType"],
 ): void {
   getNexus().transmitPhase(phaseNumber, artifact, artifactType);
 }
@@ -361,13 +384,13 @@ export function reportBreach(breach: ExecutionBreachCondition): void {
 /**
  * Get current season for agricultural awareness
  */
-export function getCurrentSeason(): 'SPRING' | 'SUMMER' | 'FALL' | 'WINTER' {
+export function getCurrentSeason(): "SPRING" | "SUMMER" | "FALL" | "WINTER" {
   const month = new Date().getMonth();
 
-  if (month >= 2 && month <= 4) return 'SPRING';
-  if (month >= 5 && month <= 7) return 'SUMMER';
-  if (month >= 8 && month <= 10) return 'FALL';
-  return 'WINTER';
+  if (month >= 2 && month <= 4) return "SPRING";
+  if (month >= 5 && month <= 7) return "SUMMER";
+  if (month >= 8 && month <= 10) return "FALL";
+  return "WINTER";
 }
 
 /**
@@ -382,14 +405,14 @@ export function getCurrentLunarPhase(): string {
   // Simplified lunar phase calculation (approximate)
   const phase = ((year - 2000) * 12.3685 + month + day / 30) % 29.53;
 
-  if (phase < 1.84566) return 'NEW_MOON';
-  if (phase < 7.38264) return 'WAXING_CRESCENT';
-  if (phase < 9.22830) return 'FIRST_QUARTER';
-  if (phase < 14.76528) return 'WAXING_GIBBOUS';
-  if (phase < 16.61094) return 'FULL_MOON';
-  if (phase < 22.14792) return 'WANING_GIBBOUS';
-  if (phase < 23.99358) return 'LAST_QUARTER';
-  return 'WANING_CRESCENT';
+  if (phase < 1.84566) return "NEW_MOON";
+  if (phase < 7.38264) return "WAXING_CRESCENT";
+  if (phase < 9.2283) return "FIRST_QUARTER";
+  if (phase < 14.76528) return "WAXING_GIBBOUS";
+  if (phase < 16.61094) return "FULL_MOON";
+  if (phase < 22.14792) return "WANING_GIBBOUS";
+  if (phase < 23.99358) return "LAST_QUARTER";
+  return "WANING_CRESCENT";
 }
 
 /**
@@ -399,7 +422,7 @@ export function createAgriculturalContext(biodynamicAwareness = true) {
   return {
     season: getCurrentSeason(),
     lunarPhase: getCurrentLunarPhase(),
-    biodynamicAwareness
+    biodynamicAwareness,
   };
 }
 

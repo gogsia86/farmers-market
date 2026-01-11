@@ -21,8 +21,8 @@
  *   --labels       Comma-separated labels to add (default: tech-debt,refactor)
  */
 
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
 // ============================================================================
 // CONFIGURATION
@@ -30,17 +30,17 @@ const path = require('path');
 
 const CONFIG = {
   // File extensions to scan
-  extensions: ['.ts', '.tsx', '.js', '.jsx', '.md'],
+  extensions: [".ts", ".tsx", ".js", ".jsx", ".md"],
 
   // Directories to exclude
   excludeDirs: [
-    'node_modules',
-    'dist',
-    'build',
-    '.next',
-    'coverage',
-    '.git',
-    '.backup',
+    "node_modules",
+    "dist",
+    "build",
+    ".next",
+    "coverage",
+    ".git",
+    ".backup",
   ],
 
   // Comment patterns to find
@@ -53,14 +53,14 @@ const CONFIG = {
 
   // Priority mapping
   priorities: {
-    FIXME: 'high',
-    HACK: 'high',
-    XXX: 'medium',
-    TODO: 'low',
+    FIXME: "high",
+    HACK: "high",
+    XXX: "medium",
+    TODO: "low",
   },
 
   // Default labels
-  defaultLabels: ['tech-debt', 'refactor'],
+  defaultLabels: ["tech-debt", "refactor"],
 };
 
 // ============================================================================
@@ -70,7 +70,7 @@ const CONFIG = {
 const state = {
   todos: [],
   filesScanned: 0,
-  outputPath: 'github-issues-from-todos.md',
+  outputPath: "github-issues-from-todos.md",
   outputJson: false,
   customLabels: [],
 };
@@ -83,13 +83,16 @@ function parseArgs() {
   const args = process.argv.slice(2);
 
   for (const arg of args) {
-    if (arg.startsWith('--output=')) {
-      state.outputPath = arg.split('=')[1];
-    } else if (arg === '--json') {
+    if (arg.startsWith("--output=")) {
+      state.outputPath = arg.split("=")[1];
+    } else if (arg === "--json") {
       state.outputJson = true;
-    } else if (arg.startsWith('--labels=')) {
-      state.customLabels = arg.split('=')[1].split(',').map(l => l.trim());
-    } else if (arg === '--help' || arg === '-h') {
+    } else if (arg.startsWith("--labels=")) {
+      state.customLabels = arg
+        .split("=")[1]
+        .split(",")
+        .map((l) => l.trim());
+    } else if (arg === "--help" || arg === "-h") {
       console.log(`
 📝 TODO to GitHub Issues Converter
 
@@ -114,7 +117,10 @@ Examples:
 
 function shouldExclude(filePath, fileName) {
   for (const dir of CONFIG.excludeDirs) {
-    if (filePath.includes(path.sep + dir + path.sep) || filePath.startsWith(dir + path.sep)) {
+    if (
+      filePath.includes(path.sep + dir + path.sep) ||
+      filePath.startsWith(dir + path.sep)
+    ) {
       return true;
     }
   }
@@ -124,7 +130,7 @@ function shouldExclude(filePath, fileName) {
 function getAllFiles(dirPath, arrayOfFiles = []) {
   const files = fs.readdirSync(dirPath);
 
-  files.forEach(file => {
+  files.forEach((file) => {
     const fullPath = path.join(dirPath, file);
     const relativePath = path.relative(process.cwd(), fullPath);
 
@@ -148,53 +154,59 @@ function getAllFiles(dirPath, arrayOfFiles = []) {
 function extractContext(lines, lineIndex, contextLines = 2) {
   const start = Math.max(0, lineIndex - contextLines);
   const end = Math.min(lines.length, lineIndex + contextLines + 1);
-  return lines.slice(start, end).join('\n');
+  return lines.slice(start, end).join("\n");
 }
 
 function detectCategory(filePath, comment) {
   const lowerPath = filePath.toLowerCase();
   const lowerComment = comment.toLowerCase();
 
-  if (lowerPath.includes('api') || lowerComment.includes('api')) {
-    return 'API';
+  if (lowerPath.includes("api") || lowerComment.includes("api")) {
+    return "API";
   }
-  if (lowerPath.includes('component') || lowerPath.includes('ui')) {
-    return 'UI/Components';
+  if (lowerPath.includes("component") || lowerPath.includes("ui")) {
+    return "UI/Components";
   }
-  if (lowerPath.includes('service')) {
-    return 'Services';
+  if (lowerPath.includes("service")) {
+    return "Services";
   }
-  if (lowerPath.includes('database') || lowerPath.includes('repository')) {
-    return 'Database';
+  if (lowerPath.includes("database") || lowerPath.includes("repository")) {
+    return "Database";
   }
-  if (lowerPath.includes('test')) {
-    return 'Testing';
+  if (lowerPath.includes("test")) {
+    return "Testing";
   }
-  if (lowerPath.includes('auth')) {
-    return 'Authentication';
+  if (lowerPath.includes("auth")) {
+    return "Authentication";
   }
-  if (lowerPath.includes('payment') || lowerPath.includes('stripe')) {
-    return 'Payments';
+  if (lowerPath.includes("payment") || lowerPath.includes("stripe")) {
+    return "Payments";
   }
-  if (lowerComment.includes('email') || lowerComment.includes('notification')) {
-    return 'Notifications';
+  if (lowerComment.includes("email") || lowerComment.includes("notification")) {
+    return "Notifications";
   }
-  if (lowerComment.includes('security') || lowerComment.includes('validation')) {
-    return 'Security';
+  if (
+    lowerComment.includes("security") ||
+    lowerComment.includes("validation")
+  ) {
+    return "Security";
   }
-  if (lowerComment.includes('performance') || lowerComment.includes('optimize')) {
-    return 'Performance';
+  if (
+    lowerComment.includes("performance") ||
+    lowerComment.includes("optimize")
+  ) {
+    return "Performance";
   }
 
-  return 'General';
+  return "General";
 }
 
 function scanFile(filePath) {
   state.filesScanned++;
 
   try {
-    const content = fs.readFileSync(filePath, 'utf8');
-    const lines = content.split('\n');
+    const content = fs.readFileSync(filePath, "utf8");
+    const lines = content.split("\n");
     const relativePath = path.relative(process.cwd(), filePath);
 
     for (const [type, pattern] of Object.entries(CONFIG.patterns)) {
@@ -209,7 +221,7 @@ function scanFile(filePath) {
 
         // Find line number
         const beforeMatch = content.substring(0, match.index);
-        const lineNumber = beforeMatch.split('\n').length;
+        const lineNumber = beforeMatch.split("\n").length;
 
         // Get context
         const context = extractContext(lines, lineNumber - 1);
@@ -239,7 +251,7 @@ function generateIssueTitle(todo) {
   let title = todo.comment;
 
   if (title.length > maxLength) {
-    title = title.substring(0, maxLength) + '...';
+    title = title.substring(0, maxLength) + "...";
   }
 
   return `[${todo.category}] ${title}`;
@@ -292,7 +304,7 @@ function generateLabels(todo) {
   labels.push(todo.type.toLowerCase());
 
   // Add category label
-  labels.push(todo.category.toLowerCase().replace(/\//g, '-'));
+  labels.push(todo.category.toLowerCase().replace(/\//g, "-"));
 
   return [...new Set(labels)];
 }
@@ -330,9 +342,9 @@ function generateMarkdownReport() {
 
   for (const category of categories) {
     const todos = grouped[category];
-    const high = todos.filter(t => t.priority === 'high').length;
-    const medium = todos.filter(t => t.priority === 'medium').length;
-    const low = todos.filter(t => t.priority === 'low').length;
+    const high = todos.filter((t) => t.priority === "high").length;
+    const medium = todos.filter((t) => t.priority === "medium").length;
+    const low = todos.filter((t) => t.priority === "low").length;
     markdown += `| ${category} | ${todos.length} | ${high} | ${medium} | ${low} |\n`;
   }
 
@@ -353,7 +365,7 @@ function generateMarkdownReport() {
       markdown += `#### Issue ${i + 1}: ${generateIssueTitle(todo)}\n\n`;
       markdown += `**Priority**: ${todo.priority.toUpperCase()}  \n`;
       markdown += `**Type**: ${todo.type}  \n`;
-      markdown += `**Labels**: ${labels.map(l => `\`${l}\``).join(', ')}  \n\n`;
+      markdown += `**Labels**: ${labels.map((l) => `\`${l}\``).join(", ")}  \n\n`;
       markdown += generateIssueBody(todo);
       markdown += `\n---\n\n`;
     }
@@ -369,7 +381,7 @@ function generateMarkdownReport() {
 
     for (const todo of todos) {
       const title = generateIssueTitle(todo).replace(/"/g, '\\"');
-      const labels = generateLabels(todo).join(',');
+      const labels = generateLabels(todo).join(",");
       const bodyFile = `issue-${issueNum}-body.md`;
 
       markdown += `# Issue ${issueNum}\n`;
@@ -421,12 +433,16 @@ function generateJsonOutput() {
     lineNumber: todo.lineNumber,
   }));
 
-  return JSON.stringify({
-    generated: new Date().toISOString(),
-    totalIssues: issues.length,
-    filesScanned: state.filesScanned,
-    issues,
-  }, null, 2);
+  return JSON.stringify(
+    {
+      generated: new Date().toISOString(),
+      totalIssues: issues.length,
+      filesScanned: state.filesScanned,
+      issues,
+    },
+    null,
+    2,
+  );
 }
 
 // ============================================================================
@@ -434,17 +450,19 @@ function generateJsonOutput() {
 // ============================================================================
 
 function main() {
-  console.log('📝 TODO to GitHub Issues Converter');
-  console.log('='.repeat(60) + '\n');
+  console.log("📝 TODO to GitHub Issues Converter");
+  console.log("=".repeat(60) + "\n");
 
   parseArgs();
 
   console.log(`📊 Output: ${state.outputPath}`);
-  console.log(`🏷️  Labels: ${[...CONFIG.defaultLabels, ...state.customLabels].join(', ')}\n`);
+  console.log(
+    `🏷️  Labels: ${[...CONFIG.defaultLabels, ...state.customLabels].join(", ")}\n`,
+  );
 
   // Scan files
-  console.log('🔍 Scanning for TODO comments...');
-  const files = getAllFiles('src');
+  console.log("🔍 Scanning for TODO comments...");
+  const files = getAllFiles("src");
   console.log(`📝 Found ${files.length} files to scan\n`);
 
   const startTime = Date.now();
@@ -456,41 +474,41 @@ function main() {
   const duration = Date.now() - startTime;
 
   // Print summary
-  console.log('='.repeat(60));
-  console.log('📊 Scan Summary');
-  console.log('='.repeat(60));
+  console.log("=".repeat(60));
+  console.log("📊 Scan Summary");
+  console.log("=".repeat(60));
   console.log(`✅ Files Scanned: ${state.filesScanned}`);
   console.log(`📝 TODOs Found: ${state.todos.length}`);
   console.log(`⏱️  Duration: ${duration}ms`);
-  console.log('='.repeat(60) + '\n');
+  console.log("=".repeat(60) + "\n");
 
   if (state.todos.length === 0) {
-    console.log('✨ No TODOs found! Your code is clean! 🎉');
+    console.log("✨ No TODOs found! Your code is clean! 🎉");
     return;
   }
 
   // Print breakdown
-  console.log('📊 Breakdown by Type:');
+  console.log("📊 Breakdown by Type:");
   const byType = {};
-  state.todos.forEach(t => {
+  state.todos.forEach((t) => {
     byType[t.type] = (byType[t.type] || 0) + 1;
   });
   Object.entries(byType).forEach(([type, count]) => {
     console.log(`   ${type}: ${count}`);
   });
 
-  console.log('\n📊 Breakdown by Priority:');
+  console.log("\n📊 Breakdown by Priority:");
   const byPriority = {};
-  state.todos.forEach(t => {
+  state.todos.forEach((t) => {
     byPriority[t.priority] = (byPriority[t.priority] || 0) + 1;
   });
   Object.entries(byPriority).forEach(([priority, count]) => {
     console.log(`   ${priority}: ${count}`);
   });
 
-  console.log('\n📊 Breakdown by Category:');
+  console.log("\n📊 Breakdown by Category:");
   const byCategory = {};
-  state.todos.forEach(t => {
+  state.todos.forEach((t) => {
     byCategory[t.category] = (byCategory[t.category] || 0) + 1;
   });
   Object.entries(byCategory)
@@ -499,31 +517,31 @@ function main() {
       console.log(`   ${category}: ${count}`);
     });
 
-  console.log('');
+  console.log("");
 
   // Generate outputs
-  console.log('📝 Generating reports...\n');
+  console.log("📝 Generating reports...\n");
 
   // Markdown report
   const markdown = generateMarkdownReport();
-  fs.writeFileSync(state.outputPath, markdown, 'utf8');
+  fs.writeFileSync(state.outputPath, markdown, "utf8");
   console.log(`✅ Markdown report: ${state.outputPath}`);
 
   // JSON output
   if (state.outputJson) {
-    const jsonPath = state.outputPath.replace(/\.md$/, '.json');
+    const jsonPath = state.outputPath.replace(/\.md$/, ".json");
     const json = generateJsonOutput();
-    fs.writeFileSync(jsonPath, json, 'utf8');
+    fs.writeFileSync(jsonPath, json, "utf8");
     console.log(`✅ JSON output: ${jsonPath}`);
   }
 
-  console.log('\n📋 Next Steps:');
-  console.log('   1. Review the generated report');
-  console.log('   2. Choose bulk import method (see report)');
-  console.log('   3. Create GitHub issues');
-  console.log('   4. Remove TODO comments as issues are resolved\n');
+  console.log("\n📋 Next Steps:");
+  console.log("   1. Review the generated report");
+  console.log("   2. Choose bulk import method (see report)");
+  console.log("   3. Create GitHub issues");
+  console.log("   4. Remove TODO comments as issues are resolved\n");
 
-  console.log('💡 Tip: Use GitHub CLI for fastest bulk import:');
+  console.log("💡 Tip: Use GitHub CLI for fastest bulk import:");
   console.log('   gh issue create --title "..." --body "..." --label "..."\n');
 }
 
@@ -532,7 +550,7 @@ if (require.main === module) {
   try {
     main();
   } catch (error) {
-    console.error('💥 Fatal error:', error);
+    console.error("💥 Fatal error:", error);
     process.exit(1);
   }
 }

@@ -52,7 +52,7 @@ describe("Toast Animation System", () => {
       const { container } = render(
         <AnimationProvider>
           <Toast toast={toast} onDismiss={jest.fn()} />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       expect(container.querySelector('[data-variant="success"]')).toBeTruthy();
@@ -64,7 +64,7 @@ describe("Toast Animation System", () => {
       const { container } = render(
         <AnimationProvider>
           <Toast toast={toast} onDismiss={jest.fn()} />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       expect(screen.getByText("Test notification message")).toBeInTheDocument();
@@ -81,14 +81,16 @@ describe("Toast Animation System", () => {
       render(
         <AnimationProvider preset="enhanced">
           <Toast toast={toast} onDismiss={jest.fn()} />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       expect(screen.getByText("Test notification message")).toBeInTheDocument();
     });
 
     it("should use reduced motion variant when prefersReducedMotion is true", () => {
-      const { useReducedMotion } = require("@/components/notifications/hooks/useReducedMotion");
+      const {
+        useReducedMotion,
+      } = require("@/components/notifications/hooks/useReducedMotion");
       useReducedMotion.mockReturnValue(true);
 
       const toast = createMockToast();
@@ -96,7 +98,7 @@ describe("Toast Animation System", () => {
       render(
         <AnimationProvider>
           <Toast toast={toast} onDismiss={jest.fn()} />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       expect(screen.getByText("Test notification message")).toBeInTheDocument();
@@ -110,7 +112,7 @@ describe("Toast Animation System", () => {
       const { container } = render(
         <AnimationProvider>
           <Toast toast={toast} onDismiss={jest.fn()} />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       const toastElement = container.firstChild;
@@ -124,7 +126,7 @@ describe("Toast Animation System", () => {
       render(
         <AnimationProvider>
           <Toast toast={toast} onDismiss={onDismiss} />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       const dismissButton = screen.getByRole("button", { name: /dismiss/i });
@@ -140,8 +142,13 @@ describe("Toast Animation System", () => {
 
       render(
         <AnimationProvider>
-          <Toast toast={toast} onDismiss={onDismiss} autoDismiss duration={3000} />
-        </AnimationProvider>
+          <Toast
+            toast={toast}
+            onDismiss={onDismiss}
+            autoDismiss
+            duration={3000}
+          />
+        </AnimationProvider>,
       );
 
       jest.advanceTimersByTime(3000);
@@ -161,7 +168,7 @@ describe("Toast Animation System", () => {
       render(
         <AnimationProvider>
           <Toast toast={toast} onDismiss={onDismiss} autoDismiss={false} />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       jest.advanceTimersByTime(5000);
@@ -179,7 +186,7 @@ describe("Toast Animation System", () => {
       render(
         <AnimationProvider>
           <Toast toast={toast} onDismiss={jest.fn()} />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       expect(screen.getByRole("status")).toBeInTheDocument();
@@ -191,7 +198,7 @@ describe("Toast Animation System", () => {
       render(
         <AnimationProvider>
           <Toast toast={toast} onDismiss={jest.fn()} />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       expect(screen.getByRole("alert")).toBeInTheDocument();
@@ -203,15 +210,17 @@ describe("Toast Animation System", () => {
       const { container } = render(
         <AnimationProvider>
           <Toast toast={toast} onDismiss={jest.fn()} />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
-      const toastElement = container.querySelector('[aria-live]');
+      const toastElement = container.querySelector("[aria-live]");
       expect(toastElement).toBeTruthy();
     });
 
     it("should render with reduced motion when user prefers reduced motion", () => {
-      const { useReducedMotion } = require("@/components/notifications/hooks/useReducedMotion");
+      const {
+        useReducedMotion,
+      } = require("@/components/notifications/hooks/useReducedMotion");
       useReducedMotion.mockReturnValue(true);
 
       const toast = createMockToast();
@@ -219,7 +228,7 @@ describe("Toast Animation System", () => {
       render(
         <AnimationProvider>
           <Toast toast={toast} onDismiss={jest.fn()} />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       expect(screen.getByText("Test notification message")).toBeInTheDocument();
@@ -236,7 +245,7 @@ describe("Toast Animation System", () => {
       render(
         <AnimationProvider>
           <Toast toast={toast} onDismiss={jest.fn()} />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       expect(screen.getByText("Divine Success")).toBeInTheDocument();
@@ -252,7 +261,7 @@ describe("Toast Animation System", () => {
       render(
         <AnimationProvider>
           <Toast toast={toast} onDismiss={jest.fn()} />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       expect(screen.getByText("Simple notification")).toBeInTheDocument();
@@ -270,7 +279,7 @@ describe("Toast Animation System", () => {
       render(
         <AnimationProvider>
           <Toast toast={toast} onDismiss={jest.fn()} />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       const actionButton = screen.getByText("View Details");
@@ -288,7 +297,7 @@ describe("Toast Animation System", () => {
       render(
         <AnimationProvider preset="minimal">
           <Toast toast={toast} onDismiss={jest.fn()} />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       expect(screen.getByText("Test notification message")).toBeInTheDocument();
@@ -300,7 +309,7 @@ describe("Toast Animation System", () => {
       render(
         <AnimationProvider season="summer">
           <Toast toast={toast} onDismiss={jest.fn()} />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       expect(screen.getByText("Test notification message")).toBeInTheDocument();
@@ -312,7 +321,7 @@ describe("Toast Animation System", () => {
       render(
         <AnimationProvider speedMultiplier={2}>
           <Toast toast={toast} onDismiss={jest.fn()} />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       expect(screen.getByText("Test notification message")).toBeInTheDocument();
@@ -326,7 +335,7 @@ describe("Toast Animation System", () => {
       const { container } = render(
         <AnimationProvider>
           <Toast toast={toast} onDismiss={jest.fn()} />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       // Check that transform/opacity are used (GPU-accelerated properties)
@@ -336,7 +345,7 @@ describe("Toast Animation System", () => {
 
     it("should render quickly with multiple toasts", () => {
       const toasts = Array.from({ length: 10 }, (_, i) =>
-        createMockToast({ id: `toast-${i}`, message: `Message ${i}` })
+        createMockToast({ id: `toast-${i}`, message: `Message ${i}` }),
       );
 
       const startTime = performance.now();
@@ -348,7 +357,7 @@ describe("Toast Animation System", () => {
               <Toast key={toast.id} toast={toast} onDismiss={jest.fn()} />
             ))}
           </>
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       const endTime = performance.now();
@@ -374,10 +383,12 @@ describe("Toast Animation System", () => {
         render(
           <AnimationProvider season={season}>
             <Toast toast={toast} onDismiss={jest.fn()} />
-          </AnimationProvider>
+          </AnimationProvider>,
         );
 
-        expect(screen.getByText("Test notification message")).toBeInTheDocument();
+        expect(
+          screen.getByText("Test notification message"),
+        ).toBeInTheDocument();
       });
     });
   });
@@ -392,10 +403,12 @@ describe("Toast Animation System", () => {
         render(
           <AnimationProvider>
             <Toast toast={toast} onDismiss={jest.fn()} />
-          </AnimationProvider>
+          </AnimationProvider>,
         );
 
-        expect(screen.getByText("Test notification message")).toBeInTheDocument();
+        expect(
+          screen.getByText("Test notification message"),
+        ).toBeInTheDocument();
       });
     });
   });

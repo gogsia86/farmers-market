@@ -21,7 +21,7 @@ import { getCurrentSeason } from "@/lib/notifications/utils";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useReducedMotion, useShouldAnimate } from "../hooks/useReducedMotion";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 // ============================================================================
 // Types
@@ -75,7 +75,7 @@ export interface AnimationContextValue {
 // ============================================================================
 
 const AnimationContext = createContext<AnimationContextValue | undefined>(
-  undefined
+  undefined,
 );
 
 // ============================================================================
@@ -112,10 +112,10 @@ export function AnimationProvider({
   // Core state
   const [preset, setPreset] = useState<AnimationPreset>(initialPreset);
   const [season, setSeason] = useState<Season>(
-    initialSeason || getCurrentSeason()
+    initialSeason || getCurrentSeason(),
   );
   const [useSeasonalAnimations, setUseSeasonalAnimations] = useState(
-    enableSeasonalAnimations
+    enableSeasonalAnimations,
   );
   const [speedMultiplier, setSpeedMultiplier] = useState(1);
   const [debugMode, setDebugMode] = useState(enableDebugMode);
@@ -167,28 +167,34 @@ export function AnimationProvider({
   // Update season automatically (optional)
   useEffect(() => {
     if (!initialSeason && useSeasonalAnimations) {
-      const interval = setInterval(() => {
-        setSeason(getCurrentSeason());
-      }, 1000 * 60 * 60); // Check every hour
+      const interval = setInterval(
+        () => {
+          setSeason(getCurrentSeason());
+        },
+        1000 * 60 * 60,
+      ); // Check every hour
 
       return () => clearInterval(interval);
     }
     // Return empty cleanup function if condition not met
-    return () => { };
+    return () => {};
   }, [initialSeason, useSeasonalAnimations]);
 
   // Log debug info
   useEffect(() => {
     if (debugMode) {
-      logger.info("🎨 Animation Context Debug Info", { presetseasonprefersReducedMotionshouldAnimateperformanceModespeedMultiplieruseSeasonalAnimations: {
-        preset,
-        season,
-        prefersReducedMotion,
-        shouldAnimate,
-        performanceMode,
-        speedMultiplier,
-        useSeasonalAnimations,
-      } });
+      logger.info("🎨 Animation Context Debug Info", {
+        presetseasonprefersReducedMotionshouldAnimateperformanceModespeedMultiplieruseSeasonalAnimations:
+          {
+            preset,
+            season,
+            prefersReducedMotion,
+            shouldAnimate,
+            performanceMode,
+            speedMultiplier,
+            useSeasonalAnimations,
+          },
+      });
     }
   }, [
     debugMode,
@@ -210,8 +216,7 @@ export function AnimationProvider({
     prefersReducedMotion,
     shouldAnimate,
     useSeasonalAnimations,
-    toggleSeasonalAnimations: () =>
-      setUseSeasonalAnimations((prev) => !prev),
+    toggleSeasonalAnimations: () => setUseSeasonalAnimations((prev) => !prev),
     performanceMode,
     speedMultiplier,
     setSpeedMultiplier,
@@ -255,7 +260,7 @@ export function useAnimationContext(): AnimationContextValue {
 
   if (!context) {
     throw new Error(
-      "useAnimationContext must be used within an AnimationProvider"
+      "useAnimationContext must be used within an AnimationProvider",
     );
   }
 

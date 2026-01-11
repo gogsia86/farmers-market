@@ -14,11 +14,13 @@ This guide walks you through configuring and testing the Stripe payment integrat
 ## 🔑 Step 1: Get Stripe API Keys
 
 ### Create Stripe Account
+
 1. Go to https://stripe.com
 2. Click **Sign Up** (or **Sign In** if you have an account)
 3. Complete registration
 
 ### Get Test Mode Keys
+
 1. In Stripe Dashboard, ensure **Test mode** is enabled (toggle in top-right)
 2. Navigate to **Developers** → **API Keys**
 3. Copy the following keys:
@@ -41,6 +43,7 @@ STRIPE_WEBHOOK_SECRET=whsec_YOUR_WEBHOOK_SECRET_HERE
 ```
 
 **Important**:
+
 - Replace `YOUR_SECRET_KEY_HERE` with your actual secret key
 - Replace `YOUR_PUBLISHABLE_KEY_HERE` with your actual publishable key
 - We'll get the webhook secret in Step 3
@@ -52,6 +55,7 @@ STRIPE_WEBHOOK_SECRET=whsec_YOUR_WEBHOOK_SECRET_HERE
 ### Option A: Using Stripe CLI (Recommended for Local Development)
 
 #### 1. Install Stripe CLI
+
 ```bash
 # Windows (using Scoop)
 scoop install stripe
@@ -63,27 +67,33 @@ brew install stripe/stripe-cli/stripe
 ```
 
 #### 2. Login to Stripe CLI
+
 ```bash
 stripe login
 ```
 
 #### 3. Start Webhook Forwarding
+
 ```bash
 stripe listen --forward-to localhost:3000/api/webhooks/stripe
 ```
 
 #### 4. Copy Webhook Secret
+
 The CLI will display a webhook signing secret like:
+
 ```
 > Ready! Your webhook signing secret is whsec_xxxxxxxxxxxxx
 ```
 
 Copy this secret and add it to `.env.local`:
+
 ```env
 STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxx
 ```
 
 #### 5. Keep CLI Running
+
 Leave the Stripe CLI running in a terminal while testing. It will forward webhook events to your local server.
 
 ### Option B: Using ngrok (Alternative)
@@ -159,6 +169,7 @@ npm run dev
    Use these Stripe test cards:
 
    **✅ Successful Payment**
+
    ```
    Card Number: 4242 4242 4242 4242
    Expiry: 12/34 (any future date)
@@ -167,6 +178,7 @@ npm run dev
    ```
 
    **❌ Card Declined**
+
    ```
    Card Number: 4000 0000 0000 0002
    Expiry: 12/34
@@ -174,6 +186,7 @@ npm run dev
    ```
 
    **🔒 3D Secure Authentication Required**
+
    ```
    Card Number: 4000 0025 0000 3155
    Expiry: 12/34
@@ -181,6 +194,7 @@ npm run dev
    ```
 
    **💰 Insufficient Funds**
+
    ```
    Card Number: 4000 0000 0000 9995
    Expiry: 12/34
@@ -239,6 +253,7 @@ ORDER BY "createdAt" DESC;
 **Cause**: Missing or invalid Stripe keys
 
 **Solution**:
+
 1. Verify `STRIPE_SECRET_KEY` is set in `.env.local`
 2. Verify `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` is set
 3. Restart Next.js server after adding env vars
@@ -249,6 +264,7 @@ ORDER BY "createdAt" DESC;
 **Cause**: Invalid API key or network issue
 
 **Solution**:
+
 1. Check Stripe Dashboard → API Keys are correct
 2. Ensure test mode keys match test mode in dashboard
 3. Check server logs for detailed error message
@@ -259,6 +275,7 @@ ORDER BY "createdAt" DESC;
 **Cause**: Incorrect webhook secret or modified payload
 
 **Solution**:
+
 1. Verify `STRIPE_WEBHOOK_SECRET` matches Stripe CLI output
 2. If using Stripe Dashboard webhook, copy signing secret from endpoint settings
 3. Restart server after updating webhook secret
@@ -269,6 +286,7 @@ ORDER BY "createdAt" DESC;
 **Cause**: Webhook not being received
 
 **Solution**:
+
 1. Check Stripe CLI is running and forwarding events
 2. Verify webhook endpoint is accessible
 3. Check webhook events in Stripe Dashboard
@@ -280,6 +298,7 @@ ORDER BY "createdAt" DESC;
 **Cause**: Missing publishable key or network issue
 
 **Solution**:
+
 1. Check browser console for errors
 2. Verify `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` is set
 3. Restart dev server
@@ -303,6 +322,7 @@ While Stripe CLI is running, you'll see webhook events in real-time:
 ### Check Webhook Logs
 
 In your server logs, look for:
+
 ```
 Processing Stripe webhook event: payment_intent.succeeded (evt_xxx)
 Payment succeeded: pi_xxx
@@ -314,6 +334,7 @@ Successfully processed payment for order ord_xxx
 ## 🎯 Testing Scenarios
 
 ### 1. Successful Payment Flow
+
 - Use card `4242 4242 4242 4242`
 - Complete checkout
 - Verify order created
@@ -322,6 +343,7 @@ Successfully processed payment for order ord_xxx
 - Verify payment status = PAID
 
 ### 2. Card Declined
+
 - Use card `4000 0000 0000 0002`
 - Complete checkout
 - Verify payment fails
@@ -329,6 +351,7 @@ Successfully processed payment for order ord_xxx
 - Verify order not created or cancelled
 
 ### 3. 3D Secure Flow
+
 - Use card `4000 0025 0000 3155`
 - Complete checkout
 - Verify 3D Secure popup appears
@@ -336,6 +359,7 @@ Successfully processed payment for order ord_xxx
 - Verify payment succeeds
 
 ### 4. Webhook Failure Recovery
+
 - Stop Stripe CLI
 - Complete payment
 - Start Stripe CLI again
@@ -347,17 +371,20 @@ Successfully processed payment for order ord_xxx
 ## 📁 Key Files Reference
 
 ### Configuration Files
+
 - `.env.local` - Environment variables
 - `src/lib/services/stripe.service.ts` - Stripe service layer
 - `src/lib/client/stripe.ts` - Client-side utilities
 
 ### API Endpoints
+
 - `POST /api/checkout/payment-intent` - Create payment intent
 - `GET /api/checkout/payment-intent?paymentIntentId=xxx` - Get payment status
 - `POST /api/webhooks/stripe` - Webhook handler
 - `POST /api/orders/[orderId]/payment` - Link payment to order
 
 ### Components
+
 - `src/components/features/checkout/payment-step.tsx` - Payment form
 - `src/components/features/checkout/review-step.tsx` - Payment confirmation
 
@@ -392,16 +419,19 @@ Successfully processed payment for order ord_xxx
 ## 🎓 Additional Resources
 
 ### Stripe Documentation
+
 - [Stripe Payment Intents](https://stripe.com/docs/payments/payment-intents)
 - [Stripe Elements](https://stripe.com/docs/payments/elements)
 - [Stripe Webhooks](https://stripe.com/docs/webhooks)
 - [Stripe Testing](https://stripe.com/docs/testing)
 
 ### Test Cards
+
 - [Full list of test cards](https://stripe.com/docs/testing#cards)
 - [Test 3D Secure](https://stripe.com/docs/testing#regulatory-cards)
 
 ### Stripe CLI
+
 - [Stripe CLI Documentation](https://stripe.com/docs/stripe-cli)
 - [Testing Webhooks](https://stripe.com/docs/webhooks/test)
 
@@ -425,12 +455,14 @@ You'll know everything is working when:
 ## 🎉 You're Ready!
 
 Once you've completed these steps:
+
 - Payment integration is fully functional
 - Webhooks are processing correctly
 - Orders are being created and confirmed
 - You're ready for user testing
 
 **Next Steps**:
+
 - Implement saved payment methods UI
 - Add payment analytics
 - Set up refund flow
@@ -439,6 +471,7 @@ Once you've completed these steps:
 ---
 
 **Need Help?**
+
 - Check server logs in terminal
 - Check browser console for client errors
 - Review Stripe Dashboard event logs
@@ -447,4 +480,4 @@ Once you've completed these steps:
 
 ---
 
-*Divine Agricultural Platform - Payment Integration Setup Complete* 🌾💳✨
+_Divine Agricultural Platform - Payment Integration Setup Complete_ 🌾💳✨

@@ -9,7 +9,7 @@ import { database } from "@/lib/database";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 // ============================================================================
 // VALIDATION SCHEMA
@@ -26,7 +26,7 @@ const UpdateOrderPaymentSchema = z.object({
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { orderId: string } }
+  { params }: { params: { orderId: string } },
 ): Promise<NextResponse> {
   try {
     // =========================================================================
@@ -43,7 +43,7 @@ export async function POST(
             message: "Authentication required",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -61,7 +61,7 @@ export async function POST(
             message: "Order ID is required",
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -78,7 +78,7 @@ export async function POST(
             details: validation.error.errors,
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -106,7 +106,7 @@ export async function POST(
             message: "Order not found",
           },
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -120,7 +120,7 @@ export async function POST(
             message: "Access denied to this order",
           },
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -201,7 +201,7 @@ export async function POST(
               : "Failed to update order payment",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -213,7 +213,7 @@ export async function POST(
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { orderId: string } }
+  { params }: { params: { orderId: string } },
 ): Promise<NextResponse> {
   try {
     // =========================================================================
@@ -230,7 +230,7 @@ export async function GET(
             message: "Authentication required",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -255,7 +255,7 @@ export async function GET(
             message: "Order not found",
           },
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -277,7 +277,7 @@ export async function GET(
             message: "Access denied to this order",
           },
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -291,14 +291,14 @@ export async function GET(
         orderNumber: order.orderNumber,
         payment: order.Payment
           ? {
-            id: order.Payment.id,
-            amount: order.Payment.amount,
-            currency: order.Payment.currency,
-            status: order.Payment.status,
-            paymentMethod: order.Payment.paymentMethod,
-            stripePaymentIntentId: order.Payment.stripePaymentIntentId,
-            paidAt: order.Payment.paidAt,
-          }
+              id: order.Payment.id,
+              amount: order.Payment.amount,
+              currency: order.Payment.currency,
+              status: order.Payment.status,
+              paymentMethod: order.Payment.paymentMethod,
+              stripePaymentIntentId: order.Payment.stripePaymentIntentId,
+              paidAt: order.Payment.paidAt,
+            }
           : null,
       },
     });
@@ -318,7 +318,7 @@ export async function GET(
               : "Failed to retrieve payment information",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

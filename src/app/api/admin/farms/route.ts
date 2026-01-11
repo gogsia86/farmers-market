@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
             message: "You must be logged in to access farm management",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
             message: "Only admins can access farm management",
           },
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -63,7 +63,10 @@ export async function GET(request: NextRequest) {
     // Build where clause
     const where: any = {};
 
-    if (statusFilter && ["PENDING", "VERIFIED", "REJECTED"].includes(statusFilter)) {
+    if (
+      statusFilter &&
+      ["PENDING", "VERIFIED", "REJECTED"].includes(statusFilter)
+    ) {
       where.verificationStatus = statusFilter;
     }
 
@@ -209,10 +212,11 @@ export async function GET(request: NextRequest) {
         success: false,
         error: {
           code: "FETCH_ERROR",
-          message: error instanceof Error ? error.message : "Failed to fetch farms",
+          message:
+            error instanceof Error ? error.message : "Failed to fetch farms",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

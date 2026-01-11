@@ -23,7 +23,10 @@ import type { NotificationPreferences } from "@/lib/notifications/types";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import React from "react";
-import { NotificationProvider, useNotificationContext } from "../NotificationProvider";
+import {
+  NotificationProvider,
+  useNotificationContext,
+} from "../NotificationProvider";
 import { ToastRenderer } from "../ToastRenderer";
 
 // ============================================================================
@@ -68,7 +71,11 @@ function TestConsumer() {
       <button onClick={() => info("Info Toast")}>Info Toast</button>
       <button
         onClick={() =>
-          showBanner({ title: "Test Banner", message: "Banner message", variant: "info" })
+          showBanner({
+            title: "Test Banner",
+            message: "Banner message",
+            variant: "info",
+          })
         }
       >
         Add Banner
@@ -135,11 +142,9 @@ function renderWithProvider(
     maxToasts?: number;
     maxBanners?: number;
     preferences?: NotificationPreferences;
-  } = {}
+  } = {},
 ) {
-  return render(
-    <NotificationProvider {...options}>{ui}</NotificationProvider>
-  );
+  return render(<NotificationProvider {...options}>{ui}</NotificationProvider>);
 }
 
 // Mock localStorage
@@ -188,7 +193,9 @@ describe("NotificationProvider Integration", () => {
 
     expect(() => {
       render(<TestConsumer />);
-    }).toThrow("useNotificationContext must be used within NotificationProvider");
+    }).toThrow(
+      "useNotificationContext must be used within NotificationProvider",
+    );
 
     consoleError.mockRestore();
   });
@@ -254,7 +261,7 @@ describe("Toast Integration", () => {
       <>
         <TestConsumer />
         <ToastRenderer />
-      </>
+      </>,
     );
 
     await user.click(screen.getByRole("button", { name: "Add Toast" }));
@@ -270,7 +277,7 @@ describe("Toast Integration", () => {
       <>
         <TestConsumer />
         <ToastRenderer />
-      </>
+      </>,
     );
 
     await user.click(screen.getByRole("button", { name: "Success Toast" }));
@@ -286,7 +293,7 @@ describe("Toast Integration", () => {
       <>
         <TestConsumer />
         <ToastRenderer />
-      </>
+      </>,
     );
 
     await user.click(screen.getByRole("button", { name: "Error Toast" }));
@@ -302,7 +309,7 @@ describe("Toast Integration", () => {
       <>
         <TestConsumer />
         <ToastRenderer />
-      </>
+      </>,
     );
 
     await user.click(screen.getByRole("button", { name: "Warning Toast" }));
@@ -318,7 +325,7 @@ describe("Toast Integration", () => {
       <>
         <TestConsumer />
         <ToastRenderer />
-      </>
+      </>,
     );
 
     await user.click(screen.getByRole("button", { name: "Info Toast" }));
@@ -335,7 +342,7 @@ describe("Toast Integration", () => {
         <TestConsumer />
         <ToastRenderer />
       </>,
-      { maxToasts: 3 }
+      { maxToasts: 3 },
     );
 
     const addButton = screen.getByRole("button", { name: "Add Toast" });
@@ -356,7 +363,7 @@ describe("Toast Integration", () => {
         <TestConsumer />
         <ToastRenderer />
       </>,
-      { defaultDuration: 3000 }
+      { defaultDuration: 3000 },
     );
 
     await user.click(screen.getByRole("button", { name: "Add Toast" }));
@@ -417,7 +424,7 @@ describe("Agricultural Notifications Integration", () => {
     renderWithProvider(<TestConsumer />);
 
     await user.click(
-      screen.getByRole("button", { name: "Agricultural Notification" })
+      screen.getByRole("button", { name: "Agricultural Notification" }),
     );
 
     expect(screen.getByTestId("notification-count")).toHaveTextContent("1");
@@ -437,7 +444,7 @@ describe("Agricultural Notifications Integration", () => {
     renderWithProvider(<TestConsumer />);
 
     await user.click(
-      screen.getByRole("button", { name: "Harvest Notification" })
+      screen.getByRole("button", { name: "Harvest Notification" }),
     );
 
     expect(screen.getByTestId("notification-count")).toHaveTextContent("1");
@@ -659,13 +666,8 @@ describe("End-to-End User Flows", () => {
     const user = userEvent.setup({ delay: null });
 
     function FullFlowConsumer() {
-      const {
-        toast,
-        notifications,
-        markAsRead,
-        clearAll,
-        unreadCount,
-      } = useNotificationContext();
+      const { toast, notifications, markAsRead, clearAll, unreadCount } =
+        useNotificationContext();
 
       return (
         <div>
@@ -705,14 +707,14 @@ describe("End-to-End User Flows", () => {
       <>
         <TestConsumer />
         <ToastRenderer />
-      </>
+      </>,
     );
 
     // Add different notification types
     await user.click(screen.getByRole("button", { name: "Success Toast" }));
     await user.click(screen.getByRole("button", { name: "Add Banner" }));
     await user.click(
-      screen.getByRole("button", { name: "Agricultural Notification" })
+      screen.getByRole("button", { name: "Agricultural Notification" }),
     );
 
     expect(screen.getByTestId("notification-count")).toHaveTextContent("3");
@@ -736,41 +738,37 @@ describe("End-to-End User Flows", () => {
     expect(screen.getByTestId("toast-count")).toHaveTextContent("5");
   });
 
-  it(
-    "should persist and restore complete notification state",
-    async () => {
-      const user = userEvent.setup({ delay: null });
+  it("should persist and restore complete notification state", async () => {
+    const user = userEvent.setup({ delay: null });
 
-      // First render - add notifications
-      const { unmount } = renderWithProvider(<TestConsumer />, {
-        persistKey: "e2e-test",
-      });
+    // First render - add notifications
+    const { unmount } = renderWithProvider(<TestConsumer />, {
+      persistKey: "e2e-test",
+    });
 
-      await user.click(screen.getByRole("button", { name: "Add Toast" }));
-      await user.click(screen.getByRole("button", { name: "Add Banner" }));
+    await user.click(screen.getByRole("button", { name: "Add Toast" }));
+    await user.click(screen.getByRole("button", { name: "Add Banner" }));
 
-      // Wait for notifications to be added and persisted
-      await waitFor(() => {
-        expect(screen.getByTestId("notification-count")).toHaveTextContent("2");
-      });
+    // Wait for notifications to be added and persisted
+    await waitFor(() => {
+      expect(screen.getByTestId("notification-count")).toHaveTextContent("2");
+    });
 
-      unmount();
+    unmount();
 
-      // Clear the screen to ensure clean state
-      cleanup();
+    // Clear the screen to ensure clean state
+    cleanup();
 
-      // Second render - should restore
-      renderWithProvider(<TestConsumer />, {
-        persistKey: "e2e-test",
-      });
+    // Second render - should restore
+    renderWithProvider(<TestConsumer />, {
+      persistKey: "e2e-test",
+    });
 
-      // Wait for restoration from localStorage
-      await waitFor(() => {
-        expect(screen.getByTestId("notification-count")).toHaveTextContent("2");
-      });
-    },
-    10000
-  ); // 10 second timeout should be enough
+    // Wait for restoration from localStorage
+    await waitFor(() => {
+      expect(screen.getByTestId("notification-count")).toHaveTextContent("2");
+    });
+  }, 10000); // 10 second timeout should be enough
 });
 
 // ============================================================================

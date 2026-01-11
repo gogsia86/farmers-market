@@ -10,7 +10,7 @@ import { stripeService } from "@/lib/services/stripe.service";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 // ============================================================================
 // VALIDATION SCHEMA
@@ -46,7 +46,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
             message: "Authentication required",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
             details: validation.error.errors,
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -93,7 +93,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
             message: "User not found or missing email",
           },
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -153,7 +153,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
               : "Failed to create payment intent",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -179,7 +179,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
             message: "Authentication required",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -198,7 +198,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
             message: "paymentIntentId is required",
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -219,7 +219,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
             message: "Access denied to this payment intent",
           },
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -252,7 +252,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
               : "Failed to retrieve payment intent",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

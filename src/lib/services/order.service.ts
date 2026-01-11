@@ -5,7 +5,11 @@
  */
 
 import { database } from "@/lib/database";
-import { BaseService, NotFoundError, ValidationError } from "@/lib/services/base.service";
+import {
+  BaseService,
+  NotFoundError,
+  ValidationError,
+} from "@/lib/services/base.service";
 import { emailService } from "@/lib/services/email.service";
 import type { Order, OrderItem, OrderStatus, Prisma } from "@prisma/client";
 
@@ -132,7 +136,7 @@ class OrderService extends BaseService {
       // Calculate totals
       const subtotalUSD = request.items.reduce(
         (sum, item) => sum + item.priceUSD * item.quantity,
-        0
+        0,
       );
 
       // TODO: Calculate tax and shipping based on location
@@ -174,7 +178,7 @@ class OrderService extends BaseService {
                   subtotal: item.priceUSD * item.quantity,
                   productSnapshot: product as any,
                 };
-              })
+              }),
             ),
           },
         },
@@ -227,33 +231,35 @@ class OrderService extends BaseService {
       // Send order confirmation email
       if (order.customer?.email) {
         try {
-          await emailService.sendOrderConfirmationEmail(
-            order.customer.email,
-            {
-              orderId: order.id,
-              orderNumber: order.orderNumber,
-              customerName: order.customer.name || "Valued Customer",
-              farmName: order.farm?.name || "Farm",
-              items: order.items.map(item => ({
-                name: item.productName,
-                quantity: item.quantity,
-                unit: item.unit,
-                price: item.unitPrice,
-                subtotal: item.subtotal
-              })),
-              subtotal: order.subtotal,
-              tax: order.tax,
-              deliveryFee: order.deliveryFee,
-              total: order.total,
-              orderUrl: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/orders/${order.id}`
-            }
-          );
-          this.log("info", "Order confirmation email sent", { orderId: order.id });
+          await emailService.sendOrderConfirmationEmail(order.customer.email, {
+            orderId: order.id,
+            orderNumber: order.orderNumber,
+            customerName: order.customer.name || "Valued Customer",
+            farmName: order.farm?.name || "Farm",
+            items: order.items.map((item) => ({
+              name: item.productName,
+              quantity: item.quantity,
+              unit: item.unit,
+              price: item.unitPrice,
+              subtotal: item.subtotal,
+            })),
+            subtotal: order.subtotal,
+            tax: order.tax,
+            deliveryFee: order.deliveryFee,
+            total: order.total,
+            orderUrl: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/orders/${order.id}`,
+          });
+          this.log("info", "Order confirmation email sent", {
+            orderId: order.id,
+          });
         } catch (emailError) {
           // Don't block order creation if email fails
           this.log("error", "Failed to send order confirmation email", {
             orderId: order.id,
-            error: emailError instanceof Error ? emailError.message : "Unknown error"
+            error:
+              emailError instanceof Error
+                ? emailError.message
+                : "Unknown error",
           });
         }
       }
@@ -292,7 +298,7 @@ class OrderService extends BaseService {
   async getOrders(
     filters: OrderFilterOptions,
     page: number = 1,
-    limit: number = 20
+    limit: number = 20,
   ): Promise<{ orders: OrderWithRelations[]; total: number }> {
     const where: Prisma.OrderWhereInput = {};
 
@@ -358,7 +364,7 @@ class OrderService extends BaseService {
   async updateOrderStatus(
     orderId: string,
     status: OrderStatus,
-    userId: string
+    userId: string,
   ): Promise<Order> {
     return this.withQuantumTransaction(async (tx) => {
       // Verify order exists and user has permission
@@ -372,8 +378,8 @@ class OrderService extends BaseService {
               email: true,
               firstName: true,
               lastName: true,
-            }
-          }
+            },
+          },
         },
       });
 
@@ -386,10 +392,7 @@ class OrderService extends BaseService {
         where: { id: userId },
       });
 
-      if (
-        order.farm.ownerId !== userId &&
-        user?.role !== "ADMIN"
-      ) {
+      if (order.farm.ownerId !== userId && user?.role !== "ADMIN") {
         throw new ValidationError("Unauthorized to update order", "userId");
       }
 
@@ -406,35 +409,54 @@ class OrderService extends BaseService {
       });
 
       // Send status update email for important status changes
-      if (order?.customer?.email && ["FULFILLED", "COMPLETED", "CANCELLED"].includes(status)) {
+      if (
+        order?.customer?.email &&
+        ["FULFILLED", "COMPLETED", "CANCELLED"].includes(status)
+      ) {
         try {
           const statusMessages = {
             FULFILLED: "Your order has been shipped and is on its way! 🚚",
-            COMPLETED: "Your order has been delivered! We hope you enjoy your fresh products. 🌾",
-            CANCELLED: "Your order has been cancelled. If you have questions, please contact support."
+            COMPLETED:
+              "Your order has been delivered! We hope you enjoy your fresh products. 🌾",
+            CANCELLED:
+              "Your order has been cancelled. If you have questions, please contact support.",
           };
 
           await emailService.sendEmail({
             to: order.customer.email,
             subject: `Order Update - ${order.orderNumber}`,
-            template: status === "FULFILLED" ? "order_shipped" : status === "COMPLETED" ? "order_delivered" : "order_confirmation",
+            template:
+              status === "FULFILLED"
+                ? "order_shipped"
+                : status === "COMPLETED"
+                  ? "order_delivered"
+                  : "order_confirmation",
             data: {
               orderId: order.id,
               orderNumber: order.orderNumber,
-              customerName: `${order.customer.firstName || ''} ${order.customer.lastName || ''}`.trim() || "Valued Customer",
+              customerName:
+                `${order.customer.firstName || ""} ${order.customer.lastName || ""}`.trim() ||
+                "Valued Customer",
               status,
-              statusMessage: statusMessages[status as keyof typeof statusMessages],
-              orderUrl: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/orders/${order.id}`,
-              trackingNumber: updatedOrder.trackingNumber
-            }
+              statusMessage:
+                statusMessages[status as keyof typeof statusMessages],
+              orderUrl: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/orders/${order.id}`,
+              trackingNumber: updatedOrder.trackingNumber,
+            },
           });
-          this.log("info", "Order status update email sent", { orderId, status });
+          this.log("info", "Order status update email sent", {
+            orderId,
+            status,
+          });
         } catch (emailError) {
           // Don't block status update if email fails
           this.log("error", "Failed to send status update email", {
             orderId,
             status,
-            error: emailError instanceof Error ? emailError.message : "Unknown error"
+            error:
+              emailError instanceof Error
+                ? emailError.message
+                : "Unknown error",
           });
         }
       }
@@ -449,7 +471,7 @@ class OrderService extends BaseService {
   async updateOrder(
     orderId: string,
     updates: UpdateOrderRequest,
-    userId: string
+    userId: string,
   ): Promise<Order> {
     return this.withQuantumTransaction(async (tx) => {
       const order = await tx.order.findUnique({
@@ -466,10 +488,7 @@ class OrderService extends BaseService {
         where: { id: userId },
       });
 
-      if (
-        order.farm.ownerId !== userId &&
-        user?.role !== "ADMIN"
-      ) {
+      if (order.farm.ownerId !== userId && user?.role !== "ADMIN") {
         throw new ValidationError("Unauthorized to update order", "userId");
       }
 
@@ -508,13 +527,10 @@ class OrderService extends BaseService {
       }
 
       // Check if order can be cancelled
-      if (
-        order.status === "COMPLETED" ||
-        order.status === "CANCELLED"
-      ) {
+      if (order.status === "COMPLETED" || order.status === "CANCELLED") {
         throw new ValidationError(
           `Cannot cancel order with status: ${order.status}`,
-          "status"
+          "status",
         );
       }
 
@@ -563,7 +579,7 @@ class OrderService extends BaseService {
   async getCustomerOrderHistory(
     customerId: string,
     page: number = 1,
-    limit: number = 20
+    limit: number = 20,
   ): Promise<{ orders: OrderWithRelations[]; total: number }> {
     return this.getOrders({ customerId }, page, limit);
   }
@@ -575,7 +591,7 @@ class OrderService extends BaseService {
   async getCustomerOrders(
     customerId: string,
     page: number = 1,
-    limit: number = 20
+    limit: number = 20,
   ): Promise<{ orders: OrderWithRelations[]; total: number }> {
     return this.getCustomerOrderHistory(customerId, page, limit);
   }
@@ -586,7 +602,7 @@ class OrderService extends BaseService {
   async getFarmOrders(
     farmId: string,
     page: number = 1,
-    limit: number = 20
+    limit: number = 20,
   ): Promise<{ orders: OrderWithRelations[]; total: number }> {
     return this.getOrders({ farmId }, page, limit);
   }
@@ -596,7 +612,7 @@ class OrderService extends BaseService {
    */
   async getOrderStatistics(
     farmId?: string,
-    customerId?: string
+    customerId?: string,
   ): Promise<{
     totalOrders: number;
     totalRevenue: number;
@@ -633,7 +649,7 @@ class OrderService extends BaseService {
     const totalOrders = orders.length;
     const totalRevenue = orders.reduce(
       (sum, order) => sum + this.toNumber(order.total),
-      0
+      0,
     );
     const averageOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
 
@@ -726,7 +742,7 @@ class OrderService extends BaseService {
    * Creates orders from checkout wizard (supports multiple farms)
    */
   async createOrderFromCheckout(
-    request: CheckoutOrderRequest
+    request: CheckoutOrderRequest,
   ): Promise<OrderWithRelations[]> {
     return this.withQuantumTransaction(async (tx) => {
       // Validate cart items
@@ -753,7 +769,7 @@ class OrderService extends BaseService {
         // Calculate farm-specific totals
         const farmTotals = this.calculateCheckoutFarmTotals(
           items,
-          request.totals
+          request.totals,
         );
 
         // Create order
@@ -864,32 +880,37 @@ class OrderService extends BaseService {
               {
                 orderId: order.id,
                 orderNumber: order.orderNumber,
-                customerName: `${order.customer.firstName || ''} ${order.customer.lastName || ''}`.trim() || "Valued Customer",
+                customerName:
+                  `${order.customer.firstName || ""} ${order.customer.lastName || ""}`.trim() ||
+                  "Valued Customer",
                 farmName: order.farm?.name || "Farm",
-                items: order.items.map(item => ({
+                items: order.items.map((item) => ({
                   name: item.productName,
                   quantity: item.quantity,
                   unit: item.unit,
                   price: item.unitPrice,
-                  subtotal: item.subtotal
+                  subtotal: item.subtotal,
                 })),
                 subtotal: order.subtotal,
                 tax: order.tax,
                 deliveryFee: order.deliveryFee,
                 total: order.total,
-                orderUrl: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/orders/${order.id}`
-              }
+                orderUrl: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/orders/${order.id}`,
+              },
             );
             this.log("info", "Checkout order confirmation email sent", {
               orderId: order.id,
-              orderNumber: order.orderNumber
+              orderNumber: order.orderNumber,
             });
           } catch (emailError) {
             // Don't block checkout if email fails
             this.log("error", "Failed to send checkout confirmation email", {
               orderId: order.id,
               orderNumber: order.orderNumber,
-              error: emailError instanceof Error ? emailError.message : "Unknown error"
+              error:
+                emailError instanceof Error
+                  ? emailError.message
+                  : "Unknown error",
             });
           }
         }
@@ -904,7 +925,7 @@ class OrderService extends BaseService {
    * @private
    */
   private async validateCheckoutItems(
-    items: CheckoutOrderRequest["cartItems"]
+    items: CheckoutOrderRequest["cartItems"],
   ) {
     for (const item of items) {
       const product = await database.product.findUnique({
@@ -915,7 +936,7 @@ class OrderService extends BaseService {
       if (!product || product.status !== "ACTIVE") {
         throw new ValidationError(
           `Product ${item.productId} is no longer available`,
-          "cartItems"
+          "cartItems",
         );
       }
 
@@ -925,7 +946,7 @@ class OrderService extends BaseService {
       ) {
         throw new ValidationError(
           `Insufficient stock for product ${item.productId}`,
-          "cartItems"
+          "cartItems",
         );
       }
     }
@@ -954,11 +975,11 @@ class OrderService extends BaseService {
    */
   private calculateCheckoutFarmTotals(
     items: CheckoutOrderRequest["cartItems"],
-    totalTotals: CheckoutOrderRequest["totals"]
+    totalTotals: CheckoutOrderRequest["totals"],
   ) {
     const subtotal = items.reduce(
       (sum, item) => sum + item.priceAtPurchase * item.quantity,
-      0
+      0,
     );
 
     // Proportional fees if multiple farms
@@ -986,7 +1007,7 @@ class OrderService extends BaseService {
   private async createCheckoutOrderItems(
     tx: Prisma.TransactionClient,
     orderId: string,
-    items: CheckoutOrderRequest["cartItems"]
+    items: CheckoutOrderRequest["cartItems"],
   ) {
     // Fetch product details
     const productIds = items.map((item: any) => item.productId);
@@ -1044,7 +1065,7 @@ class OrderService extends BaseService {
    */
   private validateStatusTransition(
     currentStatus: OrderStatus,
-    newStatus: OrderStatus
+    newStatus: OrderStatus,
   ): boolean {
     // Valid transitions map
     const validTransitions: Record<OrderStatus, OrderStatus[]> = {

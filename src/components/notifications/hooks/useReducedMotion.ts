@@ -116,7 +116,7 @@ export function useReducedMotionCallback(): () => boolean {
  */
 export function useAnimationDuration(
   normalDuration: number,
-  reducedDuration: number = 0
+  reducedDuration: number = 0,
 ): number {
   const prefersReducedMotion = useReducedMotion();
   return prefersReducedMotion ? reducedDuration : normalDuration;
@@ -189,7 +189,7 @@ export function useShouldAnimate(): boolean {
  * @returns Animation configuration with seasonal awareness
  */
 export function useAgriculturalAnimation(
-  season?: "spring" | "summer" | "fall" | "winter"
+  season?: "spring" | "summer" | "fall" | "winter",
 ) {
   const shouldAnimate = useShouldAnimate();
   const prefersReducedMotion = useReducedMotion();

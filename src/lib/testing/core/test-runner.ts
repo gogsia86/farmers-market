@@ -9,16 +9,16 @@
  * - Filtering and selection
  */
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 import type {
   BotConfig,
   BotModule,
   BotResult,
   ExecutionMode,
-  TestSuite
-} from '../types';
-import { BotEngine } from './bot-engine';
-import { BrowserManager } from './browser-manager';
+  TestSuite,
+} from "../types";
+import { BotEngine } from "./bot-engine";
+import { BrowserManager } from "./browser-manager";
 
 export interface TestRunnerOptions {
   config: BotConfig;
@@ -71,7 +71,7 @@ export class TestRunner {
     this.browserManager = new BrowserManager(this.config);
     this.engine = new BotEngine({
       config: this.config,
-      browserManager: this.browserManager
+      browserManager: this.browserManager,
     });
 
     this.setupEventHandlers();
@@ -82,44 +82,55 @@ export class TestRunner {
    */
   private setupEventHandlers(): void {
     // Log suite progress
-    this.engine.on('suite:started', (event) => {
+    this.engine.on("suite:started", (event) => {
       logger.info(`[TestRunner] Suite started: ${event.data.suite.name}`);
     });
 
-    this.engine.on('suite:completed', (event) => {
+    this.engine.on("suite:completed", (event) => {
       const { suiteId, results, duration } = event.data;
-      const passed = results.filter((r: BotResult) => r.status === 'success').length;
-      const failed = results.filter((r: BotResult) => r.status === 'failed').length;
+      const passed = results.filter(
+        (r: BotResult) => r.status === "success",
+      ).length;
+      const failed = results.filter(
+        (r: BotResult) => r.status === "failed",
+      ).length;
 
       logger.info(
-        `[TestRunner] Suite completed: ${suiteId} (${passed} passed, ${failed} failed, ${duration}ms)`
+        `[TestRunner] Suite completed: ${suiteId} (${passed} passed, ${failed} failed, ${duration}ms)`,
       );
     });
 
     // Log module progress
-    this.engine.on('module:started', (event) => {
+    this.engine.on("module:started", (event) => {
       logger.info(`[TestRunner] Module started: ${event.data.module.name}`);
     });
 
-    this.engine.on('module:completed', (event) => {
+    this.engine.on("module:completed", (event) => {
       const { result } = event.data;
-      const status = result.status === 'success' ? '✓' : result.status === 'failed' ? '✗' : '○';
+      const status =
+        result.status === "success"
+          ? "✓"
+          : result.status === "failed"
+            ? "✗"
+            : "○";
       logger.info(
-        `[TestRunner] ${status} ${result.moduleName} (${result.duration}ms)`
+        `[TestRunner] ${status} ${result.moduleName} (${result.duration}ms)`,
       );
     });
 
-    this.engine.on('module:failed', (event) => {
+    this.engine.on("module:failed", (event) => {
       const { result } = event.data;
       logger.error(`[TestRunner] Module failed: ${result.moduleName}`, {
         error: result.error,
-        duration: result.duration
+        duration: result.duration,
       });
     });
 
-    this.engine.on('module:retry', (event) => {
+    this.engine.on("module:retry", (event) => {
       const { moduleId, attempt, maxRetries } = event.data;
-      logger.warn(`[TestRunner] Retrying ${moduleId} (${attempt}/${maxRetries})`);
+      logger.warn(
+        `[TestRunner] Retrying ${moduleId} (${attempt}/${maxRetries})`,
+      );
     });
   }
 
@@ -134,7 +145,7 @@ export class TestRunner {
    * Register suites with the engine
    */
   registerSuites(suites: TestSuite[]): void {
-    suites.forEach(suite => this.engine.registerSuite(suite));
+    suites.forEach((suite) => this.engine.registerSuite(suite));
   }
 
   /**
@@ -169,7 +180,7 @@ export class TestRunner {
    */
   async runSuite(
     suiteId: string,
-    mode: ExecutionMode = 'sequential'
+    mode: ExecutionMode = "sequential",
   ): Promise<TestRunReport> {
     const startTime = new Date().toISOString();
     const startTimestamp = Date.now();
@@ -198,7 +209,7 @@ export class TestRunner {
    */
   async runSuites(
     suiteIds: string[],
-    mode: ExecutionMode = 'sequential'
+    mode: ExecutionMode = "sequential",
   ): Promise<TestRunReport> {
     const startTime = new Date().toISOString();
     const startTimestamp = Date.now();
@@ -218,7 +229,12 @@ export class TestRunner {
       const endTime = new Date().toISOString();
       const duration = Date.now() - startTimestamp;
 
-      const report = this.createReport(allResults, startTime, endTime, duration);
+      const report = this.createReport(
+        allResults,
+        startTime,
+        endTime,
+        duration,
+      );
       this.currentRun = report;
 
       return report;
@@ -248,8 +264,8 @@ export class TestRunner {
         results.push(result);
 
         // Check if we should continue on failure
-        if (result.status === 'failed' && !this.config.continueOnFailure) {
-          logger.warn('[TestRunner] Stopping execution due to failure');
+        if (result.status === "failed" && !this.config.continueOnFailure) {
+          logger.warn("[TestRunner] Stopping execution due to failure");
           break;
         }
       }
@@ -257,7 +273,13 @@ export class TestRunner {
       const endTime = new Date().toISOString();
       const duration = Date.now() - startTimestamp;
 
-      const report = this.createReport(results, startTime, endTime, duration, filter);
+      const report = this.createReport(
+        results,
+        startTime,
+        endTime,
+        duration,
+        filter,
+      );
       this.currentRun = report;
 
       return report;
@@ -302,21 +324,23 @@ export class TestRunner {
    */
   async startMonitoring(
     suiteId: string,
-    intervalSeconds: number = 60
+    intervalSeconds: number = 60,
   ): Promise<void> {
     logger.info(`[TestRunner] Starting monitoring mode for suite: ${suiteId}`);
 
     // Setup monitoring event handlers
-    this.engine.on('monitoring:cycle:completed', (event) => {
+    this.engine.on("monitoring:cycle:completed", (event) => {
       const { results } = event.data;
-      logger.info('[TestRunner] Monitoring cycle completed');
+      logger.info("[TestRunner] Monitoring cycle completed");
       this.logSummary(this.calculateSummary(results));
     });
 
-    this.engine.on('monitoring:failures:detected', (event) => {
+    this.engine.on("monitoring:failures:detected", (event) => {
       const { results } = event.data;
-      const failures = results.filter((r: BotResult) => r.status === 'failed');
-      logger.error(`[TestRunner] Monitoring detected ${failures.length} failures`);
+      const failures = results.filter((r: BotResult) => r.status === "failed");
+      logger.error(
+        `[TestRunner] Monitoring detected ${failures.length} failures`,
+      );
 
       failures.forEach((failure: BotResult) => {
         logger.error(`  - ${failure.moduleName}: ${failure.error}`);
@@ -330,7 +354,7 @@ export class TestRunner {
    * Stop monitoring mode
    */
   stopMonitoring(): void {
-    logger.info('[TestRunner] Stopping monitoring mode');
+    logger.info("[TestRunner] Stopping monitoring mode");
     this.engine.stopMonitoring();
   }
 
@@ -346,32 +370,32 @@ export class TestRunner {
 
     // Filter by module IDs
     if (filter.moduleIds && filter.moduleIds.length > 0) {
-      modules = modules.filter(m => filter.moduleIds!.includes(m.id));
+      modules = modules.filter((m) => filter.moduleIds!.includes(m.id));
     }
 
     // Filter by tags
     if (filter.tags && filter.tags.length > 0) {
-      modules = modules.filter(m =>
-        m.tags.some(tag => filter.tags!.includes(tag))
+      modules = modules.filter((m) =>
+        m.tags.some((tag) => filter.tags!.includes(tag)),
       );
     }
 
     // Filter by categories
     if (filter.categories && filter.categories.length > 0) {
-      modules = modules.filter(m =>
-        filter.categories!.includes(m.category)
-      );
+      modules = modules.filter((m) => filter.categories!.includes(m.category));
     }
 
     // Exclude by module IDs
     if (filter.exclude?.moduleIds && filter.exclude.moduleIds.length > 0) {
-      modules = modules.filter(m => !filter.exclude!.moduleIds!.includes(m.id));
+      modules = modules.filter(
+        (m) => !filter.exclude!.moduleIds!.includes(m.id),
+      );
     }
 
     // Exclude by tags
     if (filter.exclude?.tags && filter.exclude.tags.length > 0) {
-      modules = modules.filter(m =>
-        !m.tags.some(tag => filter.exclude!.tags!.includes(tag))
+      modules = modules.filter(
+        (m) => !m.tags.some((tag) => filter.exclude!.tags!.includes(tag)),
       );
     }
 
@@ -386,7 +410,7 @@ export class TestRunner {
     startTime: string,
     endTime: string,
     duration: number,
-    filter?: TestFilter
+    filter?: TestFilter,
   ): TestRunReport {
     const summary = this.calculateSummary(results);
 
@@ -397,7 +421,7 @@ export class TestRunner {
       endTime,
       duration,
       config: this.config,
-      filter
+      filter,
     };
   }
 
@@ -406,13 +430,16 @@ export class TestRunner {
    */
   private calculateSummary(results: BotResult[]): TestSummary {
     const total = results.length;
-    const passed = results.filter(r => r.status === 'success').length;
-    const failed = results.filter(r => r.status === 'failed').length;
-    const skipped = results.filter(r => r.status === 'skipped').length;
+    const passed = results.filter((r) => r.status === "success").length;
+    const failed = results.filter((r) => r.status === "failed").length;
+    const skipped = results.filter((r) => r.status === "skipped").length;
 
     const successRate = total > 0 ? (passed / total) * 100 : 0;
 
-    const totalDuration = results.reduce((sum: any, r: any) => sum + r.duration, 0);
+    const totalDuration = results.reduce(
+      (sum: any, r: any) => sum + r.duration,
+      0,
+    );
     const avgDuration = total > 0 ? totalDuration / total : 0;
 
     return {
@@ -422,7 +449,7 @@ export class TestRunner {
       skipped,
       successRate,
       avgDuration,
-      totalDuration
+      totalDuration,
     };
   }
 
@@ -430,14 +457,14 @@ export class TestRunner {
    * Log summary to console
    */
   private logSummary(summary: TestSummary): void {
-    logger.info('[TestRunner] Summary:', {
+    logger.info("[TestRunner] Summary:", {
       total: summary.total,
       passed: summary.passed,
       failed: summary.failed,
       skipped: summary.skipped,
       successRate: `${summary.successRate.toFixed(2)}%`,
       avgDuration: `${summary.avgDuration.toFixed(0)}ms`,
-      totalDuration: `${summary.totalDuration.toFixed(0)}ms`
+      totalDuration: `${summary.totalDuration.toFixed(0)}ms`,
     });
   }
 
@@ -480,7 +507,7 @@ export class TestRunner {
    * Cleanup resources
    */
   async cleanup(): Promise<void> {
-    logger.info('[TestRunner] Cleaning up resources');
+    logger.info("[TestRunner] Cleaning up resources");
 
     this.stopMonitoring();
     await this.engine.cleanup();
@@ -493,7 +520,10 @@ export class TestRunner {
 /**
  * Create a test runner instance
  */
-export function createTestRunner(config: BotConfig, filter?: TestFilter): TestRunner {
+export function createTestRunner(
+  config: BotConfig,
+  filter?: TestFilter,
+): TestRunner {
   return new TestRunner({ config, filter });
 }
 
@@ -502,7 +532,7 @@ export function createTestRunner(config: BotConfig, filter?: TestFilter): TestRu
  */
 export async function quickTest(
   moduleId: string,
-  config: BotConfig
+  config: BotConfig,
 ): Promise<TestRunReport> {
   const runner = createTestRunner(config);
 
@@ -519,7 +549,7 @@ export async function quickTest(
 export async function runSuiteWithCleanup(
   suiteId: string,
   config: BotConfig,
-  mode: ExecutionMode = 'sequential'
+  mode: ExecutionMode = "sequential",
 ): Promise<TestRunReport> {
   const runner = createTestRunner(config);
 

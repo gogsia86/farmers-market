@@ -6,7 +6,13 @@
 
 "use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { useEffect, useState } from "react";
 
 // ============================================================================
@@ -74,7 +80,9 @@ export default function WebhookMonitoringPage() {
   const fetchReport = async () => {
     try {
       setLoading(true);
-      const response = await fetch("/api/admin/webhooks/monitor?report=true&timeWindow=60");
+      const response = await fetch(
+        "/api/admin/webhooks/monitor?report=true&timeWindow=60",
+      );
       const data = await response.json();
 
       if (data.success) {
@@ -123,7 +131,9 @@ export default function WebhookMonitoringPage() {
         alert(`Action failed: ${data.error}`);
       }
     } catch (err) {
-      alert(`Action failed: ${err instanceof Error ? err.message : "Unknown error"}`);
+      alert(
+        `Action failed: ${err instanceof Error ? err.message : "Unknown error"}`,
+      );
     }
   };
 
@@ -143,7 +153,9 @@ export default function WebhookMonitoringPage() {
       <div className="p-6">
         <Card variant="elevated" className="border-red-200 bg-red-50">
           <CardHeader>
-            <CardTitle className="text-red-700">Error Loading Webhook Health</CardTitle>
+            <CardTitle className="text-red-700">
+              Error Loading Webhook Health
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-red-600">{error}</p>
@@ -180,7 +192,9 @@ export default function WebhookMonitoringPage() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">🔐 Webhook Monitoring</h1>
+          <h1 className="text-3xl font-bold text-gray-900">
+            🔐 Webhook Monitoring
+          </h1>
           <p className="text-gray-600 mt-1">
             Real-time webhook event health and metrics
           </p>
@@ -278,8 +292,9 @@ export default function WebhookMonitoringPage() {
             {Object.entries(report.health.checks).map(([key, check]) => (
               <div
                 key={key}
-                className={`flex items-center justify-between p-3 rounded-lg ${check.passed ? "bg-green-50" : "bg-red-50"
-                  }`}
+                className={`flex items-center justify-between p-3 rounded-lg ${
+                  check.passed ? "bg-green-50" : "bg-red-50"
+                }`}
               >
                 <div className="flex items-center gap-3">
                   <span className="text-2xl">{check.passed ? "✅" : "❌"}</span>
@@ -287,7 +302,9 @@ export default function WebhookMonitoringPage() {
                     <p className="font-medium text-gray-900">
                       {key.replace(/([A-Z])/g, " $1").trim()}
                     </p>
-                    <p className={`text-sm ${check.passed ? "text-green-700" : "text-red-700"}`}>
+                    <p
+                      className={`text-sm ${check.passed ? "text-green-700" : "text-red-700"}`}
+                    >
                       {check.message}
                     </p>
                   </div>
@@ -334,7 +351,9 @@ export default function WebhookMonitoringPage() {
                   >
                     <div className="flex items-start justify-between">
                       <div>
-                        <p className={`font-semibold text-${severityColor}-900`}>
+                        <p
+                          className={`font-semibold text-${severityColor}-900`}
+                        >
                           {alert.severity}: {alert.type}
                         </p>
                         <p className={`text-sm mt-1 text-${severityColor}-700`}>
@@ -368,12 +387,17 @@ export default function WebhookMonitoringPage() {
         <Card variant="elevated">
           <CardHeader>
             <CardTitle>💡 Recommendations</CardTitle>
-            <CardDescription>Suggested actions to improve system health</CardDescription>
+            <CardDescription>
+              Suggested actions to improve system health
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <ul className="space-y-2">
               {report.recommendations.map((rec: any, index: any) => (
-                <li key={index} className="flex items-start gap-3 text-gray-700">
+                <li
+                  key={index}
+                  className="flex items-start gap-3 text-gray-700"
+                >
                   <span className="mt-1">•</span>
                   <span>{rec}</span>
                 </li>
@@ -387,21 +411,27 @@ export default function WebhookMonitoringPage() {
       <Card variant="elevated">
         <CardHeader>
           <CardTitle>Events by Provider</CardTitle>
-          <CardDescription>Distribution of webhook events across providers</CardDescription>
+          <CardDescription>
+            Distribution of webhook events across providers
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
             {Object.entries(report.health.metrics.eventsByProvider).map(
               ([provider, count]) => (
-                <div key={provider} className="flex items-center justify-between">
+                <div
+                  key={provider}
+                  className="flex items-center justify-between"
+                >
                   <span className="font-medium text-gray-700">{provider}</span>
                   <div className="flex items-center gap-3">
                     <div className="w-64 bg-gray-200 rounded-full h-2">
                       <div
                         className="bg-blue-600 h-2 rounded-full"
                         style={{
-                          width: `${(count / report.health.metrics.totalEvents) * 100
-                            }%`,
+                          width: `${
+                            (count / report.health.metrics.totalEvents) * 100
+                          }%`,
                         }}
                       ></div>
                     </div>
@@ -410,7 +440,7 @@ export default function WebhookMonitoringPage() {
                     </span>
                   </div>
                 </div>
-              )
+              ),
             )}
           </div>
         </CardContent>
@@ -420,7 +450,9 @@ export default function WebhookMonitoringPage() {
       <Card variant="elevated">
         <CardHeader>
           <CardTitle>🔧 Maintenance Actions</CardTitle>
-          <CardDescription>Manual maintenance and troubleshooting tools</CardDescription>
+          <CardDescription>
+            Manual maintenance and troubleshooting tools
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -437,13 +469,17 @@ export default function WebhookMonitoringPage() {
               onClick={() => handleAction("cleanup", { olderThanDays: 90 })}
               className="p-4 text-left border-2 border-blue-200 rounded-lg hover:bg-blue-50 transition"
             >
-              <p className="font-semibold text-blue-700">🧹 Cleanup Old Events</p>
+              <p className="font-semibold text-blue-700">
+                🧹 Cleanup Old Events
+              </p>
               <p className="text-sm text-gray-600 mt-1">
                 Delete processed events &gt;90 days
               </p>
             </button>
             <button
-              onClick={() => handleAction("retry-failed", { maxAttempts: 5, limit: 50 })}
+              onClick={() =>
+                handleAction("retry-failed", { maxAttempts: 5, limit: 50 })
+              }
               className="p-4 text-left border-2 border-yellow-200 rounded-lg hover:bg-yellow-50 transition"
             >
               <p className="font-semibold text-yellow-700">🔁 Retry Failed</p>
@@ -455,7 +491,9 @@ export default function WebhookMonitoringPage() {
               onClick={() => handleAction("find-duplicates")}
               className="p-4 text-left border-2 border-purple-200 rounded-lg hover:bg-purple-50 transition"
             >
-              <p className="font-semibold text-purple-700">🔍 Find Duplicates</p>
+              <p className="font-semibold text-purple-700">
+                🔍 Find Duplicates
+              </p>
               <p className="text-sm text-gray-600 mt-1">
                 Detect duplicate webhook events
               </p>

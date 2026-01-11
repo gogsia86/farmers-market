@@ -12,7 +12,7 @@
  * - Agricultural consciousness activation
  */
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 import {
   checkOptionalServices,
   validateEnv,

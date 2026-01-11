@@ -6,13 +6,18 @@
 
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Elements, PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js";
+import {
+  Elements,
+  PaymentElement,
+  useElements,
+  useStripe,
+} from "@stripe/react-stripe-js";
 import { loadStripe, type Appearance } from "@stripe/stripe-js";
 import { AlertCircle, CreditCard, Lock } from "lucide-react";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 import type { PaymentInfo } from "./checkout-wizard";
 
@@ -90,7 +95,7 @@ export function PaymentStep({
     if (!stripePromise) {
       setLoading(false);
       setError(
-        "Stripe is not configured. Please set NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY environment variable."
+        "Stripe is not configured. Please set NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY environment variable.",
       );
       return;
     }
@@ -108,7 +113,7 @@ export function PaymentStep({
         // Check if Stripe is configured
         if (!stripePromise) {
           throw new Error(
-            "Stripe is not configured. Please set NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY environment variable."
+            "Stripe is not configured. Please set NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY environment variable.",
           );
         }
 
@@ -129,19 +134,21 @@ export function PaymentStep({
         const result = await response.json();
 
         if (!response.ok || !result.success) {
-          throw new Error(result.error?.message || "Failed to create payment intent");
+          throw new Error(
+            result.error?.message || "Failed to create payment intent",
+          );
         }
 
         setClientSecret(result.data.clientSecret);
         setPaymentIntentId(result.data.paymentIntentId);
       } catch (err) {
         logger.error("Payment intent creation error:", {
-      error: err instanceof Error ? err.message : String(err),
-    });
+          error: err instanceof Error ? err.message : String(err),
+        });
         setError(
           err instanceof Error
             ? err.message
-            : "Failed to initialize payment. Please try again."
+            : "Failed to initialize payment. Please try again.",
         );
       } finally {
         setLoading(false);
@@ -161,7 +168,9 @@ export function PaymentStep({
       <div className="flex min-h-[400px] items-center justify-center">
         <div className="text-center">
           <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-gray-200 border-t-green-600"></div>
-          <p className="mt-4 text-sm text-gray-600">Initializing secure payment...</p>
+          <p className="mt-4 text-sm text-gray-600">
+            Initializing secure payment...
+          </p>
         </div>
       </div>
     );
@@ -174,7 +183,9 @@ export function PaymentStep({
           <div className="flex gap-3">
             <AlertCircle className="h-5 w-5 flex-shrink-0 text-red-600" />
             <div>
-              <h3 className="text-sm font-semibold text-red-900">Payment Initialization Failed</h3>
+              <h3 className="text-sm font-semibold text-red-900">
+                Payment Initialization Failed
+              </h3>
               <p className="mt-1 text-xs text-red-800">
                 {error || "Unable to initialize payment. Please try again."}
               </p>
@@ -184,10 +195,26 @@ export function PaymentStep({
                     🔧 Developer Note:
                   </p>
                   <p className="mt-1 text-xs text-yellow-800">
-                    Add <code className="bg-yellow-100 px-1 rounded">NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY</code> to your <code className="bg-yellow-100 px-1 rounded">.env.local</code> file.
+                    Add{" "}
+                    <code className="bg-yellow-100 px-1 rounded">
+                      NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+                    </code>{" "}
+                    to your{" "}
+                    <code className="bg-yellow-100 px-1 rounded">
+                      .env.local
+                    </code>{" "}
+                    file.
                   </p>
                   <p className="mt-1 text-xs text-yellow-800">
-                    Get your key from: <a href="https://dashboard.stripe.com/test/apikeys" target="_blank" rel="noopener noreferrer" className="underline">Stripe Dashboard</a>
+                    Get your key from:{" "}
+                    <a
+                      href="https://dashboard.stripe.com/test/apikeys"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline"
+                    >
+                      Stripe Dashboard
+                    </a>
                   </p>
                 </div>
               )}
@@ -287,12 +314,12 @@ function PaymentStepForm({
       });
     } catch (err) {
       logger.error("Payment validation error:", {
-      error: err instanceof Error ? err.message : String(err),
-    });
+        error: err instanceof Error ? err.message : String(err),
+      });
       setPaymentError(
         err instanceof Error
           ? err.message
-          : "Payment validation failed. Please check your information."
+          : "Payment validation failed. Please check your information.",
       );
     } finally {
       setIsProcessing(false);
@@ -365,9 +392,7 @@ function PaymentStepForm({
 
       {/* Billing Address Note */}
       <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-        <h3 className="text-sm font-semibold text-gray-900">
-          Billing Address
-        </h3>
+        <h3 className="text-sm font-semibold text-gray-900">Billing Address</h3>
         <p className="mt-1 text-xs text-gray-600">
           Your billing address will be the same as your shipping address.
         </p>
@@ -395,7 +420,9 @@ function PaymentStepForm({
           <div className="flex gap-3">
             <AlertCircle className="h-5 w-5 flex-shrink-0 text-red-600" />
             <div>
-              <h3 className="text-sm font-semibold text-red-900">Payment Error</h3>
+              <h3 className="text-sm font-semibold text-red-900">
+                Payment Error
+              </h3>
               <p className="mt-1 text-xs text-red-800">{paymentError}</p>
             </div>
           </div>

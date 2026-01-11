@@ -24,7 +24,7 @@ export const phoneSchema = z
   .min(1, "Phone number is required")
   .regex(
     /^[+]?[(]?[0-9]{3}[)]?[-s.]?[0-9]{3}[-s.]?[0-9]{4,6}$/,
-    "Invalid phone number format"
+    "Invalid phone number format",
   );
 
 // Password validation (strong password requirements)
@@ -34,7 +34,10 @@ export const passwordSchema = z
   .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
   .regex(/[a-z]/, "Password must contain at least one lowercase letter")
   .regex(/[0-9]/, "Password must contain at least one number")
-  .regex(/[^A-Za-z0-9]/, "Password must contain at least one special character");
+  .regex(
+    /[^A-Za-z0-9]/,
+    "Password must contain at least one special character",
+  );
 
 // URL validation
 export const urlSchema = z
@@ -107,10 +110,7 @@ export const updateProfileSchema = z.object({
     .max(100, "Name must be less than 100 characters"),
   email: emailSchema,
   phone: phoneSchema.optional(),
-  bio: z
-    .string()
-    .max(500, "Bio must be less than 500 characters")
-    .optional(),
+  bio: z.string().max(500, "Bio must be less than 500 characters").optional(),
   avatar: z.string().url("Invalid avatar URL").optional(),
 });
 
@@ -176,7 +176,7 @@ export const farmSchema = z.object({
         "PERMACULTURE",
         "CONVENTIONAL",
         "SUSTAINABLE",
-      ])
+      ]),
     )
     .min(1, "Select at least one farming practice"),
   certifications: z
@@ -188,7 +188,7 @@ export const farmSchema = z.object({
         "FAIR_TRADE",
         "ANIMAL_WELFARE_APPROVED",
         "NON_GMO",
-      ])
+      ]),
     )
     .optional(),
   location: addressSchema,
@@ -219,7 +219,7 @@ export const farmSchema = z.object({
         "FLOWERS",
         "HERBS",
         "MIXED",
-      ])
+      ]),
     )
     .min(1, "Select at least one farm type"),
   seasonalAvailability: z
@@ -267,11 +267,19 @@ export const productSchema = z.object({
     .number()
     .positive("Price must be greater than 0")
     .max(10000, "Price seems unrealistic"),
-  unit: z.enum(["LB", "OZ", "KG", "GRAM", "EACH", "BUNCH", "DOZEN", "PINT", "QUART", "GALLON"]),
-  stockQuantity: z
-    .number()
-    .int()
-    .min(0, "Stock quantity cannot be negative"),
+  unit: z.enum([
+    "LB",
+    "OZ",
+    "KG",
+    "GRAM",
+    "EACH",
+    "BUNCH",
+    "DOZEN",
+    "PINT",
+    "QUART",
+    "GALLON",
+  ]),
+  stockQuantity: z.number().int().min(0, "Stock quantity cannot be negative"),
   minOrderQuantity: z
     .number()
     .int()
@@ -319,10 +327,7 @@ export const updateProductSchema = productSchema.partial().extend({
 
 export const orderItemSchema = z.object({
   productId: z.string().min(1, "Product ID is required"),
-  quantity: z
-    .number()
-    .int()
-    .positive("Quantity must be at least 1"),
+  quantity: z.number().int().positive("Quantity must be at least 1"),
   price: z.number().positive("Price must be greater than 0"),
   farmId: z.string().min(1, "Farm ID is required"),
 });
@@ -355,38 +360,43 @@ export const updateOrderStatusSchema = z.object({
     "CANCELLED",
     "REFUNDED",
   ]),
-  notes: z.string().max(500, "Notes must be less than 500 characters").optional(),
+  notes: z
+    .string()
+    .max(500, "Notes must be less than 500 characters")
+    .optional(),
 });
 
 // ============================================================================
 // REVIEW SCHEMAS
 // ============================================================================
 
-export const reviewSchema = z.object({
-  productId: z.string().min(1, "Product ID is required").optional(),
-  farmId: z.string().min(1, "Farm ID is required").optional(),
-  rating: z
-    .number()
-    .int()
-    .min(1, "Rating must be at least 1")
-    .max(5, "Rating must be at most 5"),
-  title: z
-    .string()
-    .min(5, "Title must be at least 5 characters")
-    .max(100, "Title must be less than 100 characters"),
-  comment: z
-    .string()
-    .min(20, "Comment must be at least 20 characters")
-    .max(1000, "Comment must be less than 1000 characters"),
-  images: z
-    .array(z.string().url("Invalid image URL"))
-    .max(5, "Maximum 5 images allowed")
-    .optional(),
-  wouldRecommend: z.boolean().default(true),
-}).refine((data) => data.productId || data.farmId, {
-  message: "Either productId or farmId must be provided",
-  path: ["productId"],
-});
+export const reviewSchema = z
+  .object({
+    productId: z.string().min(1, "Product ID is required").optional(),
+    farmId: z.string().min(1, "Farm ID is required").optional(),
+    rating: z
+      .number()
+      .int()
+      .min(1, "Rating must be at least 1")
+      .max(5, "Rating must be at most 5"),
+    title: z
+      .string()
+      .min(5, "Title must be at least 5 characters")
+      .max(100, "Title must be less than 100 characters"),
+    comment: z
+      .string()
+      .min(20, "Comment must be at least 20 characters")
+      .max(1000, "Comment must be less than 1000 characters"),
+    images: z
+      .array(z.string().url("Invalid image URL"))
+      .max(5, "Maximum 5 images allowed")
+      .optional(),
+    wouldRecommend: z.boolean().default(true),
+  })
+  .refine((data) => data.productId || data.farmId, {
+    message: "Either productId or farmId must be provided",
+    path: ["productId"],
+  });
 
 // ============================================================================
 // CONTACT & SUPPORT SCHEMAS
@@ -455,7 +465,10 @@ export const supportTicketSchema = z.object({
 // ============================================================================
 
 export const searchSchema = z.object({
-  query: z.string().min(1, "Search query is required").max(100, "Query is too long"),
+  query: z
+    .string()
+    .min(1, "Search query is required")
+    .max(100, "Query is too long"),
   category: z.string().optional(),
   farmId: z.string().optional(),
   minPrice: z.number().positive().optional(),
@@ -463,7 +476,13 @@ export const searchSchema = z.object({
   isOrganic: z.boolean().optional(),
   inStock: z.boolean().optional(),
   sortBy: z
-    .enum(["RELEVANCE", "PRICE_LOW_TO_HIGH", "PRICE_HIGH_TO_LOW", "NEWEST", "RATING"])
+    .enum([
+      "RELEVANCE",
+      "PRICE_LOW_TO_HIGH",
+      "PRICE_HIGH_TO_LOW",
+      "NEWEST",
+      "RATING",
+    ])
     .default("RELEVANCE"),
   page: z.number().int().positive().default(1),
   limit: z.number().int().positive().max(100).default(20),
@@ -549,14 +568,16 @@ export const imageUploadSchema = z.object({
     .array(
       z.object({
         name: z.string(),
-        size: z.number().max(10 * 1024 * 1024, "File size must be less than 10MB"),
+        size: z
+          .number()
+          .max(10 * 1024 * 1024, "File size must be less than 10MB"),
         type: z
           .string()
           .refine(
             (type) => type.startsWith("image/"),
-            "Only image files are allowed"
+            "Only image files are allowed",
           ),
-      })
+      }),
     )
     .min(1, "At least one file is required")
     .max(10, "Maximum 10 files allowed"),
@@ -568,7 +589,9 @@ export const documentUploadSchema = z.object({
     .array(
       z.object({
         name: z.string(),
-        size: z.number().max(20 * 1024 * 1024, "File size must be less than 20MB"),
+        size: z
+          .number()
+          .max(20 * 1024 * 1024, "File size must be less than 20MB"),
         type: z
           .string()
           .refine(
@@ -576,9 +599,9 @@ export const documentUploadSchema = z.object({
               type === "application/pdf" ||
               type.includes("document") ||
               type.includes("word"),
-            "Only PDF and document files are allowed"
+            "Only PDF and document files are allowed",
           ),
-      })
+      }),
     )
     .min(1, "At least one file is required")
     .max(5, "Maximum 5 files allowed"),
@@ -618,7 +641,7 @@ export const seasonalDateValidator = (date: Date): boolean => {
 
 export const harvestSeasonValidator = (
   startDate: Date,
-  endDate: Date
+  endDate: Date,
 ): boolean => {
   return endDate > startDate;
 };

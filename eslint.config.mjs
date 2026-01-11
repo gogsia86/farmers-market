@@ -31,6 +31,7 @@ const eslintConfig = [
       "**/*.backup/**",
       "**/.backup/**",
       "**/.archive-old-implementation/**",
+      "**/mobile-app-export-*/**",
     ],
   },
 

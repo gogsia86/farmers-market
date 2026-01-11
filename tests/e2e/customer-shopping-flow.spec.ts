@@ -21,15 +21,15 @@ test.describe("Customer Shopping Flow", () => {
     await test.step("Load home page", async () => {
       await expect(page).toHaveTitle(/Farmers Market Platform/i);
       await expect(
-        page.getByRole("heading", { name: /Fresh from Farm to Table/i })
+        page.getByRole("heading", { name: /Fresh from Farm to Table/i }),
       ).toBeVisible();
 
       // Verify CTAs are present
       await expect(
-        page.getByRole("link", { name: /Shop Products/i })
+        page.getByRole("link", { name: /Shop Products/i }),
       ).toBeVisible();
       await expect(
-        page.getByRole("link", { name: /Explore Farms/i })
+        page.getByRole("link", { name: /Explore Farms/i }),
       ).toBeVisible();
     });
 
@@ -37,12 +37,15 @@ test.describe("Customer Shopping Flow", () => {
     // STEP 2: BROWSE PRODUCTS - Navigate to products page
     // ==========================================================================
     await test.step("Navigate to products page", async () => {
-      await page.getByRole("link", { name: /Shop Products/i }).first().click();
+      await page
+        .getByRole("link", { name: /Shop Products/i })
+        .first()
+        .click();
       await page.waitForURL(/\/products/);
 
       // Verify products page loaded
       await expect(
-        page.getByRole("heading", { name: /Products/i }).first()
+        page.getByRole("heading", { name: /Products/i }).first(),
       ).toBeVisible();
 
       // Verify filter controls are present
@@ -69,7 +72,9 @@ test.describe("Customer Shopping Flow", () => {
       // Check if any products are visible
       const count = await productLinks.count();
       if (count === 0) {
-        console.log("⚠️  No products found - this is expected for empty database");
+        console.log(
+          "⚠️  No products found - this is expected for empty database",
+        );
         test.skip();
       }
     });
@@ -133,7 +138,7 @@ test.describe("Customer Shopping Flow", () => {
 
       // Verify cart page loaded
       await expect(
-        page.getByRole("heading", { name: /Shopping Cart/i })
+        page.getByRole("heading", { name: /Shopping Cart/i }),
       ).toBeVisible();
 
       // Check if cart has items or is empty
@@ -154,7 +159,7 @@ test.describe("Customer Shopping Flow", () => {
 
         // Verify cart actions
         await expect(
-          page.getByRole("button", { name: /checkout/i })
+          page.getByRole("button", { name: /checkout/i }),
         ).toBeVisible();
       }
     });
@@ -190,12 +195,15 @@ test.describe("Customer Shopping Flow", () => {
     // FARMS BROWSING FLOW
     // ==========================================================================
     await test.step("Navigate to farms page", async () => {
-      await page.getByRole("link", { name: /Explore Farms/i }).first().click();
+      await page
+        .getByRole("link", { name: /Explore Farms/i })
+        .first()
+        .click();
       await page.waitForURL(/\/farms/);
 
       // Verify farms page loaded
       await expect(
-        page.getByRole("heading", { name: /Farms/i }).first()
+        page.getByRole("heading", { name: /Farms/i }).first(),
       ).toBeVisible();
     });
 

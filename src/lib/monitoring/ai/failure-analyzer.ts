@@ -10,7 +10,7 @@
 // @ts-ignore - OpenAI module may not be available in all environments
 import OpenAI from "openai";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 import type {
   WorkflowResult,
@@ -49,7 +49,9 @@ export class AIFailureAnalyzer {
         this.enabled = false;
       } else {
         this.openai = new OpenAI({ apiKey });
-        logger.info("✅ AI Failure Analyzer initialized with", { data: this.model });
+        logger.info("✅ AI Failure Analyzer initialized with", {
+          data: this.model,
+        });
       }
     }
   }
@@ -107,8 +109,8 @@ export class AIFailureAnalyzer {
       };
     } catch (error) {
       logger.error("❌ AI failure analysis error:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
       return this.generateFallbackAnalysis(workflowResult);
     }
   }
@@ -169,8 +171,8 @@ export class AIFailureAnalyzer {
       return predictions;
     } catch (error) {
       logger.error("❌ AI risk prediction error:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
       return [];
     }
   }
@@ -226,8 +228,8 @@ export class AIFailureAnalyzer {
       };
     } catch (error) {
       logger.error("❌ AI performance analysis error:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
       return {
         summary: "Analysis unavailable",
         bottlenecks: [],
@@ -296,8 +298,8 @@ Keep it concise and actionable for executives.`;
       );
     } catch (error) {
       logger.error("❌ AI executive summary error:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
       return this.generateBasicSummary(report);
     }
   }
@@ -345,8 +347,8 @@ Format as JSON array of strings.`;
       return response.steps || response.remediationSteps || [];
     } catch (error) {
       logger.error("❌ AI remediation suggestion error:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
       return this.getFallbackRemediation(workflowType);
     }
   }
@@ -491,10 +493,14 @@ Provide practical, actionable insights with agricultural consciousness.`;
     return {
       totalRuns: results.length,
       failureRate:
-        results.filter((r: any) => r.status === "FAILED").length / results.length,
+        results.filter((r: any) => r.status === "FAILED").length /
+        results.length,
       averageDuration:
-        results.reduce((sum: any, r: any) => sum + r.duration, 0) / results.length,
-      performanceTrend: this.calculateTrend(results.map((r: any) => r.duration)),
+        results.reduce((sum: any, r: any) => sum + r.duration, 0) /
+        results.length,
+      performanceTrend: this.calculateTrend(
+        results.map((r: any) => r.duration),
+      ),
       commonErrors: this.groupErrors(results.filter((r: any) => r.error)),
       timeDistribution: this.analyzeTimeDistribution(results),
       workflowTypeBreakdown: Object.entries(grouped).map(
@@ -516,10 +522,13 @@ Provide practical, actionable insights with agricultural consciousness.`;
       count: results.length,
       averages: {
         duration:
-          results.reduce((sum: any, r: any) => sum + r.duration, 0) / results.length,
-        pageLoadTime:
-          results.reduce((sum: any, r: any) => sum + (r.metrics.pageLoadTime || 0), 0) /
+          results.reduce((sum: any, r: any) => sum + r.duration, 0) /
           results.length,
+        pageLoadTime:
+          results.reduce(
+            (sum: any, r: any) => sum + (r.metrics.pageLoadTime || 0),
+            0,
+          ) / results.length,
         apiResponseTime:
           results.reduce(
             (sum, r) => sum + (r.metrics.apiResponseTime || 0),
@@ -535,7 +544,8 @@ Provide practical, actionable insights with agricultural consciousness.`;
         0.99,
       ),
       errorRate:
-        results.filter((r: any) => r.status === "FAILED").length / results.length,
+        results.filter((r: any) => r.status === "FAILED").length /
+        results.length,
       trend: this.calculateTrend(results.map((r: any) => r.duration)),
     };
   }

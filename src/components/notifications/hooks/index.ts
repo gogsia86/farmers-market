@@ -12,12 +12,13 @@
 // ============================================================================
 
 export {
-  default, useAccessibleTransition,
+  default,
+  useAccessibleTransition,
   useAgriculturalAnimation,
   useAnimationDuration,
   useReducedMotion,
   useReducedMotionCallback,
-  useShouldAnimate
+  useShouldAnimate,
 } from "./useReducedMotion";
 
 // ============================================================================

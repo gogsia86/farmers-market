@@ -7,7 +7,7 @@
 import { useAnalytics } from "@/hooks/useAnalytics";
 import { useEffect } from "react";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 interface OrderItem {
   productId: string;
@@ -65,7 +65,7 @@ export function OrderConfirmationTracking({
       totalValue,
       tax,
       shipping,
-      items: items.map(item => ({
+      items: items.map((item) => ({
         id: item.productId,
         name: item.productName,
         price: item.price,
@@ -75,12 +75,14 @@ export function OrderConfirmationTracking({
 
     // Log to console in development for debugging
     if (process.env.NODE_ENV === "development") {
-      logger.info("📊 Purchase tracked", { length: {
-        orderId,
-        orderNumber,
-        totalValue,
-        itemCount: items.length,
-      } });
+      logger.info("📊 Purchase tracked", {
+        length: {
+          orderId,
+          orderNumber,
+          totalValue,
+          itemCount: items.length,
+        },
+      });
     }
   }, [orderId]); // Only track once per order
 

@@ -3,42 +3,42 @@
 // 🌾 Domain: Real-time Communication Infrastructure
 // ⚡ Performance: Optimized WebSocket connections with agricultural consciousness
 
-import { Server as HTTPServer } from 'http';
-import type { NextApiResponse } from 'next';
-import { Socket, Server as SocketIOServer } from 'socket.io';
+import { Server as HTTPServer } from "http";
+import type { NextApiResponse } from "next";
+import { Socket, Server as SocketIOServer } from "socket.io";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 /**
  * Socket.io event types for type safety
  */
 export enum SocketEvent {
   // Connection events
-  CONNECTION = 'connection',
-  DISCONNECT = 'disconnect',
-  ERROR = 'error',
+  CONNECTION = "connection",
+  DISCONNECT = "disconnect",
+  ERROR = "error",
 
   // Room management
-  JOIN_USER_ROOM = 'join-user-room',
-  JOIN_ORDER_ROOM = 'join-order-room',
-  JOIN_FARM_ROOM = 'join-farm-room',
-  LEAVE_ROOM = 'leave-room',
+  JOIN_USER_ROOM = "join-user-room",
+  JOIN_ORDER_ROOM = "join-order-room",
+  JOIN_FARM_ROOM = "join-farm-room",
+  LEAVE_ROOM = "leave-room",
 
   // Order events
-  ORDER_UPDATE = 'order-update',
-  ORDER_STATUS_CHANGE = 'order-status-change',
-  ORDER_NEW = 'order-new',
+  ORDER_UPDATE = "order-update",
+  ORDER_STATUS_CHANGE = "order-status-change",
+  ORDER_NEW = "order-new",
 
   // Farm events
-  FARM_UPDATE = 'farm-update',
-  PRODUCT_UPDATE = 'product-update',
+  FARM_UPDATE = "farm-update",
+  PRODUCT_UPDATE = "product-update",
 
   // Notification events
-  NOTIFICATION = 'notification',
+  NOTIFICATION = "notification",
 
   // Agricultural events
-  SEASONAL_UPDATE = 'seasonal-update',
-  HARVEST_ALERT = 'harvest-alert',
+  SEASONAL_UPDATE = "seasonal-update",
+  HARVEST_ALERT = "harvest-alert",
 }
 
 /**
@@ -54,7 +54,7 @@ export interface OrderUpdatePayload {
 
 export interface FarmUpdatePayload {
   farmId: string;
-  updateType: 'profile' | 'product' | 'status';
+  updateType: "profile" | "product" | "status";
   data: Record<string, any>;
   timestamp: string;
 }
@@ -80,33 +80,33 @@ let io: SocketIOServer | null = null;
  */
 export function initializeSocketServer(httpServer: HTTPServer): SocketIOServer {
   if (io) {
-    logger.info('⚡ Socket.io server already initialized');
+    logger.info("⚡ Socket.io server already initialized");
     return io;
   }
 
   io = new SocketIOServer(httpServer, {
     cors: {
-      origin: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
-      methods: ['GET', 'POST'],
+      origin: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+      methods: ["GET", "POST"],
       credentials: true,
     },
-    transports: ['websocket', 'polling'],
+    transports: ["websocket", "polling"],
     pingTimeout: 60000,
     pingInterval: 25000,
   });
 
   // Connection handler
   io.on(SocketEvent.CONNECTION, (socket: Socket) => {
-    logger.info('🌾 Client connected:', { data: socket.id });
+    logger.info("🌾 Client connected:", { data: socket.id });
 
     // Agricultural consciousness metadata
-    socket.data.agriculturalConsciousness = 'active';
+    socket.data.agriculturalConsciousness = "active";
     socket.data.connectedAt = new Date().toISOString();
 
     // Join user room
     socket.on(SocketEvent.JOIN_USER_ROOM, (userId: string) => {
       if (!userId) {
-        socket.emit(SocketEvent.ERROR, { message: 'User ID required' });
+        socket.emit(SocketEvent.ERROR, { message: "User ID required" });
         return;
       }
 
@@ -115,13 +115,13 @@ export function initializeSocketServer(httpServer: HTTPServer): SocketIOServer {
       socket.data.userId = userId;
 
       logger.info(`🌾 User ${userId} joined room: ${roomName}`);
-      socket.emit('room-joined', { room: roomName, userId });
+      socket.emit("room-joined", { room: roomName, userId });
     });
 
     // Join order room
     socket.on(SocketEvent.JOIN_ORDER_ROOM, (orderId: string) => {
       if (!orderId) {
-        socket.emit(SocketEvent.ERROR, { message: 'Order ID required' });
+        socket.emit(SocketEvent.ERROR, { message: "Order ID required" });
         return;
       }
 
@@ -129,13 +129,13 @@ export function initializeSocketServer(httpServer: HTTPServer): SocketIOServer {
       socket.join(roomName);
 
       logger.info(`📦 Joined order room: ${roomName}`);
-      socket.emit('room-joined', { room: roomName, orderId });
+      socket.emit("room-joined", { room: roomName, orderId });
     });
 
     // Join farm room
     socket.on(SocketEvent.JOIN_FARM_ROOM, (farmId: string) => {
       if (!farmId) {
-        socket.emit(SocketEvent.ERROR, { message: 'Farm ID required' });
+        socket.emit(SocketEvent.ERROR, { message: "Farm ID required" });
         return;
       }
 
@@ -143,14 +143,14 @@ export function initializeSocketServer(httpServer: HTTPServer): SocketIOServer {
       socket.join(roomName);
 
       logger.info(`🌾 Joined farm room: ${roomName}`);
-      socket.emit('room-joined', { room: roomName, farmId });
+      socket.emit("room-joined", { room: roomName, farmId });
     });
 
     // Leave room
     socket.on(SocketEvent.LEAVE_ROOM, (roomName: string) => {
       socket.leave(roomName);
       logger.info(`👋 Left room: ${roomName}`);
-      socket.emit('room-left', { room: roomName });
+      socket.emit("room-left", { room: roomName });
     });
 
     // Disconnect handler
@@ -160,13 +160,15 @@ export function initializeSocketServer(httpServer: HTTPServer): SocketIOServer {
 
     // Error handler
     socket.on(SocketEvent.ERROR, (error: Error) => {
-      logger.error('⚠️ Socket error:', {
-      error: error instanceof Error ? error.message : String(error),
-    });
+      logger.error("⚠️ Socket error:", {
+        error: error instanceof Error ? error.message : String(error),
+      });
     });
   });
 
-  logger.info('⚡ Socket.io server initialized with agricultural consciousness');
+  logger.info(
+    "⚡ Socket.io server initialized with agricultural consciousness",
+  );
   return io;
 }
 
@@ -182,20 +184,22 @@ export function getSocketServer(): SocketIOServer | null {
  */
 export function emitOrderUpdate(
   orderId: string,
-  payload: OrderUpdatePayload
+  payload: OrderUpdatePayload,
 ): void {
   if (!io) {
-    logger.warn('⚠️ Socket.io server not initialized');
+    logger.warn("⚠️ Socket.io server not initialized");
     return;
   }
 
   const roomName = `order:${orderId}`;
   io.to(roomName).emit(SocketEvent.ORDER_UPDATE, {
     ...payload,
-    agriculturalConsciousness: 'active',
+    agriculturalConsciousness: "active",
   });
 
-  logger.info(`📦 Order update emitted to room: ${roomName}`, { data: payload });
+  logger.info(`📦 Order update emitted to room: ${roomName}`, {
+    data: payload,
+  });
 }
 
 /**
@@ -203,17 +207,17 @@ export function emitOrderUpdate(
  */
 export function emitNotification(
   userId: string,
-  payload: NotificationPayload
+  payload: NotificationPayload,
 ): void {
   if (!io) {
-    logger.warn('⚠️ Socket.io server not initialized');
+    logger.warn("⚠️ Socket.io server not initialized");
     return;
   }
 
   const roomName = `user:${userId}`;
   io.to(roomName).emit(SocketEvent.NOTIFICATION, {
     ...payload,
-    agriculturalConsciousness: 'active',
+    agriculturalConsciousness: "active",
   });
 
   logger.info(`🔔 Notification emitted to user: ${userId}`);
@@ -224,17 +228,17 @@ export function emitNotification(
  */
 export function emitFarmUpdate(
   farmId: string,
-  payload: FarmUpdatePayload
+  payload: FarmUpdatePayload,
 ): void {
   if (!io) {
-    logger.warn('⚠️ Socket.io server not initialized');
+    logger.warn("⚠️ Socket.io server not initialized");
     return;
   }
 
   const roomName = `farm:${farmId}`;
   io.to(roomName).emit(SocketEvent.FARM_UPDATE, {
     ...payload,
-    agriculturalConsciousness: 'active',
+    agriculturalConsciousness: "active",
   });
 
   logger.info(`🌾 Farm update emitted to room: ${roomName}`);
@@ -245,13 +249,13 @@ export function emitFarmUpdate(
  */
 export function broadcast(event: string, payload: any): void {
   if (!io) {
-    logger.warn('⚠️ Socket.io server not initialized');
+    logger.warn("⚠️ Socket.io server not initialized");
     return;
   }
 
   io.emit(event, {
     ...payload,
-    agriculturalConsciousness: 'active',
+    agriculturalConsciousness: "active",
     timestamp: new Date().toISOString(),
   });
 
@@ -270,19 +274,19 @@ export function getConnectionStats(): {
     return {
       connectedClients: 0,
       rooms: [],
-      agriculturalConsciousness: 'inactive',
+      agriculturalConsciousness: "inactive",
     };
   }
 
   const sockets = io.sockets.sockets;
   const rooms = Array.from(io.sockets.adapter.rooms.keys()).filter(
-    (room) => !sockets.has(room) // Filter out socket IDs
+    (room) => !sockets.has(room), // Filter out socket IDs
   );
 
   return {
     connectedClients: io.engine.clientsCount,
     rooms,
-    agriculturalConsciousness: 'active',
+    agriculturalConsciousness: "active",
   };
 }
 
@@ -293,7 +297,7 @@ export function closeSocketServer(): void {
   if (io) {
     io.close();
     io = null;
-    logger.info('⚡ Socket.io server closed');
+    logger.info("⚡ Socket.io server closed");
   }
 }
 
@@ -301,22 +305,20 @@ export function closeSocketServer(): void {
  * Middleware to add Socket.io to Next.js API routes
  * Usage: Add to API route that needs real-time capabilities
  */
-export function withSocketIO(
-  handler: (req: any, res: any) => Promise<void>
-) {
+export function withSocketIO(handler: (req: any, res: any) => Promise<void>) {
   return async (req: any, res: NextApiResponse) => {
     // Attach Socket.io to response object
     if (!res.socket) {
-      throw new Error('Socket not available on response object');
+      throw new Error("Socket not available on response object");
     }
 
     const socket = res.socket as any;
     if (!socket.server) {
-      throw new Error('Server not available on socket');
+      throw new Error("Server not available on socket");
     }
 
     if (!socket.server.io) {
-      logger.info('🌾 Initializing Socket.io on API route...');
+      logger.info("🌾 Initializing Socket.io on API route...");
       const httpServer = socket.server;
       socket.server.io = initializeSocketServer(httpServer);
     }
@@ -333,7 +335,7 @@ declare global {
 }
 
 // Store Socket.io instance globally in development
-if (process.env.NODE_ENV === 'development') {
+if (process.env.NODE_ENV === "development") {
   if (!global.io) {
     global.io = io as any;
   }

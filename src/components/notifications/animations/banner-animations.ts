@@ -567,7 +567,7 @@ export const reducedMotionBannerVariants: Variants = {
  */
 export function getAccessibleBannerVariants(
   prefersReducedMotion: boolean,
-  baseVariants: Variants = defaultBannerVariants
+  baseVariants: Variants = defaultBannerVariants,
 ): Variants {
   return prefersReducedMotion ? reducedMotionBannerVariants : baseVariants;
 }

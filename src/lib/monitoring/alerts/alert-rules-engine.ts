@@ -721,8 +721,9 @@ export class AlertRulesEngine {
 
     return {
       totalRules: this.rules.size,
-      enabledRules: Array.from(this.rules.values()).filter((r: any) => r.enabled)
-        .length,
+      enabledRules: Array.from(this.rules.values()).filter(
+        (r: any) => r.enabled,
+      ).length,
       activeAlerts: this.activeAlerts.size,
       alertsBySeverity,
     };

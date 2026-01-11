@@ -3,9 +3,9 @@
 // 🌾 Domain: Analytics & Data Visualization
 // ⚡ Performance: Optimized chart rendering with agricultural consciousness
 
-'use client';
+"use client";
 
-import { useMemo } from 'react';
+import { useMemo } from "react";
 import {
   Area,
   AreaChart,
@@ -19,7 +19,7 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-} from 'recharts';
+} from "recharts";
 
 export interface RevenueDataPoint {
   date: string;
@@ -30,7 +30,7 @@ export interface RevenueDataPoint {
 
 interface RevenueChartProps {
   data: RevenueDataPoint[];
-  variant?: 'line' | 'area' | 'bar';
+  variant?: "line" | "area" | "bar";
   showOrders?: boolean;
   height?: number;
   title?: string;
@@ -48,18 +48,24 @@ interface RevenueChartProps {
  */
 export function RevenueChart({
   data,
-  variant = 'area',
+  variant = "area",
   showOrders = false,
   height = 400,
-  title = 'Revenue Over Time',
-  className = '',
+  title = "Revenue Over Time",
+  className = "",
 }: RevenueChartProps) {
   // Calculate statistics
   const stats = useMemo(() => {
-    const totalRevenue = data.reduce((sum: any, item: any) => sum + item.revenue, 0);
-    const totalOrders = data.reduce((sum: any, item: any) => sum + (item.orders || 0), 0);
+    const totalRevenue = data.reduce(
+      (sum: any, item: any) => sum + item.revenue,
+      0,
+    );
+    const totalOrders = data.reduce(
+      (sum: any, item: any) => sum + (item.orders || 0),
+      0,
+    );
     const avgRevenue = data.length > 0 ? totalRevenue / data.length : 0;
-    const maxRevenue = Math.max(...data.map(item => item.revenue));
+    const maxRevenue = Math.max(...data.map((item) => item.revenue));
 
     return {
       totalRevenue,
@@ -71,9 +77,9 @@ export function RevenueChart({
 
   // Format currency
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(value);
@@ -82,10 +88,10 @@ export function RevenueChart({
   // Format date for tooltip
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return new Intl.DateTimeFormat('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
+    return new Intl.DateTimeFormat("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
     }).format(date);
   };
 
@@ -95,9 +101,7 @@ export function RevenueChart({
 
     return (
       <div className="bg-white p-4 rounded-lg shadow-lg border border-gray-200">
-        <p className="font-semibold text-gray-900 mb-2">
-          {formatDate(label)}
-        </p>
+        <p className="font-semibold text-gray-900 mb-2">{formatDate(label)}</p>
         {payload.map((entry: any, index: number) => (
           <div key={index} className="flex items-center gap-2 text-sm">
             <div
@@ -106,7 +110,7 @@ export function RevenueChart({
             />
             <span className="text-gray-600">{entry.name}:</span>
             <span className="font-semibold text-gray-900">
-              {entry.name === 'Revenue'
+              {entry.name === "Revenue"
                 ? formatCurrency(entry.value)
                 : entry.value.toLocaleString()}
             </span>
@@ -124,13 +128,13 @@ export function RevenueChart({
     };
 
     const xAxisProps = {
-      dataKey: 'date',
+      dataKey: "date",
       tick: { fontSize: 12 },
       tickFormatter: (value: string) => {
         const date = new Date(value);
-        return new Intl.DateTimeFormat('en-US', {
-          month: 'short',
-          day: 'numeric',
+        return new Intl.DateTimeFormat("en-US", {
+          month: "short",
+          day: "numeric",
         }).format(date);
       },
     };
@@ -145,7 +149,7 @@ export function RevenueChart({
     };
 
     switch (variant) {
-      case 'line':
+      case "line":
         return (
           <LineChart {...commonProps}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
@@ -159,7 +163,7 @@ export function RevenueChart({
               name="Revenue"
               stroke="#16a34a"
               strokeWidth={3}
-              dot={{ fill: '#16a34a', r: 4 }}
+              dot={{ fill: "#16a34a", r: 4 }}
               activeDot={{ r: 6 }}
             />
             {showOrders && (
@@ -169,13 +173,13 @@ export function RevenueChart({
                 name="Orders"
                 stroke="#3b82f6"
                 strokeWidth={2}
-                dot={{ fill: '#3b82f6', r: 3 }}
+                dot={{ fill: "#3b82f6", r: 3 }}
               />
             )}
           </LineChart>
         );
 
-      case 'bar':
+      case "bar":
         return (
           <BarChart {...commonProps}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
@@ -200,7 +204,7 @@ export function RevenueChart({
           </BarChart>
         );
 
-      case 'area':
+      case "area":
       default:
         return (
           <AreaChart {...commonProps}>
@@ -247,22 +251,21 @@ export function RevenueChart({
       {/* Header */}
       <div className="flex items-start justify-between mb-6">
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-1">
-            {title}
-          </h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-1">{title}</h3>
           <p className="text-sm text-gray-500">
             Track revenue performance over time 🌾
           </p>
         </div>
         <div className="flex gap-2">
-          {['area', 'line', 'bar'].map((v: any) => (
+          {["area", "line", "bar"].map((v: any) => (
             <button
               key={v}
-              className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${variant === v
-                  ? 'bg-green-600 text-white'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                }`}
-              onClick={() => { }}
+              className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${
+                variant === v
+                  ? "bg-green-600 text-white"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              }`}
+              onClick={() => {}}
               disabled
             >
               {v.charAt(0).toUpperCase() + v.slice(1)}
@@ -282,9 +285,7 @@ export function RevenueChart({
           </p>
         </div>
         <div className="bg-blue-50 rounded-lg p-4">
-          <p className="text-xs font-medium text-blue-600 mb-1">
-            Avg Revenue
-          </p>
+          <p className="text-xs font-medium text-blue-600 mb-1">Avg Revenue</p>
           <p className="text-xl font-bold text-blue-900">
             {formatCurrency(stats.avgRevenue)}
           </p>
@@ -342,19 +343,19 @@ export function RevenueChart({
  */
 export function RevenueCard({
   totalRevenue,
-  period = 'This Month',
+  period = "This Month",
   trend,
-  className = '',
+  className = "",
 }: {
   totalRevenue: number;
   period?: string;
-  trend?: { value: number; direction: 'up' | 'down' };
+  trend?: { value: number; direction: "up" | "down" };
   className?: string;
 }) {
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(value);
@@ -371,12 +372,11 @@ export function RevenueCard({
           {trend && (
             <div className="flex items-center gap-1 mt-2">
               <span
-                className={`text-sm font-medium ${trend.direction === 'up'
-                    ? 'text-green-600'
-                    : 'text-red-600'
-                  }`}
+                className={`text-sm font-medium ${
+                  trend.direction === "up" ? "text-green-600" : "text-red-600"
+                }`}
               >
-                {trend.direction === 'up' ? '↑' : '↓'} {Math.abs(trend.value)}%
+                {trend.direction === "up" ? "↑" : "↓"} {Math.abs(trend.value)}%
               </span>
               <span className="text-xs text-gray-500">vs last period</span>
             </div>

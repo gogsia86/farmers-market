@@ -77,21 +77,11 @@ export function Toast({
 
       {/* Content */}
       <div className="ml-3 flex-1">
-        {title && (
-          <div className="text-sm font-semibold">
-            {title}
-          </div>
-        )}
+        {title && <div className="text-sm font-semibold">{title}</div>}
         {description && (
-          <div className="mt-1 text-sm opacity-90">
-            {description}
-          </div>
+          <div className="mt-1 text-sm opacity-90">{description}</div>
         )}
-        {action && (
-          <div className="mt-2">
-            {action}
-          </div>
-        )}
+        {action && <div className="mt-2">{action}</div>}
       </div>
 
       {/* Dismiss Button */}
@@ -114,7 +104,13 @@ export function Toast({
 
 export interface ToastViewportProps {
   children: React.ReactNode;
-  position?: "top-right" | "top-center" | "top-left" | "bottom-right" | "bottom-center" | "bottom-left";
+  position?:
+    | "top-right"
+    | "top-center"
+    | "top-left"
+    | "bottom-right"
+    | "bottom-center"
+    | "bottom-left";
 }
 
 export function ToastViewport({

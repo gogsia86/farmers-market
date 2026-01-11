@@ -12,7 +12,7 @@ import { EmailOptions, EmailPriority } from "@/lib/services/email.service";
 import { EmailStatus, EmailType } from "@prisma/client";
 import Queue, { Job, JobOptions } from "bull";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 // ============================================
 // TYPES & INTERFACES
@@ -126,7 +126,8 @@ export async function enqueueEmail(
     const jobId = `email-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
     // Determine priority
-    const priority = PRIORITY_MAP[emailOptions.priority || EmailPriority.NORMAL];
+    const priority =
+      PRIORITY_MAP[emailOptions.priority || EmailPriority.NORMAL];
 
     // Add job to queue
     const job = await emailQueue.add(
@@ -460,14 +461,14 @@ export async function closeQueue(): Promise<void> {
 if (process.env.NODE_ENV !== "test") {
   process.on("SIGTERM", async () => {
     logger.info("Received SIGTERM, shutting down email queue...");
-  await closeQueue();
-  process.exit(0);
-});
+    await closeQueue();
+    process.exit(0);
+  });
 
-process.on("SIGINT", async () => {
-  logger.info("Received SIGINT, shutting down email queue...");
-await closeQueue();
-process.exit(0);
+  process.on("SIGINT", async () => {
+    logger.info("Received SIGINT, shutting down email queue...");
+    await closeQueue();
+    process.exit(0);
   });
 }
 

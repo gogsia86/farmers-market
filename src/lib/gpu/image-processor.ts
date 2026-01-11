@@ -6,7 +6,7 @@
  * NOTE: TypeScript checks disabled - TensorFlow types not available in this environment
  */
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 let tf: any;
 let GPU: any;
@@ -88,8 +88,8 @@ export class GPUImageProcessor {
       this.initialized = true;
     } catch (error) {
       logger.error("❌ GPU initialization failed:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
       throw new Error("Failed to initialize GPU image processor");
     }
   }
@@ -134,8 +134,8 @@ export class GPUImageProcessor {
       };
     } catch (error) {
       logger.error("GPU resize failed:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
       throw error;
     }
   }
@@ -175,8 +175,8 @@ export class GPUImageProcessor {
       return results;
     } catch (error) {
       logger.error("Batch processing failed:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
       throw error;
     }
   }
@@ -240,8 +240,8 @@ export class GPUImageProcessor {
       };
     } catch (error) {
       logger.error("GPU enhancement failed:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
       throw error;
     }
   }

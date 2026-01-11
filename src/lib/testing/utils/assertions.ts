@@ -10,8 +10,8 @@
  * - Custom matchers
  */
 
-import { Page } from 'playwright';
-import { logger } from '../../monitoring/logger';
+import { Page } from "playwright";
+import { logger } from "../../monitoring/logger";
 
 export interface AssertionResult {
   passed: boolean;
@@ -25,10 +25,10 @@ export class AssertionError extends Error {
   constructor(
     message: string,
     public actual?: any,
-    public expected?: any
+    public expected?: any,
   ) {
     super(message);
-    this.name = 'AssertionError';
+    this.name = "AssertionError";
   }
 }
 
@@ -36,32 +36,32 @@ export class AssertionError extends Error {
  * Base Assertion Class
  */
 export class Assertions {
-  constructor(private page: Page) { }
+  constructor(private page: Page) {}
 
   /**
    * Assert element is visible
    */
   async isVisible(
     selector: string,
-    timeout: number = 5000
+    timeout: number = 5000,
   ): Promise<AssertionResult> {
     try {
       await this.page.waitForSelector(selector, {
-        state: 'visible',
-        timeout
+        state: "visible",
+        timeout,
       });
 
       return {
         passed: true,
-        message: `Element "${selector}" is visible`
+        message: `Element "${selector}" is visible`,
       };
     } catch (error) {
-      const screenshot = await this.captureScreenshot('assertion-failed');
+      const screenshot = await this.captureScreenshot("assertion-failed");
 
       return {
         passed: false,
         message: `Element "${selector}" is not visible`,
-        screenshot
+        screenshot,
       };
     }
   }
@@ -71,22 +71,22 @@ export class Assertions {
    */
   async isHidden(
     selector: string,
-    timeout: number = 5000
+    timeout: number = 5000,
   ): Promise<AssertionResult> {
     try {
       await this.page.waitForSelector(selector, {
-        state: 'hidden',
-        timeout
+        state: "hidden",
+        timeout,
       });
 
       return {
         passed: true,
-        message: `Element "${selector}" is hidden`
+        message: `Element "${selector}" is hidden`,
       };
     } catch (error) {
       return {
         passed: false,
-        message: `Element "${selector}" is still visible`
+        message: `Element "${selector}" is still visible`,
       };
     }
   }
@@ -97,12 +97,12 @@ export class Assertions {
   async containsText(
     selector: string,
     expectedText: string,
-    options?: { exact?: boolean; ignoreCase?: boolean }
+    options?: { exact?: boolean; ignoreCase?: boolean },
   ): Promise<AssertionResult> {
     try {
       const element = await this.page.waitForSelector(selector, {
-        state: 'visible',
-        timeout: 5000
+        state: "visible",
+        timeout: 5000,
       });
 
       const actualText = await element.textContent();
@@ -112,7 +112,7 @@ export class Assertions {
           passed: false,
           message: `Element "${selector}" has no text content`,
           actual: null,
-          expected: expectedText
+          expected: expectedText,
         };
       }
 
@@ -130,7 +130,7 @@ export class Assertions {
       if (matches) {
         return {
           passed: true,
-          message: `Element "${selector}" contains text "${expectedText}"`
+          message: `Element "${selector}" contains text "${expectedText}"`,
         };
       }
 
@@ -138,13 +138,13 @@ export class Assertions {
         passed: false,
         message: `Element "${selector}" does not contain expected text`,
         actual: actualText,
-        expected: expectedText
+        expected: expectedText,
       };
     } catch (error) {
       return {
         passed: false,
         message: `Failed to check text in "${selector}": ${error}`,
-        expected: expectedText
+        expected: expectedText,
       };
     }
   }
@@ -155,12 +155,12 @@ export class Assertions {
   async hasAttribute(
     selector: string,
     attribute: string,
-    expectedValue?: string
+    expectedValue?: string,
   ): Promise<AssertionResult> {
     try {
       const element = await this.page.waitForSelector(selector, {
-        state: 'attached',
-        timeout: 5000
+        state: "attached",
+        timeout: 5000,
       });
 
       const actualValue = await element.getAttribute(attribute);
@@ -170,7 +170,7 @@ export class Assertions {
           passed: false,
           message: `Element "${selector}" does not have attribute "${attribute}"`,
           actual: null,
-          expected: expectedValue
+          expected: expectedValue,
         };
       }
 
@@ -183,18 +183,18 @@ export class Assertions {
             ? `Element "${selector}" has attribute "${attribute}" with value "${expectedValue}"`
             : `Attribute "${attribute}" has wrong value`,
           actual: actualValue,
-          expected: expectedValue
+          expected: expectedValue,
         };
       }
 
       return {
         passed: true,
-        message: `Element "${selector}" has attribute "${attribute}"`
+        message: `Element "${selector}" has attribute "${attribute}"`,
       };
     } catch (error) {
       return {
         passed: false,
-        message: `Failed to check attribute in "${selector}": ${error}`
+        message: `Failed to check attribute in "${selector}": ${error}`,
       };
     }
   }
@@ -204,7 +204,7 @@ export class Assertions {
    */
   async urlMatches(
     expected: string | RegExp,
-    options?: { exact?: boolean; timeout?: number }
+    options?: { exact?: boolean; timeout?: number },
   ): Promise<AssertionResult> {
     const timeout = options?.timeout || 5000;
     const startTime = Date.now();
@@ -214,8 +214,10 @@ export class Assertions {
         ({ expected, exact }) => {
           const currentUrl = window.location.href;
 
-          if (typeof expected === 'string') {
-            return exact ? currentUrl === expected : currentUrl.includes(expected);
+          if (typeof expected === "string") {
+            return exact
+              ? currentUrl === expected
+              : currentUrl.includes(expected);
           }
 
           // RegExp passed as string, reconstruct
@@ -223,7 +225,7 @@ export class Assertions {
           return regex.test(currentUrl);
         },
         { expected: expected.toString(), exact: options?.exact || false },
-        { timeout }
+        { timeout },
       );
 
       const actualUrl = this.page.url();
@@ -232,7 +234,7 @@ export class Assertions {
         passed: true,
         message: `URL matches expected pattern`,
         actual: actualUrl,
-        expected: expected.toString()
+        expected: expected.toString(),
       };
     } catch (error) {
       const actualUrl = this.page.url();
@@ -241,7 +243,7 @@ export class Assertions {
         passed: false,
         message: `URL does not match expected pattern`,
         actual: actualUrl,
-        expected: expected.toString()
+        expected: expected.toString(),
       };
     }
   }
@@ -253,7 +255,7 @@ export class Assertions {
     const actualTitle = await this.page.title();
 
     const matches =
-      typeof expected === 'string'
+      typeof expected === "string"
         ? actualTitle.includes(expected)
         : expected.test(actualTitle);
 
@@ -263,7 +265,7 @@ export class Assertions {
         ? `Page title matches expected`
         : `Page title does not match expected`,
       actual: actualTitle,
-      expected: expected.toString()
+      expected: expected.toString(),
     };
   }
 
@@ -272,15 +274,15 @@ export class Assertions {
    */
   async elementCount(
     selector: string,
-    expected: number | { min?: number; max?: number }
+    expected: number | { min?: number; max?: number },
   ): Promise<AssertionResult> {
     const elements = await this.page.$$(selector);
     const actual = elements.length;
 
     let passed = false;
-    let message = '';
+    let message = "";
 
-    if (typeof expected === 'number') {
+    if (typeof expected === "number") {
       passed = actual === expected;
       message = passed
         ? `Found exactly ${expected} elements`
@@ -299,7 +301,7 @@ export class Assertions {
       passed,
       message: `${message} for selector "${selector}"`,
       actual,
-      expected
+      expected,
     };
   }
 
@@ -309,8 +311,8 @@ export class Assertions {
   async isEnabled(selector: string): Promise<AssertionResult> {
     try {
       const element = await this.page.waitForSelector(selector, {
-        state: 'visible',
-        timeout: 5000
+        state: "visible",
+        timeout: 5000,
       });
 
       const isDisabled = await element.isDisabled();
@@ -319,12 +321,12 @@ export class Assertions {
         passed: !isDisabled,
         message: isDisabled
           ? `Element "${selector}" is disabled`
-          : `Element "${selector}" is enabled`
+          : `Element "${selector}" is enabled`,
       };
     } catch (error) {
       return {
         passed: false,
-        message: `Failed to check if element "${selector}" is enabled: ${error}`
+        message: `Failed to check if element "${selector}" is enabled: ${error}`,
       };
     }
   }
@@ -335,8 +337,8 @@ export class Assertions {
   async isChecked(selector: string): Promise<AssertionResult> {
     try {
       const element = await this.page.waitForSelector(selector, {
-        state: 'attached',
-        timeout: 5000
+        state: "attached",
+        timeout: 5000,
       });
 
       const isChecked = await element.isChecked();
@@ -345,12 +347,12 @@ export class Assertions {
         passed: isChecked,
         message: isChecked
           ? `Element "${selector}" is checked`
-          : `Element "${selector}" is not checked`
+          : `Element "${selector}" is not checked`,
       };
     } catch (error) {
       return {
         passed: false,
-        message: `Failed to check if element "${selector}" is checked: ${error}`
+        message: `Failed to check if element "${selector}" is checked: ${error}`,
       };
     }
   }
@@ -358,14 +360,17 @@ export class Assertions {
   /**
    * Assert element has class
    */
-  async hasClass(selector: string, className: string): Promise<AssertionResult> {
+  async hasClass(
+    selector: string,
+    className: string,
+  ): Promise<AssertionResult> {
     try {
       const element = await this.page.waitForSelector(selector, {
-        state: 'attached',
-        timeout: 5000
+        state: "attached",
+        timeout: 5000,
       });
 
-      const classAttr = await element.getAttribute('class');
+      const classAttr = await element.getAttribute("class");
       const classes = classAttr?.split(/\s+/) || [];
       const hasClass = classes.includes(className);
 
@@ -375,12 +380,12 @@ export class Assertions {
           ? `Element "${selector}" has class "${className}"`
           : `Element "${selector}" does not have class "${className}"`,
         actual: classes,
-        expected: className
+        expected: className,
       };
     } catch (error) {
       return {
         passed: false,
-        message: `Failed to check class on "${selector}": ${error}`
+        message: `Failed to check class on "${selector}": ${error}`,
       };
     }
   }
@@ -390,12 +395,12 @@ export class Assertions {
    */
   async inputValue(
     selector: string,
-    expectedValue: string
+    expectedValue: string,
   ): Promise<AssertionResult> {
     try {
       const element = await this.page.waitForSelector(selector, {
-        state: 'attached',
-        timeout: 5000
+        state: "attached",
+        timeout: 5000,
       });
 
       const actualValue = await element.inputValue();
@@ -407,12 +412,12 @@ export class Assertions {
           ? `Input "${selector}" has expected value`
           : `Input "${selector}" has wrong value`,
         actual: actualValue,
-        expected: expectedValue
+        expected: expectedValue,
       };
     } catch (error) {
       return {
         passed: false,
-        message: `Failed to check input value in "${selector}": ${error}`
+        message: `Failed to check input value in "${selector}": ${error}`,
       };
     }
   }
@@ -423,24 +428,24 @@ export class Assertions {
   async isFocused(selector: string): Promise<AssertionResult> {
     try {
       const element = await this.page.waitForSelector(selector, {
-        state: 'visible',
-        timeout: 5000
+        state: "visible",
+        timeout: 5000,
       });
 
       const isFocused = await element.evaluate(
-        el => el === document.activeElement
+        (el) => el === document.activeElement,
       );
 
       return {
         passed: isFocused,
         message: isFocused
           ? `Element "${selector}" is focused`
-          : `Element "${selector}" is not focused`
+          : `Element "${selector}" is not focused`,
       };
     } catch (error) {
       return {
         passed: false,
-        message: `Failed to check focus on "${selector}": ${error}`
+        message: `Failed to check focus on "${selector}": ${error}`,
       };
     }
   }
@@ -451,8 +456,8 @@ export class Assertions {
   async noConsoleErrors(): Promise<AssertionResult> {
     const consoleErrors: string[] = [];
 
-    this.page.on('console', msg => {
-      if (msg.type() === 'error') {
+    this.page.on("console", (msg) => {
+      if (msg.type() === "error") {
         consoleErrors.push(msg.text());
       }
     });
@@ -464,9 +469,9 @@ export class Assertions {
       passed: consoleErrors.length === 0,
       message:
         consoleErrors.length === 0
-          ? 'No console errors detected'
+          ? "No console errors detected"
           : `Found ${consoleErrors.length} console errors`,
-      actual: consoleErrors
+      actual: consoleErrors,
     };
   }
 
@@ -475,16 +480,16 @@ export class Assertions {
    */
   async networkRequestMade(
     urlPattern: string | RegExp,
-    options?: { method?: string; timeout?: number }
+    options?: { method?: string; timeout?: number },
   ): Promise<AssertionResult> {
     const timeout = options?.timeout || 10000;
     let requestFound = false;
 
     try {
       await this.page.waitForRequest(
-        request => {
+        (request) => {
           const urlMatches =
-            typeof urlPattern === 'string'
+            typeof urlPattern === "string"
               ? request.url().includes(urlPattern)
               : urlPattern.test(request.url());
 
@@ -494,7 +499,7 @@ export class Assertions {
 
           return urlMatches && methodMatches;
         },
-        { timeout }
+        { timeout },
       );
 
       requestFound = true;
@@ -502,13 +507,13 @@ export class Assertions {
       return {
         passed: true,
         message: `Network request to "${urlPattern}" was made`,
-        expected: urlPattern.toString()
+        expected: urlPattern.toString(),
       };
     } catch (error) {
       return {
         passed: false,
         message: `Network request to "${urlPattern}" was not made within ${timeout}ms`,
-        expected: urlPattern.toString()
+        expected: urlPattern.toString(),
       };
     }
   }
@@ -518,19 +523,19 @@ export class Assertions {
    */
   async responseStatus(
     urlPattern: string | RegExp,
-    expectedStatus: number
+    expectedStatus: number,
   ): Promise<AssertionResult> {
     try {
       const response = await this.page.waitForResponse(
-        resp => {
+        (resp) => {
           const urlMatches =
-            typeof urlPattern === 'string'
+            typeof urlPattern === "string"
               ? resp.url().includes(urlPattern)
               : urlPattern.test(resp.url());
 
           return urlMatches;
         },
-        { timeout: 10000 }
+        { timeout: 10000 },
       );
 
       const actualStatus = response.status();
@@ -542,12 +547,12 @@ export class Assertions {
           ? `Response status is ${expectedStatus}`
           : `Response status mismatch`,
         actual: actualStatus,
-        expected: expectedStatus
+        expected: expectedStatus,
       };
     } catch (error) {
       return {
         passed: false,
-        message: `Failed to capture response for "${urlPattern}": ${error}`
+        message: `Failed to capture response for "${urlPattern}": ${error}`,
       };
     }
   }
@@ -560,7 +565,7 @@ export class Assertions {
       const timing = performance.timing;
       return {
         loadTime: timing.loadEventEnd - timing.navigationStart,
-        domReady: timing.domContentLoadedEventEnd - timing.navigationStart
+        domReady: timing.domContentLoadedEventEnd - timing.navigationStart,
       };
     });
 
@@ -572,7 +577,7 @@ export class Assertions {
         ? `Page loaded in ${metrics.loadTime}ms (under ${maxMilliseconds}ms)`
         : `Page load time ${metrics.loadTime}ms exceeds ${maxMilliseconds}ms`,
       actual: metrics.loadTime,
-      expected: maxMilliseconds
+      expected: maxMilliseconds,
     };
   }
 
@@ -581,11 +586,11 @@ export class Assertions {
    */
   async localStorageItem(
     key: string,
-    expectedValue?: string
+    expectedValue?: string,
   ): Promise<AssertionResult> {
     const actualValue = await this.page.evaluate(
-      key => localStorage.getItem(key),
-      key
+      (key) => localStorage.getItem(key),
+      key,
     );
 
     if (expectedValue === undefined) {
@@ -595,7 +600,7 @@ export class Assertions {
           actualValue !== null
             ? `Local storage has item "${key}"`
             : `Local storage does not have item "${key}"`,
-        actual: actualValue
+        actual: actualValue,
       };
     }
 
@@ -607,7 +612,7 @@ export class Assertions {
         ? `Local storage item "${key}" has expected value`
         : `Local storage item "${key}" has wrong value`,
       actual: actualValue,
-      expected: expectedValue
+      expected: expectedValue,
     };
   }
 
@@ -616,14 +621,14 @@ export class Assertions {
    */
   async cookieExists(name: string): Promise<AssertionResult> {
     const cookies = await this.page.context().cookies();
-    const cookie = cookies.find(c => c.name === name);
+    const cookie = cookies.find((c) => c.name === name);
 
     return {
       passed: !!cookie,
       message: cookie
         ? `Cookie "${name}" exists`
         : `Cookie "${name}" does not exist`,
-      actual: cookie?.value
+      actual: cookie?.value,
     };
   }
 
@@ -637,8 +642,11 @@ export class Assertions {
       await this.page.screenshot({ path, fullPage: true });
       return path;
     } catch (error) {
-      logger.error('[Assertions] Failed to capture screenshot:', error as Error);
-      return '';
+      logger.error(
+        "[Assertions] Failed to capture screenshot:",
+        error as Error,
+      );
+      return "";
     }
   }
 }
@@ -646,14 +654,8 @@ export class Assertions {
 /**
  * Helper to throw assertion error
  */
-export function throwAssertionError(
-  result: AssertionResult
-): never {
-  throw new AssertionError(
-    result.message,
-    result.actual,
-    result.expected
-  );
+export function throwAssertionError(result: AssertionResult): never {
+  throw new AssertionError(result.message, result.actual, result.expected);
 }
 
 /**
@@ -670,7 +672,7 @@ export function expect(page: Page): any;
 export function expect(value: any): any;
 export function expect(pageOrValue: any): any {
   // If it's a Page object, return page-based assertions
-  if (pageOrValue && typeof pageOrValue === 'object' && 'goto' in pageOrValue) {
+  if (pageOrValue && typeof pageOrValue === "object" && "goto" in pageOrValue) {
     const assertions = new Assertions(pageOrValue);
 
     return {
@@ -717,7 +719,7 @@ export function expect(pageOrValue: any): any {
       async toHaveValue(selector: string, value: string) {
         const result = await assertions.inputValue(selector, value);
         if (!result.passed) throwAssertionError(result);
-      }
+      },
     };
   }
 
@@ -732,7 +734,7 @@ export function expect(pageOrValue: any): any {
           passed: false,
           message: `Expected ${JSON.stringify(actualValue)} to be ${JSON.stringify(expected)}`,
           actual: actualValue,
-          expected
+          expected,
         });
       }
     },
@@ -745,10 +747,10 @@ export function expect(pageOrValue: any): any {
             passed: false,
             message: `Expected ${JSON.stringify(actualValue)} not to be ${JSON.stringify(expected)}`,
             actual: actualValue,
-            expected
+            expected,
           });
         }
-      }
+      },
     },
 
     toEqual(expected: any) {
@@ -758,7 +760,7 @@ export function expect(pageOrValue: any): any {
           passed: false,
           message: `Expected ${JSON.stringify(actualValue)} to equal ${JSON.stringify(expected)}`,
           actual: actualValue,
-          expected
+          expected,
         });
       }
     },
@@ -770,7 +772,7 @@ export function expect(pageOrValue: any): any {
           passed: false,
           message: `Expected value to be defined but got undefined`,
           actual: actualValue,
-          expected: 'defined'
+          expected: "defined",
         });
       }
     },
@@ -782,7 +784,7 @@ export function expect(pageOrValue: any): any {
           passed: false,
           message: `Expected value to be undefined but got ${JSON.stringify(actualValue)}`,
           actual: actualValue,
-          expected: undefined
+          expected: undefined,
         });
       }
     },
@@ -794,7 +796,7 @@ export function expect(pageOrValue: any): any {
           passed: false,
           message: `Expected value to be null but got ${JSON.stringify(actualValue)}`,
           actual: actualValue,
-          expected: null
+          expected: null,
         });
       }
     },
@@ -806,7 +808,7 @@ export function expect(pageOrValue: any): any {
           passed: false,
           message: `Expected ${JSON.stringify(actualValue)} to be truthy`,
           actual: actualValue,
-          expected: 'truthy value'
+          expected: "truthy value",
         });
       }
     },
@@ -818,55 +820,55 @@ export function expect(pageOrValue: any): any {
           passed: false,
           message: `Expected ${JSON.stringify(actualValue)} to be falsy`,
           actual: actualValue,
-          expected: 'falsy value'
+          expected: "falsy value",
         });
       }
     },
 
     toBeGreaterThan(expected: number) {
-      const passed = typeof actualValue === 'number' && actualValue > expected;
+      const passed = typeof actualValue === "number" && actualValue > expected;
       if (!passed) {
         throwAssertionError({
           passed: false,
           message: `Expected ${actualValue} to be greater than ${expected}`,
           actual: actualValue,
-          expected: `> ${expected}`
+          expected: `> ${expected}`,
         });
       }
     },
 
     toBeGreaterThanOrEqual(expected: number) {
-      const passed = typeof actualValue === 'number' && actualValue >= expected;
+      const passed = typeof actualValue === "number" && actualValue >= expected;
       if (!passed) {
         throwAssertionError({
           passed: false,
           message: `Expected ${actualValue} to be greater than or equal to ${expected}`,
           actual: actualValue,
-          expected: `>= ${expected}`
+          expected: `>= ${expected}`,
         });
       }
     },
 
     toBeLessThan(expected: number) {
-      const passed = typeof actualValue === 'number' && actualValue < expected;
+      const passed = typeof actualValue === "number" && actualValue < expected;
       if (!passed) {
         throwAssertionError({
           passed: false,
           message: `Expected ${actualValue} to be less than ${expected}`,
           actual: actualValue,
-          expected: `< ${expected}`
+          expected: `< ${expected}`,
         });
       }
     },
 
     toBeLessThanOrEqual(expected: number) {
-      const passed = typeof actualValue === 'number' && actualValue <= expected;
+      const passed = typeof actualValue === "number" && actualValue <= expected;
       if (!passed) {
         throwAssertionError({
           passed: false,
           message: `Expected ${actualValue} to be less than or equal to ${expected}`,
           actual: actualValue,
-          expected: `<= ${expected}`
+          expected: `<= ${expected}`,
         });
       }
     },
@@ -874,11 +876,11 @@ export function expect(pageOrValue: any): any {
     toContain(expected: any) {
       let passed = false;
 
-      if (typeof actualValue === 'string' && typeof expected === 'string') {
+      if (typeof actualValue === "string" && typeof expected === "string") {
         passed = actualValue.includes(expected);
       } else if (Array.isArray(actualValue)) {
         passed = actualValue.includes(expected);
-      } else if (actualValue && typeof actualValue === 'object') {
+      } else if (actualValue && typeof actualValue === "object") {
         passed = Object.values(actualValue).includes(expected);
       }
 
@@ -887,21 +889,22 @@ export function expect(pageOrValue: any): any {
           passed: false,
           message: `Expected ${JSON.stringify(actualValue)} to contain ${JSON.stringify(expected)}`,
           actual: actualValue,
-          expected
+          expected,
         });
       }
     },
 
     toMatch(expected: RegExp | string) {
-      const regex = typeof expected === 'string' ? new RegExp(expected) : expected;
-      const passed = typeof actualValue === 'string' && regex.test(actualValue);
+      const regex =
+        typeof expected === "string" ? new RegExp(expected) : expected;
+      const passed = typeof actualValue === "string" && regex.test(actualValue);
 
       if (!passed) {
         throwAssertionError({
           passed: false,
           message: `Expected "${actualValue}" to match ${regex}`,
           actual: actualValue,
-          expected: regex.toString()
+          expected: regex.toString(),
         });
       }
     },
@@ -915,7 +918,7 @@ export function expect(pageOrValue: any): any {
           passed: false,
           message: `Expected length to be ${expected} but got ${actualLength}`,
           actual: actualLength,
-          expected
+          expected,
         });
       }
     },
@@ -928,7 +931,7 @@ export function expect(pageOrValue: any): any {
           passed: false,
           message: `Expected object to have property "${property}"`,
           actual: actualValue,
-          expected: property
+          expected: property,
         });
       }
 
@@ -941,7 +944,7 @@ export function expect(pageOrValue: any): any {
             passed: false,
             message: `Expected property "${property}" to be ${JSON.stringify(value)} but got ${JSON.stringify(actualPropertyValue)}`,
             actual: actualPropertyValue,
-            expected: value
+            expected: value,
           });
         }
       }
@@ -955,7 +958,7 @@ export function expect(pageOrValue: any): any {
           passed: false,
           message: `Expected value to be instance of ${expected.name}`,
           actual: actualValue?.constructor?.name || typeof actualValue,
-          expected: expected.name
+          expected: expected.name,
         });
       }
     },
@@ -965,7 +968,7 @@ export function expect(pageOrValue: any): any {
       let error: any;
 
       try {
-        if (typeof actualValue === 'function') {
+        if (typeof actualValue === "function") {
           actualValue();
         }
       } catch (e) {
@@ -973,7 +976,7 @@ export function expect(pageOrValue: any): any {
         passed = true;
 
         if (expected) {
-          if (typeof expected === 'string') {
+          if (typeof expected === "string") {
             passed = error.message.includes(expected);
           } else if (expected instanceof RegExp) {
             passed = expected.test(error.message);
@@ -986,11 +989,11 @@ export function expect(pageOrValue: any): any {
           passed: false,
           message: expected
             ? `Expected function to throw error matching ${expected}`
-            : 'Expected function to throw an error',
-          actual: error?.message || 'no error thrown',
-          expected: expected || 'error'
+            : "Expected function to throw an error",
+          actual: error?.message || "no error thrown",
+          expected: expected || "error",
         });
       }
-    }
+    },
   };
 }

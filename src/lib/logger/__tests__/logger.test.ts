@@ -134,8 +134,8 @@ describe.skip("🌟 Divine Logger", () => {
     it("should log error messages", () => {
       const error = new Error("Test error");
       logger.error("Error occurred", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
       // In development, error uses console.log, not console.error
       expect(logSpy).toHaveBeenCalled();
     });
@@ -291,8 +291,8 @@ describe.skip("🌟 Divine Logger", () => {
       error.stack = "Error stack trace";
 
       logger.error("Error occurred", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
 
       const logOutput = errorSpy.mock.calls[0][0];
       const parsed = JSON.parse(logOutput);
@@ -329,8 +329,8 @@ describe.skip("🌟 Divine Logger", () => {
       error.code = "ERR_TEST_123";
 
       logger.error("Error occurred", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
 
       const logOutput = errorSpy.mock.calls[0][0];
       const parsed = JSON.parse(logOutput);

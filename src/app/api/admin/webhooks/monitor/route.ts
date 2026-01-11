@@ -9,7 +9,7 @@ import { webhookMonitor } from "@/lib/monitoring/webhook-monitor";
 import { webhookEventService } from "@/lib/services/webhook-event.service";
 import { NextRequest, NextResponse } from "next/server";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 // ============================================================================
 // GET /api/admin/webhooks/monitor
@@ -23,7 +23,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     if (!session?.user || session.user.role !== "ADMIN") {
       return NextResponse.json(
         { error: "Unauthorized - Admin access required" },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -56,7 +56,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         error: "Failed to retrieve webhook monitoring data",
         message: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -73,7 +73,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     if (!session?.user || session.user.role !== "ADMIN") {
       return NextResponse.json(
         { error: "Unauthorized - Admin access required" },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -81,146 +81,144 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const { action, params } = body;
 
     switch (action) {
-      case "cleanup":
-        {
-          const olderThanDays = params?.olderThanDays || 90;
-          const deletedCount = await webhookEventService.cleanupOldEvents(olderThanDays);
-          return NextResponse.json({
-            success: true,
-            data: {
-              action: "cleanup",
-              deletedCount,
-              olderThanDays,
-            },
-          });
+      case "cleanup": {
+        const olderThanDays = params?.olderThanDays || 90;
+        const deletedCount =
+          await webhookEventService.cleanupOldEvents(olderThanDays);
+        return NextResponse.json({
+          success: true,
+          data: {
+            action: "cleanup",
+            deletedCount,
+            olderThanDays,
+          },
+        });
+      }
+
+      case "auto-remediate": {
+        const result = await webhookMonitor.autoRemediate();
+        return NextResponse.json({
+          success: true,
+          data: {
+            action: "auto-remediate",
+            ...result,
+          },
+        });
+      }
+
+      case "retry-failed": {
+        const maxAttempts = params?.maxAttempts || 5;
+        const limit = params?.limit || 50;
+        const failedEvents = await webhookEventService.getFailedEvents(
+          maxAttempts,
+          limit,
+        );
+
+        return NextResponse.json({
+          success: true,
+          data: {
+            action: "retry-failed",
+            eventsFound: failedEvents.length,
+            events: failedEvents.map((e: any) => ({
+              eventId: e.eventId,
+              provider: e.provider,
+              eventType: e.eventType,
+              attempts: e.attempts,
+              error: e.error,
+              createdAt: e.createdAt,
+            })),
+          },
+        });
+      }
+
+      case "retry-event": {
+        const { eventId } = params;
+        if (!eventId) {
+          return NextResponse.json(
+            { success: false, error: "eventId is required" },
+            { status: 400 },
+          );
         }
 
-      case "auto-remediate":
-        {
-          const result = await webhookMonitor.autoRemediate();
-          return NextResponse.json({
-            success: true,
-            data: {
-              action: "auto-remediate",
-              ...result,
-            },
-          });
+        // Note: Actual retry would need the handler function
+        // This endpoint returns the event details for manual retry
+        const event = await webhookEventService.getEvent(eventId);
+        if (!event) {
+          return NextResponse.json(
+            { success: false, error: "Event not found" },
+            { status: 404 },
+          );
         }
 
-      case "retry-failed":
-        {
-          const maxAttempts = params?.maxAttempts || 5;
-          const limit = params?.limit || 50;
-          const failedEvents = await webhookEventService.getFailedEvents(maxAttempts, limit);
-
-          return NextResponse.json({
-            success: true,
-            data: {
-              action: "retry-failed",
-              eventsFound: failedEvents.length,
-              events: failedEvents.map((e: any) => ({
-                eventId: e.eventId,
-                provider: e.provider,
-                eventType: e.eventType,
-                attempts: e.attempts,
-                error: e.error,
-                createdAt: e.createdAt,
-              })),
+        return NextResponse.json({
+          success: true,
+          data: {
+            action: "retry-event",
+            event: {
+              eventId: event.eventId,
+              provider: event.provider,
+              eventType: event.eventType,
+              payload: event.payload,
+              attempts: event.attempts,
+              error: event.error,
+              processed: event.processed,
             },
-          });
+            message:
+              "Event details retrieved. Use webhook replay endpoint to retry.",
+          },
+        });
+      }
+
+      case "mark-processed": {
+        const { eventIds } = params;
+        if (!Array.isArray(eventIds) || eventIds.length === 0) {
+          return NextResponse.json(
+            { success: false, error: "eventIds array is required" },
+            { status: 400 },
+          );
         }
 
-      case "retry-event":
-        {
-          const { eventId } = params;
-          if (!eventId) {
-            return NextResponse.json(
-              { success: false, error: "eventId is required" },
-              { status: 400 }
-            );
-          }
+        const count = await webhookEventService.bulkMarkAsProcessed(eventIds);
+        return NextResponse.json({
+          success: true,
+          data: {
+            action: "mark-processed",
+            markedCount: count,
+          },
+        });
+      }
 
-          // Note: Actual retry would need the handler function
-          // This endpoint returns the event details for manual retry
-          const event = await webhookEventService.getEvent(eventId);
-          if (!event) {
-            return NextResponse.json(
-              { success: false, error: "Event not found" },
-              { status: 404 }
-            );
-          }
-
-          return NextResponse.json({
-            success: true,
-            data: {
-              action: "retry-event",
-              event: {
-                eventId: event.eventId,
-                provider: event.provider,
-                eventType: event.eventType,
-                payload: event.payload,
-                attempts: event.attempts,
-                error: event.error,
-                processed: event.processed,
-              },
-              message: "Event details retrieved. Use webhook replay endpoint to retry.",
-            },
-          });
+      case "delete-event": {
+        const { eventId } = params;
+        if (!eventId) {
+          return NextResponse.json(
+            { success: false, error: "eventId is required" },
+            { status: 400 },
+          );
         }
 
-      case "mark-processed":
-        {
-          const { eventIds } = params;
-          if (!Array.isArray(eventIds) || eventIds.length === 0) {
-            return NextResponse.json(
-              { success: false, error: "eventIds array is required" },
-              { status: 400 }
-            );
-          }
+        await webhookEventService.deleteEvent(eventId);
+        return NextResponse.json({
+          success: true,
+          data: {
+            action: "delete-event",
+            eventId,
+          },
+        });
+      }
 
-          const count = await webhookEventService.bulkMarkAsProcessed(eventIds);
-          return NextResponse.json({
-            success: true,
-            data: {
-              action: "mark-processed",
-              markedCount: count,
-            },
-          });
-        }
-
-      case "delete-event":
-        {
-          const { eventId } = params;
-          if (!eventId) {
-            return NextResponse.json(
-              { success: false, error: "eventId is required" },
-              { status: 400 }
-            );
-          }
-
-          await webhookEventService.deleteEvent(eventId);
-          return NextResponse.json({
-            success: true,
-            data: {
-              action: "delete-event",
-              eventId,
-            },
-          });
-        }
-
-      case "find-duplicates":
-        {
-          const provider = params?.provider;
-          const duplicates = await webhookEventService.findDuplicates(provider);
-          return NextResponse.json({
-            success: true,
-            data: {
-              action: "find-duplicates",
-              duplicates,
-              totalDuplicates: duplicates.length,
-            },
-          });
-        }
+      case "find-duplicates": {
+        const provider = params?.provider;
+        const duplicates = await webhookEventService.findDuplicates(provider);
+        return NextResponse.json({
+          success: true,
+          data: {
+            action: "find-duplicates",
+            duplicates,
+            totalDuplicates: duplicates.length,
+          },
+        });
+      }
 
       default:
         return NextResponse.json(
@@ -237,7 +235,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
               "find-duplicates",
             ],
           },
-          { status: 400 }
+          { status: 400 },
         );
     }
   } catch (error) {
@@ -250,7 +248,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         error: "Failed to perform maintenance action",
         message: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

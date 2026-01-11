@@ -9,13 +9,13 @@ export interface SecurityVulnerability {
   id: string;
   severity: "CRITICAL" | "HIGH" | "MEDIUM" | "LOW" | "INFO";
   category:
-  | "SQL_INJECTION"
-  | "XSS"
-  | "CSRF"
-  | "AUTH"
-  | "DATA_EXPOSURE"
-  | "DEPENDENCY"
-  | "CONFIGURATION";
+    | "SQL_INJECTION"
+    | "XSS"
+    | "CSRF"
+    | "AUTH"
+    | "DATA_EXPOSURE"
+    | "DEPENDENCY"
+    | "CONFIGURATION";
   description: string;
   location: string;
   recommendation: string;
@@ -481,13 +481,16 @@ export class SecurityAuditSystem {
   private generateSummary() {
     const summary = {
       total: this.vulnerabilities.length,
-      critical: this.vulnerabilities.filter((v: any) => v.severity === "CRITICAL")
+      critical: this.vulnerabilities.filter(
+        (v: any) => v.severity === "CRITICAL",
+      ).length,
+      high: this.vulnerabilities.filter((v: any) => v.severity === "HIGH")
         .length,
-      high: this.vulnerabilities.filter((v: any) => v.severity === "HIGH").length,
       medium: this.vulnerabilities.filter((v: any) => v.severity === "MEDIUM")
         .length,
       low: this.vulnerabilities.filter((v: any) => v.severity === "LOW").length,
-      info: this.vulnerabilities.filter((v: any) => v.severity === "INFO").length,
+      info: this.vulnerabilities.filter((v: any) => v.severity === "INFO")
+        .length,
     };
 
     return summary;

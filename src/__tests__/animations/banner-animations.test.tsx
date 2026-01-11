@@ -45,7 +45,7 @@ describe("Banner Animation System", () => {
             position="top"
             onDismiss={jest.fn()}
           />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       expect(screen.getByText("Top banner notification")).toBeInTheDocument();
@@ -60,10 +60,12 @@ describe("Banner Animation System", () => {
             position="bottom"
             onDismiss={jest.fn()}
           />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
-      expect(screen.getByText("Bottom banner notification")).toBeInTheDocument();
+      expect(
+        screen.getByText("Bottom banner notification"),
+      ).toBeInTheDocument();
     });
 
     it("should default to top position if not specified", () => {
@@ -74,7 +76,7 @@ describe("Banner Animation System", () => {
             type="info"
             onDismiss={jest.fn()}
           />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       expect(screen.getByText("Default position banner")).toBeInTheDocument();
@@ -90,7 +92,7 @@ describe("Banner Animation System", () => {
             type="success"
             onDismiss={jest.fn()}
           />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       expect(screen.getByText("Success message")).toBeInTheDocument();
@@ -99,12 +101,8 @@ describe("Banner Animation System", () => {
     it("should select severity variant for error banner", () => {
       render(
         <AnimationProvider>
-          <Banner
-            message="Error message"
-            type="error"
-            onDismiss={jest.fn()}
-          />
-        </AnimationProvider>
+          <Banner message="Error message" type="error" onDismiss={jest.fn()} />
+        </AnimationProvider>,
       );
 
       expect(screen.getByText("Error message")).toBeInTheDocument();
@@ -118,14 +116,16 @@ describe("Banner Animation System", () => {
             type="warning"
             onDismiss={jest.fn()}
           />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       expect(screen.getByText("Warning message")).toBeInTheDocument();
     });
 
     it("should use reduced motion variant when prefersReducedMotion is true", () => {
-      const { useReducedMotion } = require("@/components/notifications/hooks/useReducedMotion");
+      const {
+        useReducedMotion,
+      } = require("@/components/notifications/hooks/useReducedMotion");
       useReducedMotion.mockReturnValue(true);
 
       render(
@@ -135,7 +135,7 @@ describe("Banner Animation System", () => {
             type="info"
             onDismiss={jest.fn()}
           />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       expect(screen.getByText("Reduced motion banner")).toBeInTheDocument();
@@ -152,7 +152,7 @@ describe("Banner Animation System", () => {
             sticky
             onDismiss={jest.fn()}
           />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       const banner = container.querySelector('[role="status"]');
@@ -168,7 +168,7 @@ describe("Banner Animation System", () => {
             sticky={false}
             onDismiss={jest.fn()}
           />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       const banner = container.querySelector('[role="status"]');
@@ -190,7 +190,7 @@ describe("Banner Animation System", () => {
             duration={3000}
             onDismiss={onDismiss}
           />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       jest.advanceTimersByTime(3000);
@@ -214,7 +214,7 @@ describe("Banner Animation System", () => {
             autoHide={false}
             onDismiss={onDismiss}
           />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       jest.advanceTimersByTime(5000);
@@ -237,7 +237,7 @@ describe("Banner Animation System", () => {
             duration={1500}
             onDismiss={onDismiss}
           />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       jest.advanceTimersByTime(1500);
@@ -262,7 +262,7 @@ describe("Banner Animation System", () => {
             type="info"
             onDismiss={onDismiss}
           />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       const dismissButton = screen.getByRole("button", { name: /dismiss/i });
@@ -286,7 +286,7 @@ describe("Banner Animation System", () => {
             }}
             onDismiss={jest.fn()}
           />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       const actionButton = screen.getByText("Take Action");
@@ -300,12 +300,8 @@ describe("Banner Animation System", () => {
     it("should have correct ARIA role for info banner", () => {
       render(
         <AnimationProvider>
-          <Banner
-            message="Info banner"
-            type="info"
-            onDismiss={jest.fn()}
-          />
-        </AnimationProvider>
+          <Banner message="Info banner" type="info" onDismiss={jest.fn()} />
+        </AnimationProvider>,
       );
 
       expect(screen.getByRole("status")).toBeInTheDocument();
@@ -314,12 +310,8 @@ describe("Banner Animation System", () => {
     it("should have correct ARIA role for error banner", () => {
       render(
         <AnimationProvider>
-          <Banner
-            message="Error banner"
-            type="error"
-            onDismiss={jest.fn()}
-          />
-        </AnimationProvider>
+          <Banner message="Error banner" type="error" onDismiss={jest.fn()} />
+        </AnimationProvider>,
       );
 
       expect(screen.getByRole("alert")).toBeInTheDocument();
@@ -333,10 +325,10 @@ describe("Banner Animation System", () => {
             type="info"
             onDismiss={jest.fn()}
           />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
-      const banner = container.querySelector('[aria-live]');
+      const banner = container.querySelector("[aria-live]");
       expect(banner).toBeTruthy();
     });
 
@@ -348,7 +340,7 @@ describe("Banner Animation System", () => {
             type="info"
             onDismiss={jest.fn()}
           />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       const dismissButton = screen.getByRole("button", { name: /dismiss/i });
@@ -366,11 +358,13 @@ describe("Banner Animation System", () => {
             type="info"
             onDismiss={jest.fn()}
           />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       expect(screen.getByText("Important Notice")).toBeInTheDocument();
-      expect(screen.getByText("This is an important message")).toBeInTheDocument();
+      expect(
+        screen.getByText("This is an important message"),
+      ).toBeInTheDocument();
     });
 
     it("should render message without title", () => {
@@ -381,7 +375,7 @@ describe("Banner Animation System", () => {
             type="info"
             onDismiss={jest.fn()}
           />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       expect(screen.getByText("Simple banner message")).toBeInTheDocument();
@@ -398,7 +392,7 @@ describe("Banner Animation System", () => {
             icon={<CustomIcon />}
             onDismiss={jest.fn()}
           />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       expect(screen.getByTestId("custom-icon")).toBeInTheDocument();
@@ -414,7 +408,7 @@ describe("Banner Animation System", () => {
             type="info"
             onDismiss={jest.fn()}
           />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       expect(screen.getByText("Minimal preset banner")).toBeInTheDocument();
@@ -428,7 +422,7 @@ describe("Banner Animation System", () => {
             type="info"
             onDismiss={jest.fn()}
           />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       expect(screen.getByText("Enhanced preset banner")).toBeInTheDocument();
@@ -442,7 +436,7 @@ describe("Banner Animation System", () => {
             type="info"
             onDismiss={jest.fn()}
           />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       expect(screen.getByText("Divine preset banner")).toBeInTheDocument();
@@ -458,7 +452,7 @@ describe("Banner Animation System", () => {
             type="info"
             onDismiss={jest.fn()}
           />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       const banner = container.firstChild as HTMLElement;
@@ -476,7 +470,7 @@ describe("Banner Animation System", () => {
             <Banner message="Banner 3" type="warning" onDismiss={jest.fn()} />
             <Banner message="Banner 4" type="error" onDismiss={jest.fn()} />
           </>
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       const endTime = performance.now();
@@ -497,7 +491,7 @@ describe("Banner Animation System", () => {
             variant="seasonal"
             onDismiss={jest.fn()}
           />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       expect(screen.getByText("Spring banner")).toBeInTheDocument();
@@ -512,7 +506,7 @@ describe("Banner Animation System", () => {
             variant="seasonal"
             onDismiss={jest.fn()}
           />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       expect(screen.getByText("Summer banner")).toBeInTheDocument();
@@ -527,7 +521,7 @@ describe("Banner Animation System", () => {
             variant="seasonal"
             onDismiss={jest.fn()}
           />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       expect(screen.getByText("Fall banner")).toBeInTheDocument();
@@ -542,7 +536,7 @@ describe("Banner Animation System", () => {
             variant="seasonal"
             onDismiss={jest.fn()}
           />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       expect(screen.getByText("Winter banner")).toBeInTheDocument();
@@ -554,7 +548,7 @@ describe("Banner Animation System", () => {
       const { container } = render(
         <AnimationProvider>
           <Banner message="No dismiss handler" type="info" />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       expect(container.firstChild).toBeInTheDocument();
@@ -564,7 +558,7 @@ describe("Banner Animation System", () => {
       render(
         <AnimationProvider>
           <Banner message="" type="info" onDismiss={jest.fn()} />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       expect(screen.queryByText("")).toBeInTheDocument();
@@ -576,7 +570,7 @@ describe("Banner Animation System", () => {
       render(
         <AnimationProvider>
           <Banner message={longMessage} type="info" onDismiss={jest.fn()} />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       expect(screen.getByText(longMessage)).toBeInTheDocument();

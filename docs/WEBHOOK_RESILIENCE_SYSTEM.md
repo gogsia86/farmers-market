@@ -148,6 +148,7 @@ const duplicateResult = await webhookEventService.recordEvent({
 ```
 
 **Benefits:**
+
 - ✅ Prevents double-charging customers
 - ✅ Prevents duplicate order confirmations
 - ✅ Maintains data consistency
@@ -161,15 +162,12 @@ const duplicateResult = await webhookEventService.recordEvent({
 ```typescript
 // Stripe signature verification
 const signature = headers.get("stripe-signature");
-const event = stripe.webhooks.constructEvent(
-  rawBody,
-  signature,
-  webhookSecret
-);
+const event = stripe.webhooks.constructEvent(rawBody, signature, webhookSecret);
 // Throws error if signature invalid or timestamp too old
 ```
 
 **Security Features:**
+
 - ✅ HMAC-SHA256 signature verification
 - ✅ Timestamp validation (rejects events >5 minutes old)
 - ✅ Secret key protection (environment variable)
@@ -193,6 +191,7 @@ for (const event of failedEvents) {
 ```
 
 **Retry Configuration:**
+
 - Max attempts: 5
 - Backoff: Exponential (1s, 2s, 4s, 8s, 16s)
 - Circuit breaker: Stop retrying after max attempts
@@ -264,6 +263,7 @@ const health = await webhookMonitor.performHealthCheck(60);
 ### Step 1: Add Webhook Event Logging to Existing Handler
 
 **Before:**
+
 ```typescript
 // src/app/api/webhooks/stripe/route.ts
 export async function POST(request: NextRequest) {
@@ -278,6 +278,7 @@ export async function POST(request: NextRequest) {
 ```
 
 **After:**
+
 ```typescript
 // src/app/api/webhooks/stripe/route.ts
 import { webhookEventService } from "@/lib/services/webhook-event.service";
@@ -311,7 +312,7 @@ export async function POST(request: NextRequest) {
     // 5. Mark as failed for retry
     await webhookEventService.markAsFailed(
       event.id,
-      error instanceof Error ? error.message : "Unknown error"
+      error instanceof Error ? error.message : "Unknown error",
     );
 
     // Return 500 to trigger provider retry
@@ -363,6 +364,7 @@ model WebhookEvent {
 ```
 
 Run migration:
+
 ```bash
 npx prisma db push
 npx prisma generate
@@ -471,7 +473,7 @@ Record processing failure with error message.
 ```typescript
 await webhookEventService.markAsFailed(
   "evt_1234567890",
-  "Payment validation failed: Insufficient funds"
+  "Payment validation failed: Insufficient funds",
 );
 ```
 
@@ -502,7 +504,7 @@ const result = await webhookEventService.retryEvent(
   "evt_1234567890",
   async (payload) => {
     await processPayment(payload);
-  }
+  },
 );
 ```
 
@@ -548,10 +550,12 @@ const remediation = await webhookMonitor.autoRemediate();
 Get webhook health status.
 
 **Query Parameters:**
+
 - `timeWindow` (number) - Time window in minutes (default: 60)
 - `report` (boolean) - Include full report (default: false)
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -572,6 +576,7 @@ Perform maintenance actions.
 **Actions:**
 
 **1. Cleanup Old Events**
+
 ```json
 {
   "action": "cleanup",
@@ -580,6 +585,7 @@ Perform maintenance actions.
 ```
 
 **2. Auto-Remediate**
+
 ```json
 {
   "action": "auto-remediate"
@@ -587,6 +593,7 @@ Perform maintenance actions.
 ```
 
 **3. Get Failed Events**
+
 ```json
 {
   "action": "retry-failed",
@@ -595,6 +602,7 @@ Perform maintenance actions.
 ```
 
 **4. Mark Events as Processed**
+
 ```json
 {
   "action": "mark-processed",
@@ -603,6 +611,7 @@ Perform maintenance actions.
 ```
 
 **5. Delete Event**
+
 ```json
 {
   "action": "delete-event",
@@ -611,6 +620,7 @@ Perform maintenance actions.
 ```
 
 **6. Find Duplicates**
+
 ```json
 {
   "action": "find-duplicates",
@@ -639,6 +649,7 @@ npm test src/__tests__/integration/webhook.integration.test.ts
 ```
 
 **Test Coverage:**
+
 - ✅ Event deduplication
 - ✅ Idempotency checks
 - ✅ Replay attack prevention
@@ -650,6 +661,7 @@ npm test src/__tests__/integration/webhook.integration.test.ts
 ### Manual Testing
 
 **Test Idempotency:**
+
 ```bash
 # Send same webhook twice
 curl -X POST http://localhost:3000/api/webhooks/stripe \
@@ -660,6 +672,7 @@ curl -X POST http://localhost:3000/api/webhooks/stripe \
 ```
 
 **Test Monitoring:**
+
 ```bash
 # Get health status
 curl http://localhost:3000/api/admin/webhooks/monitor?timeWindow=60
@@ -676,12 +689,12 @@ curl http://localhost:3000/api/admin/webhooks/monitor?report=true
 
 ```typescript
 const thresholds = {
-  maxRecentFailures: 10,        // Max failures in time window
-  maxBacklogSize: 100,          // Max unprocessed events
-  maxOldestPendingMinutes: 30,  // Max age of oldest pending event
-  minSuccessRate: 0.95,         // Minimum 95% success rate
-  maxAverageAttempts: 2,        // Max average processing attempts
-  maxDuplicates: 5,             // Max duplicate events detected
+  maxRecentFailures: 10, // Max failures in time window
+  maxBacklogSize: 100, // Max unprocessed events
+  maxOldestPendingMinutes: 30, // Max age of oldest pending event
+  minSuccessRate: 0.95, // Minimum 95% success rate
+  maxAverageAttempts: 2, // Max average processing attempts
+  maxDuplicates: 5, // Max duplicate events detected
 };
 ```
 
@@ -716,18 +729,19 @@ const thresholds = {
 
 ### Alert Types
 
-| Severity | Type | Description | Action Required |
-|----------|------|-------------|-----------------|
-| ERROR | HIGH_FAILURE_RATE | Too many failures | Investigate provider API |
-| WARNING | LARGE_BACKLOG | Backlog growing | Scale workers |
-| CRITICAL | STALE_EVENTS | Old events stuck | Manual intervention |
-| WARNING | SLOW_PROCESSING | High retry attempts | Check performance |
-| WARNING | DUPLICATE_EVENTS | Duplicates detected | Review idempotency |
-| ERROR | LOW_SUCCESS_RATE | Overall success < 95% | Full system review |
+| Severity | Type              | Description           | Action Required          |
+| -------- | ----------------- | --------------------- | ------------------------ |
+| ERROR    | HIGH_FAILURE_RATE | Too many failures     | Investigate provider API |
+| WARNING  | LARGE_BACKLOG     | Backlog growing       | Scale workers            |
+| CRITICAL | STALE_EVENTS      | Old events stuck      | Manual intervention      |
+| WARNING  | SLOW_PROCESSING   | High retry attempts   | Check performance        |
+| WARNING  | DUPLICATE_EVENTS  | Duplicates detected   | Review idempotency       |
+| ERROR    | LOW_SUCCESS_RATE  | Overall success < 95% | Full system review       |
 
 ### Monitoring Dashboard Queries
 
 **Daily Success Rate:**
+
 ```sql
 SELECT
   DATE(created_at) as date,
@@ -741,6 +755,7 @@ ORDER BY date DESC;
 ```
 
 **Failed Events by Provider:**
+
 ```sql
 SELECT
   provider,
@@ -754,6 +769,7 @@ ORDER BY failures DESC;
 ```
 
 **Processing Time Analysis:**
+
 ```sql
 SELECT
   provider,
@@ -775,16 +791,19 @@ GROUP BY provider;
 #### 1. Duplicate Events Still Processing
 
 **Symptoms:**
+
 - Same event processed multiple times
 - Duplicate database entries
 
 **Diagnosis:**
+
 ```typescript
 const duplicates = await webhookEventService.findDuplicates("STRIPE");
 console.log(duplicates);
 ```
 
 **Solutions:**
+
 - Verify `eventId` is unique constraint in database
 - Check idempotency implementation in handler
 - Run cleanup: `POST /api/admin/webhooks/monitor { "action": "find-duplicates" }`
@@ -792,16 +811,19 @@ console.log(duplicates);
 #### 2. Events Stuck in Pending
 
 **Symptoms:**
+
 - Health check shows old pending events
 - Events never marked as processed
 
 **Diagnosis:**
+
 ```typescript
 const failedEvents = await webhookEventService.getFailedEvents(5, 100);
-console.log(failedEvents.map(e => ({ id: e.eventId, error: e.error })));
+console.log(failedEvents.map((e) => ({ id: e.eventId, error: e.error })));
 ```
 
 **Solutions:**
+
 - Check application logs for processing errors
 - Verify database connectivity
 - Manually retry: `POST /api/admin/webhooks/monitor { "action": "retry-failed" }`
@@ -809,16 +831,19 @@ console.log(failedEvents.map(e => ({ id: e.eventId, error: e.error })));
 #### 3. High Failure Rate
 
 **Symptoms:**
+
 - Health status CRITICAL
 - Many events with attempts >= 3
 
 **Diagnosis:**
+
 ```typescript
 const health = await webhookMonitor.performHealthCheck(60);
 console.log(health.checks.recentFailures);
 ```
 
 **Solutions:**
+
 - Check external provider API status
 - Review error messages in webhook_events table
 - Verify application has access to required services (database, Redis, etc.)
@@ -827,15 +852,18 @@ console.log(health.checks.recentFailures);
 #### 4. Signature Verification Failures
 
 **Symptoms:**
+
 - All webhooks rejected with "Invalid signature"
 - 400 errors in logs
 
 **Diagnosis:**
+
 - Verify webhook secret is correct
 - Check signature header name matches provider
 - Ensure raw body is used (not parsed JSON)
 
 **Solutions:**
+
 ```typescript
 // Ensure raw body for signature verification
 export const config = {
@@ -848,16 +876,19 @@ export const config = {
 #### 5. Memory Leak from Old Events
 
 **Symptoms:**
+
 - Database growing continuously
 - Slow queries on webhook_events table
 
 **Diagnosis:**
+
 ```sql
 SELECT COUNT(*), MIN(created_at), MAX(created_at)
 FROM webhook_events;
 ```
 
 **Solutions:**
+
 - Run cleanup regularly: `webhookEventService.cleanupOldEvents(90)`
 - Set up cron job for automatic cleanup
 - Archive old events to cold storage
@@ -888,16 +919,18 @@ if (DEBUG) {
 ### Signature Verification
 
 **Stripe:**
+
 ```typescript
 const signature = headers.get("stripe-signature");
 const event = stripe.webhooks.constructEvent(
   rawBody,
   signature!,
-  process.env.STRIPE_WEBHOOK_SECRET!
+  process.env.STRIPE_WEBHOOK_SECRET!,
 );
 ```
 
 **PayPal:**
+
 ```typescript
 const verificationStatus = await paypal.webhooks.verify({
   webhook_id: process.env.PAYPAL_WEBHOOK_ID,
@@ -920,7 +953,7 @@ const currentTimestamp = Math.floor(Date.now() / 1000);
 if (currentTimestamp - timestamp > 300) {
   return NextResponse.json(
     { error: "Webhook timestamp too old" },
-    { status: 400 }
+    { status: 400 },
   );
 }
 ```
@@ -995,11 +1028,14 @@ WHERE processed = false;
 ### Query Optimization
 
 **Avoid N+1 Queries:**
+
 ```typescript
 // ❌ BAD - N+1 queries
 const events = await db.webhookEvent.findMany();
 for (const event of events) {
-  const relatedOrder = await db.order.findUnique({ where: { id: event.orderId } });
+  const relatedOrder = await db.order.findUnique({
+    where: { id: event.orderId },
+  });
 }
 
 // ✅ GOOD - Single query with include
@@ -1009,12 +1045,13 @@ const events = await db.webhookEvent.findMany({
 ```
 
 **Pagination:**
+
 ```typescript
 // ✅ Paginate large result sets
 const { events, total } = await webhookEventService.getEvents(
   { processed: false },
   100, // limit
-  0    // offset
+  0, // offset
 );
 ```
 
@@ -1047,7 +1084,7 @@ const limit = pLimit(10); // Max 10 concurrent processes
 
 const failedEvents = await webhookEventService.getFailedEvents(5, 100);
 const retryPromises = failedEvents.map((event) =>
-  limit(() => webhookEventService.retryEvent(event.eventId, handler))
+  limit(() => webhookEventService.retryEvent(event.eventId, handler)),
 );
 
 await Promise.allSettled(retryPromises);
@@ -1115,7 +1152,7 @@ try {
   // Record failure
   await webhookEventService.markAsFailed(
     event.id,
-    error instanceof Error ? error.message : "Unknown error"
+    error instanceof Error ? error.message : "Unknown error",
   );
 
   // Return 500 to trigger provider retry
@@ -1132,13 +1169,17 @@ async function processPayment(paymentIntentId: string) {
   await db.payment.upsert({
     where: { stripePaymentIntentId: paymentIntentId },
     update: { status: "PAID", paidAt: new Date() },
-    create: { /* ... */ },
+    create: {
+      /* ... */
+    },
   });
 }
 
 // ❌ Not Idempotent - Creates duplicates
 async function processPayment(paymentIntentId: string) {
-  await db.payment.create({ /* ... */ }); // Fails on second run!
+  await db.payment.create({
+    /* ... */
+  }); // Fails on second run!
 }
 ```
 
@@ -1183,6 +1224,7 @@ export async function runWebhookMaintenance() {
 ## 📝 Changelog
 
 ### Version 1.0 (January 2025)
+
 - ✅ Initial implementation
 - ✅ Event deduplication and idempotency
 - ✅ Signature verification for all providers

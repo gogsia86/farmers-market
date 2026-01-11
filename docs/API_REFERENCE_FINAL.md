@@ -1,4 +1,5 @@
 # 🚀 Farmers Market Platform - Final API Reference
+
 ## Notification, Webhook & Admin Panel Endpoints
 
 **Version**: 1.0
@@ -27,12 +28,14 @@ GET /api/notifications
 ```
 
 **Query Parameters**:
+
 - `page` (number, default: 1) - Page number
 - `limit` (number, default: 20, max: 100) - Items per page
 - `unreadOnly` (boolean, default: false) - Filter unread only
 - `type` (NotificationType, optional) - Filter by notification type
 
 **Notification Types**:
+
 - `ORDER_PLACED`
 - `ORDER_CONFIRMED`
 - `ORDER_READY`
@@ -47,6 +50,7 @@ GET /api/notifications
 - `SYSTEM_ANNOUNCEMENT`
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -85,6 +89,7 @@ PATCH /api/notifications/:id
 ```
 
 **Body**:
+
 ```json
 {
   "isRead": true
@@ -92,6 +97,7 @@ PATCH /api/notifications/:id
 ```
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -111,6 +117,7 @@ DELETE /api/notifications/:id
 ```
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -130,6 +137,7 @@ DELETE /api/notifications
 ```
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -148,6 +156,7 @@ GET /api/notifications/preferences
 ```
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -174,6 +183,7 @@ PATCH /api/notifications/preferences
 ```
 
 **Body**:
+
 ```json
 {
   "emailEnabled": true,
@@ -187,6 +197,7 @@ PATCH /api/notifications/preferences
 **Email Frequencies**: `immediate`, `daily`, `weekly`, `never`
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -215,6 +226,7 @@ POST /api/webhooks/stripe
 ```
 
 **Headers**:
+
 - `stripe-signature` (required) - Stripe webhook signature
 
 **Events Handled**:
@@ -240,6 +252,7 @@ POST /api/webhooks/stripe
    - Updates payment status to PROCESSING
 
 **Response**:
+
 ```json
 {
   "received": true
@@ -263,6 +276,7 @@ GET /api/admin/users
 ```
 
 **Query Parameters**:
+
 - `page` (number, default: 1)
 - `limit` (number, default: 20, max: 100)
 - `role` (enum: CONSUMER, FARMER, ADMIN)
@@ -272,6 +286,7 @@ GET /api/admin/users
 - `sortOrder` (enum: asc, desc, default: desc)
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -322,6 +337,7 @@ PATCH /api/admin/users
 ```
 
 **Body**:
+
 ```json
 {
   "userId": "clxxx123",
@@ -332,6 +348,7 @@ PATCH /api/admin/users
 ```
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -347,6 +364,7 @@ PATCH /api/admin/users
 ```
 
 **Notes**:
+
 - Cannot change your own admin role
 - Logs all admin actions
 
@@ -359,6 +377,7 @@ POST /api/admin/users
 ```
 
 **Body**:
+
 ```json
 {
   "operation": "suspend",
@@ -368,6 +387,7 @@ POST /api/admin/users
 ```
 
 **Operations**:
+
 - `suspend` - Suspend users
 - `activate` - Activate suspended users
 - `delete` - Mark users as deleted
@@ -375,10 +395,12 @@ POST /api/admin/users
 - `demote` - Demote to CONSUMER role
 
 **Limits**:
+
 - Max 100 users per operation
 - Cannot operate on self
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -399,6 +421,7 @@ GET /api/admin/reviews
 ```
 
 **Query Parameters**:
+
 - `page` (number, default: 1)
 - `limit` (number, default: 20, max: 100)
 - `status` (enum: PENDING, APPROVED, FLAGGED, default: PENDING)
@@ -408,6 +431,7 @@ GET /api/admin/reviews
 - `sortOrder` (enum: asc, desc, default: desc)
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -460,6 +484,7 @@ PATCH /api/admin/reviews
 ```
 
 **Body**:
+
 ```json
 {
   "reviewId": "clxxx123",
@@ -469,10 +494,12 @@ PATCH /api/admin/reviews
 ```
 
 **Actions**:
+
 - `APPROVE` - Approve review (visible to public)
 - `REJECT` - Flag review (hidden from public)
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -489,6 +516,7 @@ PATCH /api/admin/reviews
 ```
 
 **Side Effects**:
+
 - Sends notification to review author
 - If approved, sends notification to farm owner
 
@@ -501,21 +529,23 @@ GET /api/admin/analytics
 ```
 
 **Query Parameters**:
+
 - `days` (number, default: 30) - Analysis period in days
 
 **Response**:
+
 ```json
 {
   "success": true,
   "data": {
     "overview": {
-      "totalRevenue": 125450.50,
+      "totalRevenue": 125450.5,
       "recentRevenue": 15230.25,
       "revenueGrowth": 12.5,
       "totalOrders": 1248,
       "recentOrders": 156,
       "orderGrowth": 8.3,
-      "avgOrderValue": 100.50
+      "avgOrderValue": 100.5
     },
     "users": {
       "total": 450,
@@ -562,7 +592,7 @@ GET /api/admin/analytics
           "id": "clxxx123",
           "orderNumber": "ORD-12345",
           "status": "CONFIRMED",
-          "totalPrice": 85.50,
+          "totalPrice": 85.5,
           "createdAt": "2024-11-15T10:00:00Z",
           "customer": {
             "id": "clxxx456",
@@ -576,15 +606,15 @@ GET /api/admin/analytics
       "byStatus": {
         "PAID": {
           "count": 1150,
-          "total": 125450.50
+          "total": 125450.5
         },
         "PENDING": {
           "count": 25,
-          "total": 2850.00
+          "total": 2850.0
         },
         "FAILED": {
           "count": 15,
-          "total": 1250.00
+          "total": 1250.0
         }
       }
     },
@@ -625,6 +655,7 @@ GET /api/admin/orders
 ```
 
 **Query Parameters**:
+
 - `page` (number, default: 1)
 - `limit` (number, default: 20, max: 100)
 - `status` (OrderStatus, optional)
@@ -635,6 +666,7 @@ GET /api/admin/orders
 - `sortOrder` (enum: asc, desc, default: desc)
 
 **Order Statuses**:
+
 - `PENDING`
 - `CONFIRMED`
 - `PREPARING`
@@ -644,6 +676,7 @@ GET /api/admin/orders
 - `CANCELLED`
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -654,10 +687,10 @@ GET /api/admin/orders
         "orderNumber": "ORD-12345",
         "status": "CONFIRMED",
         "paymentStatus": "PAID",
-        "subtotal": 75.00,
-        "tax": 7.50,
-        "deliveryFee": 5.00,
-        "total": 87.50,
+        "subtotal": 75.0,
+        "tax": 7.5,
+        "deliveryFee": 5.0,
+        "total": 87.5,
         "createdAt": "2024-11-15T10:00:00Z",
         "paidAt": "2024-11-15T10:05:00Z",
         "customer": {
@@ -669,8 +702,8 @@ GET /api/admin/orders
           {
             "id": "clxxx789",
             "quantity": 2,
-            "price": 25.00,
-            "subtotal": 50.00,
+            "price": 25.0,
+            "subtotal": 50.0,
             "product": {
               "id": "clxxx999",
               "name": "Organic Tomatoes",
@@ -684,7 +717,7 @@ GET /api/admin/orders
         "Payment": {
           "id": "clxxx222",
           "status": "PAID",
-          "amount": 87.50,
+          "amount": 87.5,
           "stripePaymentIntentId": "pi_xxx123"
         }
       }
@@ -715,6 +748,7 @@ PATCH /api/admin/orders
 ```
 
 **Body (Status Update)**:
+
 ```json
 {
   "orderId": "clxxx123",
@@ -723,6 +757,7 @@ PATCH /api/admin/orders
 ```
 
 **Body (Full Refund)**:
+
 ```json
 {
   "orderId": "clxxx123",
@@ -734,18 +769,20 @@ PATCH /api/admin/orders
 ```
 
 **Body (Partial Refund)**:
+
 ```json
 {
   "orderId": "clxxx123",
   "refund": {
     "fullRefund": false,
-    "amount": 25.50,
+    "amount": 25.5,
     "reason": "Damaged product - partial refund"
   }
 }
 ```
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -754,10 +791,10 @@ PATCH /api/admin/orders
       "id": "clxxx123",
       "orderNumber": "ORD-12345",
       "status": "CANCELLED",
-      "total": 87.50,
+      "total": 87.5,
       "Payment": {
         "status": "REFUNDED",
-        "amount": 87.50
+        "amount": 87.5
       }
     }
   }
@@ -765,6 +802,7 @@ PATCH /api/admin/orders
 ```
 
 **Side Effects**:
+
 - Processes refund through Stripe
 - Updates payment and order records
 - Sends notification to customer
@@ -777,10 +815,12 @@ PATCH /api/admin/orders
 All endpoints (except webhooks) require authentication via session cookies or JWT tokens.
 
 **Admin Endpoints** require:
+
 - Valid authentication
 - User role = `ADMIN`
 
 **Webhook Endpoints** require:
+
 - Valid webhook signature (Stripe-Signature header)
 
 ---
@@ -788,21 +828,27 @@ All endpoints (except webhooks) require authentication via session cookies or JW
 ## 📦 Response Formats
 
 ### Success Response
+
 ```json
 {
   "success": true,
-  "data": { /* response data */ }
+  "data": {
+    /* response data */
+  }
 }
 ```
 
 ### Error Response
+
 ```json
 {
   "success": false,
   "error": {
     "code": "ERROR_CODE",
     "message": "Human-readable error message",
-    "details": { /* optional additional details */ }
+    "details": {
+      /* optional additional details */
+    }
   }
 }
 ```
@@ -812,24 +858,29 @@ All endpoints (except webhooks) require authentication via session cookies or JW
 ## ⚠️ Error Codes
 
 ### Authentication Errors
+
 - `UNAUTHORIZED` (401) - Authentication required
 - `FORBIDDEN` (403) - Insufficient permissions
 
 ### Validation Errors
+
 - `VALIDATION_ERROR` (400) - Invalid input data
 - `INVALID_REQUEST` (400) - Malformed request
 
 ### Resource Errors
+
 - `NOT_FOUND` (404) - Resource not found
 - `CONFLICT` (409) - Resource conflict
 
 ### Operation Errors
+
 - `FETCH_ERROR` (500) - Failed to fetch data
 - `UPDATE_ERROR` (500) - Failed to update data
 - `DELETE_ERROR` (500) - Failed to delete data
 - `REFUND_FAILED` (500) - Refund processing failed
 
 ### Webhook Errors
+
 - `INVALID_SIGNATURE` (400) - Invalid webhook signature
 - `WEBHOOK_PROCESSING_FAILED` (500) - Webhook processing error
 
@@ -838,14 +889,17 @@ All endpoints (except webhooks) require authentication via session cookies or JW
 ## 📊 Rate Limits
 
 **Standard Endpoints**:
+
 - 100 requests per minute per user
 - 1000 requests per hour per user
 
 **Admin Endpoints**:
+
 - 200 requests per minute
 - 2000 requests per hour
 
 **Webhooks**:
+
 - No rate limit (handled by provider)
 
 ---
@@ -856,26 +910,29 @@ All endpoints (except webhooks) require authentication via session cookies or JW
 
 ```typescript
 // Get notifications
-const response = await fetch('/api/notifications?page=1&limit=20', {
-  credentials: 'include'
+const response = await fetch("/api/notifications?page=1&limit=20", {
+  credentials: "include",
 });
 const data = await response.json();
 
 // Update notification preferences
-const updateResponse = await fetch('/api/notifications/preferences', {
-  method: 'PATCH',
-  headers: { 'Content-Type': 'application/json' },
-  credentials: 'include',
+const updateResponse = await fetch("/api/notifications/preferences", {
+  method: "PATCH",
+  headers: { "Content-Type": "application/json" },
+  credentials: "include",
   body: JSON.stringify({
     emailEnabled: true,
-    pushEnabled: false
-  })
+    pushEnabled: false,
+  }),
 });
 
 // Admin: List users
-const usersResponse = await fetch('/api/admin/users?role=FARMER&status=ACTIVE', {
-  credentials: 'include'
-});
+const usersResponse = await fetch(
+  "/api/admin/users?role=FARMER&status=ACTIVE",
+  {
+    credentials: "include",
+  },
+);
 ```
 
 ### cURL

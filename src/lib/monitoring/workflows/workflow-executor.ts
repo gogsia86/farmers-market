@@ -25,7 +25,7 @@ import type {
 import { DEFAULT_RETRY_DELAY, DEFAULT_WORKFLOW_TIMEOUT } from "../types";
 import { getWorkflowSteps as getPredefinedWorkflowSteps } from "./predefined-workflows";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 // ============================================================================
 // DIVINE WORKFLOW EXECUTOR
@@ -51,17 +51,21 @@ export class DivinedWorkflowExecutor implements IWorkflowExecutor {
     const startTime = new Date();
 
     logger.info(
-      "\n╔════════════════════════════════════════════════════════════╗");
+      "\n╔════════════════════════════════════════════════════════════╗",
+    );
     logger.info(
-      "║ ⚡ DIVINE WORKFLOW EXECUTION INITIATED                     ║");
+      "║ ⚡ DIVINE WORKFLOW EXECUTION INITIATED                     ║",
+    );
     logger.info(
-      "╠════════════════════════════════════════════════════════════╣");
+      "╠════════════════════════════════════════════════════════════╣",
+    );
     logger.info(`║ 🔮 WORKFLOW: ${workflow.name.padEnd(44)} ║`);
     logger.info(`║ 🆔 RUN ID: ${runId.padEnd(46)} ║`);
     logger.info(`║ 🌾 TYPE: ${workflow.type.padEnd(48)} ║`);
     logger.info(`║ ⚠️  PRIORITY: ${workflow.priority.padEnd(45)} ║`);
     logger.info(
-      "╚════════════════════════════════════════════════════════════╝\n");
+      "╚════════════════════════════════════════════════════════════╝\n",
+    );
 
     try {
       // Initialize browser
@@ -128,7 +132,9 @@ export class DivinedWorkflowExecutor implements IWorkflowExecutor {
         screenshots: stepResults
           .filter((s: any) => s.screenshot)
           .map((s: any) => s.screenshot!),
-        traces: stepResults.filter((s: any) => s.trace).map((s: any) => s.trace!),
+        traces: stepResults
+          .filter((s: any) => s.trace)
+          .map((s: any) => s.trace!),
         metrics,
         agricultureConsciousness,
         tags: workflow.tags,
@@ -139,7 +145,7 @@ export class DivinedWorkflowExecutor implements IWorkflowExecutor {
       return result;
     } catch (error) {
       logger.error("❌ Workflow execution failed:", {
-        error: error instanceof Error ? error.message : String(error)
+        error: error instanceof Error ? error.message : String(error),
       });
 
       const endTime = new Date();
@@ -370,7 +376,7 @@ export class DivinedWorkflowExecutor implements IWorkflowExecutor {
           screenshot = screenshotBuffer.toString("base64");
         } catch (e) {
           logger.error("Failed to capture screenshot:", {
-            error: e instanceof Error ? e.message : String(e)
+            error: e instanceof Error ? e.message : String(e),
           });
         }
       }
@@ -416,13 +422,17 @@ export class DivinedWorkflowExecutor implements IWorkflowExecutor {
     page: Page | undefined,
     steps: WorkflowStepResult[],
   ): Promise<any> {
-    const totalDuration = steps.reduce((sum: any, s: any) => sum + s.duration, 0);
+    const totalDuration = steps.reduce(
+      (sum: any, s: any) => sum + s.duration,
+      0,
+    );
 
     const metrics: any = {
       totalDuration,
       errors: steps.filter((s: any) => !s.success).length,
-      warnings: steps.filter((s: any) => s.logs.some((log: any) => log.includes("WARN")))
-        .length,
+      warnings: steps.filter((s: any) =>
+        s.logs.some((log: any) => log.includes("WARN")),
+      ).length,
     };
 
     // Get performance metrics from page if available
@@ -450,7 +460,7 @@ export class DivinedWorkflowExecutor implements IWorkflowExecutor {
         );
       } catch (e) {
         logger.warn("Failed to gather performance metrics:", {
-          error: e instanceof Error ? e.message : String(e)
+          error: e instanceof Error ? e.message : String(e),
         });
       }
     }
@@ -562,11 +572,14 @@ export class DivinedWorkflowExecutor implements IWorkflowExecutor {
             : "⏭️";
 
     logger.info(
-      "\n╔════════════════════════════════════════════════════════════╗");
+      "\n╔════════════════════════════════════════════════════════════╗",
+    );
     logger.info(
-      `║ ${statusEmoji} WORKFLOW EXECUTION COMPLETE                           ║`);
+      `║ ${statusEmoji} WORKFLOW EXECUTION COMPLETE                           ║`,
+    );
     logger.info(
-      "╠════════════════════════════════════════════════════════════╣");
+      "╠════════════════════════════════════════════════════════════╣",
+    );
     logger.info(`║ 📊 STATUS: ${result.status.padEnd(46)} ║`);
     logger.info(
       `║ ⏱️  DURATION: ${(result.duration / 1000).toFixed(2)}s${" ".repeat(44 - (result.duration / 1000).toFixed(2).length)} ║`,
@@ -594,7 +607,8 @@ export class DivinedWorkflowExecutor implements IWorkflowExecutor {
     }
 
     logger.info(
-      "╚════════════════════════════════════════════════════════════╝\n");
+      "╚════════════════════════════════════════════════════════════╝\n",
+    );
   }
 
   private generateRunId(): string {

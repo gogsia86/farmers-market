@@ -4,13 +4,13 @@
  * Checks if Vercel database is properly seeded with data
  */
 
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 async function checkDatabaseData() {
-  console.log('🔍 Checking Vercel Database Data...\n');
-  console.log('═'.repeat(60));
+  console.log("🔍 Checking Vercel Database Data...\n");
+  console.log("═".repeat(60));
 
   try {
     // Count records in each table
@@ -21,7 +21,7 @@ async function checkDatabaseData() {
       orderCount,
       reviewCount,
       photoCount,
-      locationCount
+      locationCount,
     ] = await Promise.all([
       prisma.user.count(),
       prisma.farm.count(),
@@ -29,10 +29,10 @@ async function checkDatabaseData() {
       prisma.order.count(),
       prisma.review.count(),
       prisma.photo.count(),
-      prisma.location.count()
+      prisma.location.count(),
     ]);
 
-    console.log('\n📊 Database Record Counts:\n');
+    console.log("\n📊 Database Record Counts:\n");
     console.log(`  Users:      ${userCount.toString().padStart(5)}`);
     console.log(`  Farms:      ${farmCount.toString().padStart(5)}`);
     console.log(`  Products:   ${productCount.toString().padStart(5)}`);
@@ -41,26 +41,26 @@ async function checkDatabaseData() {
     console.log(`  Photos:     ${photoCount.toString().padStart(5)}`);
     console.log(`  Locations:  ${locationCount.toString().padStart(5)}`);
 
-    console.log('\n' + '═'.repeat(60));
+    console.log("\n" + "═".repeat(60));
 
     // Check if database needs seeding
     const needsSeeding = farmCount === 0 || productCount === 0;
 
     if (needsSeeding) {
-      console.log('\n❌ DATABASE IS EMPTY OR INCOMPLETE\n');
-      console.log('The database needs to be seeded.\n');
-      console.log('🔧 To seed the database, run:');
-      console.log('   bash scripts/reseed-vercel-now.sh --force\n');
+      console.log("\n❌ DATABASE IS EMPTY OR INCOMPLETE\n");
+      console.log("The database needs to be seeded.\n");
+      console.log("🔧 To seed the database, run:");
+      console.log("   bash scripts/reseed-vercel-now.sh --force\n");
 
-      console.log('📋 Expected counts after seeding:');
-      console.log('   Users:      9 (1 admin, 5 farmers, 3 customers)');
-      console.log('   Farms:      5');
-      console.log('   Products:   12+');
-      console.log('   Orders:     Sample orders');
-      console.log('   Reviews:    Sample reviews');
-      console.log('   Photos:     Sample product photos\n');
+      console.log("📋 Expected counts after seeding:");
+      console.log("   Users:      9 (1 admin, 5 farmers, 3 customers)");
+      console.log("   Farms:      5");
+      console.log("   Products:   12+");
+      console.log("   Orders:     Sample orders");
+      console.log("   Reviews:    Sample reviews");
+      console.log("   Photos:     Sample product photos\n");
     } else {
-      console.log('\n✅ DATABASE IS SEEDED\n');
+      console.log("\n✅ DATABASE IS SEEDED\n");
 
       // Get sample data
       const farms = await prisma.farm.findMany({
@@ -70,10 +70,10 @@ async function checkDatabaseData() {
           status: true,
           _count: {
             select: {
-              products: true
-            }
-          }
-        }
+              products: true,
+            },
+          },
+        },
       });
 
       const products = await prisma.product.findMany({
@@ -84,71 +84,69 @@ async function checkDatabaseData() {
           status: true,
           farm: {
             select: {
-              name: true
-            }
-          }
-        }
+              name: true,
+            },
+          },
+        },
       });
 
       if (farms.length > 0) {
-        console.log('🏪 Sample Farms:\n');
-        farms.forEach(farm => {
+        console.log("🏪 Sample Farms:\n");
+        farms.forEach((farm) => {
           console.log(`  • ${farm.name} (${farm.status})`);
           console.log(`    Products: ${farm._count.products}`);
         });
-        console.log('');
+        console.log("");
       }
 
       if (products.length > 0) {
-        console.log('🥬 Sample Products:\n');
-        products.forEach(product => {
+        console.log("🥬 Sample Products:\n");
+        products.forEach((product) => {
           console.log(`  • ${product.name} - $${product.price}`);
-          console.log(`    Farm: ${product.farm.name} | Status: ${product.status}`);
+          console.log(
+            `    Farm: ${product.farm.name} | Status: ${product.status}`,
+          );
         });
-        console.log('');
+        console.log("");
       }
 
-      console.log('✅ Database contains data and appears healthy!\n');
+      console.log("✅ Database contains data and appears healthy!\n");
     }
 
     // Check for admin user
     const adminUser = await prisma.user.findFirst({
       where: {
-        OR: [
-          { email: 'admin@farmersmarket.app' },
-          { role: 'ADMIN' }
-        ]
+        OR: [{ email: "admin@farmersmarket.app" }, { role: "ADMIN" }],
       },
       select: {
         email: true,
         role: true,
-        name: true
-      }
+        name: true,
+      },
     });
 
     if (adminUser) {
-      console.log('👤 Admin Account Found:');
+      console.log("👤 Admin Account Found:");
       console.log(`   Email: ${adminUser.email}`);
       console.log(`   Name:  ${adminUser.name}`);
       console.log(`   Role:  ${adminUser.role}\n`);
-      console.log('📝 Login credentials in: LOGIN_CREDENTIALS.md\n');
+      console.log("📝 Login credentials in: LOGIN_CREDENTIALS.md\n");
     } else {
-      console.log('⚠️  Warning: No admin account found!\n');
+      console.log("⚠️  Warning: No admin account found!\n");
     }
-
   } catch (error) {
-    console.error('\n❌ Error checking database:', error);
-    console.error('\nMake sure:');
-    console.error('1. DATABASE_URL is set in .env.vercel.local');
-    console.error('2. Vercel environment variables are pulled');
-    console.error('3. Database is accessible\n');
+    console.error("\n❌ Error checking database:", error);
+    console.error("\nMake sure:");
+    console.error("1. DATABASE_URL is set in .env.vercel.local");
+    console.error("2. Vercel environment variables are pulled");
+    console.error("3. Database is accessible\n");
     process.exit(1);
   } finally {
     await prisma.$disconnect();
   }
 }
 
-checkDatabaseData().catch(error => {
-  console.error('Fatal error:', error);
+checkDatabaseData().catch((error) => {
+  console.error("Fatal error:", error);
   process.exit(1);
 });

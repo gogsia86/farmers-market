@@ -23,8 +23,12 @@ async function loginForCartTests(page: Page): Promise<void> {
   await page.waitForTimeout(1000);
 
   // Fill in test credentials
-  const emailInput = page.locator('input[name="email"], input[type="email"]').first();
-  const passwordInput = page.locator('input[name="password"], input[type="password"]').first();
+  const emailInput = page
+    .locator('input[name="email"], input[type="email"]')
+    .first();
+  const passwordInput = page
+    .locator('input[name="password"], input[type="password"]')
+    .first();
   const submitButton = page.locator('button[type="submit"]').first();
 
   await emailInput.fill("test@farmersmarket.com");
@@ -36,9 +40,11 @@ async function loginForCartTests(page: Page): Promise<void> {
 
   // Verify login success by checking for user session
   const isLoggedIn = await page.evaluate(() => {
-    return document.cookie.includes("next-auth") ||
+    return (
+      document.cookie.includes("next-auth") ||
       localStorage.getItem("user") !== null ||
-      window.location.pathname !== "/login";
+      window.location.pathname !== "/login"
+    );
   });
 
   if (!isLoggedIn) {
@@ -99,7 +105,7 @@ export const CartCheckoutModule: any = {
             // Navigate to cart page
             await page.goto("/cart", {
               waitUntil: "domcontentloaded",
-              timeout: 10000
+              timeout: 10000,
             });
 
             // Verify page loaded
@@ -107,19 +113,22 @@ export const CartCheckoutModule: any = {
             expect(bodyVisible).toBe(true);
 
             // Check for cart container
-            const hasCartContainer = await page.locator(
-              '[data-testid="cart"], [class*="cart"], main'
-            ).count() > 0;
+            const hasCartContainer =
+              (await page
+                .locator('[data-testid="cart"], [class*="cart"], main')
+                .count()) > 0;
             expect(hasCartContainer).toBe(true);
 
             // Check for either empty cart message or cart items
-            const emptyMessage = await page.locator(
-              'text=/empty|no items|cart is empty/i'
-            ).count();
+            const emptyMessage = await page
+              .locator("text=/empty|no items|cart is empty/i")
+              .count();
 
-            const cartItems = await page.locator(
-              '[data-testid="cart-item"], .cart-item, [class*="cart-item"]'
-            ).count();
+            const cartItems = await page
+              .locator(
+                '[data-testid="cart-item"], .cart-item, [class*="cart-item"]',
+              )
+              .count();
 
             const isValidCart = emptyMessage > 0 || cartItems > 0;
             expect(isValidCart).toBe(true);
@@ -128,10 +137,10 @@ export const CartCheckoutModule: any = {
               data: {
                 accessible: true,
                 isEmpty: emptyMessage > 0,
-                itemCount: cartItems
-              }
+                itemCount: cartItems,
+              },
             };
-          }
+          },
         },
 
         {
@@ -152,40 +161,44 @@ export const CartCheckoutModule: any = {
             await page.waitForTimeout(2000);
 
             // Check if cart has items
-            const cartItems = await page.locator(
-              '[data-testid="cart-item"], .cart-item, tr[class*="cart"]'
-            ).count();
+            const cartItems = await page
+              .locator(
+                '[data-testid="cart-item"], .cart-item, tr[class*="cart"]',
+              )
+              .count();
 
             if (cartItems > 0) {
               return {
                 data: {
                   skipped: true,
-                  reason: "Cart already has items, cannot test empty state"
-                }
+                  reason: "Cart already has items, cannot test empty state",
+                },
               };
             }
 
             // Check for empty message
-            const emptyMessage = await page.locator(
-              'text=/empty|no items|cart is empty|continue shopping/i'
-            ).count();
+            const emptyMessage = await page
+              .locator("text=/empty|no items|cart is empty|continue shopping/i")
+              .count();
 
             expect(emptyMessage).toBeGreaterThan(0);
 
             // Check for continue shopping link
-            const continueLink = await page.locator(
-              'a:has-text("Continue Shopping"), a:has-text("Browse Products"), a[href*="product"]'
-            ).count();
+            const continueLink = await page
+              .locator(
+                'a:has-text("Continue Shopping"), a:has-text("Browse Products"), a[href*="product"]',
+              )
+              .count();
 
             return {
               data: {
                 hasEmptyMessage: emptyMessage > 0,
-                hasContinueLink: continueLink > 0
-              }
+                hasContinueLink: continueLink > 0,
+              },
             };
-          }
-        }
-      ]
+          },
+        },
+      ],
     },
 
     {
@@ -212,11 +225,13 @@ export const CartCheckoutModule: any = {
             await page.waitForTimeout(2000);
 
             // Try to navigate to a product detail page
-            const productLink = await page.locator(
-              '[data-testid="product-card"] a, .product-card a, article a'
-            ).first();
+            const productLink = await page
+              .locator(
+                '[data-testid="product-card"] a, .product-card a, article a',
+              )
+              .first();
 
-            const hasProductLink = await productLink.count() > 0;
+            const hasProductLink = (await productLink.count()) > 0;
 
             if (hasProductLink) {
               await productLink.click();
@@ -224,19 +239,21 @@ export const CartCheckoutModule: any = {
             }
 
             // Look for add to cart button
-            const addToCartButton = await page.locator(
-              'button:has-text("Add to Cart"), button:has-text("Add to Basket"), button[data-testid*="add-to-cart"], button[class*="add-to-cart"]'
-            ).count();
+            const addToCartButton = await page
+              .locator(
+                'button:has-text("Add to Cart"), button:has-text("Add to Basket"), button[data-testid*="add-to-cart"], button[class*="add-to-cart"]',
+              )
+              .count();
 
             expect(addToCartButton).toBeGreaterThan(0);
 
             return {
               data: {
                 hasAddToCartButton: addToCartButton > 0,
-                onDetailPage: hasProductLink
-              }
+                onDetailPage: hasProductLink,
+              },
             };
-          }
+          },
         },
 
         {
@@ -258,28 +275,30 @@ export const CartCheckoutModule: any = {
             await page.waitForTimeout(2000);
 
             // Click on first product - the entire card is a link in this design
-            const productLink = await page.locator(
-              'a[href^="/products/"]'
-            ).first();
+            const productLink = await page
+              .locator('a[href^="/products/"]')
+              .first();
 
-            const hasLink = await productLink.count() > 0;
+            const hasLink = (await productLink.count()) > 0;
             if (!hasLink) {
               throw new Error("No product links found");
             }
 
             // Click with navigation wait
             await Promise.all([
-              page.waitForLoadState('domcontentloaded'),
-              productLink.click()
+              page.waitForLoadState("domcontentloaded"),
+              productLink.click(),
             ]);
             await page.waitForTimeout(2000);
 
             // Find and click add to cart button
-            const addButton = page.locator(
-              'button:has-text("Add to Cart"), button:has-text("Add"), button[data-testid*="add-to-cart"]'
-            ).first();
+            const addButton = page
+              .locator(
+                'button:has-text("Add to Cart"), button:has-text("Add"), button[data-testid*="add-to-cart"]',
+              )
+              .first();
 
-            const hasButton = await addButton.count() > 0;
+            const hasButton = (await addButton.count()) > 0;
             expect(hasButton).toBe(true);
 
             await addButton.click();
@@ -291,12 +310,16 @@ export const CartCheckoutModule: any = {
             const addedText = await page.getByText(/added/i).count();
             const successText = await page.getByText(/success/i).count();
 
-            const successToast = alertByRole + toastByClass + addedText + successText;
+            const successToast =
+              alertByRole + toastByClass + addedText + successText;
 
             // Check if cart count increased (look for badge)
-            const cartBadge = await page.locator(
-              '[data-testid="cart-count"], [class*="cart-badge"], [class*="cart-count"]'
-            ).textContent().catch(() => "0");
+            const cartBadge = await page
+              .locator(
+                '[data-testid="cart-count"], [class*="cart-badge"], [class*="cart-count"]',
+              )
+              .textContent()
+              .catch(() => "0");
 
             const cartCount = parseInt(cartBadge || "0", 10);
 
@@ -305,10 +328,10 @@ export const CartCheckoutModule: any = {
                 clicked: true,
                 successIndicator: successToast > 0,
                 cartCount,
-                likelySuccess: successToast > 0 || cartCount > 0
-              }
+                likelySuccess: successToast > 0 || cartCount > 0,
+              },
             };
-          }
+          },
         },
 
         {
@@ -326,14 +349,16 @@ export const CartCheckoutModule: any = {
             await page.waitForTimeout(2000);
 
             // Count cart items
-            const cartItems = await page.locator(
-              '[data-testid="cart-item"], .cart-item, tr[class*="cart"], [class*="cart"] article'
-            ).count();
+            const cartItems = await page
+              .locator(
+                '[data-testid="cart-item"], .cart-item, tr[class*="cart"], [class*="cart"] article',
+              )
+              .count();
 
             // Check for empty message
-            const emptyMessage = await page.locator(
-              'text=/empty|no items/i'
-            ).count();
+            const emptyMessage = await page
+              .locator("text=/empty|no items/i")
+              .count();
 
             // Either we have items or we need to check if add-to-cart worked
             if (cartItems === 0 && emptyMessage > 0) {
@@ -342,8 +367,9 @@ export const CartCheckoutModule: any = {
                 data: {
                   cartItems: 0,
                   isEmpty: true,
-                  warning: "Cart appears empty - add-to-cart may have failed or requires authentication"
-                }
+                  warning:
+                    "Cart appears empty - add-to-cart may have failed or requires authentication",
+                },
               };
             }
 
@@ -354,12 +380,12 @@ export const CartCheckoutModule: any = {
               data: {
                 cartItems,
                 isEmpty: false,
-                hasItems: true
-              }
+                hasItems: true,
+              },
             };
-          }
-        }
-      ]
+          },
+        },
+      ],
     },
 
     {
@@ -380,31 +406,38 @@ export const CartCheckoutModule: any = {
             await page.waitForTimeout(2000);
 
             // Check if cart has items
-            const cartItems = await page.locator(
-              '[data-testid="cart-item"], .cart-item'
-            ).count();
+            const cartItems = await page
+              .locator('[data-testid="cart-item"], .cart-item')
+              .count();
 
             if (cartItems === 0) {
               return {
                 data: {
                   skipped: true,
-                  reason: "Cart is empty, cannot test quantity update"
-                }
+                  reason: "Cart is empty, cannot test quantity update",
+                },
               };
             }
 
             // Look for quantity input or buttons
-            const quantityInput = await page.locator(
-              'input[type="number"], input[name*="quantity" i], [data-testid*="quantity"]'
-            ).first().count();
+            const quantityInput = await page
+              .locator(
+                'input[type="number"], input[name*="quantity" i], [data-testid*="quantity"]',
+              )
+              .first()
+              .count();
 
-            const increaseButton = await page.locator(
-              'button:has-text("+"), button[aria-label*="increase" i], button[data-action="increase"]'
-            ).count();
+            const increaseButton = await page
+              .locator(
+                'button:has-text("+"), button[aria-label*="increase" i], button[data-action="increase"]',
+              )
+              .count();
 
-            const decreaseButton = await page.locator(
-              'button:has-text("-"), button[aria-label*="decrease" i], button[data-action="decrease"]'
-            ).count();
+            const decreaseButton = await page
+              .locator(
+                'button:has-text("-"), button[aria-label*="decrease" i], button[data-action="decrease"]',
+              )
+              .count();
 
             const hasQuantityControl = quantityInput > 0 || increaseButton > 0;
 
@@ -413,10 +446,10 @@ export const CartCheckoutModule: any = {
                 hasQuantityInput: quantityInput > 0,
                 hasIncreaseButton: increaseButton > 0,
                 hasDecreaseButton: decreaseButton > 0,
-                quantityControlAvailable: hasQuantityControl
-              }
+                quantityControlAvailable: hasQuantityControl,
+              },
             };
-          }
+          },
         },
 
         {
@@ -432,33 +465,35 @@ export const CartCheckoutModule: any = {
             await page.waitForTimeout(2000);
 
             // Check if cart has items
-            const cartItems = await page.locator(
-              '[data-testid="cart-item"], .cart-item'
-            ).count();
+            const cartItems = await page
+              .locator('[data-testid="cart-item"], .cart-item')
+              .count();
 
             if (cartItems === 0) {
               return {
                 data: {
                   skipped: true,
-                  reason: "Cart is empty, cannot test remove"
-                }
+                  reason: "Cart is empty, cannot test remove",
+                },
               };
             }
 
             // Look for remove button
-            const removeButton = await page.locator(
-              'button:has-text("Remove"), button:has-text("Delete"), button[aria-label*="remove" i], button[data-action="remove"]'
-            ).count();
+            const removeButton = await page
+              .locator(
+                'button:has-text("Remove"), button:has-text("Delete"), button[aria-label*="remove" i], button[data-action="remove"]',
+              )
+              .count();
 
             expect(removeButton).toBeGreaterThan(0);
 
             return {
               data: {
                 hasRemoveButton: removeButton > 0,
-                itemsInCart: cartItems
-              }
+                itemsInCart: cartItems,
+              },
             };
-          }
+          },
         },
 
         {
@@ -474,12 +509,15 @@ export const CartCheckoutModule: any = {
             await page.waitForTimeout(1000);
 
             // Check for total/subtotal using separate locators
-            const totalByTestId = await page.locator('[data-testid="cart-total"]').count();
+            const totalByTestId = await page
+              .locator('[data-testid="cart-total"]')
+              .count();
             const totalByClass = await page.locator('[class*="total"]').count();
             const totalByText = await page.getByText(/total/i).count();
             const subtotalByText = await page.getByText(/subtotal/i).count();
 
-            const totalElement = totalByTestId + totalByClass + totalByText + subtotalByText;
+            const totalElement =
+              totalByTestId + totalByClass + totalByText + subtotalByText;
 
             // Check for price display
             const priceByRegex = await page.getByText(/\$\d+\.\d{2}/).count();
@@ -489,12 +527,12 @@ export const CartCheckoutModule: any = {
               data: {
                 hasTotalLabel: totalElement > 0,
                 hasPriceDisplay: priceElement > 0,
-                totalDisplayed: totalElement > 0 && priceElement > 0
-              }
+                totalDisplayed: totalElement > 0 && priceElement > 0,
+              },
             };
-          }
-        }
-      ]
+          },
+        },
+      ],
     },
 
     {
@@ -515,14 +553,16 @@ export const CartCheckoutModule: any = {
             await page.waitForTimeout(2000);
 
             // Check if cart has items
-            const cartItems = await page.locator(
-              '[data-testid="cart-item"], .cart-item'
-            ).count();
+            const cartItems = await page
+              .locator('[data-testid="cart-item"], .cart-item')
+              .count();
 
             // Look for checkout button
-            const checkoutButton = await page.locator(
-              'button:has-text("Checkout"), a:has-text("Checkout"), button:has-text("Proceed"), a:has-text("Proceed to Checkout")'
-            ).count();
+            const checkoutButton = await page
+              .locator(
+                'button:has-text("Checkout"), a:has-text("Checkout"), button:has-text("Proceed"), a:has-text("Proceed to Checkout")',
+              )
+              .count();
 
             if (cartItems === 0) {
               // Empty cart might hide checkout button
@@ -530,8 +570,8 @@ export const CartCheckoutModule: any = {
                 data: {
                   cartEmpty: true,
                   checkoutButtonVisible: checkoutButton > 0,
-                  note: "Checkout button visibility expected to depend on cart contents"
-                }
+                  note: "Checkout button visibility expected to depend on cart contents",
+                },
               };
             }
 
@@ -540,10 +580,10 @@ export const CartCheckoutModule: any = {
             return {
               data: {
                 hasCheckoutButton: checkoutButton > 0,
-                cartItems
-              }
+                cartItems,
+              },
             };
-          }
+          },
         },
 
         {
@@ -559,25 +599,27 @@ export const CartCheckoutModule: any = {
             await page.waitForTimeout(2000);
 
             // Check for items
-            const cartItems = await page.locator(
-              '[data-testid="cart-item"], .cart-item'
-            ).count();
+            const cartItems = await page
+              .locator('[data-testid="cart-item"], .cart-item')
+              .count();
 
             if (cartItems === 0) {
               return {
                 data: {
                   skipped: true,
-                  reason: "Cart is empty, cannot proceed to checkout"
-                }
+                  reason: "Cart is empty, cannot proceed to checkout",
+                },
               };
             }
 
             // Find and click checkout button
-            const checkoutButton = page.locator(
-              'button:has-text("Checkout"), a:has-text("Checkout"), button:has-text("Proceed")'
-            ).first();
+            const checkoutButton = page
+              .locator(
+                'button:has-text("Checkout"), a:has-text("Checkout"), button:has-text("Proceed")',
+              )
+              .first();
 
-            const hasButton = await checkoutButton.count() > 0;
+            const hasButton = (await checkoutButton.count()) > 0;
             if (!hasButton) {
               throw new Error("Checkout button not found");
             }
@@ -591,13 +633,16 @@ export const CartCheckoutModule: any = {
             const navigated = beforeUrl !== afterUrl;
 
             // Check if on checkout page
-            const isCheckoutPage = afterUrl.includes("checkout") ||
-              afterUrl.includes("payment");
+            const isCheckoutPage =
+              afterUrl.includes("checkout") || afterUrl.includes("payment");
 
             // Check for checkout form or content
-            const hasCheckoutContent = await page.locator(
-              '[data-testid="checkout"], form, h1:has-text("Checkout"), h1:has-text("Payment")'
-            ).count() > 0;
+            const hasCheckoutContent =
+              (await page
+                .locator(
+                  '[data-testid="checkout"], form, h1:has-text("Checkout"), h1:has-text("Payment")',
+                )
+                .count()) > 0;
 
             return {
               data: {
@@ -605,10 +650,10 @@ export const CartCheckoutModule: any = {
                 beforeUrl,
                 afterUrl,
                 isCheckoutPage,
-                hasCheckoutContent
-              }
+                hasCheckoutContent,
+              },
             };
-          }
+          },
         },
 
         {
@@ -620,9 +665,11 @@ export const CartCheckoutModule: any = {
           retries: 1,
           async run(page: Page) {
             // Try to navigate to checkout directly
-            const response = await page.goto("/checkout", {
-              waitUntil: "domcontentloaded"
-            }).catch(() => null);
+            const response = await page
+              .goto("/checkout", {
+                waitUntil: "domcontentloaded",
+              })
+              .catch(() => null);
 
             // If checkout redirects to login, that's expected
             if (page.url().includes("login") || page.url().includes("signin")) {
@@ -630,8 +677,9 @@ export const CartCheckoutModule: any = {
                 data: {
                   redirectedToLogin: true,
                   requiresAuth: true,
-                  message: "Checkout requires authentication (expected behavior)"
-                }
+                  message:
+                    "Checkout requires authentication (expected behavior)",
+                },
               };
             }
 
@@ -640,24 +688,30 @@ export const CartCheckoutModule: any = {
               return {
                 data: {
                   skipped: true,
-                  reason: "Checkout page not accessible (may require cart items or authentication)"
-                }
+                  reason:
+                    "Checkout page not accessible (may require cart items or authentication)",
+                },
               };
             }
 
             await page.waitForTimeout(2000);
 
             // Check for form elements
-            const hasForm = await page.locator("form").count() > 0;
-            const hasNameField = await page.locator(
-              'input[name*="name" i], input[placeholder*="name" i]'
-            ).count() > 0;
-            const hasEmailField = await page.locator(
-              'input[type="email"], input[name*="email" i]'
-            ).count() > 0;
-            const hasAddressField = await page.locator(
-              'input[name*="address" i], textarea[name*="address" i]'
-            ).count() > 0;
+            const hasForm = (await page.locator("form").count()) > 0;
+            const hasNameField =
+              (await page
+                .locator('input[name*="name" i], input[placeholder*="name" i]')
+                .count()) > 0;
+            const hasEmailField =
+              (await page
+                .locator('input[type="email"], input[name*="email" i]')
+                .count()) > 0;
+            const hasAddressField =
+              (await page
+                .locator(
+                  'input[name*="address" i], textarea[name*="address" i]',
+                )
+                .count()) > 0;
 
             return {
               data: {
@@ -665,12 +719,12 @@ export const CartCheckoutModule: any = {
                 hasNameField,
                 hasEmailField,
                 hasAddressField,
-                formComplete: hasForm && hasNameField && hasEmailField
-              }
+                formComplete: hasForm && hasNameField && hasEmailField,
+              },
             };
-          }
-        }
-      ]
+          },
+        },
+      ],
     },
 
     {
@@ -687,34 +741,36 @@ export const CartCheckoutModule: any = {
           retries: 2,
           async run(page: Page) {
             // Try to access checkout
-            await page.goto("/checkout").catch(() => { });
+            await page.goto("/checkout").catch(() => {});
 
             // If redirected to login, skip
             if (page.url().includes("login")) {
               return {
                 data: {
                   skipped: true,
-                  reason: "Checkout requires authentication"
-                }
+                  reason: "Checkout requires authentication",
+                },
               };
             }
 
             await page.waitForTimeout(3000);
 
             // Look for Stripe iframe
-            const stripeFrame = await page.locator(
-              'iframe[name*="stripe" i], iframe[src*="stripe.com"]'
-            ).count();
+            const stripeFrame = await page
+              .locator('iframe[name*="stripe" i], iframe[src*="stripe.com"]')
+              .count();
 
             // Look for Stripe elements
-            const stripeElement = await page.locator(
-              '[class*="StripeElement"], [data-testid="stripe-card"], #card-element'
-            ).count();
+            const stripeElement = await page
+              .locator(
+                '[class*="StripeElement"], [data-testid="stripe-card"], #card-element',
+              )
+              .count();
 
             // Look for payment section
-            const paymentSection = await page.locator(
-              'text=/payment/i, [data-testid="payment"]'
-            ).count();
+            const paymentSection = await page
+              .locator('text=/payment/i, [data-testid="payment"]')
+              .count();
 
             const hasStripeIntegration = stripeFrame > 0 || stripeElement > 0;
 
@@ -723,10 +779,10 @@ export const CartCheckoutModule: any = {
                 hasStripeFrame: stripeFrame > 0,
                 hasStripeElement: stripeElement > 0,
                 hasPaymentSection: paymentSection > 0,
-                stripeIntegrated: hasStripeIntegration
-              }
+                stripeIntegrated: hasStripeIntegration,
+              },
             };
-          }
+          },
         },
 
         {
@@ -737,36 +793,38 @@ export const CartCheckoutModule: any = {
           timeout: 15000,
           retries: 1,
           async run(page: Page) {
-            await page.goto("/checkout").catch(() => { });
+            await page.goto("/checkout").catch(() => {});
 
             if (page.url().includes("login")) {
               return {
                 data: {
                   skipped: true,
-                  reason: "Checkout requires authentication"
-                }
+                  reason: "Checkout requires authentication",
+                },
               };
             }
 
             await page.waitForTimeout(2000);
 
             // Look for payment method options
-            const creditCardOption = await page.locator(
-              'text=/credit card|debit card/i, input[value="card"]'
-            ).count();
+            const creditCardOption = await page
+              .locator('text=/credit card|debit card/i, input[value="card"]')
+              .count();
 
-            const paymentOptions = await page.locator(
-              'input[type="radio"][name*="payment" i], [data-testid*="payment-method"]'
-            ).count();
+            const paymentOptions = await page
+              .locator(
+                'input[type="radio"][name*="payment" i], [data-testid*="payment-method"]',
+              )
+              .count();
 
             return {
               data: {
                 hasCreditCardOption: creditCardOption > 0,
                 paymentOptionsCount: paymentOptions,
-                hasPaymentMethods: creditCardOption > 0 || paymentOptions > 0
-              }
+                hasPaymentMethods: creditCardOption > 0 || paymentOptions > 0,
+              },
             };
-          }
+          },
         },
 
         {
@@ -777,31 +835,31 @@ export const CartCheckoutModule: any = {
           timeout: 10000,
           retries: 1,
           async run(page: Page) {
-            await page.goto("/checkout").catch(() => { });
+            await page.goto("/checkout").catch(() => {});
 
             if (page.url().includes("login")) {
               return {
                 data: {
                   skipped: true,
-                  reason: "Checkout requires authentication"
-                }
+                  reason: "Checkout requires authentication",
+                },
               };
             }
 
             // Look for test mode indicator
-            const testModeIndicator = await page.locator(
-              'text=/test mode|test environment|demo mode/i'
-            ).count();
+            const testModeIndicator = await page
+              .locator("text=/test mode|test environment|demo mode/i")
+              .count();
 
             return {
               data: {
                 hasTestModeIndicator: testModeIndicator > 0,
-                note: "Test mode indicator helps prevent confusion"
-              }
+                note: "Test mode indicator helps prevent confusion",
+              },
             };
-          }
-        }
-      ]
+          },
+        },
+      ],
     },
 
     {
@@ -817,51 +875,58 @@ export const CartCheckoutModule: any = {
           timeout: 15000,
           retries: 1,
           async run(page: Page) {
-            await page.goto("/checkout").catch(() => { });
+            await page.goto("/checkout").catch(() => {});
 
-            if (page.url().includes("login") || !page.url().includes("checkout")) {
+            if (
+              page.url().includes("login") ||
+              !page.url().includes("checkout")
+            ) {
               return {
                 data: {
                   skipped: true,
-                  reason: "Checkout page not accessible"
-                }
+                  reason: "Checkout page not accessible",
+                },
               };
             }
 
             await page.waitForTimeout(2000);
 
             // Try to find and click submit button without filling form
-            const submitButton = page.locator(
-              'button[type="submit"], button:has-text("Place Order"), button:has-text("Complete")'
-            ).first();
+            const submitButton = page
+              .locator(
+                'button[type="submit"], button:has-text("Place Order"), button:has-text("Complete")',
+              )
+              .first();
 
-            const hasSubmit = await submitButton.count() > 0;
+            const hasSubmit = (await submitButton.count()) > 0;
 
             if (hasSubmit) {
               await submitButton.click();
               await page.waitForTimeout(1000);
 
               // Check for validation errors
-              const validationErrors = await page.locator(
-                'text=/required|invalid|must be/i, [class*="error"], [role="alert"]'
-              ).count();
+              const validationErrors = await page
+                .locator(
+                  'text=/required|invalid|must be/i, [class*="error"], [role="alert"]',
+                )
+                .count();
 
               return {
                 data: {
                   hasSubmitButton: true,
                   validationErrorsShown: validationErrors > 0,
-                  validationWorking: validationErrors > 0
-                }
+                  validationWorking: validationErrors > 0,
+                },
               };
             }
 
             return {
               data: {
                 hasSubmitButton: false,
-                skipped: true
-              }
+                skipped: true,
+              },
             };
-          }
+          },
         },
 
         {
@@ -872,23 +937,23 @@ export const CartCheckoutModule: any = {
           timeout: 10000,
           retries: 1,
           async run(page: Page) {
-            await page.goto("/checkout").catch(() => { });
+            await page.goto("/checkout").catch(() => {});
 
             if (!page.url().includes("checkout")) {
               return {
                 data: {
                   skipped: true,
-                  reason: "Checkout page not accessible"
-                }
+                  reason: "Checkout page not accessible",
+                },
               };
             }
 
             // Find email field
-            const emailField = page.locator(
-              'input[type="email"], input[name*="email" i]'
-            ).first();
+            const emailField = page
+              .locator('input[type="email"], input[name*="email" i]')
+              .first();
 
-            const hasEmail = await emailField.count() > 0;
+            const hasEmail = (await emailField.count()) > 0;
 
             if (hasEmail) {
               // Enter invalid email
@@ -897,26 +962,26 @@ export const CartCheckoutModule: any = {
               await page.waitForTimeout(500);
 
               // Check for validation error
-              const error = await page.locator(
-                'text=/invalid email|valid email/i'
-              ).count();
+              const error = await page
+                .locator("text=/invalid email|valid email/i")
+                .count();
 
               return {
                 data: {
                   hasEmailField: true,
-                  validationTriggered: error > 0
-                }
+                  validationTriggered: error > 0,
+                },
               };
             }
 
             return {
               data: {
-                hasEmailField: false
-              }
+                hasEmailField: false,
+              },
             };
-          }
-        }
-      ]
+          },
+        },
+      ],
     },
 
     {
@@ -937,9 +1002,9 @@ export const CartCheckoutModule: any = {
             await page.waitForTimeout(2000);
             await page.waitForTimeout(2000);
 
-            const initialCount = await page.locator(
-              '[data-testid="cart-item"], .cart-item'
-            ).count();
+            const initialCount = await page
+              .locator('[data-testid="cart-item"], .cart-item')
+              .count();
 
             // Navigate away
             await page.goto("/products");
@@ -950,9 +1015,9 @@ export const CartCheckoutModule: any = {
             await page.waitForTimeout(2000);
             await page.waitForTimeout(2000);
 
-            const finalCount = await page.locator(
-              '[data-testid="cart-item"], .cart-item'
-            ).count();
+            const finalCount = await page
+              .locator('[data-testid="cart-item"], .cart-item')
+              .count();
 
             // Cart should maintain items
             const persisted = initialCount === finalCount;
@@ -962,10 +1027,10 @@ export const CartCheckoutModule: any = {
                 initialCount,
                 finalCount,
                 persisted,
-                note: "Cart persistence may depend on authentication"
-              }
+                note: "Cart persistence may depend on authentication",
+              },
             };
-          }
+          },
         },
 
         {
@@ -982,32 +1047,32 @@ export const CartCheckoutModule: any = {
             // Check for cart data in localStorage
             const hasLocalStorage = await page.evaluate(() => {
               const keys = Object.keys(localStorage);
-              return keys.some(key =>
-                key.includes("cart") ||
-                key.includes("basket") ||
-                key.includes("shopping")
+              return keys.some(
+                (key) =>
+                  key.includes("cart") ||
+                  key.includes("basket") ||
+                  key.includes("shopping"),
               );
             });
 
             // Check for cart cookies
             const cookies = await page.context().cookies();
-            const hasCartCookie = cookies.some(c =>
-              c.name.includes("cart") ||
-              c.name.includes("basket")
+            const hasCartCookie = cookies.some(
+              (c) => c.name.includes("cart") || c.name.includes("basket"),
             );
 
             return {
               data: {
                 usesLocalStorage: hasLocalStorage,
                 usesCartCookie: hasCartCookie,
-                storageDetected: hasLocalStorage || hasCartCookie
-              }
+                storageDetected: hasLocalStorage || hasCartCookie,
+              },
             };
-          }
-        }
-      ]
-    }
-  ]
+          },
+        },
+      ],
+    },
+  ],
 };
 
 export default CartCheckoutModule;

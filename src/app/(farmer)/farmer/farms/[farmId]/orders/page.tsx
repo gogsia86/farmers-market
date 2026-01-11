@@ -20,7 +20,7 @@ import {
   ShoppingBag,
   TrendingUp,
   Truck,
-  XCircle
+  XCircle,
 } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -97,7 +97,10 @@ const PAYMENT_STATUS_CONFIG = {
   PARTIALLY_REFUNDED: { label: "Partially Refunded", color: "text-orange-600" },
 } as const;
 
-export default async function FarmOrdersPage({ params, searchParams }: PageProps) {
+export default async function FarmOrdersPage({
+  params,
+  searchParams,
+}: PageProps) {
   // Authentication check
   const session = await auth();
 
@@ -267,7 +270,9 @@ export default async function FarmOrdersPage({ params, searchParams }: PageProps
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Revenue</p>
+                <p className="text-sm font-medium text-gray-600">
+                  Total Revenue
+                </p>
                 <p className="text-2xl font-bold text-gray-900 mt-2">
                   {formatCurrency(totalRevenue)}
                 </p>
@@ -363,7 +368,9 @@ export default async function FarmOrdersPage({ params, searchParams }: PageProps
                     <option value="COMPLETED">Completed</option>
                     <option value="CANCELLED">Cancelled</option>
                   </select>
-                  {searchQuery && <input type="hidden" name="search" value={searchQuery} />}
+                  {searchQuery && (
+                    <input type="hidden" name="search" value={searchQuery} />
+                  )}
                 </form>
               </div>
             </div>
@@ -375,7 +382,9 @@ export default async function FarmOrdersPage({ params, searchParams }: PageProps
           {orders.length === 0 ? (
             <div className="p-12 text-center">
               <ShoppingBag className="mx-auto h-12 w-12 text-gray-400" />
-              <h3 className="mt-4 text-lg font-medium text-gray-900">No orders found</h3>
+              <h3 className="mt-4 text-lg font-medium text-gray-900">
+                No orders found
+              </h3>
               <p className="mt-2 text-sm text-gray-500">
                 {searchQuery || statusFilter
                   ? "Try adjusting your filters or search query."
@@ -417,11 +426,11 @@ export default async function FarmOrdersPage({ params, searchParams }: PageProps
                   {orders.map((order: any) => {
                     const statusConfig =
                       ORDER_STATUS_CONFIG[
-                      order.status as keyof typeof ORDER_STATUS_CONFIG
+                        order.status as keyof typeof ORDER_STATUS_CONFIG
                       ];
                     const paymentConfig =
                       PAYMENT_STATUS_CONFIG[
-                      order.paymentStatus as keyof typeof PAYMENT_STATUS_CONFIG
+                        order.paymentStatus as keyof typeof PAYMENT_STATUS_CONFIG
                       ];
                     const StatusIcon = statusConfig?.icon || Clock;
 
@@ -453,17 +462,22 @@ export default async function FarmOrdersPage({ params, searchParams }: PageProps
                         </td>
                         <td className="px-6 py-4">
                           <div className="text-sm text-gray-900">
-                            {order.items.slice(0, 2).map((item: any, idx: number) => (
-                              <div key={item.id} className="truncate max-w-xs">
-                                {item.productName}
-                                {idx === 1 && order.items.length > 2 && (
-                                  <span className="text-gray-500">
-                                    {" "}
-                                    +{order.items.length - 2} more
-                                  </span>
-                                )}
-                              </div>
-                            ))}
+                            {order.items
+                              .slice(0, 2)
+                              .map((item: any, idx: number) => (
+                                <div
+                                  key={item.id}
+                                  className="truncate max-w-xs"
+                                >
+                                  {item.productName}
+                                  {idx === 1 && order.items.length > 2 && (
+                                    <span className="text-gray-500">
+                                      {" "}
+                                      +{order.items.length - 2} more
+                                    </span>
+                                  )}
+                                </div>
+                              ))}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
@@ -539,7 +553,10 @@ export default async function FarmOrdersPage({ params, searchParams }: PageProps
                 <div>
                   <p className="text-sm text-gray-700">
                     Showing{" "}
-                    <span className="font-medium">{(currentPage - 1) * pageSize + 1}</span> to{" "}
+                    <span className="font-medium">
+                      {(currentPage - 1) * pageSize + 1}
+                    </span>{" "}
+                    to{" "}
                     <span className="font-medium">
                       {Math.min(currentPage * pageSize, totalOrders)}
                     </span>{" "}
@@ -574,10 +591,11 @@ export default async function FarmOrdersPage({ params, searchParams }: PageProps
                         <Link
                           key={pageNum}
                           href={`?page=${pageNum}${statusFilter ? `&status=${statusFilter}` : ""}${searchQuery ? `&search=${searchQuery}` : ""}`}
-                          className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${currentPage === pageNum
-                            ? "z-10 bg-green-50 border-green-500 text-green-600"
-                            : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
-                            }`}
+                          className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
+                            currentPage === pageNum
+                              ? "z-10 bg-green-50 border-green-500 text-green-600"
+                              : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
+                          }`}
                         >
                           {pageNum}
                         </Link>
@@ -609,20 +627,20 @@ export default async function FarmOrdersPage({ params, searchParams }: PageProps
               </h3>
               <ul className="mt-2 text-sm text-blue-700 space-y-1">
                 <li>
-                  • <strong>Pending orders</strong> require your confirmation within 24
-                  hours
+                  • <strong>Pending orders</strong> require your confirmation
+                  within 24 hours
                 </li>
                 <li>
-                  • <strong>Processing orders</strong> should be prepared according to the
-                  scheduled date
+                  • <strong>Processing orders</strong> should be prepared
+                  according to the scheduled date
                 </li>
                 <li>
-                  • Mark orders as <strong>Ready for Pickup</strong> when they're
-                  complete
+                  • Mark orders as <strong>Ready for Pickup</strong> when
+                  they're complete
                 </li>
                 <li>
-                  • Communicate with customers through the order details page for any
-                  questions
+                  • Communicate with customers through the order details page
+                  for any questions
                 </li>
               </ul>
             </div>

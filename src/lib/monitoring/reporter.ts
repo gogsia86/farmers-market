@@ -9,7 +9,7 @@
 import { promises as fs } from "fs";
 import path from "path";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 import type {
   WorkflowResult,
@@ -44,22 +44,30 @@ export class DivineMonitoringReporter implements IReporter {
     period: { start: Date; end: Date },
   ): Promise<MonitoringReport> {
     logger.info(
-      "\n╔════════════════════════════════════════════════════════════╗");
+      "\n╔════════════════════════════════════════════════════════════╗",
+    );
     logger.info(
-      "║ 📊 GENERATING DIVINE MONITORING REPORT                     ║");
+      "║ 📊 GENERATING DIVINE MONITORING REPORT                     ║",
+    );
     logger.info(
-      "╠════════════════════════════════════════════════════════════╣");
+      "╠════════════════════════════════════════════════════════════╣",
+    );
     logger.info(
       `║ 📅 PERIOD: ${this.formatDate(period.start)} - ${this.formatDate(period.end)}    ║`,
     );
     logger.info(`║ 🔢 WORKFLOWS: ${String(results.length).padEnd(43)} ║`);
     logger.info(
-      "╚════════════════════════════════════════════════════════════╝\n");
+      "╚════════════════════════════════════════════════════════════╝\n",
+    );
 
     // Calculate summary statistics
     const totalWorkflows = results.length;
-    const passedWorkflows = results.filter((r: any) => r.status === "PASSED").length;
-    const failedWorkflows = results.filter((r: any) => r.status === "FAILED").length;
+    const passedWorkflows = results.filter(
+      (r: any) => r.status === "PASSED",
+    ).length;
+    const failedWorkflows = results.filter(
+      (r: any) => r.status === "FAILED",
+    ).length;
     const warningWorkflows = results.filter(
       (r) => r.status === "WARNING",
     ).length;
@@ -70,7 +78,8 @@ export class DivineMonitoringReporter implements IReporter {
       totalWorkflows > 0 ? (passedWorkflows / totalWorkflows) * 100 : 0;
     const averageDuration =
       totalWorkflows > 0
-        ? results.reduce((sum: any, r: any) => sum + r.duration, 0) / totalWorkflows
+        ? results.reduce((sum: any, r: any) => sum + r.duration, 0) /
+          totalWorkflows
         : 0;
     const criticalIssues = results.filter(
       (r) => r.status === "FAILED" && r.priority === "CRITICAL",
@@ -151,8 +160,8 @@ export class DivineMonitoringReporter implements IReporter {
       logger.info(`   📝 MD: ${mdPath}\n`);
     } catch (error) {
       logger.error("❌ Failed to save report:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
       throw error;
     }
   }
@@ -183,8 +192,8 @@ export class DivineMonitoringReporter implements IReporter {
         notifications.push(notification);
       } catch (error) {
         logger.error(`❌ Failed to send ${channel} notification:`, {
-      error: error instanceof Error ? error.message : String(error),
-    });
+          error: error instanceof Error ? error.message : String(error),
+        });
         notifications.push({
           id: this.generateNotificationId(),
           timestamp: new Date(),
@@ -226,8 +235,8 @@ export class DivineMonitoringReporter implements IReporter {
       return reports;
     } catch (error) {
       logger.error("❌ Failed to get report history:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
       return [];
     }
   }
@@ -240,7 +249,9 @@ export class DivineMonitoringReporter implements IReporter {
     const recommendations: string[] = [];
 
     // Check success rate
-    const passedCount = results.filter((r: any) => r.status === "PASSED").length;
+    const passedCount = results.filter(
+      (r: any) => r.status === "PASSED",
+    ).length;
     const successRate =
       results.length > 0 ? (passedCount / results.length) * 100 : 100;
 
@@ -262,7 +273,8 @@ export class DivineMonitoringReporter implements IReporter {
 
     // Check performance
     const avgDuration =
-      results.reduce((sum: any, r: any) => sum + r.duration, 0) / results.length;
+      results.reduce((sum: any, r: any) => sum + r.duration, 0) /
+      results.length;
     if (avgDuration > 60000) {
       // > 1 minute
       recommendations.push(
@@ -415,10 +427,12 @@ export class DivineMonitoringReporter implements IReporter {
   ): Promise<void> {
     // Email implementation would go here
     // For now, just log
-    logger.info("   📧 Would send email notification", { title: {
-      to: this.notificationConfig?.email?.to,
-      subject: notification.title,
-    } });
+    logger.info("   📧 Would send email notification", {
+      title: {
+        to: this.notificationConfig?.email?.to,
+        subject: notification.title,
+      },
+    });
   }
 
   private async sendSlackNotification(
@@ -458,7 +472,9 @@ export class DivineMonitoringReporter implements IReporter {
     };
 
     // In production, would use fetch to send to Slack
-    logger.info("   💬 Would send Slack message", { dataslackMessage: { data: slackMessage } });
+    logger.info("   💬 Would send Slack message", {
+      dataslackMessage: { data: slackMessage },
+    });
   }
 
   private async sendDiscordNotification(
@@ -486,7 +502,9 @@ export class DivineMonitoringReporter implements IReporter {
     };
 
     // In production, would use fetch to send to Discord
-    logger.info("   🎮 Would send Discord message", { datadiscordMessage: { data: discordMessage } });
+    logger.info("   🎮 Would send Discord message", {
+      datadiscordMessage: { data: discordMessage },
+    });
   }
 
   private async sendWebhookNotification(
@@ -497,9 +515,9 @@ export class DivineMonitoringReporter implements IReporter {
     }
 
     // In production, would use fetch to send webhook
-    logger.info(
-      "   🔗 Would send webhook to:", { data: this.notificationConfig.webhook.url,
-     });
+    logger.info("   🔗 Would send webhook to:", {
+      data: this.notificationConfig.webhook.url,
+    });
   }
 
   private getReportPriority(
@@ -721,11 +739,14 @@ export class DivineMonitoringReporter implements IReporter {
 
   private logReport(report: MonitoringReport): void {
     logger.info(
-      "\n╔════════════════════════════════════════════════════════════╗");
+      "\n╔════════════════════════════════════════════════════════════╗",
+    );
     logger.info(
-      "║ 📊 REPORT SUMMARY                                          ║");
+      "║ 📊 REPORT SUMMARY                                          ║",
+    );
     logger.info(
-      "╠════════════════════════════════════════════════════════════╣");
+      "╠════════════════════════════════════════════════════════════╣",
+    );
     logger.info(
       `║ ✅ PASSED: ${String(report.summary.passedWorkflows).padEnd(47)} ║`,
     );
@@ -742,7 +763,8 @@ export class DivineMonitoringReporter implements IReporter {
       `║ ⏱️  AVG DURATION: ${(report.summary.averageDuration / 1000).toFixed(2)}s${" ".repeat(37 - (report.summary.averageDuration / 1000).toFixed(2).length)} ║`,
     );
     logger.info(
-      "╚════════════════════════════════════════════════════════════╝\n");
+      "╚════════════════════════════════════════════════════════════╝\n",
+    );
   }
 
   private generateReportId(): string {

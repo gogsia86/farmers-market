@@ -19,7 +19,13 @@ import type { Variants } from "framer-motion";
 // Type Definitions
 // ============================================================================
 
-export type ToastPosition = "top-left" | "top-center" | "top-right" | "bottom-left" | "bottom-center" | "bottom-right";
+export type ToastPosition =
+  | "top-left"
+  | "top-center"
+  | "top-right"
+  | "bottom-left"
+  | "bottom-center"
+  | "bottom-right";
 export type Season = "spring" | "summer" | "fall" | "winter";
 
 // ============================================================================
@@ -466,7 +472,7 @@ export const reducedMotionToastVariants: Variants = {
  */
 export function getAccessibleToastVariants(
   prefersReducedMotion: boolean,
-  baseVariants: Variants = defaultToastVariants
+  baseVariants: Variants = defaultToastVariants,
 ): Variants {
   return prefersReducedMotion ? reducedMotionToastVariants : baseVariants;
 }

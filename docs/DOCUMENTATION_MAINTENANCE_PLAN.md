@@ -25,21 +25,22 @@
 
 ### Primary Owners
 
-| Documentation Area | Primary Owner | Backup Owner | Review Frequency |
-|-------------------|---------------|--------------|------------------|
-| **API Documentation** | Backend Lead | Senior Backend Dev | Weekly |
-| **Testing Standards** | QA Lead | Test Engineer | Bi-weekly |
-| **Security Best Practices** | Security Champion | Senior Security Engineer | Monthly |
-| **Performance Best Practices** | Performance Engineer | Staff Engineer | Bi-weekly |
-| **Code Review Standards** | Staff Engineer | Tech Lead | Monthly |
-| **Onboarding Guide** | Engineering Manager | Senior Developer | Quarterly |
-| **TypeScript Patterns** | TypeScript Expert | Staff Engineer | Bi-weekly |
-| **Prisma Best Practices** | Database Lead | Backend Lead | Bi-weekly |
-| **Architecture ADRs** | Tech Lead | Principal Engineer | Per ADR |
+| Documentation Area             | Primary Owner        | Backup Owner             | Review Frequency |
+| ------------------------------ | -------------------- | ------------------------ | ---------------- |
+| **API Documentation**          | Backend Lead         | Senior Backend Dev       | Weekly           |
+| **Testing Standards**          | QA Lead              | Test Engineer            | Bi-weekly        |
+| **Security Best Practices**    | Security Champion    | Senior Security Engineer | Monthly          |
+| **Performance Best Practices** | Performance Engineer | Staff Engineer           | Bi-weekly        |
+| **Code Review Standards**      | Staff Engineer       | Tech Lead                | Monthly          |
+| **Onboarding Guide**           | Engineering Manager  | Senior Developer         | Quarterly        |
+| **TypeScript Patterns**        | TypeScript Expert    | Staff Engineer           | Bi-weekly        |
+| **Prisma Best Practices**      | Database Lead        | Backend Lead             | Bi-weekly        |
+| **Architecture ADRs**          | Tech Lead            | Principal Engineer       | Per ADR          |
 
 ### Responsibilities
 
 **Primary Owner:**
+
 - Keep documentation accurate and up-to-date
 - Review and approve changes to their section
 - Respond to questions about their area
@@ -47,6 +48,7 @@
 - Monthly quality audit of their section
 
 **Backup Owner:**
+
 - Support primary owner
 - Take over during absence
 - Review major changes
@@ -57,11 +59,13 @@
 ## 📅 Maintenance Schedule
 
 ### Daily Activities
+
 - [ ] Monitor documentation-related issues and PRs
 - [ ] Answer questions in #engineering-docs Slack channel
 - [ ] Quick fixes for typos or broken links
 
 ### Weekly Activities (Fridays 2-3 PM)
+
 - [ ] **API Documentation Review** (Backend Lead)
   - Verify new endpoints are documented
   - Update Swagger specs
@@ -73,6 +77,7 @@
   - Add new testing examples
 
 ### Bi-weekly Activities (Every other Monday)
+
 - [ ] **Documentation Sync Meeting** (All Owners)
   - Duration: 30 minutes
   - Review pending updates
@@ -85,6 +90,7 @@
   - Check for inconsistencies
 
 ### Monthly Activities (First Monday of Month)
+
 - [ ] **Comprehensive Documentation Audit**
   - Review all sections for accuracy
   - Update outdated examples
@@ -97,6 +103,7 @@
   - Review incident learnings
 
 ### Quarterly Activities (Q1, Q2, Q3, Q4)
+
 - [ ] **Major Documentation Refresh**
   - Comprehensive review of all docs
   - Update for major framework/library changes
@@ -129,7 +136,9 @@ graph LR
 ### Documentation Update Process
 
 #### 1. Identify Need for Update
+
 **Triggers:**
+
 - New feature added
 - API changes
 - Breaking changes
@@ -138,19 +147,24 @@ graph LR
 - Security vulnerabilities patched
 
 #### 2. Create Documentation Update
+
 **Options:**
+
 - **In Same PR (Preferred):** Include doc updates with code changes
 - **Separate PR:** If substantial or needs dedicated review
 - **Issue:** For large-scale documentation work
 
 **Requirements:**
+
 - Clear description of what changed
 - Before/after examples if applicable
 - Links to related code changes
 - Review by documentation owner
 
 #### 3. Review Process
+
 **Checklist:**
+
 - [ ] Technically accurate
 - [ ] Clearly written
 - [ ] Code examples tested
@@ -159,7 +173,9 @@ graph LR
 - [ ] Related docs updated
 
 #### 4. Merge and Communicate
+
 **After Merge:**
+
 - [ ] Post in #engineering-updates Slack channel
 - [ ] Update changelog if significant
 - [ ] Notify affected teams
@@ -172,6 +188,7 @@ graph LR
 ### Documentation Health Indicators
 
 #### Tracked Metrics:
+
 1. **Accuracy Score** (Target: >95%)
    - Code examples that run without errors
    - API documentation matches actual endpoints
@@ -204,22 +221,25 @@ graph LR
 
 ### Overall Score: [X]/100
 
-| Metric | Score | Target | Status |
-|--------|-------|--------|--------|
-| Accuracy | X% | >95% | ✅/⚠️/❌ |
-| Completeness | X% | >90% | ✅/⚠️/❌ |
-| Freshness | X% | >85% | ✅/⚠️/❌ |
+| Metric        | Score  | Target  | Status   |
+| ------------- | ------ | ------- | -------- |
+| Accuracy      | X%     | >95%    | ✅/⚠️/❌ |
+| Completeness  | X%     | >90%    | ✅/⚠️/❌ |
+| Freshness     | X%     | >85%    | ✅/⚠️/❌ |
 | Response Time | X days | <3 days | ✅/⚠️/❌ |
 
 ### Top Issues:
+
 1. [Issue description] - [Owner] - [Due date]
 2. [Issue description] - [Owner] - [Due date]
 
 ### Improvements Made:
+
 - [Improvement 1]
 - [Improvement 2]
 
 ### Next Month Focus:
+
 - [Priority 1]
 - [Priority 2]
 ```
@@ -230,38 +250,43 @@ graph LR
 
 ### Documentation Issue Labels
 
-| Label | Description | Priority | SLA |
-|-------|-------------|----------|-----|
-| `docs:critical` | Incorrect info causing production issues | P0 | 24 hours |
-| `docs:high` | Major inaccuracies or missing critical docs | P1 | 3 days |
-| `docs:medium` | Minor errors or improvement suggestions | P2 | 1 week |
-| `docs:low` | Typos, formatting, nice-to-haves | P3 | 2 weeks |
-| `docs:enhancement` | New documentation requests | P2 | 1 sprint |
+| Label              | Description                                 | Priority | SLA      |
+| ------------------ | ------------------------------------------- | -------- | -------- |
+| `docs:critical`    | Incorrect info causing production issues    | P0       | 24 hours |
+| `docs:high`        | Major inaccuracies or missing critical docs | P1       | 3 days   |
+| `docs:medium`      | Minor errors or improvement suggestions     | P2       | 1 week   |
+| `docs:low`         | Typos, formatting, nice-to-haves            | P3       | 2 weeks  |
+| `docs:enhancement` | New documentation requests                  | P2       | 1 sprint |
 
 ### Issue Resolution Process
 
 #### Step 1: Triage (Within 24 hours)
+
 - Assign appropriate label
 - Assign to documentation owner
 - Estimate effort
 - Set due date based on SLA
 
 #### Step 2: Investigation
+
 - Verify the issue
 - Determine scope of fix
 - Check related documentation
 
 #### Step 3: Fix
+
 - Update documentation
 - Test code examples
 - Review with stakeholders
 
 #### Step 4: Verification
+
 - Peer review
 - Test with fresh eyes
 - Verify issue is resolved
 
 #### Step 5: Close & Communicate
+
 - Close issue with summary
 - Post update in relevant channels
 - Add to changelog if significant
@@ -273,44 +298,53 @@ graph LR
 ### Minimum Requirements for All Documentation
 
 #### Structure:
+
 ```markdown
 # Title
 
 ## Overview
+
 - Purpose
 - Scope
 - Audience
 
 ## Prerequisites
+
 - Required knowledge
 - Required tools
 
 ## Main Content
+
 - Clear sections
 - Logical flow
 - Progressive complexity
 
 ## Examples
+
 - Real-world scenarios
 - Tested code samples
 - Expected outputs
 
 ## Troubleshooting
+
 - Common issues
 - Solutions
 - Where to get help
 
 ## Related Documentation
+
 - Links to related docs
 - External resources
 
 ## Metadata
+
 - Last Updated
 - Version
 - Owner
 ```
 
 #### Code Examples:
+
 - ✅ Must be tested and working
 - ✅ Include imports and setup
 - ✅ Show expected output
@@ -318,6 +352,7 @@ graph LR
 - ✅ Follow project coding standards
 
 #### Writing Style:
+
 - ✅ Clear and concise
 - ✅ Active voice
 - ✅ Present tense
@@ -325,6 +360,7 @@ graph LR
 - ✅ Avoid jargon or explain it
 
 #### Formatting:
+
 - ✅ Consistent heading hierarchy
 - ✅ Proper markdown syntax
 - ✅ Tables for structured data
@@ -340,6 +376,7 @@ graph LR
 **For Each Documentation Section:**
 
 #### Accuracy ✅
+
 - [ ] Code examples run without errors
 - [ ] API documentation matches implementation
 - [ ] Screenshots are current
@@ -347,6 +384,7 @@ graph LR
 - [ ] Links are not broken
 
 #### Completeness ✅
+
 - [ ] All features documented
 - [ ] All sections filled out
 - [ ] Examples provided
@@ -354,6 +392,7 @@ graph LR
 - [ ] Troubleshooting section complete
 
 #### Clarity ✅
+
 - [ ] Easy to understand
 - [ ] Logical organization
 - [ ] Proper headings
@@ -361,12 +400,14 @@ graph LR
 - [ ] No ambiguous statements
 
 #### Consistency ✅
+
 - [ ] Follows documentation standards
 - [ ] Consistent terminology
 - [ ] Consistent formatting
 - [ ] Matches other sections
 
 #### Relevance ✅
+
 - [ ] Still applicable
 - [ ] Reflects current practices
 - [ ] No outdated information
@@ -383,22 +424,27 @@ graph LR
 ### Findings
 
 #### ✅ Strengths
+
 - [What's working well]
 
 #### ⚠️ Issues Found
+
 1. **[Issue]** - Priority: [High/Medium/Low]
    - Location: [File/Section]
    - Description: [Details]
    - Recommended Fix: [Solution]
 
 #### 📈 Improvements Made
+
 - [What was fixed during audit]
 
 ### Action Items
+
 - [ ] [Action 1] - Owner: [Name] - Due: [Date]
 - [ ] [Action 2] - Owner: [Name] - Due: [Date]
 
 ### Overall Score: [X]/100
+
 - Accuracy: [X]/20
 - Completeness: [X]/20
 - Clarity: [X]/20
@@ -415,15 +461,18 @@ graph LR
 ### Documentation Updates Communication
 
 #### Minor Updates (typos, small fixes)
+
 - ✅ No announcement needed
 - ✅ Include in monthly summary
 
 #### Medium Updates (new sections, significant changes)
+
 - ✅ Post in #engineering-updates Slack
 - ✅ Mention in weekly team meeting
 - ✅ Update changelog
 
 #### Major Updates (new docs, restructuring)
+
 - ✅ Team-wide announcement
 - ✅ Email notification
 - ✅ Optional training session
@@ -432,10 +481,12 @@ graph LR
 ### Training Sessions
 
 #### Quarterly Documentation Workshops
+
 **Duration:** 1 hour  
 **Audience:** All engineers
 
 **Topics:**
+
 1. Documentation overview and navigation
 2. How to find answers quickly
 3. How to contribute to docs
@@ -443,10 +494,12 @@ graph LR
 5. Q&A session
 
 #### New Hire Documentation Training
+
 **Duration:** 30 minutes  
 **Timing:** Day 2 of onboarding
 
 **Coverage:**
+
 - Documentation structure
 - Where to find what
 - How to search effectively
@@ -460,12 +513,14 @@ graph LR
 ### How Team Members Can Contribute
 
 #### Small Fixes (Anyone)
+
 1. Find an issue (typo, broken link, etc.)
 2. Click "Edit" on GitHub
 3. Make the change
 4. Submit PR with clear description
 
 #### Substantial Changes (Need Review)
+
 1. Open an issue describing the change
 2. Discuss with documentation owner
 3. Create PR with changes
@@ -474,6 +529,7 @@ graph LR
 6. Merge after approval
 
 #### New Documentation (Collaborative)
+
 1. Propose in #engineering-docs or GitHub issue
 2. Discuss scope and structure
 3. Create draft
@@ -484,18 +540,22 @@ graph LR
 ### Recognition & Rewards
 
 #### Documentation Champions
+
 **Criteria:** 5+ substantial documentation contributions per quarter
 
 **Benefits:**
+
 - Recognition in team meeting
 - Listed in documentation credits
 - Priority consideration for documentation-related projects
 - Input on documentation strategy
 
 #### Monthly Documentation MVP
+
 **Selection:** Most impactful documentation contribution
 
 **Recognition:**
+
 - Announced in team meeting
 - $100 gift card or equivalent
 - Featured in company newsletter
@@ -505,6 +565,7 @@ graph LR
 ## 🔧 Tools & Automation
 
 ### Current Tools
+
 - **GitHub:** Version control, PRs, issues
 - **Markdown:** Documentation format
 - **VSCode:** Editing with extensions
@@ -514,12 +575,14 @@ graph LR
 ### Automation Opportunities
 
 #### Automated Checks (Implemented)
+
 - ✅ Broken link detection
 - ✅ Markdown linting
 - ✅ Spell checking
 - ✅ Format validation
 
 #### Future Automation (Planned)
+
 - [ ] API documentation auto-generation from code
 - [ ] Code example testing in CI/CD
 - [ ] Screenshot automation
@@ -529,21 +592,25 @@ graph LR
 ### Documentation Scripts
 
 #### Check All Links
+
 ```bash
 npm run docs:check-links
 ```
 
 #### Format All Documentation
+
 ```bash
 npm run docs:format
 ```
 
 #### Generate Table of Contents
+
 ```bash
 npm run docs:generate-toc
 ```
 
 #### Spell Check
+
 ```bash
 npm run docs:spell-check
 ```
@@ -553,6 +620,7 @@ npm run docs:spell-check
 ## 📈 Success Criteria
 
 ### Short-Term (3 months)
+
 - ✅ All documentation owners assigned and active
 - ✅ Bi-weekly sync meetings established
 - ✅ Documentation issues resolved within SLA 90% of time
@@ -560,6 +628,7 @@ npm run docs:spell-check
 - ✅ Documentation health score >85%
 
 ### Medium-Term (6 months)
+
 - ✅ Documentation maintenance becomes routine
 - ✅ Documentation health score >90%
 - ✅ Reduced documentation-related support questions
@@ -567,6 +636,7 @@ npm run docs:spell-check
 - ✅ Team satisfaction with documentation >4/5
 
 ### Long-Term (12 months)
+
 - ✅ Documentation is self-sustaining
 - ✅ Documentation health score >95%
 - ✅ Documentation cited as major strength in team surveys
@@ -580,22 +650,27 @@ npm run docs:spell-check
 ### When Documentation Issues Arise
 
 #### Level 1: Documentation Owner
+
 **Contact:** Section owner (see ownership table)  
 **Response Time:** Based on issue priority  
 **Scope:** Issues within their section
 
 #### Level 2: Technical Lead
+
 **Contact:** [Tech Lead Name/Slack]  
 **Response Time:** 24 hours  
-**Scope:** 
+**Scope:**
+
 - Cross-cutting issues
 - Owner unavailable
 - Disagreements on approach
 
 #### Level 3: Engineering Manager
+
 **Contact:** [Manager Name/Slack]  
 **Response Time:** 48 hours  
 **Scope:**
+
 - Resource allocation
 - Priority conflicts
 - Process improvements
@@ -606,7 +681,7 @@ npm run docs:spell-check
 
 ### New Documentation Template
 
-```markdown
+````markdown
 # [Title]
 
 ## 📋 Overview
@@ -624,11 +699,14 @@ npm run docs:spell-check
 [Content]
 
 #### Example:
+
 ```[language]
 [code example]
 ```
+````
 
 **Expected Output:**
+
 ```
 [output]
 ```
@@ -638,6 +716,7 @@ npm run docs:spell-check
 ## 🔧 Common Issues
 
 ### Issue: [Description]
+
 **Solution:** [How to fix]
 
 ---
@@ -649,10 +728,11 @@ npm run docs:spell-check
 
 ---
 
-*Last Updated: [Date]*  
-*Version: [X.X]*  
-*Owner: [Name]*
-```
+_Last Updated: [Date]_  
+_Version: [X.X]_  
+_Owner: [Name]_
+
+````
 
 ### Documentation Update PR Template
 
@@ -691,24 +771,29 @@ npm run docs:spell-check
 - [ ] Technically accurate
 - [ ] Examples tested
 - [ ] Related docs updated
-```
+````
 
 ---
 
 ## 📞 Support & Contact
 
 ### Documentation Questions
+
 **Primary:** #engineering-docs Slack channel  
 **Email:** engineering-docs@farmersmarket.com
 
 ### Documentation Owners
+
 [See ownership table above]
 
 ### Process Questions
+
 **Contact:** Technical Lead or Engineering Manager
 
 ### Feedback & Suggestions
+
 **Methods:**
+
 - GitHub Discussions
 - #engineering-docs Slack
 - Monthly documentation sync meeting
@@ -721,14 +806,17 @@ npm run docs:spell-check
 ### Quarterly Documentation Awards
 
 #### Best Documentation Contributor
+
 - Most helpful documentation updates
 - Quality and quantity of contributions
 
 #### Most Improved Section
+
 - Section that saw biggest quality improvement
 - Recognition for owner and contributors
 
 #### Documentation Champion
+
 - Consistent, high-quality contributions
 - Helping others with documentation
 
@@ -737,15 +825,16 @@ npm run docs:spell-check
 ## 🔄 Plan Review & Updates
 
 ### This Plan Will Be Reviewed:
+
 - **Quarterly:** Update metrics, processes, ownership
 - **Annually:** Major review and refresh
 - **As Needed:** When processes aren't working
 
 ### Plan Version History
 
-| Version | Date | Changes | Author |
-|---------|------|---------|--------|
-| 1.0 | Jan 2025 | Initial plan | Tech Lead |
+| Version | Date     | Changes      | Author    |
+| ------- | -------- | ------------ | --------- |
+| 1.0     | Jan 2025 | Initial plan | Tech Lead |
 
 ---
 
@@ -769,6 +858,7 @@ docs/
 ```
 
 ### B. Useful Links
+
 - [Phase 3 Completion Summary](./PHASE_3_COMPLETION_SUMMARY.md)
 - [Phase 3 Progress Dashboard](./PHASE_3_PROGRESS_DASHBOARD.md)
 - [Developer Onboarding Guide](./onboarding/DEVELOPER_ONBOARDING.md)
@@ -781,26 +871,31 @@ docs/
 ## [Section Name] Health Check - [Date]
 
 ### Accuracy
+
 - [ ] Code examples tested
 - [ ] API docs match implementation
 - [ ] No outdated information
 
-### Completeness  
+### Completeness
+
 - [ ] All features documented
 - [ ] Examples provided
 - [ ] Troubleshooting section complete
 
 ### Clarity
+
 - [ ] Easy to understand
 - [ ] Well organized
 - [ ] Good examples
 
 ### Consistency
+
 - [ ] Follows standards
 - [ ] Consistent terminology
 - [ ] Proper formatting
 
 ### Relevance
+
 - [ ] Still applicable
 - [ ] Reflects current practices
 - [ ] Up-to-date tech stack
@@ -815,7 +910,7 @@ docs/
 
 ---
 
-*Last Updated: January 2025*  
-*Version: 1.0*  
-*Owner: Technical Lead*  
-*Next Review: April 2025*
+_Last Updated: January 2025_  
+_Version: 1.0_  
+_Owner: Technical Lead_  
+_Next Review: April 2025_

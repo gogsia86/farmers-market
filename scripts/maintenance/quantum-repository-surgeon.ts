@@ -13,11 +13,11 @@
  * @license MIT
  */
 
-import { exec } from 'child_process';
-import * as fs from 'fs';
-import * as path from 'path';
-import { fileURLToPath } from 'url';
-import { promisify } from 'util';
+import { exec } from "child_process";
+import * as fs from "fs";
+import * as path from "path";
+import { fileURLToPath } from "url";
+import { promisify } from "util";
 
 const execAsync = promisify(exec);
 const __filename = fileURLToPath(import.meta.url);
@@ -27,14 +27,14 @@ const __dirname = path.dirname(__filename);
 // 🎯 DIVINE TYPE DEFINITIONS
 // ═══════════════════════════════════════════════════════════════════════════════
 
-type Season = 'SPRING' | 'SUMMER' | 'FALL' | 'WINTER';
-type ConsciousnessLevel = 'QUANTUM' | 'DIVINE' | 'BIODYNAMIC' | 'STANDARD';
+type Season = "SPRING" | "SUMMER" | "FALL" | "WINTER";
+type ConsciousnessLevel = "QUANTUM" | "DIVINE" | "BIODYNAMIC" | "STANDARD";
 type DeletionReason =
-  | 'EMPTY_DIRECTORY'
-  | 'BUILD_ARTIFACT'
-  | 'OBSOLETE_FILES'
-  | 'TEMPORAL_CACHE'
-  | 'AGRICULTURAL_DEBRIS';
+  | "EMPTY_DIRECTORY"
+  | "BUILD_ARTIFACT"
+  | "OBSOLETE_FILES"
+  | "TEMPORAL_CACHE"
+  | "AGRICULTURAL_DEBRIS";
 
 interface AgriculturalMetadata {
   season: Season;
@@ -95,63 +95,103 @@ class QuantumRepositorySurgeon {
 
   constructor(repoPath: string = process.cwd()) {
     this.repoRoot = path.resolve(repoPath);
-    this.backupPath = path.join(this.repoRoot, '.quantum-surgical-backup');
+    this.backupPath = path.join(this.repoRoot, ".quantum-surgical-backup");
     this.surgicalLog = [];
 
     // Protected patterns - DIVINE FORTRESS
     this.protectedPatterns = new Set([
-      '.git',
-      '.github',
-      '.vscode',
-      '.zed',
-      '.cursor',
-      '.copilot',
-      '.idea',
-      'node_modules',
-      'venv',
-      '.venv',
-      'env',
-      '.env',
-      'prisma',
-      'src',
-      'core',
-      'config',
-      'public',
-      'types',
-      'tests',
-      '__tests__',
-      'docs',
-      'scripts',
-      'mobile-app',
-      'docker',
-      'nginx',
+      ".git",
+      ".github",
+      ".vscode",
+      ".zed",
+      ".cursor",
+      ".copilot",
+      ".idea",
+      "node_modules",
+      "venv",
+      ".venv",
+      "env",
+      ".env",
+      "prisma",
+      "src",
+      "core",
+      "config",
+      "public",
+      "types",
+      "tests",
+      "__tests__",
+      "docs",
+      "scripts",
+      "mobile-app",
+      "docker",
+      "nginx",
     ]);
 
     // Whitelist extensions - AGRICULTURAL CONSCIOUSNESS
     this.whitelistExtensions = new Set([
-      '.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs',
-      '.json', '.jsonc', '.json5',
-      '.md', '.mdx',
-      '.css', '.scss', '.sass', '.less',
-      '.html', '.htm',
-      '.yml', '.yaml',
-      '.toml', '.ini', '.cfg', '.conf',
-      '.sql', '.prisma',
-      '.graphql', '.gql',
-      '.proto', '.grpc',
-      '.svg', '.png', '.jpg', '.jpeg', '.ico', '.webp',
-      '.woff', '.woff2', '.ttf', '.eot',
-      '.lock', '.example', '.sample', '.template',
-      '.env.example', '.env.local', '.env.production',
-      '.sh', '.bash', '.ps1', '.cmd', '.bat',
-      '.gitignore', '.dockerignore', '.vercelignore',
-      '.eslintrc', '.prettierrc', '.editorconfig',
+      ".ts",
+      ".tsx",
+      ".js",
+      ".jsx",
+      ".mjs",
+      ".cjs",
+      ".json",
+      ".jsonc",
+      ".json5",
+      ".md",
+      ".mdx",
+      ".css",
+      ".scss",
+      ".sass",
+      ".less",
+      ".html",
+      ".htm",
+      ".yml",
+      ".yaml",
+      ".toml",
+      ".ini",
+      ".cfg",
+      ".conf",
+      ".sql",
+      ".prisma",
+      ".graphql",
+      ".gql",
+      ".proto",
+      ".grpc",
+      ".svg",
+      ".png",
+      ".jpg",
+      ".jpeg",
+      ".ico",
+      ".webp",
+      ".woff",
+      ".woff2",
+      ".ttf",
+      ".eot",
+      ".lock",
+      ".example",
+      ".sample",
+      ".template",
+      ".env.example",
+      ".env.local",
+      ".env.production",
+      ".sh",
+      ".bash",
+      ".ps1",
+      ".cmd",
+      ".bat",
+      ".gitignore",
+      ".dockerignore",
+      ".vercelignore",
+      ".eslintrc",
+      ".prettierrc",
+      ".editorconfig",
     ]);
 
     // Initialize agricultural consciousness
     this.agricultural = {
       season: this.detectCurrentSeason(),
-      consciousness: 'QUANTUM',
+      consciousness: "QUANTUM",
       harvestCycle: Date.now(),
       biodynamicAlignment: true,
     };
@@ -163,10 +203,10 @@ class QuantumRepositorySurgeon {
 
   private detectCurrentSeason(): Season {
     const month = new Date().getMonth() + 1;
-    if (month >= 3 && month <= 5) return 'SPRING';
-    if (month >= 6 && month <= 8) return 'SUMMER';
-    if (month >= 9 && month <= 11) return 'FALL';
-    return 'WINTER';
+    if (month >= 3 && month <= 5) return "SPRING";
+    if (month >= 6 && month <= 8) return "SUMMER";
+    if (month >= 9 && month <= 11) return "FALL";
+    return "WINTER";
   }
 
   private calculateAgriculturalRelevance(targetPath: string): number {
@@ -174,8 +214,16 @@ class QuantumRepositorySurgeon {
     let score = 0;
 
     const agriculturalKeywords = [
-      'farm', 'product', 'order', 'delivery', 'customer',
-      'farmer', 'market', 'harvest', 'seasonal', 'organic',
+      "farm",
+      "product",
+      "order",
+      "delivery",
+      "customer",
+      "farmer",
+      "market",
+      "harvest",
+      "seasonal",
+      "organic",
     ];
 
     const pathLower = targetPath.toLowerCase();
@@ -199,15 +247,21 @@ class QuantumRepositorySurgeon {
   // ═══════════════════════════════════════════════════════════════════════════════
 
   async scanRepositoryConsciousness(): Promise<void> {
-    this.logQuantum('[01/05] → Initiating Quantum Repository Scan', 'QUANTUM');
-    this.logQuantum(`📁 Target: ${this.repoRoot}`, 'DIVINE');
-    this.logQuantum(`🌾 Season: ${this.agricultural.season}`, 'BIODYNAMIC');
+    this.logQuantum("[01/05] → Initiating Quantum Repository Scan", "QUANTUM");
+    this.logQuantum(`📁 Target: ${this.repoRoot}`, "DIVINE");
+    this.logQuantum(`🌾 Season: ${this.agricultural.season}`, "BIODYNAMIC");
 
     const structure = await this.mapQuantumStructure();
 
-    this.logQuantum(`✓ Mapped ${structure.totalDirectories} directories`, 'STANDARD');
-    this.logQuantum(`✓ Found ${structure.totalFiles} files`, 'STANDARD');
-    this.logQuantum(`✓ Total size: ${structure.totalSizeMB.toFixed(2)} MB`, 'STANDARD');
+    this.logQuantum(
+      `✓ Mapped ${structure.totalDirectories} directories`,
+      "STANDARD",
+    );
+    this.logQuantum(`✓ Found ${structure.totalFiles} files`, "STANDARD");
+    this.logQuantum(
+      `✓ Total size: ${structure.totalSizeMB.toFixed(2)} MB`,
+      "STANDARD",
+    );
   }
 
   private async mapQuantumStructure(): Promise<{
@@ -262,7 +316,10 @@ class QuantumRepositorySurgeon {
   // ═══════════════════════════════════════════════════════════════════════════════
 
   async identifyQuantumTargets(): Promise<QuantumTarget[]> {
-    this.logQuantum('[02/05] → Identifying Quantum Deletion Targets', 'QUANTUM');
+    this.logQuantum(
+      "[02/05] → Identifying Quantum Deletion Targets",
+      "QUANTUM",
+    );
 
     const targets: QuantumTarget[] = [];
 
@@ -271,12 +328,15 @@ class QuantumRepositorySurgeon {
     // Sort by agricultural relevance (lowest first = safest to delete)
     targets.sort((a, b) => a.agriculturalRelevance - b.agriculturalRelevance);
 
-    this.logQuantum(`✓ Identified ${targets.length} quantum targets`, 'DIVINE');
+    this.logQuantum(`✓ Identified ${targets.length} quantum targets`, "DIVINE");
 
     return targets;
   }
 
-  private async scanForOrphans(dir: string, targets: QuantumTarget[]): Promise<void> {
+  private async scanForOrphans(
+    dir: string,
+    targets: QuantumTarget[],
+  ): Promise<void> {
     try {
       const entries = await fs.promises.readdir(dir, { withFileTypes: true });
 
@@ -291,13 +351,16 @@ class QuantumRepositorySurgeon {
 
         if (entry.isDirectory()) {
           // Check if directory should be targeted
-          const shouldTarget = await this.shouldTargetDirectory(fullPath, entry.name);
+          const shouldTarget = await this.shouldTargetDirectory(
+            fullPath,
+            entry.name,
+          );
 
           if (shouldTarget.target) {
             const target = await this.createQuantumTarget(
               fullPath,
               relativePath,
-              shouldTarget.reason
+              shouldTarget.reason,
             );
             targets.push(target);
           } else {
@@ -313,48 +376,50 @@ class QuantumRepositorySurgeon {
 
   private async shouldTargetDirectory(
     fullPath: string,
-    dirName: string
+    dirName: string,
   ): Promise<{ target: boolean; reason: DeletionReason }> {
     // Check if empty
     const isEmpty = await this.isEmptyDirectory(fullPath);
     if (isEmpty) {
-      return { target: true, reason: 'EMPTY_DIRECTORY' };
+      return { target: true, reason: "EMPTY_DIRECTORY" };
     }
 
     // Check for build artifacts
     const buildArtifacts = [
-      '__pycache__',
-      '.pytest_cache',
-      '.coverage',
-      'target',
-      'dist',
-      'build',
-      'out',
-      '.next',
-      '.nuxt',
-      '.output',
-      '.cache',
-      '.turbo',
-      '.parcel-cache',
+      "__pycache__",
+      ".pytest_cache",
+      ".coverage",
+      "target",
+      "dist",
+      "build",
+      "out",
+      ".next",
+      ".nuxt",
+      ".output",
+      ".cache",
+      ".turbo",
+      ".parcel-cache",
     ];
 
     if (buildArtifacts.includes(dirName)) {
-      return { target: true, reason: 'BUILD_ARTIFACT' };
+      return { target: true, reason: "BUILD_ARTIFACT" };
     }
 
     // Check for temporal caches
-    const cachePatterns = ['cache', 'tmp', 'temp', 'logs'];
-    if (cachePatterns.some(pattern => dirName.toLowerCase().includes(pattern))) {
-      return { target: true, reason: 'TEMPORAL_CACHE' };
+    const cachePatterns = ["cache", "tmp", "temp", "logs"];
+    if (
+      cachePatterns.some((pattern) => dirName.toLowerCase().includes(pattern))
+    ) {
+      return { target: true, reason: "TEMPORAL_CACHE" };
     }
 
     // Check if contains only irrelevant files
     const onlyIrrelevant = await this.containsOnlyIrrelevantFiles(fullPath);
     if (onlyIrrelevant) {
-      return { target: true, reason: 'OBSOLETE_FILES' };
+      return { target: true, reason: "OBSOLETE_FILES" };
     }
 
-    return { target: false, reason: 'EMPTY_DIRECTORY' };
+    return { target: false, reason: "EMPTY_DIRECTORY" };
   }
 
   private async isEmptyDirectory(dirPath: string): Promise<boolean> {
@@ -401,7 +466,7 @@ class QuantumRepositorySurgeon {
   private async createQuantumTarget(
     fullPath: string,
     relativePath: string,
-    reason: DeletionReason
+    reason: DeletionReason,
   ): Promise<QuantumTarget> {
     const stats = await this.calculateDirectoryStats(fullPath);
     const lastModified = await this.getLastModifiedTime(fullPath);
@@ -420,7 +485,7 @@ class QuantumRepositorySurgeon {
   }
 
   private async calculateDirectoryStats(
-    dirPath: string
+    dirPath: string,
   ): Promise<{ sizeMB: number; fileCount: number }> {
     let totalSize = 0;
     let fileCount = 0;
@@ -477,11 +542,16 @@ class QuantumRepositorySurgeon {
   // 💾 PHASE 3: QUANTUM BACKUP MANIFESTATION
   // ═══════════════════════════════════════════════════════════════════════════════
 
-  async createQuantumBackup(targets: QuantumTarget[]): Promise<SurgicalManifest> {
-    this.logQuantum('[03/05] → Creating Quantum Backup Manifest', 'QUANTUM');
+  async createQuantumBackup(
+    targets: QuantumTarget[],
+  ): Promise<SurgicalManifest> {
+    this.logQuantum("[03/05] → Creating Quantum Backup Manifest", "QUANTUM");
 
     if (targets.length === 0) {
-      this.logQuantum('✓ No targets identified - backup not required', 'STANDARD');
+      this.logQuantum(
+        "✓ No targets identified - backup not required",
+        "STANDARD",
+      );
       return this.createEmptyManifest();
     }
 
@@ -491,7 +561,7 @@ class QuantumRepositorySurgeon {
     // Create manifest
     const manifest: SurgicalManifest = {
       timestamp: new Date().toISOString(),
-      operation: 'QUANTUM_REPOSITORY_SURGICAL_CLEANSE',
+      operation: "QUANTUM_REPOSITORY_SURGICAL_CLEANSE",
       totalTargets: targets.length,
       targets,
       backupLocation: this.backupPath,
@@ -500,15 +570,15 @@ class QuantumRepositorySurgeon {
     };
 
     // Save manifest
-    const manifestPath = path.join(this.backupPath, 'quantum-manifest.json');
+    const manifestPath = path.join(this.backupPath, "quantum-manifest.json");
     await fs.promises.writeFile(
       manifestPath,
       JSON.stringify(manifest, null, 2),
-      'utf-8'
+      "utf-8",
     );
 
-    this.logQuantum(`✓ Backup manifest created: ${manifestPath}`, 'DIVINE');
-    this.logQuantum(`✓ ${targets.length} targets documented`, 'STANDARD');
+    this.logQuantum(`✓ Backup manifest created: ${manifestPath}`, "DIVINE");
+    this.logQuantum(`✓ ${targets.length} targets documented`, "STANDARD");
 
     return manifest;
   }
@@ -516,12 +586,12 @@ class QuantumRepositorySurgeon {
   private createEmptyManifest(): SurgicalManifest {
     return {
       timestamp: new Date().toISOString(),
-      operation: 'QUANTUM_REPOSITORY_SURGICAL_CLEANSE',
+      operation: "QUANTUM_REPOSITORY_SURGICAL_CLEANSE",
       totalTargets: 0,
       targets: [],
       backupLocation: this.backupPath,
       agricultural: this.agricultural,
-      integrityHash: 'EMPTY',
+      integrityHash: "EMPTY",
     };
   }
 
@@ -529,8 +599,10 @@ class QuantumRepositorySurgeon {
   // ⚡ PHASE 4: SURGICAL DELETION EXECUTION
   // ═══════════════════════════════════════════════════════════════════════════════
 
-  async executeSurgicalDeletion(targets: QuantumTarget[]): Promise<DeletionResults> {
-    this.logQuantum('[04/05] → Executing Quantum Surgical Deletion', 'QUANTUM');
+  async executeSurgicalDeletion(
+    targets: QuantumTarget[],
+  ): Promise<DeletionResults> {
+    this.logQuantum("[04/05] → Executing Quantum Surgical Deletion", "QUANTUM");
 
     const results: DeletionResults = {
       successful: [],
@@ -545,7 +617,10 @@ class QuantumRepositorySurgeon {
         // Double-check path still exists
         if (!fs.existsSync(target.path)) {
           results.skipped.push(target.relativePath);
-          this.logQuantum(`⊘ Skipped (not found): ${target.relativePath}`, 'STANDARD');
+          this.logQuantum(
+            `⊘ Skipped (not found): ${target.relativePath}`,
+            "STANDARD",
+          );
           continue;
         }
 
@@ -559,23 +634,23 @@ class QuantumRepositorySurgeon {
         results.totalFreedMB += target.sizeMB;
 
         this.surgicalLog.push(
-          `✓ Removed: ${target.relativePath} (${target.sizeMB.toFixed(2)} MB) [${target.reason}]`
+          `✓ Removed: ${target.relativePath} (${target.sizeMB.toFixed(2)} MB) [${target.reason}]`,
         );
-        this.logQuantum(`✓ Removed: ${target.relativePath}`, 'STANDARD');
+        this.logQuantum(`✓ Removed: ${target.relativePath}`, "STANDARD");
       } catch (error) {
         results.failed.push({
           path: target.relativePath,
-          error: error instanceof Error ? error.message : 'Unknown error',
+          error: error instanceof Error ? error.message : "Unknown error",
         });
 
         this.surgicalLog.push(`✗ Failed: ${target.relativePath} - ${error}`);
-        this.logQuantum(`✗ Failed: ${target.relativePath}`, 'STANDARD');
+        this.logQuantum(`✗ Failed: ${target.relativePath}`, "STANDARD");
       }
     }
 
     this.logQuantum(
       `✓ Deletion complete: ${results.successful.length} removed, ${results.failed.length} failed`,
-      'DIVINE'
+      "DIVINE",
     );
 
     return results;
@@ -597,14 +672,14 @@ class QuantumRepositorySurgeon {
 
   async generateIntegrityReport(
     manifest: SurgicalManifest,
-    results: DeletionResults
+    results: DeletionResults,
   ): Promise<void> {
-    this.logQuantum('[05/05] → Generating Quantum Integrity Report', 'QUANTUM');
+    this.logQuantum("[05/05] → Generating Quantum Integrity Report", "QUANTUM");
 
     const integrity = await this.performIntegrityChecks();
 
     const report = {
-      operation: 'QUANTUM_REPOSITORY_SURGICAL_CLEANSE',
+      operation: "QUANTUM_REPOSITORY_SURGICAL_CLEANSE",
       timestamp: new Date().toISOString(),
       manifest,
       results,
@@ -615,11 +690,14 @@ class QuantumRepositorySurgeon {
     };
 
     // Save report
-    const reportPath = path.join(this.repoRoot, '.quantum-surgical-report.json');
+    const reportPath = path.join(
+      this.repoRoot,
+      ".quantum-surgical-report.json",
+    );
     await fs.promises.writeFile(
       reportPath,
       JSON.stringify(report, null, 2),
-      'utf-8'
+      "utf-8",
     );
 
     // Print divine summary
@@ -640,12 +718,12 @@ class QuantumRepositorySurgeon {
 
   private async checkGitIntegrity(): Promise<boolean> {
     try {
-      const gitDir = path.join(this.repoRoot, '.git');
+      const gitDir = path.join(this.repoRoot, ".git");
       if (!fs.existsSync(gitDir)) {
         return true; // Not a git repo
       }
 
-      const { stdout } = await execAsync('git status', { cwd: this.repoRoot });
+      const { stdout } = await execAsync("git status", { cwd: this.repoRoot });
       return stdout.length > 0;
     } catch {
       return false;
@@ -654,11 +732,11 @@ class QuantumRepositorySurgeon {
 
   private async checkCriticalFiles(): Promise<boolean> {
     const criticalFiles = [
-      'package.json',
-      'tsconfig.json',
-      'next.config.mjs',
-      'prisma/schema.prisma',
-      'README.md',
+      "package.json",
+      "tsconfig.json",
+      "next.config.mjs",
+      "prisma/schema.prisma",
+      "README.md",
     ];
 
     let foundCount = 0;
@@ -684,7 +762,7 @@ class QuantumRepositorySurgeon {
 
   private calculateQuantumCoherence(
     results: DeletionResults,
-    integrity: IntegrityReport
+    integrity: IntegrityReport,
   ): number {
     let coherence = 100;
 
@@ -716,7 +794,10 @@ class QuantumRepositorySurgeon {
       const targets = await this.identifyQuantumTargets();
 
       if (targets.length === 0) {
-        this.logQuantum('\n✅ Repository is in quantum equilibrium - no cleansing needed', 'DIVINE');
+        this.logQuantum(
+          "\n✅ Repository is in quantum equilibrium - no cleansing needed",
+          "DIVINE",
+        );
         return;
       }
 
@@ -724,7 +805,7 @@ class QuantumRepositorySurgeon {
       this.displayTargets(targets);
 
       if (dryRun) {
-        this.logQuantum('\n⚠️  DRY RUN MODE - No deletion executed', 'QUANTUM');
+        this.logQuantum("\n⚠️  DRY RUN MODE - No deletion executed", "QUANTUM");
         return;
       }
 
@@ -736,9 +817,11 @@ class QuantumRepositorySurgeon {
 
       // Phase 5: Verify
       await this.generateIntegrityReport(manifest, results);
-
     } catch (error) {
-      this.logQuantum(`\n❌ Quantum coherence disruption: ${error}`, 'STANDARD');
+      this.logQuantum(
+        `\n❌ Quantum coherence disruption: ${error}`,
+        "STANDARD",
+      );
       throw error;
     }
   }
@@ -757,7 +840,7 @@ class QuantumRepositorySurgeon {
 🌾 AGRICULTURAL CONTEXT:
    Season: ${this.agricultural.season}
    Consciousness Level: ${this.agricultural.consciousness}
-   Biodynamic Alignment: ${this.agricultural.biodynamicAlignment ? '✓ ALIGNED' : '✗ MISALIGNED'}
+   Biodynamic Alignment: ${this.agricultural.biodynamicAlignment ? "✓ ALIGNED" : "✗ MISALIGNED"}
 
 📁 REPOSITORY: ${this.repoRoot}
 
@@ -769,12 +852,14 @@ class QuantumRepositorySurgeon {
     console.log(`\n🎯 QUANTUM TARGETS IDENTIFIED: ${targets.length}\n`);
 
     for (const target of targets.slice(0, 20)) {
-      const relevance = '█'.repeat(Math.floor(target.agriculturalRelevance / 10));
-      console.log(
-        `  ${this.getReasonEmoji(target.reason)} ${target.relativePath}`
+      const relevance = "█".repeat(
+        Math.floor(target.agriculturalRelevance / 10),
       );
       console.log(
-        `     Size: ${target.sizeMB.toFixed(2)} MB | Relevance: [${relevance}] ${target.agriculturalRelevance}%`
+        `  ${this.getReasonEmoji(target.reason)} ${target.relativePath}`,
+      );
+      console.log(
+        `     Size: ${target.sizeMB.toFixed(2)} MB | Relevance: [${relevance}] ${target.agriculturalRelevance}%`,
       );
     }
 
@@ -789,7 +874,7 @@ class QuantumRepositorySurgeon {
   private printDivineSummary(
     results: DeletionResults,
     integrity: IntegrityReport,
-    reportPath: string
+    reportPath: string,
   ): void {
     console.log(`
 ════════════════════════════════════════════════════════════════════════════════
@@ -803,10 +888,10 @@ class QuantumRepositorySurgeon {
    ⊘ Skipped: ${results.skipped.length}
 
 🔬 INTEGRITY VERIFICATION:
-   ${integrity.gitIntegrity ? '✓' : '✗'} Git Repository: ${integrity.gitIntegrity ? 'INTACT' : 'COMPROMISED'}
-   ${integrity.criticalFilesPresent ? '✓' : '✗'} Critical Files: ${integrity.criticalFilesPresent ? 'PRESENT' : 'MISSING'}
-   ${integrity.noEmptyRoot ? '✓' : '✗'} Root Directory: ${integrity.noEmptyRoot ? 'POPULATED' : 'EMPTY'}
-   ${integrity.agriculturalConsciousness ? '✓' : '✗'} Agricultural Consciousness: ${integrity.agriculturalConsciousness ? 'ALIGNED' : 'MISALIGNED'}
+   ${integrity.gitIntegrity ? "✓" : "✗"} Git Repository: ${integrity.gitIntegrity ? "INTACT" : "COMPROMISED"}
+   ${integrity.criticalFilesPresent ? "✓" : "✗"} Critical Files: ${integrity.criticalFilesPresent ? "PRESENT" : "MISSING"}
+   ${integrity.noEmptyRoot ? "✓" : "✗"} Root Directory: ${integrity.noEmptyRoot ? "POPULATED" : "EMPTY"}
+   ${integrity.agriculturalConsciousness ? "✓" : "✗"} Agricultural Consciousness: ${integrity.agriculturalConsciousness ? "ALIGNED" : "MISALIGNED"}
    📈 Quantum Coherence: ${integrity.quantumCoherence}%
 
 💾 BACKUP & REPORTS:
@@ -816,7 +901,7 @@ class QuantumRepositorySurgeon {
 🌾 AGRICULTURAL STATUS:
    Season: ${this.agricultural.season}
    Harvest Cycle: COMPLETE
-   Biodynamic State: ${this.agricultural.biodynamicAlignment ? 'HARMONIOUS' : 'REQUIRES ATTENTION'}
+   Biodynamic State: ${this.agricultural.biodynamicAlignment ? "HARMONIOUS" : "REQUIRES ATTENTION"}
 
 ════════════════════════════════════════════════════════════════════════════════
 ⚡ SURGICAL PROTOCOL TERMINATED
@@ -827,10 +912,10 @@ class QuantumRepositorySurgeon {
 
   private logQuantum(message: string, level: ConsciousnessLevel): void {
     const prefix = {
-      QUANTUM: '🔮',
-      DIVINE: '⚡',
-      BIODYNAMIC: '🌾',
-      STANDARD: '  ',
+      QUANTUM: "🔮",
+      DIVINE: "⚡",
+      BIODYNAMIC: "🌾",
+      STANDARD: "  ",
     }[level];
 
     console.log(`${prefix} ${message}`);
@@ -838,17 +923,19 @@ class QuantumRepositorySurgeon {
 
   private getReasonEmoji(reason: DeletionReason): string {
     const emoji = {
-      EMPTY_DIRECTORY: '📂',
-      BUILD_ARTIFACT: '🏗️',
-      OBSOLETE_FILES: '📄',
-      TEMPORAL_CACHE: '⏳',
-      AGRICULTURAL_DEBRIS: '🌾',
+      EMPTY_DIRECTORY: "📂",
+      BUILD_ARTIFACT: "🏗️",
+      OBSOLETE_FILES: "📄",
+      TEMPORAL_CACHE: "⏳",
+      AGRICULTURAL_DEBRIS: "🌾",
     };
-    return emoji[reason] || '❓';
+    return emoji[reason] || "❓";
   }
 
   private isProtectedPath(pathSegment: string): boolean {
-    return this.protectedPatterns.has(pathSegment) || pathSegment.startsWith('.');
+    return (
+      this.protectedPatterns.has(pathSegment) || pathSegment.startsWith(".")
+    );
   }
 }
 
@@ -858,25 +945,31 @@ class QuantumRepositorySurgeon {
 
 async function main() {
   const args = process.argv.slice(2);
-  const dryRun = args.includes('--dry-run') || args.includes('-d');
-  const repoPath = args.find(arg => !arg.startsWith('--')) || process.cwd();
+  const dryRun = args.includes("--dry-run") || args.includes("-d");
+  const repoPath = args.find((arg) => !arg.startsWith("--")) || process.cwd();
 
   const surgeon = new QuantumRepositorySurgeon(repoPath);
 
   try {
     await surgeon.executeQuantumCleanse(dryRun);
   } catch (error) {
-    console.error('\n❌ QUANTUM COHERENCE FAILURE:', error);
+    console.error("\n❌ QUANTUM COHERENCE FAILURE:", error);
     process.exit(1);
   }
 }
 
 // Execute if run directly
-const isMainModule = process.argv[1] === __filename || process.argv[1]?.endsWith('quantum-repository-surgeon.ts');
+const isMainModule =
+  process.argv[1] === __filename ||
+  process.argv[1]?.endsWith("quantum-repository-surgeon.ts");
 if (isMainModule) {
   main();
 }
 
 export { QuantumRepositorySurgeon };
-export type { AgriculturalMetadata, DeletionResults, QuantumTarget, SurgicalManifest };
-
+export type {
+  AgriculturalMetadata,
+  DeletionResults,
+  QuantumTarget,
+  SurgicalManifest,
+};

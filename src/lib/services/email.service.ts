@@ -164,7 +164,7 @@ class EmailService extends BaseService {
           // Generate subject with data interpolation
           const subject = this.interpolateString(
             emailData.subject || template.subject,
-            emailData.data
+            emailData.data,
           );
 
           // Generate HTML and text content
@@ -209,7 +209,7 @@ class EmailService extends BaseService {
           };
         }
       },
-      { template: emailData.template }
+      { template: emailData.template },
     );
   }
 
@@ -225,7 +225,10 @@ class EmailService extends BaseService {
   /**
    * Send welcome email
    */
-  async sendWelcomeEmail(to: string, userName: string): Promise<EmailSendResult> {
+  async sendWelcomeEmail(
+    to: string,
+    userName: string,
+  ): Promise<EmailSendResult> {
     return this.sendEmail({
       to,
       subject: "Welcome to Farmers Market Platform! 🌾",
@@ -239,7 +242,7 @@ class EmailService extends BaseService {
    */
   async sendOrderConfirmationEmail(
     to: string,
-    orderData: any
+    orderData: any,
   ): Promise<EmailSendResult> {
     return this.sendEmail({
       to,
@@ -254,7 +257,7 @@ class EmailService extends BaseService {
    */
   async sendFarmVerificationEmail(
     to: string,
-    farmData: any
+    farmData: any,
   ): Promise<EmailSendResult> {
     return this.sendEmail({
       to,
@@ -267,7 +270,10 @@ class EmailService extends BaseService {
   /**
    * Interpolate template strings with data
    */
-  private interpolateString(template: string, data: Record<string, any>): string {
+  private interpolateString(
+    template: string,
+    data: Record<string, any>,
+  ): string {
     return template.replace(/\{(\w+)\}/g, (match, key) => {
       return data[key] !== undefined ? String(data[key]) : match;
     });
@@ -341,7 +347,7 @@ Visit ${process.env.NEXT_PUBLIC_APP_URL}/dashboard to get started!
           <td>$${Number(item.priceUSD).toFixed(2)}</td>
           <td>$${Number(item.subtotalUSD).toFixed(2)}</td>
         </tr>
-      `
+      `,
       )
       .join("");
 

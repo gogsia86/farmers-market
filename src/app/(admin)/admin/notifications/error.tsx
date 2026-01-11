@@ -1,27 +1,27 @@
-'use client'
+"use client";
 
-import { useEffect } from 'react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { AlertCircle, ArrowLeft, RefreshCw } from 'lucide-react'
-import Link from 'next/link'
+import { useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { AlertCircle, ArrowLeft, RefreshCw } from "lucide-react";
+import Link from "next/link";
 
 export default function AdminNotificationsError({
   error,
   reset,
 }: {
-  error: Error & { digest?: string }
-  reset: () => void
+  error: Error & { digest?: string };
+  reset: () => void;
 }) {
   useEffect(() => {
     // Log error to console and monitoring service
-    console.error('Admin Notifications Error:', {
+    console.error("Admin Notifications Error:", {
       message: error.message,
       digest: error.digest,
       stack: error.stack,
       timestamp: new Date().toISOString(),
-    })
-  }, [error])
+    });
+  }, [error]);
 
   return (
     <div className="container mx-auto py-8 px-4">
@@ -38,14 +38,15 @@ export default function AdminNotificationsError({
               Unable to Load Admin Notifications
             </h3>
             <p className="text-gray-600 leading-relaxed">
-              {error.message || 'An unexpected error occurred while loading the notifications page. This could be due to a database connection issue or a problem with the notification service.'}
+              {error.message ||
+                "An unexpected error occurred while loading the notifications page. This could be due to a database connection issue or a problem with the notification service."}
             </p>
           </div>
 
           {error.digest && (
             <div className="bg-gray-50 border border-gray-200 rounded-md p-4">
               <p className="text-sm text-gray-700">
-                <span className="font-medium">Error Reference ID:</span>{' '}
+                <span className="font-medium">Error Reference ID:</span>{" "}
                 <code className="text-xs bg-gray-100 px-2 py-1 rounded font-mono">
                   {error.digest}
                 </code>
@@ -90,7 +91,7 @@ export default function AdminNotificationsError({
             </Button>
           </div>
 
-          {process.env.NODE_ENV === 'development' && error.stack && (
+          {process.env.NODE_ENV === "development" && error.stack && (
             <details className="mt-6 border-t pt-4">
               <summary className="cursor-pointer text-sm font-medium text-gray-700 hover:text-gray-900 mb-2">
                 🔍 Stack Trace (Development Only)
@@ -103,5 +104,5 @@ export default function AdminNotificationsError({
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

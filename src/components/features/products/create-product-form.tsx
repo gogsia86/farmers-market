@@ -32,7 +32,7 @@ import type { ProductCategory } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 /**
  * 🌱 COMPONENT PROPS
@@ -85,7 +85,10 @@ const COMMON_UNITS = [
 /**
  * 🌾 CREATE PRODUCT FORM COMPONENT
  */
-export function CreateProductForm({ farmId, farmName }: CreateProductFormProps) {
+export function CreateProductForm({
+  farmId,
+  farmName,
+}: CreateProductFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -199,7 +202,11 @@ export function CreateProductForm({ farmId, farmName }: CreateProductFormProps) 
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6" data-testid="create-product-form">
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-6"
+      data-testid="create-product-form"
+    >
       {/* Header */}
       <div>
         <h2 className="text-2xl font-bold text-gray-900">

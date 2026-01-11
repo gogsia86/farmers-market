@@ -7,7 +7,7 @@
 
 import { loadTensorFlow } from "@/lib/lazy/ml.lazy";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 import type * as tf from "@tensorflow/tfjs";
 
@@ -43,9 +43,8 @@ export class AgriculturalGPUAccelerator {
       });
     } catch (error) {
       logger.warn("⚠️ GPU acceleration unavailable, falling back to CPU", {
-          error: error instanceof Error ? error.message : String(error)
-        }
-      );
+        error: error instanceof Error ? error.message : String(error),
+      });
       if (this.tf) {
         await this.tf.setBackend("cpu");
       }

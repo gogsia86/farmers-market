@@ -17,6 +17,7 @@ This directory contains k6 load testing scripts designed to test the Farmers Mar
 ### Prerequisites
 
 1. **Install k6**
+
    ```bash
    # macOS
    brew install k6
@@ -36,6 +37,7 @@ This directory contains k6 load testing scripts designed to test the Farmers Mar
    ```
 
 2. **Ensure API is running**
+
    ```bash
    npm run dev
    # API should be available at http://localhost:3001
@@ -49,6 +51,7 @@ This directory contains k6 load testing scripts designed to test the Farmers Mar
 ### Running Tests
 
 #### Basic Test Run
+
 ```bash
 # Default configuration (from project root)
 k6 run tests/load/concurrent-orders.k6.js
@@ -58,6 +61,7 @@ k6 run concurrent-orders.k6.js
 ```
 
 #### Custom Virtual Users and Duration
+
 ```bash
 # 50 virtual users for 2 minutes
 k6 run --vus 50 --duration 2m tests/load/concurrent-orders.k6.js
@@ -67,6 +71,7 @@ k6 run --vus 100 --duration 5m tests/load/concurrent-orders.k6.js
 ```
 
 #### With Custom Base URL
+
 ```bash
 # Test against staging environment
 BASE_URL=https://staging.farmersmarket.com k6 run tests/load/concurrent-orders.k6.js
@@ -76,6 +81,7 @@ BASE_URL=http://localhost:3001 k6 run tests/load/concurrent-orders.k6.js
 ```
 
 #### Output Results to File
+
 ```bash
 # JSON output
 k6 run --out json=results.json tests/load/concurrent-orders.k6.js
@@ -94,6 +100,7 @@ k6 run --out influxdb=http://localhost:8086/k6 tests/load/concurrent-orders.k6.j
 Simulates realistic e-commerce traffic patterns with multiple users creating orders simultaneously.
 
 **Test Stages:**
+
 1. **Warm-up** (30s): 10 virtual users
 2. **Ramp-up** (1m): 30 virtual users
 3. **Peak load** (2m): 50 virtual users
@@ -102,6 +109,7 @@ Simulates realistic e-commerce traffic patterns with multiple users creating ord
 6. **Wind-down** (30s): 0 virtual users
 
 **User Journey:**
+
 1. Register and authenticate
 2. Browse products (multiple pages)
 3. Add products to cart
@@ -112,6 +120,7 @@ Simulates realistic e-commerce traffic patterns with multiple users creating ord
 8. Check inventory consistency
 
 **Key Metrics Tracked:**
+
 - HTTP request success rate (< 5% error threshold)
 - Response times (95th percentile < 2s)
 - Order creation duration (< 3s)
@@ -125,17 +134,17 @@ Simulates realistic e-commerce traffic patterns with multiple users creating ord
 
 The tests enforce the following performance thresholds:
 
-| Metric | Threshold | Purpose |
-|--------|-----------|---------|
-| HTTP Error Rate | < 5% | Overall system reliability |
-| API Response Time (p95) | < 500ms | Fast API responses |
-| Page Load Time (p95) | < 1.5s | Good user experience |
-| Order Creation (p95) | < 3s | Acceptable checkout time |
-| Payment Processing (p95) | < 5s | Include external API calls |
-| Cart Operations (p95) | < 500ms | Smooth cart interactions |
-| Order Success Rate | > 95% | Most orders complete |
-| Payment Success Rate | > 98% | High payment reliability |
-| Inventory Consistency | > 99% | Prevent overselling |
+| Metric                   | Threshold | Purpose                    |
+| ------------------------ | --------- | -------------------------- |
+| HTTP Error Rate          | < 5%      | Overall system reliability |
+| API Response Time (p95)  | < 500ms   | Fast API responses         |
+| Page Load Time (p95)     | < 1.5s    | Good user experience       |
+| Order Creation (p95)     | < 3s      | Acceptable checkout time   |
+| Payment Processing (p95) | < 5s      | Include external API calls |
+| Cart Operations (p95)    | < 500ms   | Smooth cart interactions   |
+| Order Success Rate       | > 95%     | Most orders complete       |
+| Payment Success Rate     | > 98%     | High payment reliability   |
+| Inventory Consistency    | > 99%     | Prevent overselling        |
 
 ## 📈 Understanding Results
 
@@ -165,17 +174,20 @@ The tests enforce the following performance thresholds:
 ### High Error Rates
 
 **Symptoms:**
+
 ```
 ✗ http_req_failed: 15.2% (above 5% threshold)
 ```
 
 **Possible Causes:**
+
 - Database connection pool exhausted
 - API rate limiting triggered
 - Network timeouts
 - Insufficient server resources
 
 **Solutions:**
+
 1. Check database connection pool size
 2. Review API rate limit configuration
 3. Increase timeout values
@@ -184,17 +196,20 @@ The tests enforce the following performance thresholds:
 ### Inventory Conflicts
 
 **Symptoms:**
+
 ```
 inventory_conflicts: 50+ conflicts detected
 ✗ inventory_consistency_rate: 92% (below 99% threshold)
 ```
 
 **Possible Causes:**
+
 - Race conditions in inventory decrement
 - Missing database transactions
 - Insufficient row-level locking
 
 **Solutions:**
+
 1. Verify Prisma transaction usage
 2. Add optimistic locking (version field)
 3. Use `SELECT FOR UPDATE` in critical sections
@@ -203,18 +218,21 @@ inventory_conflicts: 50+ conflicts detected
 ### Payment Failures
 
 **Symptoms:**
+
 ```
 payment_failures: 120
 ✗ payment_success_rate: 94% (below 98% threshold)
 ```
 
 **Possible Causes:**
+
 - Stripe API rate limits
 - Network timeouts to payment provider
 - Invalid test data
 - Insufficient error handling
 
 **Solutions:**
+
 1. Implement exponential backoff for Stripe API calls
 2. Add webhook-based payment confirmation
 3. Increase request timeouts
@@ -223,18 +241,21 @@ payment_failures: 120
 ### Slow Response Times
 
 **Symptoms:**
+
 ```
 ✗ http_req_duration: p(95)=3.5s (above 2s threshold)
 ✗ order_creation_duration: p(95)=5.2s (above 3s threshold)
 ```
 
 **Possible Causes:**
+
 - N+1 query problems
 - Missing database indexes
 - Inefficient queries
 - Cold cache
 
 **Solutions:**
+
 1. Enable query logging and analyze slow queries
 2. Add database indexes on frequently queried fields
 3. Implement query result caching (Redis)
@@ -246,6 +267,7 @@ payment_failures: 120
 ### Custom Test Configuration
 
 Create a custom config file `config.json`:
+
 ```json
 {
   "vus": 100,
@@ -258,6 +280,7 @@ Create a custom config file `config.json`:
 ```
 
 Run with custom config:
+
 ```bash
 k6 run --config config.json tests/load/concurrent-orders.k6.js
 ```
@@ -275,12 +298,13 @@ k6 cloud tests/load/concurrent-orders.k6.js
 ### Integration with CI/CD
 
 Add to GitHub Actions (`.github/workflows/load-test.yml`):
+
 ```yaml
 name: Load Testing
 
 on:
   schedule:
-    - cron: '0 2 * * *'  # Daily at 2 AM
+    - cron: "0 2 * * *" # Daily at 2 AM
   workflow_dispatch:
 
 jobs:
@@ -331,11 +355,13 @@ docker run --rm -i \
 ### Using Grafana + InfluxDB
 
 1. **Start InfluxDB and Grafana:**
+
    ```bash
    docker-compose up -d influxdb grafana
    ```
 
 2. **Run k6 with InfluxDB output:**
+
    ```bash
    k6 run --out influxdb=http://localhost:8086/k6 tests/load/concurrent-orders.k6.js
    ```
@@ -357,16 +383,19 @@ View real-time results at: https://app.k6.io
 ## 🎓 Best Practices
 
 ### 1. Test Realistic Scenarios
+
 - Use production-like data volumes
 - Simulate real user behavior (think time, varied actions)
 - Test during different times of day
 
 ### 2. Gradual Load Increase
+
 - Always include warm-up and ramp-up stages
 - Don't start with maximum load
 - Monitor system recovery during cool-down
 
 ### 3. Monitor Backend Resources
+
 - CPU usage
 - Memory consumption
 - Database connections
@@ -374,6 +403,7 @@ View real-time results at: https://app.k6.io
 - Disk I/O
 
 ### 4. Test Different Scenarios
+
 - **Smoke test**: 1-2 VUs, verify basic functionality
 - **Load test**: Expected production traffic
 - **Stress test**: Push system beyond normal capacity
@@ -381,6 +411,7 @@ View real-time results at: https://app.k6.io
 - **Soak test**: Extended duration (several hours)
 
 ### 5. Analyze and Iterate
+
 - Review all failed requests
 - Identify bottlenecks
 - Optimize code and infrastructure
@@ -423,6 +454,7 @@ To add new load test scenarios:
 ## 📞 Support
 
 For issues or questions about load testing:
+
 - Open an issue in the project repository
 - Contact the DevOps team
 - Review k6 community forums

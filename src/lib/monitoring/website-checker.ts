@@ -21,7 +21,7 @@
 
 import { Browser, BrowserContext, chromium, Page } from "@playwright/test";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 // ============================================================================
 // TYPES & INTERFACES
@@ -285,15 +285,19 @@ export class DivineWebsiteChecker {
     }
 
     logger.info(
-      "\n╔════════════════════════════════════════════════════════════╗");
+      "\n╔════════════════════════════════════════════════════════════╗",
+    );
     logger.info(
-      "║  🌟 DIVINE WEBSITE HEALTH CHECK - COMPREHENSIVE SCAN      ║");
+      "║  🌟 DIVINE WEBSITE HEALTH CHECK - COMPREHENSIVE SCAN      ║",
+    );
     logger.info(
-      "╠════════════════════════════════════════════════════════════╣");
+      "╠════════════════════════════════════════════════════════════╣",
+    );
     logger.info(`║  🌐 Base URL: ${this.config.baseUrl.padEnd(45)} ║`);
     logger.info(`║  📄 Pages: ${pagesToCheck.length.toString().padEnd(48)} ║`);
     logger.info(
-      "╚════════════════════════════════════════════════════════════╝\n");
+      "╚════════════════════════════════════════════════════════════╝\n",
+    );
 
     const pageResults: PageCheckResult[] = [];
 
@@ -1267,8 +1271,10 @@ export class DivineWebsiteChecker {
       ) / totalPages;
 
     const avgAccessibility =
-      pages.reduce((sum: any, p: any) => sum + p.checks.accessibility.score, 0) /
-      totalPages;
+      pages.reduce(
+        (sum: any, p: any) => sum + p.checks.accessibility.score,
+        0,
+      ) / totalPages;
 
     const criticalIssues: string[] = [];
     pages.forEach((page: any) => {
@@ -1297,7 +1303,9 @@ export class DivineWebsiteChecker {
     database: DatabaseHealthResult,
   ): "HEALTHY" | "DEGRADED" | "CRITICAL" {
     const criticalPages = pages.filter((p: any) => p.status === "FAIL").length;
-    const criticalApis = apiEndpoints.filter((a: any) => a.status === "FAIL").length;
+    const criticalApis = apiEndpoints.filter(
+      (a: any) => a.status === "FAIL",
+    ).length;
     const databaseFailed = database.status === "FAIL";
 
     if (
@@ -1320,11 +1328,14 @@ export class DivineWebsiteChecker {
    */
   private printSummary(report: WebsiteHealthReport): void {
     logger.info(
-      "\n╔════════════════════════════════════════════════════════════╗");
+      "\n╔════════════════════════════════════════════════════════════╗",
+    );
     logger.info(
-      "║               🌟 HEALTH CHECK SUMMARY                      ║");
+      "║               🌟 HEALTH CHECK SUMMARY                      ║",
+    );
     logger.info(
-      "╠════════════════════════════════════════════════════════════╣");
+      "╠════════════════════════════════════════════════════════════╣",
+    );
     logger.info(
       `║  Overall Status: ${this.getStatusIcon(report.overallStatus)} ${report.overallStatus.padEnd(42)} ║`,
     );
@@ -1353,7 +1364,8 @@ export class DivineWebsiteChecker {
       `║  Duration: ${Math.round(report.duration / 1000)}s${" ".repeat(47 - Math.round(report.duration / 1000).toString().length)} ║`,
     );
     logger.info(
-      "╚════════════════════════════════════════════════════════════╝\n");
+      "╚════════════════════════════════════════════════════════════╝\n",
+    );
 
     if (report.summary.criticalIssues.length > 0) {
       logger.info("⚠️  CRITICAL ISSUES:");

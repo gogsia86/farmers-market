@@ -7,11 +7,13 @@
  * @category Performance Optimization
  */
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 import type {
-  v2 as cloudinaryV2, ConfigOptions,
-  ResourceApiResponse, UploadApiOptions,
-  UploadApiResponse
+  v2 as cloudinaryV2,
+  ConfigOptions,
+  ResourceApiResponse,
+  UploadApiOptions,
+  UploadApiResponse,
 } from "cloudinary";
 
 // ============================================================================
@@ -20,8 +22,9 @@ import type {
 
 export type {
   ConfigOptions,
-  ResourceApiResponse, UploadApiOptions,
-  UploadApiResponse
+  ResourceApiResponse,
+  UploadApiOptions,
+  UploadApiResponse,
 };
 
 export interface CloudinaryConfig {

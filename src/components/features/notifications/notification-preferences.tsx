@@ -6,7 +6,13 @@
 
 "use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { useEffect, useState } from "react";
 
 // ============================================================================
@@ -52,7 +58,8 @@ export function NotificationPreferencesComponent({
   className = "",
   onSave,
 }: NotificationPreferencesProps) {
-  const [userPreferences, setUserPreferences] = useState<NotificationPreferences | null>(null);
+  const [userPreferences, setUserPreferences] =
+    useState<NotificationPreferences | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -71,7 +78,9 @@ export function NotificationPreferencesComponent({
         setError(data.error?.message || "Failed to load preferences");
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load preferences");
+      setError(
+        err instanceof Error ? err.message : "Failed to load preferences",
+      );
     } finally {
       setLoading(false);
     }
@@ -82,7 +91,10 @@ export function NotificationPreferencesComponent({
   }, []);
 
   // Update preference
-  const updatePreference = (key: keyof NotificationPreferences, value: boolean) => {
+  const updatePreference = (
+    key: keyof NotificationPreferences,
+    value: boolean,
+  ) => {
     if (!userPreferences) return;
 
     setUserPreferences({
@@ -127,7 +139,9 @@ export function NotificationPreferencesComponent({
         setError(data.error?.message || "Failed to save preferences");
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to save preferences");
+      setError(
+        err instanceof Error ? err.message : "Failed to save preferences",
+      );
     } finally {
       setSaving(false);
     }
@@ -247,7 +261,9 @@ export function NotificationPreferencesComponent({
               <input
                 type="checkbox"
                 checked={userPreferences.emailOrders}
-                onChange={(e) => updatePreference("emailOrders", e.target.checked)}
+                onChange={(e) =>
+                  updatePreference("emailOrders", e.target.checked)
+                }
                 className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
               />
             </label>
@@ -262,7 +278,9 @@ export function NotificationPreferencesComponent({
               <input
                 type="checkbox"
                 checked={userPreferences.emailReviews}
-                onChange={(e) => updatePreference("emailReviews", e.target.checked)}
+                onChange={(e) =>
+                  updatePreference("emailReviews", e.target.checked)
+                }
                 className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
               />
             </label>
@@ -277,7 +295,9 @@ export function NotificationPreferencesComponent({
               <input
                 type="checkbox"
                 checked={userPreferences.emailPromotions}
-                onChange={(e) => updatePreference("emailPromotions", e.target.checked)}
+                onChange={(e) =>
+                  updatePreference("emailPromotions", e.target.checked)
+                }
                 className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
               />
             </label>
@@ -292,7 +312,9 @@ export function NotificationPreferencesComponent({
               <input
                 type="checkbox"
                 checked={userPreferences.emailNewsletter}
-                onChange={(e) => updatePreference("emailNewsletter", e.target.checked)}
+                onChange={(e) =>
+                  updatePreference("emailNewsletter", e.target.checked)
+                }
                 className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
               />
             </label>
@@ -316,7 +338,9 @@ export function NotificationPreferencesComponent({
               <input
                 type="checkbox"
                 checked={userPreferences.inAppOrders}
-                onChange={(e) => updatePreference("inAppOrders", e.target.checked)}
+                onChange={(e) =>
+                  updatePreference("inAppOrders", e.target.checked)
+                }
                 className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
               />
             </label>
@@ -331,7 +355,9 @@ export function NotificationPreferencesComponent({
               <input
                 type="checkbox"
                 checked={userPreferences.inAppReviews}
-                onChange={(e) => updatePreference("inAppReviews", e.target.checked)}
+                onChange={(e) =>
+                  updatePreference("inAppReviews", e.target.checked)
+                }
                 className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
               />
             </label>
@@ -346,7 +372,9 @@ export function NotificationPreferencesComponent({
               <input
                 type="checkbox"
                 checked={userPreferences.inAppMessages}
-                onChange={(e) => updatePreference("inAppMessages", e.target.checked)}
+                onChange={(e) =>
+                  updatePreference("inAppMessages", e.target.checked)
+                }
                 className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
               />
             </label>
@@ -370,7 +398,9 @@ export function NotificationPreferencesComponent({
               <input
                 type="checkbox"
                 checked={userPreferences.pushOrders}
-                onChange={(e) => updatePreference("pushOrders", e.target.checked)}
+                onChange={(e) =>
+                  updatePreference("pushOrders", e.target.checked)
+                }
                 className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
               />
             </label>
@@ -385,7 +415,9 @@ export function NotificationPreferencesComponent({
               <input
                 type="checkbox"
                 checked={userPreferences.pushReviews}
-                onChange={(e) => updatePreference("pushReviews", e.target.checked)}
+                onChange={(e) =>
+                  updatePreference("pushReviews", e.target.checked)
+                }
                 className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
               />
             </label>
@@ -400,7 +432,9 @@ export function NotificationPreferencesComponent({
               <input
                 type="checkbox"
                 checked={userPreferences.pushPromotions}
-                onChange={(e) => updatePreference("pushPromotions", e.target.checked)}
+                onChange={(e) =>
+                  updatePreference("pushPromotions", e.target.checked)
+                }
                 className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
               />
             </label>
@@ -428,8 +462,9 @@ export function NotificationPreferencesComponent({
         {/* Info Footer */}
         <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
           <p className="text-sm text-blue-800">
-            <strong>💡 Tip:</strong> You'll always receive critical notifications (like
-            payment confirmations and security alerts) regardless of your userPreferences.
+            <strong>💡 Tip:</strong> You'll always receive critical
+            notifications (like payment confirmations and security alerts)
+            regardless of your userPreferences.
           </p>
         </div>
 

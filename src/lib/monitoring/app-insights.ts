@@ -15,7 +15,7 @@
 
 // Placeholder types for when package is not installed
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 type TelemetryClient = any;
 
@@ -98,7 +98,7 @@ export function initializeAppInsights(): TelemetryClient | null {
   if (!config.connectionString && !config.instrumentationKey) {
     logger.warn(
       "[AppInsights] No connection string or instrumentation key provided. " +
-      "Set APPLICATIONINSIGHTS_CONNECTION_STRING or APPINSIGHTS_INSTRUMENTATION_KEY.",
+        "Set APPLICATIONINSIGHTS_CONNECTION_STRING or APPINSIGHTS_INSTRUMENTATION_KEY.",
     );
     return null;
   }
@@ -126,7 +126,7 @@ export function initializeAppInsights(): TelemetryClient | null {
         hasInstrumentationKey: !!config.instrumentationKey,
         samplingPercentage: config.samplingPercentage,
         autoCollectEnabled: config.enableAutoCollect,
-      }
+      },
     });
 
     isInitialized = true;
@@ -142,7 +142,7 @@ export function initializeAppInsights(): TelemetryClient | null {
     }
   } catch (error) {
     logger.error("[AppInsights] Initialization failed:", {
-      error: error instanceof Error ? error.message : String(error)
+      error: error instanceof Error ? error.message : String(error),
     });
     return null;
   }
@@ -171,10 +171,9 @@ export function trackMetric(metric: CustomMetric): void {
   const client = getAppInsightsClient();
 
   if (!client) {
-    logger.debug(
-      "[AppInsights] Client not available, skipping metric",
-      { metricName: metric.name }
-    );
+    logger.debug("[AppInsights] Client not available, skipping metric", {
+      metricName: metric.name,
+    });
     return;
   }
 
@@ -189,7 +188,7 @@ export function trackMetric(metric: CustomMetric): void {
     });
   } catch (error) {
     logger.error("[AppInsights] Failed to track metric:", {
-      error: error instanceof Error ? error.message : String(error)
+      error: error instanceof Error ? error.message : String(error),
     });
   }
 }
@@ -212,10 +211,9 @@ export function trackEvent(event: CustomEvent): void {
   const client = getAppInsightsClient();
 
   if (!client) {
-    logger.debug(
-      "[AppInsights] Client not available, skipping event",
-      { eventName: event.name }
-    );
+    logger.debug("[AppInsights] Client not available, skipping event", {
+      eventName: event.name,
+    });
     return;
   }
 
@@ -227,7 +225,7 @@ export function trackEvent(event: CustomEvent): void {
     });
   } catch (error) {
     logger.error("[AppInsights] Failed to track event:", {
-      error: error instanceof Error ? error.message : String(error)
+      error: error instanceof Error ? error.message : String(error),
     });
   }
 }
@@ -491,8 +489,8 @@ export function trackException(
 
   if (!client) {
     logger.error("[AppInsights] Client not available, logging exception:", {
-        error: error instanceof Error ? error.message : String(error)
-      });
+      error: error instanceof Error ? error.message : String(error),
+    });
     return;
   }
 
@@ -503,7 +501,8 @@ export function trackException(
     });
   } catch (trackError) {
     logger.error("[AppInsights] Failed to track exception:", {
-      error: trackError instanceof Error ? trackError.message : String(trackError)
+      error:
+        trackError instanceof Error ? trackError.message : String(trackError),
     });
   }
 }
@@ -525,7 +524,9 @@ export function trackDependency(
   const client = getAppInsightsClient();
 
   if (!client) {
-    logger.debug("[AppInsights] Client not available, skipping dependency", { name: name });
+    logger.debug("[AppInsights] Client not available, skipping dependency", {
+      name: name,
+    });
     return;
   }
 
@@ -539,7 +540,7 @@ export function trackDependency(
     });
   } catch (error) {
     logger.error("[AppInsights] Failed to track dependency:", {
-      error: error instanceof Error ? error.message : String(error)
+      error: error instanceof Error ? error.message : String(error),
     });
   }
 }
@@ -561,7 +562,9 @@ export function trackRequest(
   const client = getAppInsightsClient();
 
   if (!client) {
-    logger.debug("[AppInsights] Client not available, skipping request", { name: name });
+    logger.debug("[AppInsights] Client not available, skipping request", {
+      name: name,
+    });
     return;
   }
 
@@ -575,7 +578,7 @@ export function trackRequest(
     });
   } catch (error) {
     logger.error("[AppInsights] Failed to track request:", {
-      error: error instanceof Error ? error.message : String(error)
+      error: error instanceof Error ? error.message : String(error),
     });
   }
 }
@@ -604,7 +607,7 @@ export async function flushTelemetry(): Promise<void> {
       });
     } catch (error) {
       logger.error("[AppInsights] Failed to flush telemetry:", {
-        error: error instanceof Error ? error.message : String(error)
+        error: error instanceof Error ? error.message : String(error),
       });
       resolve();
     }

@@ -30,7 +30,8 @@ export function CartSummary({
   isValidating = false,
   onCheckout,
 }: CartSummaryProps) {
-  const { subtotal, tax, deliveryFee, total, itemCount, uniqueProductCount } = summary;
+  const { subtotal, tax, deliveryFee, total, itemCount, uniqueProductCount } =
+    summary;
 
   const freeDeliveryThreshold = 50;
   const remainingForFreeDelivery = freeDeliveryThreshold - subtotal;
@@ -49,7 +50,8 @@ export function CartSummary({
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <ShoppingCart className="h-4 w-4" />
             <span>
-              {itemCount} item{itemCount !== 1 ? "s" : ""} ({uniqueProductCount} unique)
+              {itemCount} item{itemCount !== 1 ? "s" : ""} ({uniqueProductCount}{" "}
+              unique)
             </span>
           </div>
         </div>
@@ -59,7 +61,9 @@ export function CartSummary({
           {/* Subtotal */}
           <div className="flex items-center justify-between text-sm">
             <span className="text-gray-600">Subtotal</span>
-            <span className="font-medium text-gray-900">${subtotal.toFixed(2)}</span>
+            <span className="font-medium text-gray-900">
+              ${subtotal.toFixed(2)}
+            </span>
           </div>
 
           {/* Delivery Fee */}
@@ -69,8 +73,9 @@ export function CartSummary({
               <span className="text-gray-600">Delivery Fee</span>
             </div>
             <span
-              className={`font-medium ${deliveryFee === 0 ? "text-green-600" : "text-gray-900"
-                }`}
+              className={`font-medium ${
+                deliveryFee === 0 ? "text-green-600" : "text-gray-900"
+              }`}
             >
               {deliveryFee === 0 ? "FREE" : `$${deliveryFee.toFixed(2)}`}
             </span>
@@ -93,7 +98,9 @@ export function CartSummary({
         {/* Total */}
         <div className="flex items-center justify-between border-b pb-4">
           <span className="text-lg font-semibold text-gray-900">Total</span>
-          <span className="text-2xl font-bold text-green-600">${total.toFixed(2)}</span>
+          <span className="text-2xl font-bold text-green-600">
+            ${total.toFixed(2)}
+          </span>
         </div>
 
         {/* Checkout Button */}

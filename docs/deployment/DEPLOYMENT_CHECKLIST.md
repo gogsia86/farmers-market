@@ -24,6 +24,7 @@
 ### 🔴 CRITICAL: Fix Vulnerabilities
 
 #### Current Issues:
+
 - **Moderate**: `nodemailer` (<7.0.11) - DoS & Email Misrouting
 - **Low**: `next-auth` & `@auth/core` - Dependency on vulnerable nodemailer
 
@@ -44,6 +45,7 @@ npm run test:email  # If you have email tests
 ```
 
 #### Manual Testing Required:
+
 - [ ] Test email sending functionality
 - [ ] Verify authentication flows
 - [ ] Check password reset emails
@@ -51,6 +53,7 @@ npm run test:email  # If you have email tests
 - [ ] Test notification emails
 
 #### Security Best Practices:
+
 - [ ] Review `.env` files - ensure no secrets committed
 - [ ] Verify environment variables in Vercel dashboard
 - [ ] Check API rate limiting is working
@@ -98,6 +101,7 @@ npm run test
 ```
 
 ### Testing After Updates:
+
 - [ ] Run all tests: `npm test`
 - [ ] Build successfully: `npm run build`
 - [ ] Development server starts: `npm run dev`
@@ -111,6 +115,7 @@ npm run test
 ### 🌐 Access Your Deployment
 
 **Vercel URLs:**
+
 ```
 Production: https://[your-app].vercel.app
 Preview: https://[your-app]-git-[branch].vercel.app
@@ -119,6 +124,7 @@ Preview: https://[your-app]-git-[branch].vercel.app
 ### Core Functionality Tests:
 
 #### Public Pages:
+
 - [ ] Homepage loads (/)
 - [ ] About page (/about)
 - [ ] Products page (/products)
@@ -126,6 +132,7 @@ Preview: https://[your-app]-git-[branch].vercel.app
 - [ ] Individual product pages (/products/[slug])
 
 #### Authentication:
+
 - [ ] Login page (/login)
 - [ ] Register page (/register)
 - [ ] Login functionality works
@@ -134,6 +141,7 @@ Preview: https://[your-app]-git-[branch].vercel.app
 - [ ] Logout functionality
 
 #### Customer Features:
+
 - [ ] View products
 - [ ] Add to cart
 - [ ] Cart page (/cart)
@@ -145,6 +153,7 @@ Preview: https://[your-app]-git-[branch].vercel.app
 - [ ] Customer dashboard (/customer/dashboard)
 
 #### Farmer Features:
+
 - [ ] Farmer dashboard (/farmer/dashboard)
 - [ ] Create farm (/farmer/farms/new)
 - [ ] View farm details (/farmer/farms/[farmId])
@@ -154,6 +163,7 @@ Preview: https://[your-app]-git-[branch].vercel.app
 - [ ] Update inventory
 
 #### Admin Features:
+
 - [ ] Admin dashboard (/admin/dashboard)
 - [ ] User management (/admin/users)
 - [ ] Analytics (/admin/analytics)
@@ -162,6 +172,7 @@ Preview: https://[your-app]-git-[branch].vercel.app
 - [ ] Farm verification
 
 #### API Endpoints:
+
 ```bash
 # Test health check
 curl https://[your-app].vercel.app/api/health
@@ -177,18 +188,21 @@ curl https://[your-app].vercel.app/api/search?q=tomato
 ```
 
 ### Database Connectivity:
+
 - [ ] Database queries execute successfully
 - [ ] Prisma Client works in production
 - [ ] CRUD operations function correctly
 - [ ] Relationships/joins work properly
 
 ### Payment Integration:
+
 - [ ] Stripe test mode works
 - [ ] Payment intent creation
 - [ ] Webhook handling (/api/webhooks/stripe)
 - [ ] Order confirmation after payment
 
 ### Performance Tests:
+
 - [ ] First page load < 3 seconds
 - [ ] Time to Interactive (TTI) < 5 seconds
 - [ ] API responses < 500ms
@@ -202,6 +216,7 @@ curl https://[your-app].vercel.app/api/search?q=tomato
 ### 📊 Vercel Analytics
 
 **Enable in Vercel Dashboard:**
+
 1. Go to your project settings
 2. Enable "Speed Insights"
 3. Enable "Web Analytics"
@@ -210,11 +225,13 @@ curl https://[your-app].vercel.app/api/search?q=tomato
 ### Key Metrics to Monitor:
 
 #### Core Web Vitals:
+
 - **LCP (Largest Contentful Paint)**: Target < 2.5s
 - **FID (First Input Delay)**: Target < 100ms
 - **CLS (Cumulative Layout Shift)**: Target < 0.1
 
 #### Performance Budget:
+
 ```javascript
 // next.config.mjs - Add performance hints
 experimental: {
@@ -223,6 +240,7 @@ experimental: {
 ```
 
 ### Optimization Checklist:
+
 - [ ] Images use Next.js Image component
 - [ ] Static assets cached properly
 - [ ] API routes have appropriate cache headers
@@ -260,12 +278,14 @@ npm install --save-dev @next/bundle-analyzer
 ### Sentry Dashboard Checks:
 
 #### Initial Setup:
+
 - [ ] Access Sentry dashboard: https://sentry.io
 - [ ] Verify project "farmers-market-prod" exists
 - [ ] Check source maps uploaded successfully (✅ Confirmed)
 - [ ] Configure alert rules
 
 #### Error Monitoring:
+
 - [ ] Set up error notifications (email/Slack)
 - [ ] Configure error sampling rates
 - [ ] Set up performance monitoring
@@ -308,13 +328,14 @@ beforeSend(event, hint) {
 ```
 
 ### Custom Monitoring:
+
 ```typescript
 // Add to critical operations
-import * as Sentry from '@sentry/nextjs';
+import * as Sentry from "@sentry/nextjs";
 
-Sentry.captureMessage('Order placed successfully', {
-  level: 'info',
-  tags: { orderId: '123' },
+Sentry.captureMessage("Order placed successfully", {
+  level: "info",
+  tags: { orderId: "123" },
 });
 ```
 
@@ -325,6 +346,7 @@ Sentry.captureMessage('Order placed successfully', {
 ### 🗄️ Prisma & PostgreSQL
 
 #### Connection Verification:
+
 ```bash
 # Test database connection
 npx prisma studio
@@ -337,6 +359,7 @@ npx prisma validate
 ```
 
 #### Database Monitoring:
+
 - [ ] Check connection pool settings
 - [ ] Monitor query performance
 - [ ] Review slow query logs
@@ -344,12 +367,14 @@ npx prisma validate
 - [ ] Check database size/growth
 
 #### Backup Strategy:
+
 - [ ] Automated backups configured (Supabase/provider)
 - [ ] Test restore procedure
 - [ ] Document backup schedule
 - [ ] Store backups in separate location
 
 #### Data Integrity:
+
 - [ ] Foreign key constraints working
 - [ ] Unique constraints enforced
 - [ ] Default values applied
@@ -362,6 +387,7 @@ npx prisma validate
 ### 📈 Daily Checks (First Week)
 
 #### Morning Check (5 minutes):
+
 ```bash
 # 1. Check Vercel deployment status
 # 2. Review Sentry errors from last 24h
@@ -373,6 +399,7 @@ curl https://[your-app].vercel.app/api/health
 ```
 
 #### Weekly Review (30 minutes):
+
 - [ ] Review all error reports
 - [ ] Analyze performance metrics
 - [ ] Check security advisories: `npm audit`
@@ -383,21 +410,25 @@ curl https://[your-app].vercel.app/api/health
 ### 🔔 Alerts to Set Up
 
 #### Vercel:
+
 - [ ] Deployment failures
 - [ ] Function timeout errors
 - [ ] High error rates
 
 #### Sentry:
+
 - [ ] New error types
 - [ ] Error spike (>10 in 1 hour)
 - [ ] Performance degradation
 
 #### Database:
+
 - [ ] Connection pool exhaustion
 - [ ] Slow queries (>1s)
 - [ ] Storage approaching limit
 
 #### Payment:
+
 - [ ] Failed payment webhooks
 - [ ] Stripe API errors
 
@@ -408,6 +439,7 @@ curl https://[your-app].vercel.app/api/health
 ### IMMEDIATE (Do Today):
 
 1. **Fix Security Vulnerabilities:**
+
    ```bash
    npm install nodemailer@latest
    npm audit
@@ -430,6 +462,7 @@ curl https://[your-app].vercel.app/api/health
 ### THIS WEEK:
 
 4. **Update Dependencies:**
+
    ```bash
    npm outdated
    npm update
@@ -460,20 +493,24 @@ curl https://[your-app].vercel.app/api/health
 ## 📞 Support & Resources
 
 ### Vercel:
+
 - Dashboard: https://vercel.com/dashboard
 - Docs: https://vercel.com/docs
 - Support: https://vercel.com/support
 
 ### Sentry:
+
 - Dashboard: https://sentry.io
 - Docs: https://docs.sentry.io
 - Community: https://discord.gg/sentry
 
 ### Next.js:
+
 - Docs: https://nextjs.org/docs
 - Deployment: https://nextjs.org/docs/deployment
 
 ### Prisma:
+
 - Docs: https://www.prisma.io/docs
 - Studio: `npx prisma studio`
 
@@ -497,10 +534,12 @@ curl https://[your-app].vercel.app/api/health
 ## 📝 Notes & Issues
 
 ### Known Issues:
+
 - Document any known issues here
 - Link to GitHub issues if applicable
 
 ### Future Improvements:
+
 - [ ] Implement caching strategy
 - [ ] Add E2E tests with Playwright
 - [ ] Set up staging environment

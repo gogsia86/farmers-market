@@ -57,7 +57,9 @@ describe("Animation Accessibility System", () => {
 
   describe("Reduced Motion Support", () => {
     it("should detect prefers-reduced-motion setting", () => {
-      const { useReducedMotion } = require("@/components/notifications/hooks/useReducedMotion");
+      const {
+        useReducedMotion,
+      } = require("@/components/notifications/hooks/useReducedMotion");
       useReducedMotion.mockReturnValue(true);
 
       const result = useReducedMotion();
@@ -65,7 +67,9 @@ describe("Animation Accessibility System", () => {
     });
 
     it("should use minimal animations when reduced motion is enabled", () => {
-      const { useReducedMotion } = require("@/components/notifications/hooks/useReducedMotion");
+      const {
+        useReducedMotion,
+      } = require("@/components/notifications/hooks/useReducedMotion");
       useReducedMotion.mockReturnValue(true);
 
       const toast = createMockToast();
@@ -73,14 +77,16 @@ describe("Animation Accessibility System", () => {
       render(
         <AnimationProvider>
           <Toast toast={toast} onDismiss={jest.fn()} />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       expect(screen.getByText("Test notification message")).toBeInTheDocument();
     });
 
     it("should provide instant transitions in reduced motion mode", () => {
-      const { useReducedMotion } = require("@/components/notifications/hooks/useReducedMotion");
+      const {
+        useReducedMotion,
+      } = require("@/components/notifications/hooks/useReducedMotion");
       useReducedMotion.mockReturnValue(true);
 
       const reducedMotionTransition = {
@@ -97,7 +103,7 @@ describe("Animation Accessibility System", () => {
       const { rerender } = render(
         <AnimationProvider preset="minimal">
           <Toast toast={toast} onDismiss={jest.fn()} />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       expect(screen.getByText("Test notification message")).toBeInTheDocument();
@@ -105,7 +111,7 @@ describe("Animation Accessibility System", () => {
       rerender(
         <AnimationProvider preset="enhanced">
           <Toast toast={toast} onDismiss={jest.fn()} />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       expect(screen.getByText("Test notification message")).toBeInTheDocument();
@@ -119,7 +125,7 @@ describe("Animation Accessibility System", () => {
       render(
         <AnimationProvider>
           <Toast toast={toast} onDismiss={jest.fn()} />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       expect(screen.getByRole("status")).toBeInTheDocument();
@@ -131,7 +137,7 @@ describe("Animation Accessibility System", () => {
       render(
         <AnimationProvider>
           <Toast toast={toast} onDismiss={jest.fn()} />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       expect(screen.getByRole("status")).toBeInTheDocument();
@@ -143,7 +149,7 @@ describe("Animation Accessibility System", () => {
       render(
         <AnimationProvider>
           <Toast toast={toast} onDismiss={jest.fn()} />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       expect(screen.getByRole("alert")).toBeInTheDocument();
@@ -155,7 +161,7 @@ describe("Animation Accessibility System", () => {
       render(
         <AnimationProvider>
           <Toast toast={toast} onDismiss={jest.fn()} />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       expect(screen.getByRole("alert")).toBeInTheDocument();
@@ -167,10 +173,10 @@ describe("Animation Accessibility System", () => {
       const { container } = render(
         <AnimationProvider>
           <Toast toast={toast} onDismiss={jest.fn()} />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
-      const liveRegion = container.querySelector('[aria-live]');
+      const liveRegion = container.querySelector("[aria-live]");
       expect(liveRegion).toBeTruthy();
     });
 
@@ -180,10 +186,10 @@ describe("Animation Accessibility System", () => {
       const { container } = render(
         <AnimationProvider>
           <Toast toast={toast} onDismiss={jest.fn()} />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
-      const atomicRegion = container.querySelector('[aria-atomic]');
+      const atomicRegion = container.querySelector("[aria-atomic]");
       expect(atomicRegion).toBeTruthy();
     });
 
@@ -193,7 +199,7 @@ describe("Animation Accessibility System", () => {
       render(
         <AnimationProvider>
           <Toast toast={toast} onDismiss={jest.fn()} />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       const dismissButton = screen.getByRole("button", { name: /dismiss/i });
@@ -231,7 +237,7 @@ describe("Animation Accessibility System", () => {
       render(
         <AnimationProvider>
           <Toast toast={toast} onDismiss={onDismiss} />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       const dismissButton = screen.getByRole("button", { name: /dismiss/i });
@@ -249,7 +255,7 @@ describe("Animation Accessibility System", () => {
       render(
         <AnimationProvider>
           <Toast toast={toast} onDismiss={onDismiss} />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       const dismissButton = screen.getByRole("button", { name: /dismiss/i });
@@ -297,7 +303,7 @@ describe("Animation Accessibility System", () => {
             type="info"
             onDismiss={onDismiss}
           />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       await user.keyboard("{Escape}");
@@ -318,7 +324,7 @@ describe("Animation Accessibility System", () => {
             <Toast toast={toast} onDismiss={jest.fn()} />
           </AnimationProvider>
           <button>After Toast</button>
-        </div>
+        </div>,
       );
 
       const beforeButton = screen.getByText("Before Toast");
@@ -339,10 +345,12 @@ describe("Animation Accessibility System", () => {
           {toasts.map((toast: any) => (
             <Toast key={toast.id} toast={toast} onDismiss={jest.fn()} />
           ))}
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
-      const dismissButtons = screen.getAllByRole("button", { name: /dismiss/i });
+      const dismissButtons = screen.getAllByRole("button", {
+        name: /dismiss/i,
+      });
       expect(dismissButtons).toHaveLength(2);
     });
 
@@ -357,7 +365,7 @@ describe("Animation Accessibility System", () => {
           <AnimationProvider>
             <Toast toast={toast} onDismiss={onDismiss} />
           </AnimationProvider>
-        </div>
+        </div>,
       );
 
       const triggerButton = screen.getByText("Trigger Button");
@@ -375,7 +383,7 @@ describe("Animation Accessibility System", () => {
       const { container } = render(
         <AnimationProvider>
           <Toast toast={toast} onDismiss={jest.fn()} />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       const dismissButton = screen.getByRole("button", { name: /dismiss/i });
@@ -395,10 +403,10 @@ describe("Animation Accessibility System", () => {
       const { container } = render(
         <AnimationProvider>
           <Toast toast={toast} onDismiss={jest.fn()} />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
-      const liveRegion = container.querySelector('[aria-live]');
+      const liveRegion = container.querySelector("[aria-live]");
       expect(liveRegion).toBeTruthy();
       expect(screen.getByText("Farm created successfully")).toBeInTheDocument();
     });
@@ -409,7 +417,7 @@ describe("Animation Accessibility System", () => {
       const { container } = render(
         <AnimationProvider>
           <Toast toast={toast} onDismiss={jest.fn()} />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       const liveRegion = container.querySelector('[aria-live="polite"]');
@@ -422,7 +430,7 @@ describe("Animation Accessibility System", () => {
       const { container } = render(
         <AnimationProvider>
           <Toast toast={toast} onDismiss={jest.fn()} />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       const liveRegion = container.querySelector('[aria-live="assertive"]');
@@ -438,7 +446,7 @@ describe("Animation Accessibility System", () => {
       render(
         <AnimationProvider>
           <Toast toast={toast} onDismiss={jest.fn()} />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       expect(screen.getByText("Success")).toBeInTheDocument();
@@ -492,7 +500,7 @@ describe("Animation Accessibility System", () => {
       render(
         <AnimationProvider>
           <Toast toast={toast} onDismiss={jest.fn()} />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       // Green background with white text should have good contrast
@@ -505,7 +513,7 @@ describe("Animation Accessibility System", () => {
       render(
         <AnimationProvider>
           <Toast toast={toast} onDismiss={jest.fn()} />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       // Red background with white text should have good contrast
@@ -518,7 +526,7 @@ describe("Animation Accessibility System", () => {
       render(
         <AnimationProvider>
           <Toast toast={toast} onDismiss={jest.fn()} />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       // Opacity animations should not make text unreadable
@@ -533,10 +541,10 @@ describe("Animation Accessibility System", () => {
       const { container } = render(
         <AnimationProvider>
           <Toast toast={toast} onDismiss={jest.fn()} />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
-      expect(container.querySelector('button')).toBeTruthy();
+      expect(container.querySelector("button")).toBeTruthy();
     });
 
     it("should have proper heading hierarchy", () => {
@@ -545,7 +553,7 @@ describe("Animation Accessibility System", () => {
       render(
         <AnimationProvider>
           <Toast toast={toast} onDismiss={jest.fn()} />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       expect(screen.getByText("Important Notice")).toBeInTheDocument();
@@ -580,7 +588,7 @@ describe("Animation Accessibility System", () => {
       const { container } = render(
         <AnimationProvider>
           <Toast toast={toast} onDismiss={jest.fn()} />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       const results = await axe(container);
@@ -595,7 +603,7 @@ describe("Animation Accessibility System", () => {
             type="info"
             onDismiss={jest.fn()}
           />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       const results = await axe(container);
@@ -624,7 +632,9 @@ describe("Animation Accessibility System", () => {
 
   describe("Animation Context Accessibility", () => {
     it("should respect system accessibility preferences", () => {
-      const { useReducedMotion } = require("@/components/notifications/hooks/useReducedMotion");
+      const {
+        useReducedMotion,
+      } = require("@/components/notifications/hooks/useReducedMotion");
       useReducedMotion.mockReturnValue(true);
 
       const toast = createMockToast();
@@ -632,7 +642,7 @@ describe("Animation Accessibility System", () => {
       render(
         <AnimationProvider>
           <Toast toast={toast} onDismiss={jest.fn()} />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       expect(screen.getByText("Test notification message")).toBeInTheDocument();
@@ -644,7 +654,7 @@ describe("Animation Accessibility System", () => {
       const { rerender } = render(
         <AnimationProvider preset="minimal">
           <Toast toast={toast} onDismiss={jest.fn()} />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       expect(screen.getByText("Test notification message")).toBeInTheDocument();
@@ -652,7 +662,7 @@ describe("Animation Accessibility System", () => {
       rerender(
         <AnimationProvider preset="divine">
           <Toast toast={toast} onDismiss={jest.fn()} />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       expect(screen.getByText("Test notification message")).toBeInTheDocument();
@@ -666,10 +676,10 @@ describe("Animation Accessibility System", () => {
         const { container } = render(
           <AnimationProvider preset={preset}>
             <Toast toast={toast} onDismiss={jest.fn()} />
-          </AnimationProvider>
+          </AnimationProvider>,
         );
 
-        const liveRegion = container.querySelector('[aria-live]');
+        const liveRegion = container.querySelector("[aria-live]");
         expect(liveRegion).toBeTruthy();
       });
     });
@@ -691,7 +701,9 @@ describe("Animation Accessibility System", () => {
     });
 
     it("should provide escape hatch for all animations", () => {
-      const { useReducedMotion } = require("@/components/notifications/hooks/useReducedMotion");
+      const {
+        useReducedMotion,
+      } = require("@/components/notifications/hooks/useReducedMotion");
       useReducedMotion.mockReturnValue(true);
 
       const toast = createMockToast();
@@ -699,7 +711,7 @@ describe("Animation Accessibility System", () => {
       render(
         <AnimationProvider>
           <Toast toast={toast} onDismiss={jest.fn()} />
-        </AnimationProvider>
+        </AnimationProvider>,
       );
 
       // All animations should be bypassable

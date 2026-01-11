@@ -31,13 +31,13 @@ const Form = FormProvider;
 
 type FormFieldContextValue<
   TFieldValues extends FieldValues = FieldValues,
-  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 > = {
   name: TName;
 };
 
 const FormFieldContext = React.createContext<FormFieldContextValue>(
-  {} as FormFieldContextValue
+  {} as FormFieldContextValue,
 );
 
 // ============================================================================
@@ -46,7 +46,7 @@ const FormFieldContext = React.createContext<FormFieldContextValue>(
 
 const FormField = <
   TFieldValues extends FieldValues = FieldValues,
-  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >({
   ...props
 }: ControllerProps<TFieldValues, TName>) => {
@@ -66,7 +66,7 @@ type FormItemContextValue = {
 };
 
 const FormItemContext = React.createContext<FormItemContextValue>(
-  {} as FormItemContextValue
+  {} as FormItemContextValue,
 );
 
 // ============================================================================
@@ -134,7 +134,7 @@ const FormLabel = React.forwardRef<
         className={cn(
           "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
           error && "text-red-600 dark:text-red-500",
-          className
+          className,
         )}
         htmlFor={formItemId}
         {...props}
@@ -223,7 +223,7 @@ const FormMessage = React.forwardRef<
       id={formMessageId}
       className={cn(
         "text-sm font-medium text-red-600 dark:text-red-500",
-        className
+        className,
       )}
       {...props}
     >
@@ -250,7 +250,7 @@ const FormSuccess = React.forwardRef<
       ref={ref}
       className={cn(
         "text-sm font-medium text-green-600 dark:text-green-500",
-        className
+        className,
       )}
       {...props}
     >
@@ -272,8 +272,15 @@ interface FormSectionProps extends React.HTMLAttributes<HTMLDivElement> {
 
 const FormSection = React.forwardRef<HTMLDivElement, FormSectionProps>(
   (
-    { className, title, description, consciousness = "STANDARD", children, ...props },
-    ref
+    {
+      className,
+      title,
+      description,
+      consciousness = "STANDARD",
+      children,
+      ...props
+    },
+    ref,
   ) => {
     const consciousnessStyles = {
       DIVINE: "border-l-4 border-purple-500 pl-4",
@@ -287,7 +294,7 @@ const FormSection = React.forwardRef<HTMLDivElement, FormSectionProps>(
         className={cn(
           "space-y-4 py-4",
           consciousnessStyles[consciousness],
-          className
+          className,
         )}
         {...props}
       >
@@ -302,7 +309,7 @@ const FormSection = React.forwardRef<HTMLDivElement, FormSectionProps>(
         {children}
       </div>
     );
-  }
+  },
 );
 FormSection.displayName = "FormSection";
 
@@ -331,15 +338,15 @@ const FormActions = React.forwardRef<HTMLDivElement, FormActionsProps>(
           "flex items-center gap-4 pt-6 mt-6 border-t",
           justifyStyles[justify],
           sticky &&
-          "sticky bottom-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 py-4",
-          className
+            "sticky bottom-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 py-4",
+          className,
         )}
         {...props}
       >
         {children}
       </div>
     );
-  }
+  },
 );
 FormActions.displayName = "FormActions";
 
@@ -372,14 +379,14 @@ const FormGrid = React.forwardRef<HTMLDivElement, FormGridProps>(
             "grid-cols-1 md:grid-cols-2 lg:grid-cols-4": columns === 4,
           },
           gapStyles[gap],
-          className
+          className,
         )}
         {...props}
       >
         {children}
       </div>
     );
-  }
+  },
 );
 FormGrid.displayName = "FormGrid";
 
@@ -399,6 +406,5 @@ export {
   FormMessage,
   FormSection,
   FormSuccess,
-  useFormField
+  useFormField,
 };
-

@@ -9,40 +9,34 @@
 
 "use client";
 
-import {
-  useErrorHandler,
-  useValidationError
-} from "@/hooks/use-error-handler";
+import { useErrorHandler, useValidationError } from "@/hooks/use-error-handler";
 import {
   useAgriculturalRecovery,
   useCircuitBreaker,
   useFallback,
-  useRetry
+  useRetry,
 } from "@/hooks/use-error-recovery";
 import {
   ErrorCategory,
   NetworkError,
   PaymentError,
-  SeasonalViolationError
+  SeasonalViolationError,
 } from "@/lib/errors/types";
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 import { useState } from "react";
-import {
-  AgriculturalErrorBoundary,
-  ErrorBoundary
-} from "./error-boundary";
+import { AgriculturalErrorBoundary, ErrorBoundary } from "./error-boundary";
 import {
   AgriculturalErrorDisplay,
   ErrorAlert,
   ErrorCard,
-  InlineError
+  InlineError,
 } from "./error-display";
 import {
   ToastProvider,
   useAgriculturalToast,
   useErrorToast,
   useToast,
-  useUndoToast
+  useUndoToast,
 } from "./error-toast";
 
 // ============================================================================
@@ -59,7 +53,9 @@ export function ErrorBoundaryExample() {
     if (shouldError) {
       throw new Error("Something went wrong in the component!");
     }
-    return <div className="p-4 bg-green-50 rounded">✅ Component working fine</div>;
+    return (
+      <div className="p-4 bg-green-50 rounded">✅ Component working fine</div>
+    );
   };
 
   return (
@@ -75,7 +71,9 @@ export function ErrorBoundaryExample() {
       <ErrorBoundary
         fallback={(error, reset) => (
           <div className="p-4 bg-red-50 border border-red-200 rounded">
-            <p className="font-semibold text-red-900">Error caught by boundary!</p>
+            <p className="font-semibold text-red-900">
+              Error caught by boundary!
+            </p>
             <p className="text-sm text-red-700">{error.message}</p>
             <button
               onClick={() => {
@@ -120,7 +118,9 @@ export function AgriculturalErrorBoundaryExample() {
     }
     return (
       <div className="p-4 bg-green-50 rounded border border-green-200">
-        <p className="font-semibold text-green-900">🌱 Spring Planting Active</p>
+        <p className="font-semibold text-green-900">
+          🌱 Spring Planting Active
+        </p>
       </div>
     );
   };
@@ -251,7 +251,9 @@ export function ToastNotificationExample() {
 
       <div className="grid grid-cols-2 gap-3">
         <button
-          onClick={() => toast.success("Success!", "Operation completed successfully")}
+          onClick={() =>
+            toast.success("Success!", "Operation completed successfully")
+          }
           className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
         >
           Success Toast
@@ -297,7 +299,7 @@ export function ToastNotificationExample() {
                 statusCode: 503,
                 endpoint: "/api/data",
               }),
-              () => logger.info("Retrying...")
+              () => logger.info("Retrying..."),
             )
           }
           className="px-4 py-2 bg-red-700 text-white rounded hover:bg-red-800"
@@ -307,7 +309,9 @@ export function ToastNotificationExample() {
 
         <button
           onClick={() =>
-            undoToast.showUndo("Item deleted", () => logger.info("Undo clicked"))
+            undoToast.showUndo("Item deleted", () =>
+              logger.info("Undo clicked"),
+            )
           }
           className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
         >
@@ -316,7 +320,10 @@ export function ToastNotificationExample() {
 
         <button
           onClick={() =>
-            agriToast.success("Harvest Complete!", "50 bushels of wheat harvested")
+            agriToast.success(
+              "Harvest Complete!",
+              "50 bushels of wheat harvested",
+            )
           }
           className="px-4 py-2 bg-green-700 text-white rounded hover:bg-green-800"
         >
@@ -423,9 +430,14 @@ export function ValidationErrorExample() {
           <input
             type="email"
             value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            className={`w-full px-3 py-2 border rounded ${validation.hasError("email") ? "border-red-500" : "border-gray-300"
-              }`}
+            onChange={(e) =>
+              setFormData({ ...formData, email: e.target.value })
+            }
+            className={`w-full px-3 py-2 border rounded ${
+              validation.hasError("email")
+                ? "border-red-500"
+                : "border-gray-300"
+            }`}
           />
           {validation.hasError("email") && (
             <InlineError message={validation.getError("email")!} />
@@ -437,9 +449,14 @@ export function ValidationErrorExample() {
           <input
             type="password"
             value={formData.password}
-            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-            className={`w-full px-3 py-2 border rounded ${validation.hasError("password") ? "border-red-500" : "border-gray-300"
-              }`}
+            onChange={(e) =>
+              setFormData({ ...formData, password: e.target.value })
+            }
+            className={`w-full px-3 py-2 border rounded ${
+              validation.hasError("password")
+                ? "border-red-500"
+                : "border-gray-300"
+            }`}
           />
           {validation.hasError("password") && (
             <InlineError message={validation.getError("password")!} />
@@ -481,17 +498,17 @@ export function RetryExample() {
       backoffMultiplier: 2,
       onSuccess: () => logger.info("Retry succeeded!"),
       onFailure: (error) => logger.info("All retries failed:", error),
-    }
+    },
   );
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold">Retry Hook (Exponential Backoff)</h3>
+      <h3 className="text-lg font-semibold">
+        Retry Hook (Exponential Backoff)
+      </h3>
 
       <div className="p-4 bg-gray-50 rounded">
-        <p className="text-sm mb-2">
-          Attempts: {retry.attempt} / 3
-        </p>
+        <p className="text-sm mb-2">Attempts: {retry.attempt} / 3</p>
         <p className="text-sm mb-2">Count: {count}</p>
         <p className="text-sm">
           Status: {retry.isRetrying ? "Retrying..." : "Ready"}
@@ -537,7 +554,7 @@ export function FallbackExample() {
       cacheDuration: 5 * 60 * 1000,
       enableCache: true,
       onFallback: (error) => logger.info("Using fallback:", error),
-    }
+    },
   );
 
   return (
@@ -597,7 +614,7 @@ export function CircuitBreakerExample() {
       timeout: 10000,
       onOpen: () => logger.info("Circuit opened!"),
       onClose: () => logger.info("Circuit closed!"),
-    }
+    },
   );
 
   return (
@@ -660,7 +677,9 @@ export function CircuitBreakerExample() {
  * Example: Agricultural error recovery with consciousness
  */
 export function AgriculturalRecoveryExample() {
-  const [season, setSeason] = useState<"SPRING" | "SUMMER" | "FALL" | "WINTER">("SPRING");
+  const [season, setSeason] = useState<"SPRING" | "SUMMER" | "FALL" | "WINTER">(
+    "SPRING",
+  );
 
   const recovery = useAgriculturalRecovery(
     async () => {
@@ -680,12 +699,14 @@ export function AgriculturalRecoveryExample() {
       fallback: { planted: false, season: "UNKNOWN" },
       maxAttempts: 2,
       isSeasonalError: (error) => error.category === ErrorCategory.SEASONAL,
-    }
+    },
   );
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold">Agricultural Recovery (Divine Pattern)</h3>
+      <h3 className="text-lg font-semibold">
+        Agricultural Recovery (Divine Pattern)
+      </h3>
 
       <div>
         <label className="block text-sm font-medium mb-1">Season:</label>
@@ -748,7 +769,8 @@ export function ErrorHandlingExamples() {
             🌟 Error Handling Framework Examples
           </h1>
           <p className="text-gray-600">
-            Comprehensive demonstration of all error handling components and patterns
+            Comprehensive demonstration of all error handling components and
+            patterns
           </p>
         </div>
 

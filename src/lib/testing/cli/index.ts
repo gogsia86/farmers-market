@@ -14,43 +14,43 @@
  *   npm run bot monitor <suite> [--interval=60]
  */
 
-import { createConfig } from '../config/bot-config';
-import { createReportGenerator } from '../core/report-generator';
-import type { TestFilter, TestRunReport } from '../core/test-runner';
-import { createTestRunner } from '../core/test-runner';
-import type { BotConfig, BotModule, TestModule, TestSuite } from '../types';
+import { createConfig } from "../config/bot-config";
+import { createReportGenerator } from "../core/report-generator";
+import type { TestFilter, TestRunReport } from "../core/test-runner";
+import { createTestRunner } from "../core/test-runner";
+import type { BotConfig, BotModule, TestModule, TestSuite } from "../types";
 
 // Import module adapter
-import { adaptTestModules } from '../adapters/module-adapter';
+import { adaptTestModules } from "../adapters/module-adapter";
 
 // Import all available modules
-import AuthLoginModule from '../modules/auth/login.module';
-import CartCheckoutModule from '../modules/cart/checkout.module';
-import FarmerDashboardModule from '../modules/farmer/dashboard.module';
-import HealthChecksModule from '../modules/health/checks.module';
-import MarketplaceBrowseModule from '../modules/marketplace/browse.module';
-import CustomerOrdersModule from '../modules/orders/customer-orders.module';
-import NewPagesModule from '../modules/pages/new-pages.module';
+import AuthLoginModule from "../modules/auth/login.module";
+import CartCheckoutModule from "../modules/cart/checkout.module";
+import FarmerDashboardModule from "../modules/farmer/dashboard.module";
+import HealthChecksModule from "../modules/health/checks.module";
+import MarketplaceBrowseModule from "../modules/marketplace/browse.module";
+import CustomerOrdersModule from "../modules/orders/customer-orders.module";
+import NewPagesModule from "../modules/pages/new-pages.module";
 
 // Color codes for terminal output
 const colors = {
-  reset: '\x1b[0m',
-  bright: '\x1b[1m',
-  dim: '\x1b[2m',
+  reset: "\x1b[0m",
+  bright: "\x1b[1m",
+  dim: "\x1b[2m",
 
   // Colors
-  red: '\x1b[31m',
-  green: '\x1b[32m',
-  yellow: '\x1b[33m',
-  blue: '\x1b[34m',
-  magenta: '\x1b[35m',
-  cyan: '\x1b[36m',
-  white: '\x1b[37m',
+  red: "\x1b[31m",
+  green: "\x1b[32m",
+  yellow: "\x1b[33m",
+  blue: "\x1b[34m",
+  magenta: "\x1b[35m",
+  cyan: "\x1b[36m",
+  white: "\x1b[37m",
 
   // Background
-  bgRed: '\x1b[41m',
-  bgGreen: '\x1b[42m',
-  bgYellow: '\x1b[43m',
+  bgRed: "\x1b[41m",
+  bgGreen: "\x1b[42m",
+  bgYellow: "\x1b[43m",
 };
 
 /**
@@ -71,10 +71,10 @@ function parseArgs(): CLIOptions {
   const positional: string[] = [];
 
   for (const arg of args) {
-    if (arg.startsWith('--')) {
-      const [key, value] = arg.slice(2).split('=');
+    if (arg.startsWith("--")) {
+      const [key, value] = arg.slice(2).split("=");
       flags[key] = value ?? true;
-    } else if (arg.startsWith('-')) {
+    } else if (arg.startsWith("-")) {
       flags[arg.slice(1)] = true;
     } else {
       positional.push(arg);
@@ -82,7 +82,7 @@ function parseArgs(): CLIOptions {
   }
 
   return {
-    command: positional[0] || 'help',
+    command: positional[0] || "help",
     args: positional.slice(1),
     flags,
   };
@@ -169,7 +169,7 @@ For more information, visit: https://github.com/your-repo/farmers-market
  * Print framework information
  */
 function printInfo(): void {
-  const { getFrameworkInfo } = require('../index');
+  const { getFrameworkInfo } = require("../index");
   const info = getFrameworkInfo();
 
   console.log(`
@@ -185,10 +185,10 @@ ${colors.bright}Status:${colors.reset}
   - Test Modules: ${colors.yellow}${info.status.testModules}${colors.reset}
 
 ${colors.bright}Migrated Modules:${colors.reset}
-  ${info.status.migratedModules.map((m: string) => `  - ${colors.green}${m}${colors.reset}`).join('\n')}
+  ${info.status.migratedModules.map((m: string) => `  - ${colors.green}${m}${colors.reset}`).join("\n")}
 
 ${colors.bright}Features:${colors.reset}
-  ${info.features.map((f: string) => `  ✓ ${f}`).join('\n')}
+  ${info.features.map((f: string) => `  ✓ ${f}`).join("\n")}
   `);
 }
 
@@ -196,7 +196,7 @@ ${colors.bright}Features:${colors.reset}
  * Get configuration from CLI options
  */
 function getConfig(options: CLIOptions): BotConfig {
-  const preset = options.flags.preset as string || 'mvp';
+  const preset = (options.flags.preset as string) || "mvp";
   const config = createConfig(preset);
 
   // Override with CLI flags
@@ -212,8 +212,8 @@ function getConfig(options: CLIOptions): BotConfig {
     config.verbose = options.flags.verbose as boolean;
   }
 
-  if (options.flags['continue-on-failure'] !== undefined) {
-    config.continueOnFailure = options.flags['continue-on-failure'] as boolean;
+  if (options.flags["continue-on-failure"] !== undefined) {
+    config.continueOnFailure = options.flags["continue-on-failure"] as boolean;
   }
 
   if (options.flags.output) {
@@ -235,19 +235,24 @@ function getFilter(options: CLIOptions): TestFilter | undefined {
       const parsed = JSON.parse(options.flags.filter as string);
       Object.assign(filter, parsed);
     } catch (error) {
-      console.error(`${colors.red}Error parsing filter JSON:${colors.reset}`, error);
+      console.error(
+        `${colors.red}Error parsing filter JSON:${colors.reset}`,
+        error,
+      );
       process.exit(1);
     }
   }
 
   // Parse tags
   if (options.flags.tags) {
-    filter.tags = (options.flags.tags as string).split(',').map(t => t.trim());
+    filter.tags = (options.flags.tags as string)
+      .split(",")
+      .map((t) => t.trim());
   }
 
   // Parse category
   if (options.flags.category) {
-    filter.categories = [(options.flags.category as string)];
+    filter.categories = [options.flags.category as string];
   }
 
   return Object.keys(filter).length > 0 ? filter : undefined;
@@ -277,46 +282,51 @@ function getAvailableModules(): BotModule[] {
 function getAvailableSuites(): TestSuite[] {
   return [
     {
-      id: 'health',
-      name: 'Health Checks',
-      description: 'Critical health and availability checks',
-      modules: ['health'],
+      id: "health",
+      name: "Health Checks",
+      description: "Critical health and availability checks",
+      modules: ["health"],
     },
     {
-      id: 'marketplace',
-      name: 'Marketplace Tests',
-      description: 'Product browsing and search functionality',
-      modules: ['marketplace-browse'],
+      id: "marketplace",
+      name: "Marketplace Tests",
+      description: "Product browsing and search functionality",
+      modules: ["marketplace-browse"],
     },
     {
-      id: 'checkout',
-      name: 'Checkout Flow',
-      description: 'Shopping cart and checkout process',
-      modules: ['cart-checkout'],
+      id: "checkout",
+      name: "Checkout Flow",
+      description: "Shopping cart and checkout process",
+      modules: ["cart-checkout"],
     },
     {
-      id: 'auth',
-      name: 'Authentication',
-      description: 'User authentication flows',
-      modules: ['auth.login.farmer'],
+      id: "auth",
+      name: "Authentication",
+      description: "User authentication flows",
+      modules: ["auth.login.farmer"],
     },
     {
-      id: 'critical',
-      name: 'Critical Tests',
-      description: 'All critical priority tests',
-      modules: ['health', 'auth.login.farmer'],
+      id: "critical",
+      name: "Critical Tests",
+      description: "All critical priority tests",
+      modules: ["health", "auth.login.farmer"],
     },
     {
-      id: 'smoke',
-      name: 'Smoke Tests',
-      description: 'Quick smoke test suite',
-      modules: ['health', 'marketplace-browse'],
+      id: "smoke",
+      name: "Smoke Tests",
+      description: "Quick smoke test suite",
+      modules: ["health", "marketplace-browse"],
     },
     {
-      id: 'full',
-      name: 'Full Test Suite',
-      description: 'Complete test coverage',
-      modules: ['health', 'marketplace-browse', 'cart-checkout', 'auth.login.farmer'],
+      id: "full",
+      name: "Full Test Suite",
+      description: "Complete test coverage",
+      modules: [
+        "health",
+        "marketplace-browse",
+        "cart-checkout",
+        "auth.login.farmer",
+      ],
     },
   ];
 }
@@ -327,21 +337,27 @@ function getAvailableSuites(): TestSuite[] {
 function listModules(): void {
   const modules = getAvailableModules();
 
-  console.log(`\n${colors.bright}${colors.cyan}Available Test Modules:${colors.reset}\n`);
+  console.log(
+    `\n${colors.bright}${colors.cyan}Available Test Modules:${colors.reset}\n`,
+  );
 
-  modules.forEach(module => {
+  modules.forEach((module) => {
     const categoryColor =
-      module.category === 'CRITICAL' ? colors.red :
-        module.category === 'IMPORTANT' ? colors.yellow :
-          colors.dim;
+      module.category === "CRITICAL"
+        ? colors.red
+        : module.category === "IMPORTANT"
+          ? colors.yellow
+          : colors.dim;
 
     console.log(`  ${colors.green}${module.id}${colors.reset}`);
     console.log(`    ${module.name}`);
     console.log(`    ${colors.dim}${module.description}${colors.reset}`);
-    console.log(`    Category: ${categoryColor}${module.category}${colors.reset}`);
-    console.log(`    Tags: ${module.tags.join(', ')}`);
+    console.log(
+      `    Category: ${categoryColor}${module.category}${colors.reset}`,
+    );
+    console.log(`    Tags: ${module.tags.join(", ")}`);
     console.log(`    Tests: ${module.tests.length}`);
-    console.log('');
+    console.log("");
   });
 
   console.log(`${colors.dim}Total: ${modules.length} modules${colors.reset}\n`);
@@ -353,14 +369,16 @@ function listModules(): void {
 function listSuites(): void {
   const suites = getAvailableSuites();
 
-  console.log(`\n${colors.bright}${colors.cyan}Available Test Suites:${colors.reset}\n`);
+  console.log(
+    `\n${colors.bright}${colors.cyan}Available Test Suites:${colors.reset}\n`,
+  );
 
-  suites.forEach(suite => {
+  suites.forEach((suite) => {
     console.log(`  ${colors.green}${suite.id}${colors.reset}`);
     console.log(`    ${suite.name}`);
     console.log(`    ${colors.dim}${suite.description}${colors.reset}`);
-    console.log(`    Modules: ${suite.modules.join(', ')}`);
-    console.log('');
+    console.log(`    Modules: ${suite.modules.join(", ")}`);
+    console.log("");
   });
 
   console.log(`${colors.dim}Total: ${suites.length} suites${colors.reset}\n`);
@@ -373,14 +391,22 @@ function printReportSummary(report: TestRunReport): void {
   const { summary, duration, startTime, endTime } = report;
 
   // Header
-  console.log(`\n${'='.repeat(70)}`);
-  console.log(`${colors.bright}${colors.cyan}  Test Run Summary${colors.reset}`);
-  console.log(`${'='.repeat(70)}\n`);
+  console.log(`\n${"=".repeat(70)}`);
+  console.log(
+    `${colors.bright}${colors.cyan}  Test Run Summary${colors.reset}`,
+  );
+  console.log(`${"=".repeat(70)}\n`);
 
   // Timestamps
-  console.log(`${colors.dim}Started:${colors.reset}  ${new Date(startTime).toLocaleString()}`);
-  console.log(`${colors.dim}Finished:${colors.reset} ${new Date(endTime).toLocaleString()}`);
-  console.log(`${colors.dim}Duration:${colors.reset} ${(duration / 1000).toFixed(2)}s\n`);
+  console.log(
+    `${colors.dim}Started:${colors.reset}  ${new Date(startTime).toLocaleString()}`,
+  );
+  console.log(
+    `${colors.dim}Finished:${colors.reset} ${new Date(endTime).toLocaleString()}`,
+  );
+  console.log(
+    `${colors.dim}Duration:${colors.reset} ${(duration / 1000).toFixed(2)}s\n`,
+  );
 
   // Results
   const passedColor = summary.passed > 0 ? colors.green : colors.dim;
@@ -388,46 +414,62 @@ function printReportSummary(report: TestRunReport): void {
   const skippedColor = summary.skipped > 0 ? colors.yellow : colors.dim;
 
   console.log(`${colors.bright}Results:${colors.reset}`);
-  console.log(`  ${passedColor}✓ Passed:${colors.reset}  ${summary.passed}/${summary.total}`);
-  console.log(`  ${failedColor}✗ Failed:${colors.reset}  ${summary.failed}/${summary.total}`);
-  console.log(`  ${skippedColor}○ Skipped:${colors.reset} ${summary.skipped}/${summary.total}\n`);
+  console.log(
+    `  ${passedColor}✓ Passed:${colors.reset}  ${summary.passed}/${summary.total}`,
+  );
+  console.log(
+    `  ${failedColor}✗ Failed:${colors.reset}  ${summary.failed}/${summary.total}`,
+  );
+  console.log(
+    `  ${skippedColor}○ Skipped:${colors.reset} ${summary.skipped}/${summary.total}\n`,
+  );
 
   // Success rate
   const successRate = summary.successRate;
   const rateColor =
-    successRate >= 90 ? colors.green :
-      successRate >= 70 ? colors.yellow :
-        colors.red;
+    successRate >= 90
+      ? colors.green
+      : successRate >= 70
+        ? colors.yellow
+        : colors.red;
 
-  console.log(`${colors.bright}Success Rate:${colors.reset} ${rateColor}${successRate.toFixed(2)}%${colors.reset}`);
-  console.log(`${colors.bright}Avg Duration:${colors.reset} ${summary.avgDuration.toFixed(0)}ms\n`);
+  console.log(
+    `${colors.bright}Success Rate:${colors.reset} ${rateColor}${successRate.toFixed(2)}%${colors.reset}`,
+  );
+  console.log(
+    `${colors.bright}Avg Duration:${colors.reset} ${summary.avgDuration.toFixed(0)}ms\n`,
+  );
 
   // Failed tests details
   if (summary.failed > 0) {
     console.log(`${colors.bright}${colors.red}Failed Tests:${colors.reset}\n`);
 
     report.results
-      .filter(r => r.status === 'failed')
-      .forEach(result => {
+      .filter((r) => r.status === "failed")
+      .forEach((result) => {
         console.log(`  ${colors.red}✗${colors.reset} ${result.moduleName}`);
         if (result.error) {
           console.log(`    ${colors.dim}${result.error}${colors.reset}`);
         }
         if (result.screenshot) {
-          console.log(`    ${colors.dim}Screenshot: ${result.screenshot}${colors.reset}`);
+          console.log(
+            `    ${colors.dim}Screenshot: ${result.screenshot}${colors.reset}`,
+          );
         }
-        console.log('');
+        console.log("");
       });
   }
 
   // Summary footer
-  console.log(`${'='.repeat(70)}\n`);
+  console.log(`${"=".repeat(70)}\n`);
 
   // Exit code based on results
   if (summary.failed > 0) {
     console.log(`${colors.red}${colors.bright}Tests failed!${colors.reset}\n`);
   } else {
-    console.log(`${colors.green}${colors.bright}All tests passed!${colors.reset}\n`);
+    console.log(
+      `${colors.green}${colors.bright}All tests passed!${colors.reset}\n`,
+    );
   }
 }
 
@@ -438,7 +480,9 @@ async function runTest(options: CLIOptions): Promise<void> {
   const target = options.args[0];
 
   if (!target) {
-    console.error(`${colors.red}Error: Module or suite name required${colors.reset}`);
+    console.error(
+      `${colors.red}Error: Module or suite name required${colors.reset}`,
+    );
     console.log(`Usage: npm run bot test <module|suite>`);
     process.exit(1);
   }
@@ -446,10 +490,16 @@ async function runTest(options: CLIOptions): Promise<void> {
   const config = getConfig(options);
   const filter = getFilter(options);
 
-  console.log(`\n${colors.bright}${colors.cyan}🤖 Starting test run...${colors.reset}\n`);
+  console.log(
+    `\n${colors.bright}${colors.cyan}🤖 Starting test run...${colors.reset}\n`,
+  );
   console.log(`${colors.dim}Target:${colors.reset} ${target}`);
-  console.log(`${colors.dim}Preset:${colors.reset} ${options.flags.preset || 'mvp'}`);
-  console.log(`${colors.dim}Mode:${colors.reset}   ${config.headless ? 'headless' : 'headed'}\n`);
+  console.log(
+    `${colors.dim}Preset:${colors.reset} ${options.flags.preset || "mvp"}`,
+  );
+  console.log(
+    `${colors.dim}Mode:${colors.reset}   ${config.headless ? "headless" : "headed"}\n`,
+  );
 
   const runner = createTestRunner(config, filter);
 
@@ -462,7 +512,7 @@ async function runTest(options: CLIOptions): Promise<void> {
 
     // Check if target is a suite or module
     const suites = getAvailableSuites();
-    const isSuite = suites.some(s => s.id === target);
+    const isSuite = suites.some((s) => s.id === target);
 
     if (isSuite) {
       console.log(`${colors.cyan}Running suite:${colors.reset} ${target}\n`);
@@ -477,11 +527,11 @@ async function runTest(options: CLIOptions): Promise<void> {
 
     // Generate reports
     const reportFormats = options.flags.format
-      ? [(options.flags.format as string)]
-      : ['json', 'markdown', 'console'];
+      ? [options.flags.format as string]
+      : ["json", "markdown", "console"];
 
     const reportGen = createReportGenerator({
-      outputDir: config.reportDir || './reports',
+      outputDir: config.reportDir || "./reports",
       formats: reportFormats as any,
       includeScreenshots: true,
       includeLogs: true,
@@ -490,17 +540,20 @@ async function runTest(options: CLIOptions): Promise<void> {
     const reports = await reportGen.generateReports(report);
 
     console.log(`${colors.bright}Reports generated:${colors.reset}`);
-    reports.forEach(r => {
+    reports.forEach((r) => {
       if (r.success && r.path) {
         console.log(`  ${colors.green}✓${colors.reset} ${r.format}: ${r.path}`);
       }
     });
-    console.log('');
+    console.log("");
 
     // Exit with appropriate code
     process.exit(report.summary.failed > 0 ? 1 : 0);
   } catch (error) {
-    console.error(`\n${colors.red}${colors.bright}Test execution failed:${colors.reset}`, error);
+    console.error(
+      `\n${colors.red}${colors.bright}Test execution failed:${colors.reset}`,
+      error,
+    );
     process.exit(1);
   } finally {
     await runner.cleanup();
@@ -514,7 +567,9 @@ async function runAll(options: CLIOptions): Promise<void> {
   const config = getConfig(options);
   const filter = getFilter(options);
 
-  console.log(`\n${colors.bright}${colors.cyan}🤖 Running all tests...${colors.reset}\n`);
+  console.log(
+    `\n${colors.bright}${colors.cyan}🤖 Running all tests...${colors.reset}\n`,
+  );
 
   const runner = createTestRunner(config, filter);
 
@@ -529,8 +584,8 @@ async function runAll(options: CLIOptions): Promise<void> {
 
     // Generate reports
     const reportGen = createReportGenerator({
-      outputDir: config.reportDir || './reports',
-      formats: ['json', 'markdown', 'html'],
+      outputDir: config.reportDir || "./reports",
+      formats: ["json", "markdown", "html"],
       includeScreenshots: true,
       includeLogs: true,
     });
@@ -540,7 +595,10 @@ async function runAll(options: CLIOptions): Promise<void> {
     // Exit with appropriate code
     process.exit(report.summary.failed > 0 ? 1 : 0);
   } catch (error) {
-    console.error(`\n${colors.red}${colors.bright}Test execution failed:${colors.reset}`, error);
+    console.error(
+      `\n${colors.red}${colors.bright}Test execution failed:${colors.reset}`,
+      error,
+    );
     process.exit(1);
   } finally {
     await runner.cleanup();
@@ -560,9 +618,11 @@ async function startMonitoring(options: CLIOptions): Promise<void> {
   }
 
   const config = getConfig(options);
-  const interval = parseInt(options.flags.interval as string || '60');
+  const interval = parseInt((options.flags.interval as string) || "60");
 
-  console.log(`\n${colors.bright}${colors.cyan}🤖 Starting monitoring mode...${colors.reset}\n`);
+  console.log(
+    `\n${colors.bright}${colors.cyan}🤖 Starting monitoring mode...${colors.reset}\n`,
+  );
   console.log(`${colors.dim}Suite:${colors.reset}    ${suite}`);
   console.log(`${colors.dim}Interval:${colors.reset} ${interval}s\n`);
 
@@ -577,10 +637,12 @@ async function startMonitoring(options: CLIOptions): Promise<void> {
     await runner.startMonitoring(suite, interval);
 
     // Keep process alive
-    console.log(`${colors.green}Monitoring started. Press Ctrl+C to stop.${colors.reset}\n`);
+    console.log(
+      `${colors.green}Monitoring started. Press Ctrl+C to stop.${colors.reset}\n`,
+    );
 
     // Handle shutdown gracefully
-    process.on('SIGINT', async () => {
+    process.on("SIGINT", async () => {
       console.log(`\n\n${colors.yellow}Stopping monitoring...${colors.reset}`);
       runner.stopMonitoring();
       await runner.cleanup();
@@ -588,9 +650,12 @@ async function startMonitoring(options: CLIOptions): Promise<void> {
     });
 
     // Keep process running
-    await new Promise(() => { }); // Never resolves
+    await new Promise(() => {}); // Never resolves
   } catch (error) {
-    console.error(`\n${colors.red}${colors.bright}Monitoring failed:${colors.reset}`, error);
+    console.error(
+      `\n${colors.red}${colors.bright}Monitoring failed:${colors.reset}`,
+      error,
+    );
     process.exit(1);
   }
 }
@@ -603,64 +668,82 @@ async function main(): Promise<void> {
 
   // Handle commands
   switch (options.command) {
-    case 'help':
-    case '--help':
-    case '-h':
+    case "help":
+    case "--help":
+    case "-h":
       printHelp();
       break;
 
-    case 'info':
+    case "info":
       printInfo();
       break;
 
-    case 'list':
-      if (options.args[0] === 'suites') {
+    case "list":
+      if (options.args[0] === "suites") {
         listSuites();
       } else {
         listModules();
       }
       break;
 
-    case 'test':
+    case "test":
       await runTest(options);
       break;
 
-    case 'test:all':
+    case "test:all":
       await runAll(options);
       break;
 
-    case 'test:health':
-      options.args = ['health'];
+    case "test:health":
+      options.args = ["health"];
       await runTest(options);
       break;
 
-    case 'test:critical':
-      options.args = ['critical'];
+    case "test:critical":
+      options.args = ["critical"];
       await runTest(options);
       break;
 
-    case 'monitor':
+    case "monitor":
       await startMonitoring(options);
       break;
 
-    case 'report':
-      console.log(`${colors.yellow}Report viewing not yet implemented${colors.reset}`);
-      console.log('Reports are generated in the output directory after each run.');
+    case "report":
+      console.log(
+        `${colors.yellow}Report viewing not yet implemented${colors.reset}`,
+      );
+      console.log(
+        "Reports are generated in the output directory after each run.",
+      );
       break;
 
     default:
-      console.error(`${colors.red}Unknown command: ${options.command}${colors.reset}`);
-      console.log(`Run '${colors.cyan}npm run bot help${colors.reset}' for usage information.`);
+      console.error(
+        `${colors.red}Unknown command: ${options.command}${colors.reset}`,
+      );
+      console.log(
+        `Run '${colors.cyan}npm run bot help${colors.reset}' for usage information.`,
+      );
       process.exit(1);
   }
 }
 
 // Run CLI if executed directly
 if (require.main === module) {
-  main().catch(error => {
-    console.error(`${colors.red}${colors.bright}Fatal error:${colors.reset}`, error);
+  main().catch((error) => {
+    console.error(
+      `${colors.red}${colors.bright}Fatal error:${colors.reset}`,
+      error,
+    );
     process.exit(1);
   });
 }
 
-export { getAvailableModules, getAvailableSuites, getConfig, getFilter, main, parseArgs };
+export {
+  getAvailableModules,
+  getAvailableSuites,
+  getConfig,
+  getFilter,
+  main,
+  parseArgs,
+};

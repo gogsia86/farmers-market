@@ -17,7 +17,7 @@ import type Sharp from "sharp";
 // TYPE DEFINITIONS
 // ============================================================================
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 export interface ImageProcessingOptions {
   width?: number;
@@ -329,7 +329,9 @@ export async function batchProcessImages(
   images: (Buffer | string)[],
   options: ImageProcessingOptions = {},
 ): Promise<ImageOptimizationResult[]> {
-  return await Promise.all(images.map((img: any) => processImage(img, options)));
+  return await Promise.all(
+    images.map((img: any) => processImage(img, options)),
+  );
 }
 
 // ============================================================================

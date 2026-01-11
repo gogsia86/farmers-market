@@ -17,7 +17,7 @@ import type {
 } from "../types";
 import { database } from "@/lib/database";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 // ============================================================================
 // SELF-HEALING ORCHESTRATOR
@@ -42,7 +42,8 @@ export class SelfHealingOrchestrator {
     if (this.enabled) {
       this.initializeStrategies();
       logger.info(
-        `✅ Self-Healing Orchestrator initialized with ${this.strategies.size} strategies`);
+        `✅ Self-Healing Orchestrator initialized with ${this.strategies.size} strategies`,
+      );
     }
   }
 
@@ -64,7 +65,8 @@ export class SelfHealingOrchestrator {
     }
 
     logger.info(
-      `\n🔧 Attempting self-heal for workflow: ${workflowResult.name}`);
+      `\n🔧 Attempting self-heal for workflow: ${workflowResult.name}`,
+    );
 
     // Check if we've exceeded max attempts for this workflow
     const recentAttempts = this.getRecentAttempts(workflowResult.workflowId);
@@ -167,8 +169,8 @@ export class SelfHealingOrchestrator {
       return result;
     } catch (error) {
       logger.error("   ❌ Healing strategy failed:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
 
       const result: HealingResult = {
         healed: false,
@@ -237,8 +239,10 @@ export class SelfHealingOrchestrator {
     ).length;
 
     const avgHealTime =
-      this.healingHistory.reduce((sum: any, h: any) => sum + h.result.duration, 0) /
-      (total || 1);
+      this.healingHistory.reduce(
+        (sum: any, h: any) => sum + h.result.duration,
+        0,
+      ) / (total || 1);
 
     // Calculate top strategies
     const strategyStats = new Map<
@@ -674,8 +678,8 @@ export class SelfHealingOrchestrator {
       return true;
     } catch (error) {
       logger.error("Healing verification error:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
       return false;
     }
   }
@@ -692,8 +696,8 @@ export class SelfHealingOrchestrator {
         await database.$connect();
       } catch (error) {
         logger.error("Rollback failed:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+          error: error instanceof Error ? error.message : String(error),
+        });
       }
     }
 

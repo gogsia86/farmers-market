@@ -6,11 +6,11 @@
  * @route GET /api/products/search
  */
 
-import { database } from '@/lib/database';
-import { logger } from '@/lib/monitoring/logger';
-import type { Product, ProductCategory, ProductStatus } from '@prisma/client';
-import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
+import { database } from "@/lib/database";
+import { logger } from "@/lib/monitoring/logger";
+import type { Product, ProductCategory, ProductStatus } from "@prisma/client";
+import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 
 // ============================================================================
 // TYPES
@@ -39,25 +39,33 @@ interface ProductSearchResponse {
 // ============================================================================
 
 const ProductSearchQuerySchema = z.object({
-  q: z.string().min(1, 'Search query is required'),
-  limit: z.string().optional().default('10').transform(Number),
-  category: z.enum([
-    'VEGETABLES',
-    'FRUITS',
-    'GRAINS',
-    'DAIRY',
-    'MEAT',
-    'EGGS',
-    'HONEY',
-    'PRESERVES',
-    'BAKED_GOODS',
-    'HERBS',
-    'OTHER',
-  ]).optional(),
+  q: z.string().min(1, "Search query is required"),
+  limit: z.string().optional().default("10").transform(Number),
+  category: z
+    .enum([
+      "VEGETABLES",
+      "FRUITS",
+      "GRAINS",
+      "DAIRY",
+      "MEAT",
+      "EGGS",
+      "HONEY",
+      "PRESERVES",
+      "BAKED_GOODS",
+      "HERBS",
+      "OTHER",
+    ])
+    .optional(),
   organic: z.string().optional(),
   inStock: z.string().optional(),
-  minPrice: z.string().optional().transform((val) => val ? parseFloat(val) : undefined),
-  maxPrice: z.string().optional().transform((val) => val ? parseFloat(val) : undefined),
+  minPrice: z
+    .string()
+    .optional()
+    .transform((val) => (val ? parseFloat(val) : undefined)),
+  maxPrice: z
+    .string()
+    .optional()
+    .transform((val) => (val ? parseFloat(val) : undefined)),
 });
 
 // ============================================================================
@@ -78,19 +86,21 @@ const ProductSearchQuerySchema = z.object({
  *
  * Returns products matching the search criteria
  */
-export async function GET(request: NextRequest): Promise<NextResponse<ProductSearchResponse>> {
+export async function GET(
+  request: NextRequest,
+): Promise<NextResponse<ProductSearchResponse>> {
   try {
     const { searchParams } = new URL(request.url);
 
     // Validate query parameters
     const queryValidation = ProductSearchQuerySchema.safeParse({
-      q: searchParams.get('q') || '',
-      limit: searchParams.get('limit') || '10',
-      category: searchParams.get('category') || undefined,
-      organic: searchParams.get('organic') || undefined,
-      inStock: searchParams.get('inStock') || undefined,
-      minPrice: searchParams.get('minPrice') || undefined,
-      maxPrice: searchParams.get('maxPrice') || undefined,
+      q: searchParams.get("q") || "",
+      limit: searchParams.get("limit") || "10",
+      category: searchParams.get("category") || undefined,
+      organic: searchParams.get("organic") || undefined,
+      inStock: searchParams.get("inStock") || undefined,
+      minPrice: searchParams.get("minPrice") || undefined,
+      maxPrice: searchParams.get("maxPrice") || undefined,
     });
 
     if (!queryValidation.success) {
@@ -98,26 +108,34 @@ export async function GET(request: NextRequest): Promise<NextResponse<ProductSea
         {
           success: false,
           error: {
-            code: 'VALIDATION_ERROR',
-            message: 'Invalid search parameters',
+            code: "VALIDATION_ERROR",
+            message: "Invalid search parameters",
             details: queryValidation.error.flatten(),
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    const { q: query, limit, category, organic, inStock, minPrice, maxPrice } = queryValidation.data;
+    const {
+      q: query,
+      limit,
+      category,
+      organic,
+      inStock,
+      minPrice,
+      maxPrice,
+    } = queryValidation.data;
 
     // Cap limit at 100 for performance
     const cappedLimit = Math.min(limit, 100);
 
     // Build where clause
     const where: any = {
-      status: 'ACTIVE' as ProductStatus,
+      status: "ACTIVE" as ProductStatus,
       OR: [
-        { name: { contains: query, mode: 'insensitive' } },
-        { description: { contains: query, mode: 'insensitive' } },
+        { name: { contains: query, mode: "insensitive" } },
+        { description: { contains: query, mode: "insensitive" } },
       ],
     };
 
@@ -127,12 +145,12 @@ export async function GET(request: NextRequest): Promise<NextResponse<ProductSea
     }
 
     // Add organic filter
-    if (organic === 'true') {
+    if (organic === "true") {
       where.organic = true;
     }
 
     // Add in-stock filter
-    if (inStock === 'true') {
+    if (inStock === "true") {
       where.quantityAvailable = { gt: 0 };
     }
 
@@ -149,8 +167,8 @@ export async function GET(request: NextRequest): Promise<NextResponse<ProductSea
 
     // Ensure products are from active, verified farms
     where.farm = {
-      status: 'ACTIVE',
-      verificationStatus: 'VERIFIED',
+      status: "ACTIVE",
+      verificationStatus: "VERIFIED",
     };
 
     // Fetch products from database
@@ -186,14 +204,14 @@ export async function GET(request: NextRequest): Promise<NextResponse<ProductSea
         },
       },
       orderBy: [
-        { purchaseCount: 'desc' }, // Popularity first
-        { averageRating: 'desc' },
-        { createdAt: 'desc' },
+        { purchaseCount: "desc" }, // Popularity first
+        { averageRating: "desc" },
+        { createdAt: "desc" },
       ],
       take: cappedLimit,
     });
 
-    logger.info('Product search completed successfully', {
+    logger.info("Product search completed successfully", {
       query,
       count: products.length,
       limit: cappedLimit,
@@ -212,19 +230,19 @@ export async function GET(request: NextRequest): Promise<NextResponse<ProductSea
       },
     });
   } catch (error) {
-    logger.error('Product search failed', {
-      error: error instanceof Error ? error.message : 'Unknown error',
+    logger.error("Product search failed", {
+      error: error instanceof Error ? error.message : "Unknown error",
     });
 
     return NextResponse.json(
       {
         success: false,
         error: {
-          code: 'SEARCH_ERROR',
-          message: 'Failed to search products',
+          code: "SEARCH_ERROR",
+          message: "Failed to search products",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -233,6 +251,6 @@ export async function GET(request: NextRequest): Promise<NextResponse<ProductSea
 // EXPORT ROUTE CONFIG
 // ============================================================================
 
-export const runtime = 'nodejs';
-export const dynamic = 'force-dynamic';
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 export const revalidate = 0;

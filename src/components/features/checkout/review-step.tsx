@@ -8,13 +8,25 @@ import { Button } from "@/components/ui/button";
 import { confirmPayment } from "@/lib/client/stripe";
 import { formatCurrency } from "@/lib/utils/currency";
 import type { CartItem, Farm, Product } from "@prisma/client";
-import { AlertTriangle, Check, Edit2, Loader2, MapPin, Package, Truck } from "lucide-react";
+import {
+  AlertTriangle,
+  Check,
+  Edit2,
+  Loader2,
+  MapPin,
+  Package,
+  Truck,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
-import type { DeliveryInfo, PaymentInfo, ShippingAddress } from "./checkout-wizard";
+import type {
+  DeliveryInfo,
+  PaymentInfo,
+  ShippingAddress,
+} from "./checkout-wizard";
 
 // ============================================================================
 // TYPES
@@ -28,7 +40,10 @@ interface ReviewStepProps {
   };
   cart: (CartItem & {
     product: Product & {
-      farm: Pick<Farm, "id" | "name" | "slug" | "address" | "city" | "state" | "zipCode">;
+      farm: Pick<
+        Farm,
+        "id" | "name" | "slug" | "address" | "city" | "state" | "zipCode"
+      >;
     };
   })[];
   userId: string;
@@ -128,7 +143,7 @@ export function ReviewStep({
       if (formData.payment?.paymentIntentId) {
         // Get the payment intent details
         const paymentIntentResponse = await fetch(
-          `/api/checkout/payment-intent?paymentIntentId=${formData.payment.paymentIntentId}`
+          `/api/checkout/payment-intent?paymentIntentId=${formData.payment.paymentIntentId}`,
         );
 
         if (!paymentIntentResponse.ok) {
@@ -137,7 +152,10 @@ export function ReviewStep({
 
         const paymentIntentResult = await paymentIntentResponse.json();
 
-        if (!paymentIntentResult.success || !paymentIntentResult.data?.clientSecret) {
+        if (
+          !paymentIntentResult.success ||
+          !paymentIntentResult.data?.clientSecret
+        ) {
           throw new Error("Invalid payment details");
         }
 
@@ -151,7 +169,8 @@ export function ReviewStep({
           // Payment confirmation failed - orders were created but payment failed
           // The webhook will handle updating the order status to CANCELLED
           throw new Error(
-            confirmResult.error || "Payment confirmation failed. Your order has been cancelled."
+            confirmResult.error ||
+              "Payment confirmation failed. Your order has been cancelled.",
           );
         }
 
@@ -171,12 +190,12 @@ export function ReviewStep({
       router.push(`/orders/${orderResult.data.orderId}/confirmation`);
     } catch (err) {
       logger.error("Order submission error:", {
-      error: err instanceof Error ? err.message : String(err),
-    });
+        error: err instanceof Error ? err.message : String(err),
+      });
       setError(
         err instanceof Error
           ? err.message
-          : "Failed to submit order. Please try again."
+          : "Failed to submit order. Please try again.",
       );
     } finally {
       setIsSubmitting(false);
@@ -263,17 +282,21 @@ export function ReviewStep({
               <div className="mt-2 space-y-1 text-sm text-gray-600">
                 <p>
                   <span className="font-medium text-gray-900">Date:</span>{" "}
-                  {new Date(delivery.preferredDate).toLocaleDateString("en-US", {
-                    weekday: "long",
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
+                  {new Date(delivery.preferredDate).toLocaleDateString(
+                    "en-US",
+                    {
+                      weekday: "long",
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    },
+                  )}
                 </p>
                 <p>
                   <span className="font-medium text-gray-900">Time:</span>{" "}
                   {delivery.preferredTime === "morning" && "8:00 AM - 12:00 PM"}
-                  {delivery.preferredTime === "afternoon" && "12:00 PM - 4:00 PM"}
+                  {delivery.preferredTime === "afternoon" &&
+                    "12:00 PM - 4:00 PM"}
                   {delivery.preferredTime === "evening" && "4:00 PM - 8:00 PM"}
                 </p>
                 {delivery.deliveryInstructions && (
@@ -310,7 +333,9 @@ export function ReviewStep({
               </h3>
               <div className="mt-2 text-sm text-gray-600">
                 <p className="font-medium text-gray-900">
-                  {payment.method === "card" ? "Credit/Debit Card" : "Digital Wallet"}
+                  {payment.method === "card"
+                    ? "Credit/Debit Card"
+                    : "Digital Wallet"}
                 </p>
                 <p className="text-xs text-gray-500 mt-1">
                   Payment will be processed securely via Stripe
@@ -349,12 +374,15 @@ export function ReviewStep({
                   from {item.product.farm.name}
                 </p>
                 <p className="text-xs text-gray-500 mt-1">
-                  {Number(item.quantity)} {item.unit} × {formatCurrency(Number(item.priceAtAdd))}
+                  {Number(item.quantity)} {item.unit} ×{" "}
+                  {formatCurrency(Number(item.priceAtAdd))}
                 </p>
               </div>
               <div className="text-right">
                 <p className="text-sm font-semibold text-gray-900">
-                  {formatCurrency(Number(item.priceAtAdd) * Number(item.quantity))}
+                  {formatCurrency(
+                    Number(item.priceAtAdd) * Number(item.quantity),
+                  )}
                 </p>
               </div>
             </div>
@@ -478,7 +506,15 @@ export function ReviewStep({
 // LABEL COMPONENT (if not imported from ui)
 // ============================================================================
 
-function Label({ htmlFor, className, children }: { htmlFor?: string; className?: string; children: React.ReactNode }) {
+function Label({
+  htmlFor,
+  className,
+  children,
+}: {
+  htmlFor?: string;
+  className?: string;
+  children: React.ReactNode;
+}) {
   return (
     <label htmlFor={htmlFor} className={className}>
       {children}

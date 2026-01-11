@@ -5,7 +5,7 @@
 
 import { recordDatabaseQuery } from "./performance";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 /**
  * Measure the performance of a database query
@@ -119,7 +119,7 @@ export class QueryMonitor {
     timestamp: number;
   }> = [];
 
-  constructor(private context: string) { }
+  constructor(private context: string) {}
 
   /**
    * Measure a single query
@@ -157,7 +157,10 @@ export class QueryMonitor {
    * Get summary of all queries in this context
    */
   getSummary() {
-    const totalDuration = this.queries.reduce((sum: any, q: any) => sum + q.duration, 0);
+    const totalDuration = this.queries.reduce(
+      (sum: any, q: any) => sum + q.duration,
+      0,
+    );
     const successCount = this.queries.filter((q: any) => q.success).length;
     const failureCount = this.queries.length - successCount;
 

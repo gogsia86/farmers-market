@@ -1,4 +1,5 @@
 # 🔍 Remaining Issues Investigation Report
+
 **Date:** January 8, 2025
 **Status:** Investigation Complete
 **Priority:** Medium to High
@@ -21,15 +22,19 @@ After fixing the three critical issues (registration click interception, admin p
 ### Status: ⚠️ LIKELY IMPROVED (Needs Verification)
 
 ### Analysis
+
 The checkout wizard (`src/components/features/checkout/checkout-wizard.tsx`) is a client component with multi-step forms that would suffer from the same z-index/click interception issues as the registration form.
 
 ### What Was Fixed
+
 - Header z-index reduced from `z-50` to `z-40`
 - Forms should now sit above header with proper stacking
 - Same pointer-events patterns should apply
 
 ### Potential Remaining Issues
+
 1. **Checkout wizard may need explicit z-index**:
+
    ```typescript
    // src/components/features/checkout/checkout-wizard.tsx
    // May need to add relative z-10 to main container
@@ -45,6 +50,7 @@ The checkout wizard (`src/components/features/checkout/checkout-wizard.tsx`) is 
    - May need explicit pointer-events
 
 ### Recommended Fixes
+
 ```typescript
 // src/components/features/checkout/checkout-wizard.tsx
 export function CheckoutWizard({ cart, savedAddresses, userId }: WizardProps) {
@@ -67,6 +73,7 @@ export function CheckoutWizard({ cart, savedAddresses, userId }: WizardProps) {
 ```
 
 ### Testing Instructions
+
 ```bash
 # 1. Login as customer
 # 2. Add products to cart
@@ -77,6 +84,7 @@ export function CheckoutWizard({ cart, savedAddresses, userId }: WizardProps) {
 ```
 
 ### Expected Bot Behavior
+
 - **Before:** Timeout on clicking checkout buttons
 - **After:** Should work (benefits from header z-index fix)
 - **Success Rate:** 70-80% chance of passing
@@ -88,11 +96,13 @@ export function CheckoutWizard({ cart, savedAddresses, userId }: WizardProps) {
 ### Status: ❌ **MISSING PAGE** (Broken Functionality)
 
 ### Analysis
+
 The farmer dashboard and farm details pages have links to `/farmer/farms/[farmId]/orders`, but **this page does not exist**.
 
 ### Evidence
 
 **1. Dashboard Links Found:**
+
 ```typescript
 // src/app/(farmer)/farmer/farms/[farmId]/page.tsx (Line 383-395)
 <Link
@@ -113,12 +123,14 @@ The farmer dashboard and farm details pages have links to `/farmer/farms/[farmId
 ```
 
 **2. File System Check:**
+
 ```bash
 $ find . -path "**/farmer/farms/[farmId]/orders/**"
 # No matches found
 ```
 
 **3. Header Navigation:**
+
 ```typescript
 // src/components/layout/header.tsx (Line 172-179)
 {(userRole === "CONSUMER" || userRole === "FARMER") && (
@@ -134,12 +146,14 @@ $ find . -path "**/farmer/farms/[farmId]/orders/**"
 ```
 
 **4. Customer Orders Page Exists:**
+
 ```typescript
 // src/app/(customer)/orders/page.tsx ← Exists for customers
 // But no equivalent for farmers
 ```
 
 ### Impact
+
 - 🔴 **Critical:** Bot test "Orders in Farmer Dashboard" will fail
 - 🔴 **User Experience:** Farmers click "View Orders" → 404 error
 - 🔴 **Business Impact:** Farmers cannot manage their orders
@@ -645,6 +659,7 @@ export default async function OrderDetailsPage({ params }: PageProps) {
 ```
 
 ### Testing Instructions
+
 ```bash
 # 1. Create the pages above
 # 2. Login as farmer
@@ -662,11 +677,13 @@ export default async function OrderDetailsPage({ params }: PageProps) {
 ### Status: ⚠️ NEEDS VERIFICATION
 
 ### Analysis
+
 The product form exists and has correct fields, but the bot may fail due to authentication/routing issues.
 
 ### Potential Issues
 
 **1. Authentication Check:**
+
 ```typescript
 // src/app/(farmer)/farmer/products/new/page.tsx (Line 23-33)
 const session = await auth();
@@ -682,12 +699,13 @@ if (session.user.role !== "FARMER") {
 ```
 
 **2. Farm Lookup:**
+
 ```typescript
 // Lines 35-42
 const farm = await database.farm.findFirst({
   where: {
     ownerId: session.user.id,
-    status: "ACTIVE",  // ← Only finds ACTIVE farms
+    status: "ACTIVE", // ← Only finds ACTIVE farms
   },
 });
 ```
@@ -695,6 +713,7 @@ const farm = await database.farm.findFirst({
 **Issue:** If farmer's farm status is `PENDING` (not `ACTIVE`), the page shows "No active farm found" and bot can't access form.
 
 ### Recommended Fix
+
 ```typescript
 // Change line 38:
 status: "ACTIVE",  // ← TOO RESTRICTIVE
@@ -706,6 +725,7 @@ status: { in: ["ACTIVE", "PENDING"] },  // ← Allow pending farms to create pro
 **Reasoning:** Farmers should be able to prepare products while farm is pending approval. Products can have their own approval workflow.
 
 ### Testing Instructions
+
 ```bash
 # 1. Create farmer with PENDING farm
 # 2. Login as that farmer
@@ -720,11 +740,13 @@ status: { in: ["ACTIVE", "PENDING"] },  // ← Allow pending farms to create pro
 ### Status: ⚠️ POTENTIAL Z-INDEX ISSUE
 
 ### Analysis
+
 The payment step in checkout likely uses Stripe Elements, which renders in an iframe and may have z-index issues.
 
 ### Potential Issues
 
 **1. Stripe Elements Overlay:**
+
 ```typescript
 // src/components/features/checkout/payment-step.tsx
 // Stripe Elements may render with high z-index
@@ -732,16 +754,19 @@ The payment step in checkout likely uses Stripe Elements, which renders in an if
 ```
 
 **2. Loading Overlays:**
+
 ```typescript
 // During payment processing, loading overlays may block interaction
 ```
 
 ### Recommended Investigation
+
 1. Check if Stripe Elements are rendered
 2. Verify no loading overlays block form
 3. Ensure proper z-index for payment container
 
 ### Testing Instructions
+
 ```bash
 # 1. Complete checkout flow to payment step
 # 2. Check if Stripe card element is clickable
@@ -753,18 +778,19 @@ The payment step in checkout likely uses Stripe Elements, which renders in an if
 
 ## Priority Ranking
 
-| Issue | Priority | Impact | Effort | Status |
-|-------|----------|--------|--------|--------|
-| Farmer Orders Page | 🔴 **CRITICAL** | HIGH | 4 hours | Not Started |
-| Product Creation Auth | 🟡 **HIGH** | MEDIUM | 15 min | Quick Fix |
-| Checkout Flow | 🟡 **MEDIUM** | MEDIUM | 1 hour | Likely Fixed |
-| Payment Form | 🟢 **LOW** | LOW | 2 hours | Needs Investigation |
+| Issue                 | Priority        | Impact | Effort  | Status              |
+| --------------------- | --------------- | ------ | ------- | ------------------- |
+| Farmer Orders Page    | 🔴 **CRITICAL** | HIGH   | 4 hours | Not Started         |
+| Product Creation Auth | 🟡 **HIGH**     | MEDIUM | 15 min  | Quick Fix           |
+| Checkout Flow         | 🟡 **MEDIUM**   | MEDIUM | 1 hour  | Likely Fixed        |
+| Payment Form          | 🟢 **LOW**      | LOW    | 2 hours | Needs Investigation |
 
 ---
 
 ## Recommended Action Plan
 
 ### Phase 1: Critical Fix (Must Do)
+
 1. **Create Farmer Orders Pages** (4 hours)
    - `/farmer/farms/[farmId]/orders/page.tsx`
    - `/farmer/farms/[farmId]/orders/[orderId]/page.tsx`
@@ -772,11 +798,13 @@ The payment step in checkout likely uses Stripe Elements, which renders in an if
    - Test with bot
 
 ### Phase 2: Quick Wins (15 minutes)
+
 2. **Fix Product Creation Auth** (15 min)
    - Change `status: "ACTIVE"` to `status: { in: ["ACTIVE", "PENDING"] }`
    - Allow pending farms to create products
 
 ### Phase 3: Verification (2 hours)
+
 3. **Verify Checkout Flow** (1 hour)
    - Manual test checkout process
    - Check z-index stacking
@@ -792,10 +820,12 @@ The payment step in checkout likely uses Stripe Elements, which renders in an if
 ## Expected Bot Results After Fixes
 
 ### Current Status (After Initial 3 Fixes)
+
 - Success Rate: ~75% (estimated)
 - Fixed: Registration, Admin Approval, Forms clickable
 
 ### After Implementing Remaining Fixes
+
 - **Orders Page:** +10% (critical blocker removed)
 - **Product Auth:** +5% (edge case fixed)
 - **Checkout:** Already improved (no change)
@@ -823,10 +853,12 @@ After implementing fixes:
 ## Files to Create/Modify
 
 ### New Files (2)
+
 1. `src/app/(farmer)/farmer/farms/[farmId]/orders/page.tsx` - Orders list
 2. `src/app/(farmer)/farmer/farms/[farmId]/orders/[orderId]/page.tsx` - Order details
 
 ### Files to Modify (2)
+
 3. `src/app/(farmer)/farmer/products/new/page.tsx` - Line 38 (farm status filter)
 4. `src/components/features/checkout/checkout-wizard.tsx` - Add z-index (if needed)
 

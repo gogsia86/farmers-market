@@ -10,7 +10,7 @@ import { database } from "@/lib/database";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 // ============================================================================
 // Validation Schemas
@@ -22,7 +22,9 @@ const GetUsersSchema = z.object({
   role: z.enum(["CONSUMER", "FARMER", "ADMIN"]).optional(),
   status: z.enum(["ACTIVE", "INACTIVE", "SUSPENDED", "PENDING"]).optional(),
   search: z.string().optional(),
-  sortBy: z.enum(["createdAt", "name", "email", "loginCount"]).default("createdAt"),
+  sortBy: z
+    .enum(["createdAt", "name", "email", "loginCount"])
+    .default("createdAt"),
   sortOrder: z.enum(["asc", "desc"]).default("desc"),
 });
 
@@ -55,7 +57,7 @@ async function logAdminAction(
   adminId: string,
   actionType: string,
   targetUserId: string,
-  details?: Record<string, any>
+  details?: Record<string, any>,
 ): Promise<void> {
   await database.adminAction.create({
     data: {
@@ -86,7 +88,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
             message: "Authentication required",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -101,7 +103,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
             message: "Admin access required",
           },
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -127,11 +129,12 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
             details: validation.error.flatten(),
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    const { page, limit, role, status, search, sortBy, sortOrder } = validation.data;
+    const { page, limit, role, status, search, sortBy, sortOrder } =
+      validation.data;
     const skip = (page - 1) * limit;
 
     // Build where clause
@@ -182,12 +185,13 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     ]);
 
     // Get statistics
-    const [totalUsers, activeUsers, farmerCount, consumerCount] = await Promise.all([
-      database.user.count(),
-      database.user.count({ where: { status: "ACTIVE" } }),
-      database.user.count({ where: { role: "FARMER" } }),
-      database.user.count({ where: { role: "CONSUMER" } }),
-    ]);
+    const [totalUsers, activeUsers, farmerCount, consumerCount] =
+      await Promise.all([
+        database.user.count(),
+        database.user.count({ where: { status: "ACTIVE" } }),
+        database.user.count({ where: { role: "FARMER" } }),
+        database.user.count({ where: { role: "CONSUMER" } }),
+      ]);
 
     return NextResponse.json({
       success: true,
@@ -216,10 +220,11 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         success: false,
         error: {
           code: "FETCH_USERS_ERROR",
-          message: error instanceof Error ? error.message : "Failed to fetch users",
+          message:
+            error instanceof Error ? error.message : "Failed to fetch users",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -241,7 +246,7 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
             message: "Authentication required",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -256,7 +261,7 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
             message: "Admin access required",
           },
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -273,7 +278,7 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
             details: validation.error.flatten(),
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -289,7 +294,7 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
             message: "Cannot change your own admin role",
           },
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -325,7 +330,8 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
     // Log admin action
     let actionType = "USER_ACTIVATED";
     if (role) {
-      actionType = role === "ADMIN" ? "USER_PROMOTED_ADMIN" : "USER_DEMOTED_ADMIN";
+      actionType =
+        role === "ADMIN" ? "USER_PROMOTED_ADMIN" : "USER_DEMOTED_ADMIN";
     } else if (status === "SUSPENDED") {
       actionType = "USER_SUSPENDED";
     } else if (status === "ACTIVE") {
@@ -353,10 +359,11 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
         success: false,
         error: {
           code: "UPDATE_USER_ERROR",
-          message: error instanceof Error ? error.message : "Failed to update user",
+          message:
+            error instanceof Error ? error.message : "Failed to update user",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -378,7 +385,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
             message: "Authentication required",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -393,7 +400,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
             message: "Admin access required",
           },
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -410,7 +417,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
             details: validation.error.flatten(),
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -426,7 +433,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
             message: "Cannot perform bulk operations on yourself",
           },
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -498,8 +505,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           operation,
           reason,
           bulkOperation: true,
-        })
-      )
+        }),
+      ),
     );
 
     return NextResponse.json({
@@ -520,10 +527,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         error: {
           code: "BULK_OPERATION_ERROR",
           message:
-            error instanceof Error ? error.message : "Failed to perform bulk operation",
+            error instanceof Error
+              ? error.message
+              : "Failed to perform bulk operation",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

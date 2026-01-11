@@ -8,8 +8,8 @@
  * @route GET /api/ready
  */
 
-import { database } from '@/lib/database';
-import { NextResponse } from 'next/server';
+import { database } from "@/lib/database";
+import { NextResponse } from "next/server";
 
 /**
  * GET /api/ready - Quick readiness check
@@ -26,42 +26,44 @@ export async function GET(): Promise<NextResponse> {
     // Application is ready
     return NextResponse.json(
       {
-        status: 'ready',
+        status: "ready",
         timestamp: new Date().toISOString(),
-        message: 'Application is ready to serve traffic',
+        message: "Application is ready to serve traffic",
       },
       {
         status: 200,
         headers: {
-          'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
-          Pragma: 'no-cache',
-          Expires: '0',
+          "Cache-Control":
+            "no-store, no-cache, must-revalidate, proxy-revalidate",
+          Pragma: "no-cache",
+          Expires: "0",
         },
-      }
+      },
     );
   } catch (error) {
     // Application is not ready
     return NextResponse.json(
       {
-        status: 'not_ready',
+        status: "not_ready",
         timestamp: new Date().toISOString(),
-        message: 'Application is not ready to serve traffic',
+        message: "Application is not ready to serve traffic",
         error:
-          process.env.NODE_ENV === 'development'
+          process.env.NODE_ENV === "development"
             ? error instanceof Error
               ? error.message
-              : 'Unknown error'
-            : 'Service temporarily unavailable',
+              : "Unknown error"
+            : "Service temporarily unavailable",
       },
       {
         status: 503,
         headers: {
-          'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
-          Pragma: 'no-cache',
-          Expires: '0',
-          'Retry-After': '5',
+          "Cache-Control":
+            "no-store, no-cache, must-revalidate, proxy-revalidate",
+          Pragma: "no-cache",
+          Expires: "0",
+          "Retry-After": "5",
         },
-      }
+      },
     );
   }
 }
@@ -75,20 +77,20 @@ export async function HEAD(): Promise<NextResponse> {
     return new NextResponse(null, {
       status: 200,
       headers: {
-        'Cache-Control': 'no-store, no-cache, must-revalidate',
+        "Cache-Control": "no-store, no-cache, must-revalidate",
       },
     });
   } catch {
     return new NextResponse(null, {
       status: 503,
       headers: {
-        'Cache-Control': 'no-store, no-cache, must-revalidate',
-        'Retry-After': '5',
+        "Cache-Control": "no-store, no-cache, must-revalidate",
+        "Retry-After": "5",
       },
     });
   }
 }
 
-export const runtime = 'nodejs';
-export const dynamic = 'force-dynamic';
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 export const revalidate = 0;

@@ -52,13 +52,7 @@ export function CartBadge({
     setMounted(true);
   }, []);
 
-  const {
-    cart,
-    count,
-    isLoading,
-    removeFromCart,
-    clearCart,
-  } = useCart();
+  const { cart, count, isLoading, removeFromCart, clearCart } = useCart();
 
   // Trigger animation when count changes (only when mounted)
   useEffect(() => {
@@ -96,7 +90,11 @@ export function CartBadge({
   if (!mounted) {
     return (
       <div className="relative mini-cart-container">
-        <Button variant={variant} size={size} className={`relative ${className}`}>
+        <Button
+          variant={variant}
+          size={size}
+          className={`relative ${className}`}
+        >
           <ShoppingCart className="h-5 w-5" />
         </Button>
       </div>
@@ -117,8 +115,9 @@ export function CartBadge({
           <ShoppingCart className="h-5 w-5" />
           {count > 0 && (
             <span
-              className={`absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-green-600 text-xs font-semibold text-white transition-transform ${isAnimating ? "scale-125" : "scale-100"
-                }`}
+              className={`absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-green-600 text-xs font-semibold text-white transition-transform ${
+                isAnimating ? "scale-125" : "scale-100"
+              }`}
             >
               {count > 99 ? "99+" : count}
             </span>
@@ -126,12 +125,17 @@ export function CartBadge({
         </Button>
       ) : (
         <Link href="/cart" aria-label={`Shopping cart with ${count} items`}>
-          <Button variant={variant} size={size} className={`relative ${className}`}>
+          <Button
+            variant={variant}
+            size={size}
+            className={`relative ${className}`}
+          >
             <ShoppingCart className="h-5 w-5" />
             {count > 0 && (
               <span
-                className={`absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-green-600 text-xs font-semibold text-white transition-transform ${isAnimating ? "scale-125" : "scale-100"
-                  }`}
+                className={`absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-green-600 text-xs font-semibold text-white transition-transform ${
+                  isAnimating ? "scale-125" : "scale-100"
+                }`}
               >
                 {count > 99 ? "99+" : count}
               </span>
@@ -213,7 +217,7 @@ export function CartBadge({
                           </span>
                           <span className="text-sm font-semibold text-gray-900">
                             {formatCurrency(
-                              Number(item.priceAtAdd) * Number(item.quantity)
+                              Number(item.priceAtAdd) * Number(item.quantity),
                             )}
                           </span>
                         </div>
@@ -319,8 +323,9 @@ export function CompactCartBadge({
       <ShoppingCart className="h-6 w-6 text-gray-700" />
       {count > 0 && (
         <span
-          className={`absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-green-600 text-xs font-semibold text-white transition-transform ${isAnimating ? "scale-125" : "scale-100"
-            }`}
+          className={`absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-green-600 text-xs font-semibold text-white transition-transform ${
+            isAnimating ? "scale-125" : "scale-100"
+          }`}
         >
           {count > 99 ? "99+" : count}
         </span>

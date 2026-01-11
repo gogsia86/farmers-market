@@ -118,12 +118,16 @@ export default async function ProductsManagementPage({
       status: resolvedSearchParams.status as any,
       category: resolvedSearchParams.category as any,
       limit: 100,
-    }
+    },
   );
 
   // Calculate summary stats
-  const activeProducts = products.filter((p: any) => p.status === "ACTIVE").length;
-  const outOfStock = products.filter((p: any) => p.status === "OUT_OF_STOCK").length;
+  const activeProducts = products.filter(
+    (p: any) => p.status === "ACTIVE",
+  ).length;
+  const outOfStock = products.filter(
+    (p: any) => p.status === "OUT_OF_STOCK",
+  ).length;
   const totalInventoryValue = products.reduce((sum: any, p: any) => {
     const qty = p.quantityAvailable ? Number(p.quantityAvailable) : 0;
     const price = Number(p.price);
@@ -338,12 +342,13 @@ export default async function ProductsManagementPage({
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-gray-600">Inventory:</span>
                       <span
-                        className={`font-medium ${quantity === 0
-                          ? "text-red-600"
-                          : lowStock
-                            ? "text-yellow-600"
-                            : "text-gray-900"
-                          }`}
+                        className={`font-medium ${
+                          quantity === 0
+                            ? "text-red-600"
+                            : lowStock
+                              ? "text-yellow-600"
+                              : "text-gray-900"
+                        }`}
                       >
                         {quantity} {product.unit}
                       </span>

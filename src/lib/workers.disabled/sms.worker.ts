@@ -12,7 +12,7 @@ import { SMSJobData, smsQueue } from "@/lib/queue/notification.queue";
 import { smsService } from "@/lib/services/sms.service";
 import { SpanStatusCode, trace } from "@opentelemetry/api";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 import type { Job } from "bull";
 
@@ -59,7 +59,7 @@ async function processSMSJob(job: Job<SMSJobData>) {
 
       // Send SMS via SMS service
       logger.info(
-        `📱 Sending SMS to ${maskPhoneNumber(job.data.phoneNumber)} (Job: ${job.id})`
+        `📱 Sending SMS to ${maskPhoneNumber(job.data.phoneNumber)} (Job: ${job.id})`,
       );
 
       await job.progress(30);
@@ -100,7 +100,7 @@ async function processSMSJob(job: Job<SMSJobData>) {
         });
 
         logger.info(
-          `✅ SMS sent successfully to ${maskPhoneNumber(job.data.phoneNumber)} (${duration}ms)`
+          `✅ SMS sent successfully to ${maskPhoneNumber(job.data.phoneNumber)} (${duration}ms)`,
         );
 
         return {
@@ -113,12 +113,15 @@ async function processSMSJob(job: Job<SMSJobData>) {
       }
     } catch (error) {
       const duration = Date.now() - startTime;
-      const errorMessage = error instanceof Error ? error.message : "Unknown error";
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
 
       // Note: Notification model doesn't have failedAt field
       // Failed notifications are tracked in SMSLog table
       if (job.data.notificationId) {
-        logger.error(`Notification ${job.data.notificationId} SMS delivery failed: ${errorMessage}`);
+        logger.error(
+          `Notification ${job.data.notificationId} SMS delivery failed: ${errorMessage}`,
+        );
       }
 
       span.setStatus({
@@ -130,10 +133,14 @@ async function processSMSJob(job: Job<SMSJobData>) {
         "job.error": errorMessage,
       });
 
-      logger.error(`❌ SMS failed to ${maskPhoneNumber(job.data.phoneNumber)} (Job: ${job.id}, Attempt: ${job.attemptsMade + 1
-        }):`, {
-        error: error instanceof Error ? error.message : String(error)
-      });
+      logger.error(
+        `❌ SMS failed to ${maskPhoneNumber(job.data.phoneNumber)} (Job: ${job.id}, Attempt: ${
+          job.attemptsMade + 1
+        }):`,
+        {
+          error: error instanceof Error ? error.message : String(error),
+        },
+      );
 
       throw error;
     } finally {

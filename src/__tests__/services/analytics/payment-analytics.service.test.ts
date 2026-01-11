@@ -240,9 +240,7 @@ describe("PaymentAnalyticsService", () => {
     });
 
     it("should include correct date range in result", async () => {
-      const mockPayments = [
-        createMockPayment({ amount: 100, status: "PAID" }),
-      ];
+      const mockPayments = [createMockPayment({ amount: 100, status: "PAID" })];
 
       (database.payment.findMany as jest.Mock).mockResolvedValue(mockPayments);
       (database.payment.aggregate as jest.Mock).mockResolvedValue({
@@ -569,12 +567,12 @@ describe("PaymentAnalyticsService", () => {
         createMockPayment({
           amount: 60,
           status: "PAID",
-          createdAt: new Date("2024-01-01T10:00:00Z")
+          createdAt: new Date("2024-01-01T10:00:00Z"),
         }),
         createMockPayment({
           amount: 40,
           status: "PAID",
-          createdAt: new Date("2024-01-02T10:00:00Z")
+          createdAt: new Date("2024-01-02T10:00:00Z"),
         }),
       ];
 
@@ -594,12 +592,12 @@ describe("PaymentAnalyticsService", () => {
         createMockPayment({
           amount: 50,
           status: "PAID",
-          createdAt: new Date("2024-01-01T10:00:00Z")
+          createdAt: new Date("2024-01-01T10:00:00Z"),
         }),
         createMockPayment({
           amount: 100,
           status: "PAID",
-          createdAt: new Date("2024-01-01T14:00:00Z")
+          createdAt: new Date("2024-01-01T14:00:00Z"),
         }),
       ];
 
@@ -627,12 +625,12 @@ describe("PaymentAnalyticsService", () => {
         createMockPayment({
           amount: 100,
           status: "PAID",
-          createdAt: new Date("2024-01-03T10:00:00Z")
+          createdAt: new Date("2024-01-03T10:00:00Z"),
         }),
         createMockPayment({
           amount: 50,
           status: "PAID",
-          createdAt: new Date("2024-01-01T10:00:00Z")
+          createdAt: new Date("2024-01-01T10:00:00Z"),
         }),
       ];
 
@@ -693,7 +691,11 @@ describe("PaymentAnalyticsService", () => {
 
       (database.payment.findMany as jest.Mock).mockResolvedValue(mockPayments);
 
-      const result = await service.getFarmRevenueMetrics(startDate, endDate, 10);
+      const result = await service.getFarmRevenueMetrics(
+        startDate,
+        endDate,
+        10,
+      );
 
       expect(result[0].averageOrderValue).toBe(300);
     });
@@ -705,7 +707,11 @@ describe("PaymentAnalyticsService", () => {
 
       (database.payment.findMany as jest.Mock).mockResolvedValue(mockPayments);
 
-      const result = await service.getFarmRevenueMetrics(startDate, endDate, 10);
+      const result = await service.getFarmRevenueMetrics(
+        startDate,
+        endDate,
+        10,
+      );
 
       expect(result[0].farmName).toBe("Farm farm1");
     });

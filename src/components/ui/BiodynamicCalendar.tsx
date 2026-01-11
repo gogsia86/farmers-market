@@ -160,7 +160,7 @@ function isDateDisabled(
   date: Date,
   minDate?: Date,
   maxDate?: Date,
-  disabledDates?: Date[]
+  disabledDates?: Date[],
 ): boolean {
   if (minDate && date < minDate) return true;
   if (maxDate && date > maxDate) return true;
@@ -279,7 +279,12 @@ function MonthView({
           }
 
           const isToday = highlightToday && isSameDay(date, today);
-          const isDisabled = isDateDisabled(date, minDate, maxDate, disabledDates);
+          const isDisabled = isDateDisabled(
+            date,
+            minDate,
+            maxDate,
+            disabledDates,
+          );
           const dayEvents = getEventsForDate(date);
           const hasEvents = dayEvents.length > 0;
 
@@ -302,13 +307,15 @@ function MonthView({
                   "group relative aspect-square rounded-lg border p-2 text-sm transition-all",
                   "flex flex-col items-start",
                   isToday &&
-                  showSeasonalTheme &&
-                  `${theme.colors.border} ${theme.colors.secondary} font-bold`,
-                  isToday && !showSeasonalTheme && "border-green-500 bg-green-50 font-bold",
+                    showSeasonalTheme &&
+                    `${theme.colors.border} ${theme.colors.secondary} font-bold`,
+                  isToday &&
+                    !showSeasonalTheme &&
+                    "border-green-500 bg-green-50 font-bold",
                   !isToday && "border-gray-200 hover:border-gray-300",
                   !isDisabled && !isToday && theme.colors.hover,
                   isDisabled && "cursor-not-allowed opacity-40",
-                  hasEvents && !isToday && "bg-gray-50"
+                  hasEvents && !isToday && "bg-gray-50",
                 )}
               >
                 {/* Day Number */}
@@ -318,7 +325,7 @@ function MonthView({
                     isToday && showSeasonalTheme && theme.colors.text,
                     isToday && !showSeasonalTheme && "text-green-700",
                     !isToday && !isDisabled && "text-gray-900",
-                    isDisabled && "text-gray-400"
+                    isDisabled && "text-gray-400",
                   )}
                 >
                   {date.getDate()}
@@ -337,7 +344,7 @@ function MonthView({
                         className={cn(
                           "truncate rounded px-1 py-0.5 text-[10px] font-medium text-white",
                           event.color || "bg-green-500",
-                          "cursor-pointer hover:opacity-80"
+                          "cursor-pointer hover:opacity-80",
                         )}
                         title={event.title}
                       >
@@ -399,7 +406,7 @@ export function BiodynamicCalendar({
     const newDate = new Date(
       currentDate.getFullYear(),
       currentDate.getMonth() - 1,
-      1
+      1,
     );
     setCurrentDate(newDate);
     onMonthChange?.(newDate);
@@ -409,7 +416,7 @@ export function BiodynamicCalendar({
     const newDate = new Date(
       currentDate.getFullYear(),
       currentDate.getMonth() + 1,
-      1
+      1,
     );
     setCurrentDate(newDate);
     onMonthChange?.(newDate);
@@ -430,7 +437,7 @@ export function BiodynamicCalendar({
       className={cn(
         "rounded-lg border bg-white p-6 shadow-sm",
         showSeasonalTheme && `bg-gradient-to-br ${theme.gradient}`,
-        className
+        className,
       )}
     >
       {/* Header */}
@@ -446,7 +453,7 @@ export function BiodynamicCalendar({
                 className={cn(
                   "flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-medium",
                   theme.colors.secondary,
-                  theme.colors.text
+                  theme.colors.text,
                 )}
               >
                 <SeasonIcon className="h-4 w-4" />
@@ -462,7 +469,7 @@ export function BiodynamicCalendar({
               className={cn(
                 "rounded-lg p-2 transition-colors",
                 theme.colors.hover,
-                "hover:bg-gray-100"
+                "hover:bg-gray-100",
               )}
               aria-label="Previous month"
             >
@@ -477,7 +484,7 @@ export function BiodynamicCalendar({
                 showSeasonalTheme && theme.colors.primary,
                 showSeasonalTheme && "text-white",
                 !showSeasonalTheme && "bg-green-600 text-white",
-                "hover:opacity-90"
+                "hover:opacity-90",
               )}
             >
               Today
@@ -489,7 +496,7 @@ export function BiodynamicCalendar({
               className={cn(
                 "rounded-lg p-2 transition-colors",
                 theme.colors.hover,
-                "hover:bg-gray-100"
+                "hover:bg-gray-100",
               )}
               aria-label="Next month"
             >

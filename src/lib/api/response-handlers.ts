@@ -14,9 +14,9 @@
  * @reference .cursorrules - Claude Sonnet 4.5 API Patterns
  */
 
-import { logger } from '@/lib/monitoring/logger';
-import { NextResponse } from 'next/server';
-import { ZodError } from 'zod';
+import { logger } from "@/lib/monitoring/logger";
+import { NextResponse } from "next/server";
+import { ZodError } from "zod";
 
 // ============================================================================
 // TYPES & INTERFACES
@@ -62,36 +62,36 @@ export interface PaginationMeta {
 
 export const ErrorCodes = {
   // Authentication & Authorization
-  UNAUTHORIZED: 'UNAUTHORIZED',
-  FORBIDDEN: 'FORBIDDEN',
-  INVALID_TOKEN: 'INVALID_TOKEN',
-  TOKEN_EXPIRED: 'TOKEN_EXPIRED',
+  UNAUTHORIZED: "UNAUTHORIZED",
+  FORBIDDEN: "FORBIDDEN",
+  INVALID_TOKEN: "INVALID_TOKEN",
+  TOKEN_EXPIRED: "TOKEN_EXPIRED",
 
   // Validation
-  VALIDATION_ERROR: 'VALIDATION_ERROR',
-  INVALID_INPUT: 'INVALID_INPUT',
-  MISSING_REQUIRED_FIELD: 'MISSING_REQUIRED_FIELD',
+  VALIDATION_ERROR: "VALIDATION_ERROR",
+  INVALID_INPUT: "INVALID_INPUT",
+  MISSING_REQUIRED_FIELD: "MISSING_REQUIRED_FIELD",
 
   // Resource errors
-  NOT_FOUND: 'NOT_FOUND',
-  ALREADY_EXISTS: 'ALREADY_EXISTS',
-  DUPLICATE_ENTRY: 'DUPLICATE_ENTRY',
-  CONFLICT: 'CONFLICT',
+  NOT_FOUND: "NOT_FOUND",
+  ALREADY_EXISTS: "ALREADY_EXISTS",
+  DUPLICATE_ENTRY: "DUPLICATE_ENTRY",
+  CONFLICT: "CONFLICT",
 
   // Rate limiting
-  RATE_LIMIT_EXCEEDED: 'RATE_LIMIT_EXCEEDED',
-  TOO_MANY_REQUESTS: 'TOO_MANY_REQUESTS',
+  RATE_LIMIT_EXCEEDED: "RATE_LIMIT_EXCEEDED",
+  TOO_MANY_REQUESTS: "TOO_MANY_REQUESTS",
 
   // Server errors
-  INTERNAL_ERROR: 'INTERNAL_ERROR',
-  DATABASE_ERROR: 'DATABASE_ERROR',
-  SERVICE_UNAVAILABLE: 'SERVICE_UNAVAILABLE',
-  EXTERNAL_SERVICE_ERROR: 'EXTERNAL_SERVICE_ERROR',
+  INTERNAL_ERROR: "INTERNAL_ERROR",
+  DATABASE_ERROR: "DATABASE_ERROR",
+  SERVICE_UNAVAILABLE: "SERVICE_UNAVAILABLE",
+  EXTERNAL_SERVICE_ERROR: "EXTERNAL_SERVICE_ERROR",
 
   // Business logic errors
-  BUSINESS_RULE_VIOLATION: 'BUSINESS_RULE_VIOLATION',
-  INSUFFICIENT_PERMISSIONS: 'INSUFFICIENT_PERMISSIONS',
-  INVALID_OPERATION: 'INVALID_OPERATION',
+  BUSINESS_RULE_VIOLATION: "BUSINESS_RULE_VIOLATION",
+  INSUFFICIENT_PERMISSIONS: "INSUFFICIENT_PERMISSIONS",
+  INVALID_OPERATION: "INVALID_OPERATION",
 } as const;
 
 export type ErrorCode = (typeof ErrorCodes)[keyof typeof ErrorCodes];
@@ -113,7 +113,7 @@ function generateRequestId(): string {
 function buildMeta(
   requestId: string,
   startTime?: number,
-  additionalMeta?: Partial<ResponseMeta>
+  additionalMeta?: Partial<ResponseMeta>,
 ): ResponseMeta {
   const timestamp = new Date().toISOString();
   const duration = startTime ? Date.now() - startTime : undefined;
@@ -122,7 +122,7 @@ function buildMeta(
     requestId,
     timestamp,
     duration,
-    version: 'v1',
+    version: "v1",
     ...additionalMeta,
   };
 }
@@ -138,7 +138,7 @@ export function successResponse<T>(
     startTime?: number;
     meta?: Partial<ResponseMeta>;
     status?: number;
-  }
+  },
 ): NextResponse<ApiResponse<T>> {
   const requestId = options?.requestId || generateRequestId();
   const meta = buildMeta(requestId, options?.startTime, options?.meta);
@@ -151,7 +151,7 @@ export function successResponse<T>(
 
   // Log successful response
   if (meta.duration) {
-    logger.debug('API response sent', {
+    logger.debug("API response sent", {
       requestId,
       duration: meta.duration,
       status: options?.status || 200,
@@ -171,7 +171,7 @@ export function createdResponse<T>(
     requestId?: string;
     startTime?: number;
     meta?: Partial<ResponseMeta>;
-  }
+  },
 ): NextResponse<ApiResponse<T>> {
   return successResponse(data, { ...options, status: 201 });
 }
@@ -201,10 +201,10 @@ export function errorResponse(
     requestId?: string;
     startTime?: number;
     status?: number;
-  }
+  },
 ): NextResponse<ApiResponse<never>> {
   const requestId = options?.requestId || generateRequestId();
-  const isDevelopment = process.env.NODE_ENV === 'development';
+  const isDevelopment = process.env.NODE_ENV === "development";
   const timestamp = new Date().toISOString();
 
   const apiError: ApiError = {
@@ -247,13 +247,13 @@ export function validationErrorResponse(
   options?: {
     requestId?: string;
     startTime?: number;
-  }
+  },
 ): NextResponse<ApiResponse<never>> {
   const fieldErrors = zodError.flatten();
 
   return errorResponse(
     ErrorCodes.VALIDATION_ERROR,
-    'Validation failed. Please check your input.',
+    "Validation failed. Please check your input.",
     {
       details: {
         fieldErrors: fieldErrors.fieldErrors,
@@ -262,7 +262,7 @@ export function validationErrorResponse(
       requestId: options?.requestId,
       startTime: options?.startTime,
       status: 400,
-    }
+    },
   );
 }
 
@@ -275,11 +275,11 @@ export function notFoundResponse(
   options?: {
     requestId?: string;
     startTime?: number;
-  }
+  },
 ): NextResponse<ApiResponse<never>> {
   const message = resourceType
     ? `${resourceType} not found`
-    : 'Resource not found';
+    : "Resource not found";
 
   return errorResponse(ErrorCodes.NOT_FOUND, message, {
     requestId: options?.requestId,
@@ -293,11 +293,11 @@ export function notFoundResponse(
  * Returns 401 Unauthorized
  */
 export function unauthorizedResponse(
-  message: string = 'Authentication required',
+  message: string = "Authentication required",
   options?: {
     requestId?: string;
     startTime?: number;
-  }
+  },
 ): NextResponse<ApiResponse<never>> {
   return errorResponse(ErrorCodes.UNAUTHORIZED, message, {
     requestId: options?.requestId,
@@ -311,11 +311,11 @@ export function unauthorizedResponse(
  * Returns 403 Forbidden
  */
 export function forbiddenResponse(
-  message: string = 'You do not have permission to perform this action',
+  message: string = "You do not have permission to perform this action",
   options?: {
     requestId?: string;
     startTime?: number;
-  }
+  },
 ): NextResponse<ApiResponse<never>> {
   return errorResponse(ErrorCodes.FORBIDDEN, message, {
     requestId: options?.requestId,
@@ -334,7 +334,7 @@ export function conflictResponse(
     details?: Record<string, unknown>;
     requestId?: string;
     startTime?: number;
-  }
+  },
 ): NextResponse<ApiResponse<never>> {
   return errorResponse(ErrorCodes.CONFLICT, message, {
     details: options?.details,
@@ -353,21 +353,21 @@ export function rateLimitResponse(
   options?: {
     requestId?: string;
     startTime?: number;
-  }
+  },
 ): NextResponse<ApiResponse<never>> {
   const response = errorResponse(
     ErrorCodes.RATE_LIMIT_EXCEEDED,
-    'Rate limit exceeded. Please try again later.',
+    "Rate limit exceeded. Please try again later.",
     {
       details: { retryAfter },
       requestId: options?.requestId,
       startTime: options?.startTime,
       status: 429,
-    }
+    },
   );
 
   // Add Retry-After header
-  response.headers.set('Retry-After', retryAfter.toString());
+  response.headers.set("Retry-After", retryAfter.toString());
 
   return response;
 }
@@ -381,13 +381,13 @@ export function internalErrorResponse(
   options?: {
     requestId?: string;
     startTime?: number;
-  }
+  },
 ): NextResponse<ApiResponse<never>> {
   // Never expose internal error details in production
   const message =
-    process.env.NODE_ENV === 'development' && error
+    process.env.NODE_ENV === "development" && error
       ? error.message
-      : 'An unexpected error occurred. Please try again later.';
+      : "An unexpected error occurred. Please try again later.";
 
   return errorResponse(ErrorCodes.INTERNAL_ERROR, message, {
     error,
@@ -402,12 +402,12 @@ export function internalErrorResponse(
  * Returns 503 Service Unavailable
  */
 export function serviceUnavailableResponse(
-  message: string = 'Service temporarily unavailable',
+  message: string = "Service temporarily unavailable",
   options?: {
     requestId?: string;
     startTime?: number;
     retryAfter?: number;
-  }
+  },
 ): NextResponse<ApiResponse<never>> {
   const response = errorResponse(ErrorCodes.SERVICE_UNAVAILABLE, message, {
     requestId: options?.requestId,
@@ -416,7 +416,7 @@ export function serviceUnavailableResponse(
   });
 
   if (options?.retryAfter) {
-    response.headers.set('Retry-After', options.retryAfter.toString());
+    response.headers.set("Retry-After", options.retryAfter.toString());
   }
 
   return response;
@@ -440,7 +440,7 @@ export function paginatedResponse<T>(
   options?: {
     requestId?: string;
     startTime?: number;
-  }
+  },
 ): NextResponse<ApiResponse<T[]>> {
   const totalPages = Math.ceil(pagination.totalItems / pagination.pageSize);
   const hasNext = pagination.page < totalPages;
@@ -477,17 +477,20 @@ export function handleApiError(
   options?: {
     requestId?: string;
     startTime?: number;
-  }
+  },
 ): NextResponse<ApiResponse<never>> {
   const requestId = options?.requestId || generateRequestId();
 
   // Zod validation error
   if (error instanceof ZodError) {
-    return validationErrorResponse(error, { requestId, startTime: options?.startTime });
+    return validationErrorResponse(error, {
+      requestId,
+      startTime: options?.startTime,
+    });
   }
 
   // Custom error with status code
-  if (error instanceof Error && 'statusCode' in error) {
+  if (error instanceof Error && "statusCode" in error) {
     const statusCode = (error as any).statusCode;
     const errorCode =
       statusCode === 404
@@ -509,18 +512,21 @@ export function handleApiError(
   // Standard Error
   if (error instanceof Error) {
     // Check for known error patterns
-    if (error.message.toLowerCase().includes('not found')) {
-      return notFoundResponse(undefined, { requestId, startTime: options?.startTime });
+    if (error.message.toLowerCase().includes("not found")) {
+      return notFoundResponse(undefined, {
+        requestId,
+        startTime: options?.startTime,
+      });
     }
 
-    if (error.message.toLowerCase().includes('unauthorized')) {
+    if (error.message.toLowerCase().includes("unauthorized")) {
       return unauthorizedResponse(error.message, {
         requestId,
         startTime: options?.startTime,
       });
     }
 
-    if (error.message.toLowerCase().includes('forbidden')) {
+    if (error.message.toLowerCase().includes("forbidden")) {
       return forbiddenResponse(error.message, {
         requestId,
         startTime: options?.startTime,
@@ -528,16 +534,22 @@ export function handleApiError(
     }
 
     // Default to internal error
-    return internalErrorResponse(error, { requestId, startTime: options?.startTime });
+    return internalErrorResponse(error, {
+      requestId,
+      startTime: options?.startTime,
+    });
   }
 
   // Unknown error
-  logger.error('Unknown error type in API handler', {
+  logger.error("Unknown error type in API handler", {
     requestId,
     error: String(error),
   });
 
-  return internalErrorResponse(undefined, { requestId, startTime: options?.startTime });
+  return internalErrorResponse(undefined, {
+    requestId,
+    startTime: options?.startTime,
+  });
 }
 
 // ============================================================================

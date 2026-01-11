@@ -14,21 +14,18 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm",
-        destructive:
-          "bg-red-500 text-white hover:bg-red-600 shadow-sm",
+        default:
+          "bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm",
+        destructive: "bg-red-500 text-white hover:bg-red-600 shadow-sm",
         outline:
           "border border-gray-300 bg-background text-gray-700 hover:bg-gray-50 hover:border-gray-400 hover:text-gray-900",
-        secondary:
-          "bg-gray-100 text-gray-900 hover:bg-gray-200 shadow-sm",
+        secondary: "bg-gray-100 text-gray-900 hover:bg-gray-200 shadow-sm",
         ghost: "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
         link: "text-primary underline-offset-4 hover:underline",
         agricultural:
           "bg-green-600 text-white hover:bg-green-700 shadow-sm hover:shadow-md",
-        success:
-          "bg-green-500 text-white hover:bg-green-600 shadow-sm",
-        warning:
-          "bg-yellow-500 text-white hover:bg-yellow-600 shadow-sm",
+        success: "bg-green-500 text-white hover:bg-green-600 shadow-sm",
+        warning: "bg-yellow-500 text-white hover:bg-yellow-600 shadow-sm",
       },
       size: {
         default: "h-10 px-4 py-2",
@@ -47,18 +44,32 @@ const buttonVariants = cva(
       size: "default",
       fullWidth: false,
     },
-  }
+  },
 );
 
 export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-  VariantProps<typeof buttonVariants> {
+  extends
+    React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
   asChild?: boolean;
   loading?: boolean;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, fullWidth, loading, children, disabled, asChild = false, ...props }, ref) => {
+  (
+    {
+      className,
+      variant,
+      size,
+      fullWidth,
+      loading,
+      children,
+      disabled,
+      asChild = false,
+      ...props
+    },
+    ref,
+  ) => {
     const Comp = asChild ? Slot : "button";
     return (
       <Comp
@@ -92,7 +103,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {children}
       </Comp>
     );
-  }
+  },
 );
 Button.displayName = "Button";
 

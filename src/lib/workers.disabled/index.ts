@@ -11,7 +11,7 @@ import emailWorker from "./email.worker";
 import pushWorker from "./push.worker";
 import smsWorker from "./sms.worker";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 // ============================================
 // TYPES
@@ -95,7 +95,7 @@ export async function stopAllWorkers(): Promise<void> {
       emailWorker.stop().then(() => {
         workerStatus.email = false;
         logger.info("✅ Email worker stopped");
-      })
+      }),
     );
   }
 
@@ -106,7 +106,7 @@ export async function stopAllWorkers(): Promise<void> {
       smsWorker.stop().then(() => {
         workerStatus.sms = false;
         logger.info("✅ SMS worker stopped");
-      })
+      }),
     );
   }
 
@@ -117,7 +117,7 @@ export async function stopAllWorkers(): Promise<void> {
       pushWorker.stop().then(() => {
         workerStatus.push = false;
         logger.info("✅ Push notification worker stopped");
-      })
+      }),
     );
   }
 
@@ -146,10 +146,7 @@ export function areWorkersRunning(): boolean {
  */
 export function areWorkersHealthy(): boolean {
   return (
-    isRunning &&
-    workerStatus.email &&
-    workerStatus.sms &&
-    workerStatus.push
+    isRunning && workerStatus.email && workerStatus.sms && workerStatus.push
   );
 }
 

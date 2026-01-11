@@ -12,11 +12,9 @@ import { database } from "@/lib/database";
 import { SpanStatusCode, trace } from "@opentelemetry/api";
 import * as admin from "firebase-admin";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
-import type {
-  MulticastMessage
-} from "firebase-admin/messaging";
+import type { MulticastMessage } from "firebase-admin/messaging";
 
 // ============================================
 // TYPES & INTERFACES
@@ -59,10 +57,7 @@ export interface PushTemplate {
 // PUSH NOTIFICATION TEMPLATES
 // ============================================
 
-export const PUSH_TEMPLATES: Record<
-  string,
-  (params: any) => PushTemplate
-> = {
+export const PUSH_TEMPLATES: Record<string, (params: any) => PushTemplate> = {
   ORDER_CONFIRMED: (params: { orderNumber: string; farmName: string }) => ({
     title: "Order Confirmed! ✅",
     body: `Your order #${params.orderNumber} from ${params.farmName} has been confirmed.`,
@@ -179,7 +174,11 @@ export const PUSH_TEMPLATES: Record<
     },
   }),
 
-  PRICE_DROP: (params: { productName: string; oldPrice: string; newPrice: string }) => ({
+  PRICE_DROP: (params: {
+    productName: string;
+    oldPrice: string;
+    newPrice: string;
+  }) => ({
     title: "Price Drop! 💰",
     body: `${params.productName} is now $${params.newPrice} (was $${params.oldPrice})`,
     data: {
@@ -230,13 +229,13 @@ export class PushNotificationService {
       const projectId = process.env.FIREBASE_PROJECT_ID;
       const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(
         /\\n/g,
-        "\n"
+        "\n",
       );
       const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
 
       if (!projectId || !privateKey || !clientEmail) {
         logger.warn(
-          "⚠️ Push notification service not configured. Set FIREBASE_PROJECT_ID, FIREBASE_PRIVATE_KEY, and FIREBASE_CLIENT_EMAIL"
+          "⚠️ Push notification service not configured. Set FIREBASE_PROJECT_ID, FIREBASE_PRIVATE_KEY, and FIREBASE_CLIENT_EMAIL",
         );
         this.isConfigured = false;
         return;
@@ -262,7 +261,7 @@ export class PushNotificationService {
       }
     } catch (error) {
       logger.error("❌ Failed to initialize push notification service:", {
-        error: error instanceof Error ? error.message : String(error)
+        error: error instanceof Error ? error.message : String(error),
       });
       this.isConfigured = false;
     }
@@ -284,177 +283,187 @@ export class PushNotificationService {
    * @returns Send result
    */
   async sendPushNotification(
-    options: PushNotificationOptions
+    options: PushNotificationOptions,
   ): Promise<SendPushResult> {
     await this.ensureInitialized();
 
     const tracer = trace.getTracer("push-service");
 
-    return await tracer.startActiveSpan("sendPushNotification", async (span) => {
-      span.setAttributes({
-        "push.user_id": options.userId,
-        "push.title": options.title,
-        "push.priority": options.priority || "normal",
-      });
+    return await tracer.startActiveSpan(
+      "sendPushNotification",
+      async (span) => {
+        span.setAttributes({
+          "push.user_id": options.userId,
+          "push.title": options.title,
+          "push.priority": options.priority || "normal",
+        });
 
-      const timestamp = new Date();
+        const timestamp = new Date();
 
-      try {
-        // Check if service is configured
-        if (!this.isConfigured || !this.messaging) {
-          logger.info(
-            `🔔 [PUSH NOT CONFIGURED] Would send to user ${options.userId}: ${options.title}`
-          );
-          span.setStatus({ code: SpanStatusCode.OK });
-          span.setAttributes({ "push.simulated": true });
+        try {
+          // Check if service is configured
+          if (!this.isConfigured || !this.messaging) {
+            logger.info(
+              `🔔 [PUSH NOT CONFIGURED] Would send to user ${options.userId}: ${options.title}`,
+            );
+            span.setStatus({ code: SpanStatusCode.OK });
+            span.setAttributes({ "push.simulated": true });
 
-          return {
-            success: true,
-            messageId: `simulated-${Date.now()}`,
-            timestamp,
-          };
-        }
+            return {
+              success: true,
+              messageId: `simulated-${Date.now()}`,
+              timestamp,
+            };
+          }
 
-        // Get user's device tokens
-        const tokens = await this.getUserDeviceTokens(options.userId);
+          // Get user's device tokens
+          const tokens = await this.getUserDeviceTokens(options.userId);
 
-        if (tokens.length === 0) {
-          logger.warn(`⚠️ No device tokens found for user ${options.userId}`);
-          return {
-            success: false,
-            error: "No device tokens registered for user",
-            timestamp,
-          };
-        }
+          if (tokens.length === 0) {
+            logger.warn(`⚠️ No device tokens found for user ${options.userId}`);
+            return {
+              success: false,
+              error: "No device tokens registered for user",
+              timestamp,
+            };
+          }
 
-        // Build multicast message
-        const message: MulticastMessage = {
-          tokens: tokens.map((t: any) => t.token),
-          notification: {
-            title: options.title,
-            body: options.body,
-            imageUrl: options.imageUrl,
-          },
-          data: options.data,
-          apns: {
-            payload: {
-              aps: {
-                badge: options.badge,
+          // Build multicast message
+          const message: MulticastMessage = {
+            tokens: tokens.map((t: any) => t.token),
+            notification: {
+              title: options.title,
+              body: options.body,
+              imageUrl: options.imageUrl,
+            },
+            data: options.data,
+            apns: {
+              payload: {
+                aps: {
+                  badge: options.badge,
+                  sound: options.sound || "default",
+                },
+              },
+            },
+            android: {
+              priority: options.priority || "normal",
+              notification: {
+                clickAction: options.clickAction,
                 sound: options.sound || "default",
               },
             },
-          },
-          android: {
-            priority: options.priority || "normal",
-            notification: {
-              clickAction: options.clickAction,
-              sound: options.sound || "default",
-            },
-          },
-          webpush: options.clickAction
-            ? {
-              fcmOptions: {
-                link: options.clickAction,
-              },
-            }
-            : undefined,
-        };
+            webpush: options.clickAction
+              ? {
+                  fcmOptions: {
+                    link: options.clickAction,
+                  },
+                }
+              : undefined,
+          };
 
-        // Send to all devices
-        const response = await this.messaging.sendEachForMulticast(message);
+          // Send to all devices
+          const response = await this.messaging.sendEachForMulticast(message);
 
-        span.setAttributes({
-          "push.success_count": response.successCount,
-          "push.failure_count": response.failureCount,
-        });
+          span.setAttributes({
+            "push.success_count": response.successCount,
+            "push.failure_count": response.failureCount,
+          });
 
-        // Track failed tokens for cleanup
-        const failedTokens: string[] = [];
-        if (response.failureCount > 0) {
-          response.responses.forEach((resp, idx) => {
-            if (!resp.success) {
-              const token = tokens[idx];
-              if (token) {
-                failedTokens.push(token.token);
+          // Track failed tokens for cleanup
+          const failedTokens: string[] = [];
+          if (response.failureCount > 0) {
+            response.responses.forEach((resp, idx) => {
+              if (!resp.success) {
+                const token = tokens[idx];
+                if (token) {
+                  failedTokens.push(token.token);
 
-                // If token is invalid, remove it
-                if (
-                  resp.error?.code === "messaging/invalid-registration-token" ||
-                  resp.error?.code === "messaging/registration-token-not-registered"
-                ) {
-                  this.removeDeviceToken(token.token).catch((err) =>
-                    logger.error("Failed to remove invalid token:", err)
-                  );
+                  // If token is invalid, remove it
+                  if (
+                    resp.error?.code ===
+                      "messaging/invalid-registration-token" ||
+                    resp.error?.code ===
+                      "messaging/registration-token-not-registered"
+                  ) {
+                    this.removeDeviceToken(token.token).catch((err) =>
+                      logger.error("Failed to remove invalid token:", err),
+                    );
+                  }
                 }
               }
-            }
+            });
+          }
+
+          // Log to database
+          await this.logPushNotification({
+            userId: options.userId,
+            title: options.title,
+            body: options.body,
+            data: options.data,
+            status: response.successCount > 0 ? "SENT" : "FAILED",
+            successCount: response.successCount,
+            failureCount: response.failureCount,
+            notificationId: options.notificationId,
           });
+
+          const success = response.successCount > 0;
+          span.setStatus({
+            code: success ? SpanStatusCode.OK : SpanStatusCode.ERROR,
+          });
+
+          logger.info(
+            `${success ? "✅" : "❌"} Push notification sent to user ${options.userId}: ${response.successCount}/${tokens.length} successful`,
+          );
+
+          return {
+            success,
+            messageId: `batch-${Date.now()}`,
+            failedTokens: failedTokens.length > 0 ? failedTokens : undefined,
+            error:
+              response.failureCount === tokens.length
+                ? "All push notifications failed"
+                : undefined,
+            timestamp,
+          };
+        } catch (error) {
+          const errorMessage =
+            error instanceof Error ? error.message : "Unknown error";
+
+          span.setStatus({
+            code: SpanStatusCode.ERROR,
+            message: errorMessage,
+          });
+
+          logger.error(
+            `❌ Failed to send push notification to user ${options.userId}:`,
+            {
+              error: error instanceof Error ? error.message : String(error),
+            },
+          );
+
+          // Log failure
+          await this.logPushNotification({
+            userId: options.userId,
+            title: options.title,
+            body: options.body,
+            data: options.data,
+            status: "FAILED",
+            successCount: 0,
+            failureCount: 1,
+            errorMessage,
+            notificationId: options.notificationId,
+          });
+
+          return {
+            success: false,
+            error: errorMessage,
+            timestamp,
+          };
+        } finally {
+          span.end();
         }
-
-        // Log to database
-        await this.logPushNotification({
-          userId: options.userId,
-          title: options.title,
-          body: options.body,
-          data: options.data,
-          status: response.successCount > 0 ? "SENT" : "FAILED",
-          successCount: response.successCount,
-          failureCount: response.failureCount,
-          notificationId: options.notificationId,
-        });
-
-        const success = response.successCount > 0;
-        span.setStatus({ code: success ? SpanStatusCode.OK : SpanStatusCode.ERROR });
-
-        logger.info(
-          `${success ? "✅" : "❌"} Push notification sent to user ${options.userId}: ${response.successCount}/${tokens.length} successful`
-        );
-
-        return {
-          success,
-          messageId: `batch-${Date.now()}`,
-          failedTokens: failedTokens.length > 0 ? failedTokens : undefined,
-          error:
-            response.failureCount === tokens.length
-              ? "All push notifications failed"
-              : undefined,
-          timestamp,
-        };
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Unknown error";
-
-        span.setStatus({
-          code: SpanStatusCode.ERROR,
-          message: errorMessage,
-        });
-
-        logger.error(`❌ Failed to send push notification to user ${options.userId}:`, {
-      error: error instanceof Error ? error.message : String(error)
-    });
-
-        // Log failure
-        await this.logPushNotification({
-          userId: options.userId,
-          title: options.title,
-          body: options.body,
-          data: options.data,
-          status: "FAILED",
-          successCount: 0,
-          failureCount: 1,
-          errorMessage,
-          notificationId: options.notificationId,
-        });
-
-        return {
-          success: false,
-          error: errorMessage,
-          timestamp,
-        };
-      } finally {
-        span.end();
-      }
-    });
+      },
+    );
   }
 
   /**
@@ -476,7 +485,7 @@ export class PushNotificationService {
       priority?: "high" | "normal";
       imageUrl?: string;
       notificationId?: string;
-    }
+    },
   ): Promise<SendPushResult> {
     const template = PUSH_TEMPLATES[templateName];
 
@@ -508,7 +517,7 @@ export class PushNotificationService {
   async registerDeviceToken(
     userId: string,
     token: string,
-    platform: "ios" | "android" | "web"
+    platform: "ios" | "android" | "web",
   ): Promise<void> {
     try {
       // Check if token already exists
@@ -543,7 +552,7 @@ export class PushNotificationService {
       logger.info(`✅ Device token registered for user ${userId}`);
     } catch (error) {
       logger.error("Failed to register device token:", {
-        error: error instanceof Error ? error.message : String(error)
+        error: error instanceof Error ? error.message : String(error),
       });
       throw error;
     }
@@ -563,7 +572,7 @@ export class PushNotificationService {
       logger.info(`🗑️ Device token removed: ${token.substring(0, 20)}...`);
     } catch (error) {
       logger.error("Failed to remove device token:", {
-        error: error instanceof Error ? error.message : String(error)
+        error: error instanceof Error ? error.message : String(error),
       });
       // Don't throw - token might already be deleted
     }
@@ -576,7 +585,7 @@ export class PushNotificationService {
    * @returns Array of device tokens
    */
   private async getUserDeviceTokens(
-    userId: string
+    userId: string,
   ): Promise<{ token: string; platform: string }[]> {
     try {
       const tokens = await database.deviceToken.findMany({
@@ -593,7 +602,7 @@ export class PushNotificationService {
       return tokens;
     } catch (error) {
       logger.error("Failed to get user device tokens:", {
-        error: error instanceof Error ? error.message : String(error)
+        error: error instanceof Error ? error.message : String(error),
       });
       return [];
     }
@@ -631,7 +640,7 @@ export class PushNotificationService {
       });
     } catch (error) {
       logger.error("Failed to log push notification to database:", {
-        error: error instanceof Error ? error.message : String(error)
+        error: error instanceof Error ? error.message : String(error),
       });
       // Don't throw - logging failure shouldn't break push sending
     }
@@ -650,7 +659,7 @@ export class PushNotificationService {
     userIds: string[],
     title: string,
     body: string,
-    data?: Record<string, string>
+    data?: Record<string, string>,
   ): Promise<{ userId: string; result: SendPushResult }[]> {
     const results = await Promise.allSettled(
       userIds.map((userId: any) =>
@@ -659,8 +668,8 @@ export class PushNotificationService {
           title,
           body,
           data,
-        })
-      )
+        }),
+      ),
     );
 
     return userIds.map((userId: any, index: any) => {
@@ -681,10 +690,12 @@ export class PushNotificationService {
           result.status === "fulfilled"
             ? result.value
             : {
-              success: false,
-              error: (result as PromiseRejectedResult).reason?.message || "Unknown error",
-              timestamp: new Date(),
-            },
+                success: false,
+                error:
+                  (result as PromiseRejectedResult).reason?.message ||
+                  "Unknown error",
+                timestamp: new Date(),
+              },
       };
     });
   }
@@ -699,7 +710,9 @@ export class PushNotificationService {
     await this.ensureInitialized();
 
     if (!this.isConfigured || !this.messaging) {
-      logger.info(`🔔 [PUSH NOT CONFIGURED] Would subscribe user ${userId} to topic ${topic}`);
+      logger.info(
+        `🔔 [PUSH NOT CONFIGURED] Would subscribe user ${userId} to topic ${topic}`,
+      );
       return;
     }
 
@@ -713,13 +726,13 @@ export class PushNotificationService {
 
       await this.messaging.subscribeToTopic(
         tokens.map((t: any) => t.token),
-        topic
+        topic,
       );
 
       logger.info(`✅ User ${userId} subscribed to topic: ${topic}`);
     } catch (error) {
       logger.error(`Failed to subscribe user ${userId} to topic ${topic}:`, {
-        error: error instanceof Error ? error.message : String(error)
+        error: error instanceof Error ? error.message : String(error),
       });
       throw error;
     }
@@ -735,7 +748,9 @@ export class PushNotificationService {
     await this.ensureInitialized();
 
     if (!this.isConfigured || !this.messaging) {
-      logger.info(`🔔 [PUSH NOT CONFIGURED] Would unsubscribe user ${userId} from topic ${topic}`);
+      logger.info(
+        `🔔 [PUSH NOT CONFIGURED] Would unsubscribe user ${userId} from topic ${topic}`,
+      );
       return;
     }
 
@@ -748,14 +763,17 @@ export class PushNotificationService {
 
       await this.messaging.unsubscribeFromTopic(
         tokens.map((t: any) => t.token),
-        topic
+        topic,
       );
 
       logger.info(`✅ User ${userId} unsubscribed from topic: ${topic}`);
     } catch (error) {
-      logger.error(`Failed to unsubscribe user ${userId} from topic ${topic}:`, {
-      error: error instanceof Error ? error.message : String(error)
-    });
+      logger.error(
+        `Failed to unsubscribe user ${userId} from topic ${topic}:`,
+        {
+          error: error instanceof Error ? error.message : String(error),
+        },
+      );
       throw error;
     }
   }

@@ -114,17 +114,22 @@ async function main() {
     console.log(`✅ Created farm: ${existingFarm.name} (VERIFIED)`);
   } else {
     // Update status to ACTIVE and verificationStatus to VERIFIED if not already
-    if (existingFarm.status !== "ACTIVE" || existingFarm.verificationStatus !== "VERIFIED") {
+    if (
+      existingFarm.status !== "ACTIVE" ||
+      existingFarm.verificationStatus !== "VERIFIED"
+    ) {
       existingFarm = await prisma.farm.update({
         where: { id: existingFarm.id },
         data: {
           status: "ACTIVE",
           verificationStatus: "VERIFIED",
           verifiedAt: new Date(),
-          verifiedBy: "system-seed"
+          verifiedBy: "system-seed",
         },
       });
-      console.log(`✅ Updated farm status to ACTIVE/VERIFIED: ${existingFarm.name}`);
+      console.log(
+        `✅ Updated farm status to ACTIVE/VERIFIED: ${existingFarm.name}`,
+      );
     } else {
       console.log(`✅ Farm already exists and is active: ${existingFarm.name}`);
     }
@@ -192,20 +197,27 @@ async function main() {
         deliveryRadius: 20,
       },
     });
-    console.log(`✅ Created PENDING farm: ${pendingFarm.name} (verificationStatus: PENDING)`);
+    console.log(
+      `✅ Created PENDING farm: ${pendingFarm.name} (verificationStatus: PENDING)`,
+    );
   } else {
     // Update both status and verificationStatus to PENDING if not already
-    if (pendingFarm.status !== "PENDING" || pendingFarm.verificationStatus !== "PENDING") {
+    if (
+      pendingFarm.status !== "PENDING" ||
+      pendingFarm.verificationStatus !== "PENDING"
+    ) {
       pendingFarm = await prisma.farm.update({
         where: { id: pendingFarm.id },
         data: {
           status: "PENDING",
-          verificationStatus: "PENDING"
+          verificationStatus: "PENDING",
         },
       });
       console.log(`✅ Updated farm to PENDING status: ${pendingFarm.name}`);
     } else {
-      console.log(`✅ PENDING farm already exists: ${pendingFarm.name} (verificationStatus: PENDING)`);
+      console.log(
+        `✅ PENDING farm already exists: ${pendingFarm.name} (verificationStatus: PENDING)`,
+      );
     }
   }
 

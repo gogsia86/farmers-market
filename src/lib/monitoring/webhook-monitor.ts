@@ -4,10 +4,13 @@
  */
 
 import { database } from "@/lib/database";
-import { webhookEventService, type WebhookProvider } from "@/lib/services/webhook-event.service";
+import {
+  webhookEventService,
+  type WebhookProvider,
+} from "@/lib/services/webhook-event.service";
 import { SpanStatusCode, trace } from "@opentelemetry/api";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 const tracer = trace.getTracer("webhook-monitor");
 
@@ -84,7 +87,9 @@ export class WebhookMonitor {
   /**
    * Perform comprehensive health check
    */
-  async performHealthCheck(timeWindowMinutes = 60): Promise<WebhookHealthStatus> {
+  async performHealthCheck(
+    timeWindowMinutes = 60,
+  ): Promise<WebhookHealthStatus> {
     return await tracer.startActiveSpan("webhookHealthCheck", async (span) => {
       span.setAttribute("time_window_minutes", timeWindowMinutes);
 
@@ -117,7 +122,10 @@ export class WebhookMonitor {
 
         const failedChecks = allChecks.filter((check: any) => !check.passed);
         const healthy = failedChecks.length === 0;
-        const status = this.determineHealthStatus(failedChecks.length, allChecks.length);
+        const status = this.determineHealthStatus(
+          failedChecks.length,
+          allChecks.length,
+        );
 
         const health: WebhookHealthStatus = {
           healthy,
@@ -214,7 +222,7 @@ export class WebhookMonitor {
     }
 
     const ageMinutes = Math.floor(
-      (Date.now() - oldestPending.createdAt.getTime()) / (1000 * 60)
+      (Date.now() - oldestPending.createdAt.getTime()) / (1000 * 60),
     );
     const passed = ageMinutes <= this.thresholds.maxOldestPendingMinutes;
 
@@ -276,7 +284,7 @@ export class WebhookMonitor {
    */
   private determineHealthStatus(
     failedChecks: number,
-    totalChecks: number
+    totalChecks: number,
   ): "HEALTHY" | "DEGRADED" | "CRITICAL" {
     if (failedChecks === 0) return "HEALTHY";
     if (failedChecks <= totalChecks / 3) return "DEGRADED";
@@ -301,7 +309,11 @@ export class WebhookMonitor {
         where: { processed: true, createdAt: { gte: since } },
       }),
       database.webhookEvent.count({
-        where: { processed: false, attempts: { gte: 3 }, createdAt: { gte: since } },
+        where: {
+          processed: false,
+          attempts: { gte: 3 },
+          createdAt: { gte: since },
+        },
       }),
       database.webhookEvent.count({
         where: { processed: false, createdAt: { gte: since } },
@@ -341,7 +353,9 @@ export class WebhookMonitor {
   /**
    * Get events grouped by provider
    */
-  private async getEventsByProvider(since: Date): Promise<Record<string, number>> {
+  private async getEventsByProvider(
+    since: Date,
+  ): Promise<Record<string, number>> {
     const results = await database.webhookEvent.groupBy({
       by: ["provider"],
       where: { createdAt: { gte: since } },
@@ -470,83 +484,86 @@ export class WebhookMonitor {
   /**
    * Generate recommendations based on health status
    */
-  generateRecommendations(health: WebhookHealthStatus, alerts: WebhookAlert[]): string[] {
+  generateRecommendations(
+    health: WebhookHealthStatus,
+    alerts: WebhookAlert[],
+  ): string[] {
     const recommendations: string[] = [];
 
     // High failure rate recommendations
     if (alerts.some((a: any) => a.type === "HIGH_FAILURE_RATE")) {
       recommendations.push(
-        "🔴 Investigate recent webhook failures - check provider API status and error logs"
+        "🔴 Investigate recent webhook failures - check provider API status and error logs",
       );
       recommendations.push(
-        "🔧 Review webhook handler implementations for potential bugs"
+        "🔧 Review webhook handler implementations for potential bugs",
       );
     }
 
     // Large backlog recommendations
     if (alerts.some((a: any) => a.type === "LARGE_BACKLOG")) {
       recommendations.push(
-        "⚡ Consider scaling up webhook workers to process backlog faster"
+        "⚡ Consider scaling up webhook workers to process backlog faster",
       );
       recommendations.push(
-        "📊 Check worker health and restart any stuck processes"
+        "📊 Check worker health and restart any stuck processes",
       );
     }
 
     // Stale events recommendations
     if (alerts.some((a: any) => a.type === "STALE_EVENTS")) {
       recommendations.push(
-        "🚨 Oldest events are very stale - immediate attention required"
+        "🚨 Oldest events are very stale - immediate attention required",
       );
       recommendations.push(
-        "🔄 Consider manual retry of failed events using admin endpoint"
+        "🔄 Consider manual retry of failed events using admin endpoint",
       );
     }
 
     // Slow processing recommendations
     if (alerts.some((a: any) => a.type === "SLOW_PROCESSING")) {
       recommendations.push(
-        "⏱️ Events requiring multiple attempts - investigate retry causes"
+        "⏱️ Events requiring multiple attempts - investigate retry causes",
       );
       recommendations.push(
-        "🔍 Check for intermittent network issues or provider timeouts"
+        "🔍 Check for intermittent network issues or provider timeouts",
       );
     }
 
     // Duplicate events recommendations
     if (alerts.some((a: any) => a.type === "DUPLICATE_EVENTS")) {
       recommendations.push(
-        "🔍 Duplicate events detected - verify idempotency implementation"
+        "🔍 Duplicate events detected - verify idempotency implementation",
       );
       recommendations.push(
-        "🧹 Run duplicate cleanup to remove redundant event records"
+        "🧹 Run duplicate cleanup to remove redundant event records",
       );
     }
 
     // Low success rate recommendations
     if (alerts.some((a: any) => a.type === "LOW_SUCCESS_RATE")) {
       recommendations.push(
-        "📉 Overall success rate is low - review webhook processing pipeline"
+        "📉 Overall success rate is low - review webhook processing pipeline",
       );
       recommendations.push(
-        "🛡️ Implement circuit breakers for failing provider integrations"
+        "🛡️ Implement circuit breakers for failing provider integrations",
       );
     }
 
     // General recommendations when degraded or critical
     if (health.status === "DEGRADED" || health.status === "CRITICAL") {
       recommendations.push(
-        "📧 Consider enabling emergency notifications to on-call team"
+        "📧 Consider enabling emergency notifications to on-call team",
       );
       recommendations.push(
-        "📊 Review webhook monitoring dashboard for trends and patterns"
+        "📊 Review webhook monitoring dashboard for trends and patterns",
       );
     }
 
     // Add positive recommendation if healthy
     if (health.status === "HEALTHY" && recommendations.length === 0) {
       recommendations.push(
-        "✅ Webhook system is healthy - continue regular monitoring"
+        "✅ Webhook system is healthy - continue regular monitoring",
       );
     }
 
@@ -571,7 +588,10 @@ export class WebhookMonitor {
   /**
    * Auto-remediation for common issues
    */
-  async autoRemediate(): Promise<{ actions: string[]; results: Record<string, any> }> {
+  async autoRemediate(): Promise<{
+    actions: string[];
+    results: Record<string, any>;
+  }> {
     const actions: string[] = [];
     const results: Record<string, any> = {};
 
@@ -587,7 +607,7 @@ export class WebhookMonitor {
       const failedEvents = await webhookEventService.getFailedEvents(3, 50);
       if (failedEvents.length > 0) {
         actions.push(
-          `Found ${failedEvents.length} failed events eligible for retry (max 3 attempts)`
+          `Found ${failedEvents.length} failed events eligible for retry (max 3 attempts)`,
         );
         results.retryableEvents = failedEvents.length;
       }
@@ -600,15 +620,17 @@ export class WebhookMonitor {
         },
       });
       if (stuckEvents > 0) {
-        actions.push(`Identified ${stuckEvents} stuck events requiring manual review`);
+        actions.push(
+          `Identified ${stuckEvents} stuck events requiring manual review`,
+        );
         results.stuckEvents = stuckEvents;
       }
 
       return { actions, results };
     } catch (error) {
       logger.error("Auto-remediation failed:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
       throw error;
     }
   }

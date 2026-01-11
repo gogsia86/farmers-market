@@ -27,11 +27,11 @@ The validation process ensures that the Unified Bot Framework (UBF) produces equ
 
 ### What Gets Validated
 
-| Module | Legacy Script | UBF Module | Focus Areas |
-|--------|--------------|------------|-------------|
-| **Health Checks** | `website-checker-bot.ts` | `health-checks` | Homepage, API endpoints, DB connectivity |
-| **Marketplace** | `mvp-validation-bot.ts` (partial) | `marketplace-browse` | Product listing, search, filters |
-| **Cart & Checkout** | `mvp-validation-bot.ts` (partial) | `cart-checkout` | Cart operations, checkout flow |
+| Module              | Legacy Script                     | UBF Module           | Focus Areas                              |
+| ------------------- | --------------------------------- | -------------------- | ---------------------------------------- |
+| **Health Checks**   | `website-checker-bot.ts`          | `health-checks`      | Homepage, API endpoints, DB connectivity |
+| **Marketplace**     | `mvp-validation-bot.ts` (partial) | `marketplace-browse` | Product listing, search, filters         |
+| **Cart & Checkout** | `mvp-validation-bot.ts` (partial) | `cart-checkout`      | Cart operations, checkout flow           |
 
 ### Validation Metrics
 
@@ -50,6 +50,7 @@ The validation system compares:
 ### Prerequisites
 
 1. **Environment Setup**
+
    ```bash
    # Ensure environment variables are set
    export BASE_URL=http://localhost:3000
@@ -63,6 +64,7 @@ The validation system compares:
    ```
 
 2. **Start Application**
+
    ```bash
    # Start the application
    npm run dev
@@ -134,11 +136,11 @@ The validation harness uses a **behavior-based comparison** approach:
 
 Validation uses **configurable thresholds** to handle expected variations:
 
-| Metric | Threshold | Rationale |
-|--------|-----------|-----------|
-| Duration | ±50% | Different execution paths acceptable |
-| Success Rate | ±5% | Minor flakiness tolerated |
-| Test Count | ±2 tests | Module granularity may differ |
+| Metric       | Threshold | Rationale                            |
+| ------------ | --------- | ------------------------------------ |
+| Duration     | ±50%      | Different execution paths acceptable |
+| Success Rate | ±5%       | Minor flakiness tolerated            |
+| Test Count   | ±2 tests  | Module granularity may differ        |
 
 ### Scoring System
 
@@ -164,6 +166,7 @@ Based on differences found:
 ### Single Module Validation
 
 #### Health Checks
+
 ```bash
 # Validate health check module
 npm run validate:ubf:health
@@ -176,12 +179,14 @@ npm run validate:ubf:health
 ```
 
 #### Marketplace
+
 ```bash
 # Validate marketplace module
 npm run validate:ubf:marketplace
 ```
 
 #### Cart & Checkout
+
 ```bash
 # Validate cart and checkout module
 npm run validate:ubf:cart
@@ -224,7 +229,7 @@ name: Validate UBF Migration
 on:
   pull_request:
     paths:
-      - 'src/lib/testing/**'
+      - "src/lib/testing/**"
 
 jobs:
   validate:
@@ -235,7 +240,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: "18"
 
       - name: Install dependencies
         run: npm ci
@@ -263,6 +268,7 @@ jobs:
 ### Console Output
 
 #### Example: Perfect Match
+
 ```
 🔍 Validating: Health Checks
 
@@ -286,6 +292,7 @@ Recommendation: PASS
 ```
 
 #### Example: Needs Investigation
+
 ```
 🔍 Validating: Marketplace Browse
 
@@ -321,6 +328,7 @@ Recommendation: INVESTIGATE
 ```
 
 #### Example: Failure
+
 ```
 🔍 Validating: Cart & Checkout
 
@@ -359,6 +367,7 @@ Recommendation: FAIL
 ### Report Files
 
 #### JSON Report
+
 ```json
 {
   "timestamp": "2025-01-15T10:30:00.000Z",
@@ -409,26 +418,29 @@ Saved to `validation-reports/validation-<timestamp>.md`:
 
 ## Summary
 
-| Status | Count |
-|--------|-------|
-| ✅ Pass | 1 |
-| ⚠️  Investigate | 1 |
-| ❌ Fail | 1 |
-| **Total** | **3** |
+| Status         | Count |
+| -------------- | ----- |
+| ✅ Pass        | 1     |
+| ⚠️ Investigate | 1     |
+| ❌ Fail        | 1     |
+| **Total**      | **3** |
 
 ## Health Checks
 
 ### Legacy Script
+
 - Success: ✅
 - Tests: 10/10
 - Duration: 5.23s
 
 ### UBF Module
+
 - Success: ✅
 - Tests: 13/13
 - Duration: 4.12s
 
 ### Comparison
+
 **Recommendation:** PASS
 
 ✅ Perfect match - UBF produces identical results to legacy
@@ -443,11 +455,13 @@ Saved to `validation-reports/validation-<timestamp>.md`:
 #### Issue: "Module Not Found"
 
 **Problem:**
+
 ```
 ❌ Failed to validate health: Unknown module: health
 ```
 
 **Solution:**
+
 ```bash
 # Check available modules
 npm run bot:list
@@ -459,11 +473,13 @@ npm run validate:ubf:health
 #### Issue: "Application Not Running"
 
 **Problem:**
+
 ```
 Error: Navigation timeout of 30000ms exceeded
 ```
 
 **Solution:**
+
 ```bash
 # Ensure application is running
 npm run dev
@@ -478,11 +494,13 @@ npm run validate:ubf
 #### Issue: "Test User Password Missing"
 
 **Problem:**
+
 ```
 ❌ ERROR: TEST_USER_PASSWORD environment variable is required
 ```
 
 **Solution:**
+
 ```bash
 # Set the password
 export TEST_USER_PASSWORD=YourPassword123!
@@ -494,6 +512,7 @@ TEST_USER_PASSWORD=YourPassword123! npm run validate:ubf
 #### Issue: "High Duration Differences"
 
 **Problem:**
+
 ```
 [LOW] Execution time differs significantly
 Legacy: 5.23s
@@ -504,6 +523,7 @@ Impact: UBF is 136% slower
 **Analysis:**
 
 This is often **expected and acceptable** because:
+
 - UBF runs more comprehensive tests
 - UBF includes setup/teardown overhead
 - UBF has better error handling (takes longer)
@@ -513,6 +533,7 @@ This is often **expected and acceptable** because:
 #### Issue: "Test Count Differences"
 
 **Problem:**
+
 ```
 [MEDIUM] Number of tests differs significantly
 Legacy: 3
@@ -523,6 +544,7 @@ Impact: UBF has more tests (13 difference)
 **Analysis:**
 
 This is **usually positive** because:
+
 - UBF has more granular test coverage
 - Legacy scripts had monolithic flows
 - UBF breaks tests into focused units
@@ -532,6 +554,7 @@ This is **usually positive** because:
 #### Issue: "Success Rate Degradation"
 
 **Problem:**
+
 ```
 [HIGH] Success rate differs
 Legacy: 100.0%
@@ -542,6 +565,7 @@ Impact: UBF success rate is lower - investigate failures
 **Analysis:**
 
 This needs **immediate investigation**:
+
 - Review UBF error logs
 - Check screenshots of failures
 - Compare test implementation
@@ -641,11 +665,13 @@ npm run validate:ubf:cart
 ### Before Validation
 
 1. ✅ **Seed Database** - Ensure consistent test data
+
    ```bash
    npm run bot:seed
    ```
 
 2. ✅ **Clean State** - Fresh browser context
+
    ```bash
    rm -rf screenshots/ validation-screenshots/
    ```
@@ -659,11 +685,13 @@ npm run validate:ubf:cart
 ### During Validation
 
 1. ✅ **Run Multiple Times** - Check for flakiness
+
    ```bash
    for i in {1..3}; do npm run validate:ubf:health; done
    ```
 
 2. ✅ **Isolate Issues** - One module at a time
+
    ```bash
    npm run validate:ubf:health
    # Fix
@@ -735,6 +763,7 @@ npm run validate:ubf:cart
 ### After Successful Validation
 
 1. **Enable CI/CD Integration**
+
    ```bash
    # Activate GitHub Actions workflow
    git add .github/workflows/ubf-tests.yml
@@ -743,6 +772,7 @@ npm run validate:ubf:cart
    ```
 
 2. **Deprecate Legacy Scripts**
+
    ```bash
    # Move to archive
    mkdir scripts/archive/legacy-bots
@@ -805,6 +835,7 @@ npm run validate:ubf:cart
 ### Q: How often should I validate?
 
 **A:** Run validation:
+
 - After any UBF module changes
 - Before deprecating legacy scripts
 - When issues are reported

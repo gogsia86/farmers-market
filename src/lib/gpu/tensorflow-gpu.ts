@@ -9,7 +9,7 @@
 
 import { loadTensorFlow } from "@/lib/lazy/ml.lazy";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 import type * as tf from "@tensorflow/tfjs";
 

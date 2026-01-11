@@ -10,7 +10,7 @@
 // @ts-ignore - TensorFlow module may not be available in all environments
 import * as tf from "@tensorflow/tfjs-node";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 import type {
   WorkflowResult,
@@ -144,8 +144,8 @@ export class PredictiveMonitor {
       };
     } catch (error) {
       logger.error("❌ Prediction error:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
       return this.generateFallbackPrediction();
     }
   }
@@ -186,7 +186,9 @@ export class PredictiveMonitor {
     // Check API response time anomalies
     if (baselines.apiResponseTime) {
       const apiAnomaly = this.checkAnomaly(
-        recentValues.map((m: any) => m.apiResponseTime || 0).filter((v: any) => v > 0),
+        recentValues
+          .map((m: any) => m.apiResponseTime || 0)
+          .filter((v: any) => v > 0),
         baselines.apiResponseTime,
       );
       if (apiAnomaly.isAnomaly) {
@@ -236,7 +238,8 @@ export class PredictiveMonitor {
     }
 
     logger.info(
-      `🎓 Training prediction model with ${historicalResults.length} samples...`);
+      `🎓 Training prediction model with ${historicalResults.length} samples...`,
+    );
 
     // Prepare training data
     const { xs, ys } = this.prepareTrainingData(historicalResults);
@@ -272,8 +275,8 @@ export class PredictiveMonitor {
       ys.dispose();
     } catch (error) {
       logger.error("❌ Model training error:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
     }
   }
 
@@ -346,7 +349,9 @@ export class PredictiveMonitor {
     // Create sequences of 10 timesteps
     for (let i = 10; i < results.length; i++) {
       const sequence = results.slice(i - 10, i);
-      const features = sequence.map((r: any) => this.extractFeaturesFromResult(r));
+      const features = sequence.map((r: any) =>
+        this.extractFeaturesFromResult(r),
+      );
 
       sequences.push(features);
       const result = results[i];
@@ -463,9 +468,11 @@ export class PredictiveMonitor {
   }
 
   private calculateStats(values: number[]): { mean: number; std: number } {
-    const mean = values.reduce((sum: any, v: any) => sum + v, 0) / values.length;
+    const mean =
+      values.reduce((sum: any, v: any) => sum + v, 0) / values.length;
     const variance =
-      values.reduce((sum: any, v: any) => sum + Math.pow(v - mean, 2), 0) / values.length;
+      values.reduce((sum: any, v: any) => sum + Math.pow(v - mean, 2), 0) /
+      values.length;
     const std = Math.sqrt(variance);
 
     return { mean, std: std || 1 };
@@ -475,7 +482,8 @@ export class PredictiveMonitor {
     values: number[],
     baseline: { mean: number; std: number },
   ): Omit<AnomalyDetection, "context" | "recommendations"> {
-    const recentAvg = values.reduce((sum: any, v: any) => sum + v, 0) / values.length;
+    const recentAvg =
+      values.reduce((sum: any, v: any) => sum + v, 0) / values.length;
     const deviation = Math.abs(recentAvg - baseline.mean) / baseline.std;
 
     const threshold = 2.5; // Standard deviations
@@ -508,7 +516,8 @@ export class PredictiveMonitor {
       recentMetrics.reduce((sum: any, m: any) => sum + m.totalDuration, 0) /
       recentMetrics.length;
     const avgBaseline =
-      baseline.reduce((sum: any, m: any) => sum + m.totalDuration, 0) / baseline.length;
+      baseline.reduce((sum: any, m: any) => sum + m.totalDuration, 0) /
+      baseline.length;
 
     if (avgRecent > avgBaseline * 1.5) {
       factors.push("Significant increase in execution time");
@@ -524,8 +533,10 @@ export class PredictiveMonitor {
 
     // Check performance degradation
     const avgPerf =
-      recentMetrics.reduce((sum: any, m: any) => sum + (m.performanceScore || 0), 0) /
-      recentMetrics.length;
+      recentMetrics.reduce(
+        (sum: any, m: any) => sum + (m.performanceScore || 0),
+        0,
+      ) / recentMetrics.length;
     if (avgPerf < 50) {
       factors.push("Performance score below threshold");
     }
@@ -544,7 +555,8 @@ export class PredictiveMonitor {
 
     // Variance confidence
     const durations = metrics.map((m: any) => m.totalDuration);
-    const mean = durations.reduce((sum: any, v: any) => sum + v, 0) / durations.length;
+    const mean =
+      durations.reduce((sum: any, v: any) => sum + v, 0) / durations.length;
     const variance =
       durations.reduce((sum: any, v: any) => sum + Math.pow(v - mean, 2), 0) /
       durations.length;

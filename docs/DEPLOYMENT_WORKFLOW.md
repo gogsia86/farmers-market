@@ -97,28 +97,29 @@ This document outlines the complete workflow for deploying the Farmers Market Pl
    - Production & Preview environments configured
 
 3. **Environment Variables** (Set in Vercel Dashboard)
+
    ```bash
    # Database
    DATABASE_URL=postgresql://user:password@host:5432/database
-   
+
    # Authentication
    NEXTAUTH_SECRET=your-secure-secret-key
    NEXTAUTH_URL=https://your-app.vercel.app
-   
+
    # Email
    SENDGRID_API_KEY=your-sendgrid-key
    EMAIL_FROM=noreply@yourdomain.com
-   
+
    # Payments
    STRIPE_SECRET_KEY=sk_live_...
    STRIPE_WEBHOOK_SECRET=whsec_...
    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_...
-   
+
    # Storage
    CLOUDINARY_CLOUD_NAME=your-cloud-name
    CLOUDINARY_API_KEY=your-api-key
    CLOUDINARY_API_SECRET=your-api-secret
-   
+
    # Monitoring
    SENTRY_DSN=your-sentry-dsn
    NEXT_PUBLIC_SENTRY_DSN=your-sentry-dsn
@@ -166,6 +167,7 @@ npm run dev
 ### GitHub Actions Pipeline
 
 The automated workflow is defined in `.github/workflows/vercel-deploy.yml` and runs automatically on:
+
 - **Push to `main`** → Production deployment
 - **Pull Requests to `main`** → Preview deployment
 - **Push to `develop`** → Development preview
@@ -173,6 +175,7 @@ The automated workflow is defined in `.github/workflows/vercel-deploy.yml` and r
 #### Workflow Stages
 
 **1. Pre-Deployment Checks** ✅
+
 ```yaml
 - Node.js & npm version check
 - Clean dependency installation
@@ -183,6 +186,7 @@ The automated workflow is defined in `.github/workflows/vercel-deploy.yml` and r
 ```
 
 **2. Deployment** 🚀
+
 ```yaml
 - Install Vercel CLI
 - Pull environment configuration
@@ -191,6 +195,7 @@ The automated workflow is defined in `.github/workflows/vercel-deploy.yml` and r
 ```
 
 **3. Post-Deployment Tests** 🧪
+
 ```yaml
 - Health endpoint verification
 - API route testing
@@ -200,6 +205,7 @@ The automated workflow is defined in `.github/workflows/vercel-deploy.yml` and r
 ```
 
 **4. Reporting** 📊
+
 ```yaml
 - Comment on PR with preview URL
 - Generate deployment summary
@@ -209,6 +215,7 @@ The automated workflow is defined in `.github/workflows/vercel-deploy.yml` and r
 ### Triggering Automated Deployment
 
 #### Production Deployment
+
 ```bash
 # Merge to main via pull request
 git checkout main
@@ -224,6 +231,7 @@ git push origin main
 ```
 
 #### Preview Deployment
+
 ```bash
 # Create pull request
 git checkout -b feature/your-feature
@@ -240,21 +248,25 @@ git push origin feature/your-feature
 ### Using Vercel CLI
 
 1. **Install Vercel CLI**
+
    ```bash
    npm install -g vercel@latest
    ```
 
 2. **Login to Vercel**
+
    ```bash
    vercel login
    ```
 
 3. **Link Project**
+
    ```bash
    vercel link
    ```
 
 4. **Deploy Preview**
+
    ```bash
    vercel
    ```
@@ -279,6 +291,7 @@ git push origin feature/your-feature
 ### Automated Test Scripts
 
 #### 1. Full Deployment Test Suite (Bash)
+
 ```bash
 # Run comprehensive deployment tests
 bash scripts/test-deployment.sh
@@ -291,6 +304,7 @@ RUN_LOCAL_BUILD=true bash scripts/test-deployment.sh
 ```
 
 **Tests Included:**
+
 - ✅ Pre-deployment checks (Node, npm, Prisma)
 - ✅ Local build test (optional)
 - ✅ Deployment health checks
@@ -300,6 +314,7 @@ RUN_LOCAL_BUILD=true bash scripts/test-deployment.sh
 - ✅ Response time analysis
 
 #### 2. Node.js Verification Script
+
 ```bash
 # Run Node.js verification
 node scripts/verify-deployment.js
@@ -309,6 +324,7 @@ DEPLOYMENT_URL=https://your-preview.vercel.app node scripts/verify-deployment.js
 ```
 
 **Tests Included:**
+
 - ✅ Core endpoints (homepage, login, dashboard)
 - ✅ Farmer routes (dashboard, products, orders)
 - ✅ Customer routes (farms, products, cart)
@@ -319,6 +335,7 @@ DEPLOYMENT_URL=https://your-preview.vercel.app node scripts/verify-deployment.js
 - ✅ Performance metrics
 
 #### 3. npm Scripts
+
 ```bash
 # Quick verification
 npm run test:vercel:quick
@@ -337,6 +354,7 @@ npm run deploy:check:full
 ### Manual Testing Checklist
 
 #### Core Functionality ✅
+
 - [ ] Homepage loads correctly
 - [ ] User registration works
 - [ ] User login works
@@ -345,6 +363,7 @@ npm run deploy:check:full
 - [ ] Image uploads work
 
 #### Farmer Features ✅
+
 - [ ] Farmer can create farm profile
 - [ ] Farmer can add products
 - [ ] Farmer can manage inventory
@@ -352,6 +371,7 @@ npm run deploy:check:full
 - [ ] Farmer can update order status
 
 #### Customer Features ✅
+
 - [ ] Customer can browse farms
 - [ ] Customer can search products
 - [ ] Customer can add to cart
@@ -359,12 +379,14 @@ npm run deploy:check:full
 - [ ] Customer can view order history
 
 #### Admin Features ✅
+
 - [ ] Admin can view dashboard
 - [ ] Admin can manage users
 - [ ] Admin can moderate farms
 - [ ] Admin can view analytics
 
 #### Payment Integration ✅
+
 - [ ] Stripe checkout works
 - [ ] Webhooks receive events
 - [ ] Payment confirmations send
@@ -379,6 +401,7 @@ npm run deploy:check:full
 **Endpoint:** `GET /api/health`
 
 **Response Example:**
+
 ```json
 {
   "status": "healthy",
@@ -416,16 +439,17 @@ npm run deploy:check:full
    - Release tracking
 
 3. **Custom Monitoring**
+
    ```bash
    # Start monitoring daemon
    npm run monitor:daemon
-   
+
    # Check monitoring status
    npm run monitor:daemon:status
-   
+
    # View logs
    npm run monitor:daemon:logs
-   
+
    # Stop monitoring
    npm run monitor:daemon:stop
    ```
@@ -434,16 +458,16 @@ npm run deploy:check:full
 
 Monitor these key metrics:
 
-| Metric | Target | Critical |
-|--------|--------|----------|
-| Response Time | < 1000ms | < 3000ms |
-| Time to First Byte (TTFB) | < 600ms | < 1200ms |
-| First Contentful Paint (FCP) | < 1800ms | < 3000ms |
+| Metric                         | Target   | Critical |
+| ------------------------------ | -------- | -------- |
+| Response Time                  | < 1000ms | < 3000ms |
+| Time to First Byte (TTFB)      | < 600ms  | < 1200ms |
+| First Contentful Paint (FCP)   | < 1800ms | < 3000ms |
 | Largest Contentful Paint (LCP) | < 2500ms | < 4000ms |
-| Cumulative Layout Shift (CLS) | < 0.1 | < 0.25 |
-| First Input Delay (FID) | < 100ms | < 300ms |
-| Database Query Time | < 50ms | < 200ms |
-| API Response Time | < 200ms | < 500ms |
+| Cumulative Layout Shift (CLS)  | < 0.1    | < 0.25   |
+| First Input Delay (FID)        | < 100ms  | < 300ms  |
+| Database Query Time            | < 50ms   | < 200ms  |
+| API Response Time              | < 200ms  | < 500ms  |
 
 ---
 
@@ -454,6 +478,7 @@ Monitor these key metrics:
 #### 1. Build Failures
 
 **Issue:** "Module not found" errors
+
 ```bash
 # Solution: Clean install dependencies
 rm -rf node_modules package-lock.json .next
@@ -462,6 +487,7 @@ npm run build
 ```
 
 **Issue:** TypeScript errors during build
+
 ```bash
 # Solution: Check and fix type errors
 npm run type-check
@@ -469,6 +495,7 @@ npm run type-check
 ```
 
 **Issue:** Prisma client not generated
+
 ```bash
 # Solution: Manually generate Prisma client
 npx prisma generate
@@ -478,6 +505,7 @@ npm run build
 #### 2. Deployment Failures
 
 **Issue:** Platform-specific dependencies
+
 ```bash
 # Solution: Remove lock file, let Vercel generate it
 git rm package-lock.json
@@ -488,6 +516,7 @@ git push
 ```
 
 **Issue:** Environment variables missing
+
 ```bash
 # Solution: Add in Vercel Dashboard
 # Settings → Environment Variables
@@ -495,6 +524,7 @@ git push
 ```
 
 **Issue:** Database connection fails
+
 ```bash
 # Solution: Verify DATABASE_URL
 # - Check connection string format
@@ -505,6 +535,7 @@ git push
 #### 3. Runtime Errors
 
 **Issue:** 500 errors after deployment
+
 ```bash
 # Check Vercel logs
 vercel logs
@@ -517,6 +548,7 @@ curl https://your-app.vercel.app/api/health
 ```
 
 **Issue:** Database queries timing out
+
 ```bash
 # Solution: Optimize queries
 # - Add database indexes
@@ -525,6 +557,7 @@ curl https://your-app.vercel.app/api/health
 ```
 
 **Issue:** Memory limit exceeded
+
 ```bash
 # Solution: Optimize memory usage
 # - Review NODE_OPTIONS settings
@@ -536,6 +569,7 @@ curl https://your-app.vercel.app/api/health
 #### 4. API Route Failures
 
 **Issue:** API routes return 404
+
 ```bash
 # Solution: Verify file structure
 # app/api/[route]/route.ts (correct)
@@ -548,6 +582,7 @@ curl https://your-app.vercel.app/api/health
 ```
 
 **Issue:** CORS errors
+
 ```bash
 # Solution: Add CORS headers
 # In route.ts:
@@ -564,6 +599,7 @@ export async function GET(request: NextRequest) {
 ### Debug Mode
 
 Enable detailed logging:
+
 ```bash
 # Local development
 DEBUG=* npm run dev
@@ -727,6 +763,7 @@ npx prisma db push --preview-feature
 Use this checklist for every production deployment:
 
 ### Pre-Deployment
+
 - [ ] All tests passing locally
 - [ ] TypeScript builds without errors
 - [ ] Prisma schema validated
@@ -736,6 +773,7 @@ Use this checklist for every production deployment:
 - [ ] Rollback plan prepared
 
 ### Deployment
+
 - [ ] Create preview deployment
 - [ ] Test preview deployment
 - [ ] Run automated test suite
@@ -744,6 +782,7 @@ Use this checklist for every production deployment:
 - [ ] Performance validated
 
 ### Post-Deployment
+
 - [ ] Health endpoint responding
 - [ ] Critical user flows tested
 - [ ] Error monitoring active
@@ -754,6 +793,7 @@ Use this checklist for every production deployment:
 - [ ] Payment processing working
 
 ### Monitoring (First Hour)
+
 - [ ] Monitor error rates
 - [ ] Check response times
 - [ ] Verify database performance
@@ -774,7 +814,7 @@ Deployment is considered successful when:
 ✅ No critical errors in Sentry  
 ✅ Response times < 2s  
 ✅ Database queries < 100ms  
-✅ Zero downtime achieved  
+✅ Zero downtime achieved
 
 ---
 

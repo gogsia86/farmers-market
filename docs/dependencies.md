@@ -13,12 +13,14 @@ This document provides a comprehensive overview of all project dependencies, the
 ## Core Framework Dependencies
 
 ### Next.js 15.0.3
+
 - **Category**: Framework
 - **Purpose**: React framework for production with App Router, Server Components, and API routes
 - **Why Required**: Foundation of the application, provides routing, SSR, and build optimization
 - **Documentation**: https://nextjs.org/docs
 
 ### React 19.0.0-rc & React DOM 19.0.0-rc
+
 - **Category**: UI Framework
 - **Purpose**: Core React library for building user interfaces
 - **Why Required**: Required by Next.js 15, provides component-based architecture
@@ -26,6 +28,7 @@ This document provides a comprehensive overview of all project dependencies, the
 - **Documentation**: https://react.dev
 
 ### TypeScript 5.7.2
+
 - **Category**: Language
 - **Purpose**: Type-safe JavaScript superset
 - **Why Required**: Ensures type safety, better IDE support, and prevents runtime errors
@@ -36,6 +39,7 @@ This document provides a comprehensive overview of all project dependencies, the
 ## Database & ORM
 
 ### Prisma 6.1.0
+
 - **Category**: ORM
 - **Purpose**: Type-safe database client and schema management
 - **Why Required**:
@@ -50,6 +54,7 @@ This document provides a comprehensive overview of all project dependencies, the
 - **Documentation**: https://www.prisma.io/docs
 
 ### @prisma/client 6.1.0
+
 - **Category**: Database Client
 - **Purpose**: Auto-generated Prisma client for database operations
 - **Why Required**: Runtime client for all database interactions
@@ -61,6 +66,7 @@ This document provides a comprehensive overview of all project dependencies, the
 ## Authentication & Authorization
 
 ### NextAuth.js (Auth.js) 5.0.0-beta.25
+
 - **Category**: Authentication
 - **Purpose**: Authentication solution for Next.js App Router
 - **Why Required**:
@@ -76,12 +82,14 @@ This document provides a comprehensive overview of all project dependencies, the
 - **Documentation**: https://authjs.dev
 
 ### @auth/prisma-adapter 2.7.4
+
 - **Category**: Authentication Adapter
 - **Purpose**: Connects NextAuth with Prisma ORM
 - **Why Required**: Stores authentication data in PostgreSQL via Prisma
 - **Documentation**: https://authjs.dev/reference/adapter/prisma
 
 ### bcryptjs 2.4.3
+
 - **Category**: Security
 - **Purpose**: Password hashing library
 - **Why Required**: Securely hash and verify user passwords
@@ -93,6 +101,7 @@ This document provides a comprehensive overview of all project dependencies, the
 ## Payment Processing
 
 ### Stripe 17.5.0
+
 - **Category**: Payment Gateway (Server)
 - **Purpose**: Server-side Stripe SDK for payment processing
 - **Why Required**:
@@ -103,6 +112,7 @@ This document provides a comprehensive overview of all project dependencies, the
 - **Documentation**: https://stripe.com/docs/api
 
 ### @stripe/stripe-js 4.12.0
+
 - **Category**: Payment Gateway (Client)
 - **Purpose**: Client-side Stripe SDK for secure payment UI
 - **Why Required**:
@@ -116,6 +126,7 @@ This document provides a comprehensive overview of all project dependencies, the
 ## UI Components & Styling
 
 ### Tailwind CSS 3.4.17
+
 - **Category**: CSS Framework
 - **Purpose**: Utility-first CSS framework
 - **Why Required**:
@@ -126,6 +137,7 @@ This document provides a comprehensive overview of all project dependencies, the
 - **Documentation**: https://tailwindcss.com/docs
 
 ### Radix UI Components
+
 - **Category**: Headless UI Components
 - **Purpose**: Accessible, unstyled UI primitives
 - **Why Required**:
@@ -155,12 +167,14 @@ This document provides a comprehensive overview of all project dependencies, the
 - **Documentation**: https://www.radix-ui.com/primitives
 
 ### Lucide React 0.469.0
+
 - **Category**: Icon Library
 - **Purpose**: Beautiful, consistent icon set
 - **Why Required**: Icons for UI elements, actions, and navigation
 - **Documentation**: https://lucide.dev
 
 ### clsx 2.1.1 & tailwind-merge 2.6.0
+
 - **Category**: Utility
 - **Purpose**: Conditional class name management
 - **Why Required**: Merge Tailwind classes and handle conditional styling
@@ -170,6 +184,7 @@ This document provides a comprehensive overview of all project dependencies, the
   - https://github.com/dcastil/tailwind-merge
 
 ### class-variance-authority 0.7.1
+
 - **Category**: Utility
 - **Purpose**: Variant-based component styling
 - **Why Required**: Create reusable component variants with type safety
@@ -180,6 +195,7 @@ This document provides a comprehensive overview of all project dependencies, the
 ## Forms & Validation
 
 ### React Hook Form 7.54.2
+
 - **Category**: Form Management
 - **Purpose**: Performant form library with validation
 - **Why Required**:
@@ -190,6 +206,7 @@ This document provides a comprehensive overview of all project dependencies, the
 - **Documentation**: https://react-hook-form.com
 
 ### Zod 3.24.1
+
 - **Category**: Validation
 - **Purpose**: TypeScript-first schema validation
 - **Why Required**:
@@ -201,6 +218,7 @@ This document provides a comprehensive overview of all project dependencies, the
 - **Documentation**: https://zod.dev
 
 ### @hookform/resolvers 3.9.1
+
 - **Category**: Form Integration
 - **Purpose**: Connect validation libraries to React Hook Form
 - **Why Required**: Integrate Zod schemas with React Hook Form
@@ -211,6 +229,7 @@ This document provides a comprehensive overview of all project dependencies, the
 ## Date & Time Handling
 
 ### date-fns 4.1.0
+
 - **Category**: Date Utility
 - **Purpose**: Modern date utility library
 - **Why Required**:
@@ -229,6 +248,7 @@ This document provides a comprehensive overview of all project dependencies, the
 ## File Upload & Storage
 
 ### uploadthing 7.4.2
+
 - **Category**: File Upload
 - **Purpose**: Type-safe file upload solution
 - **Why Required**:
@@ -240,6 +260,7 @@ This document provides a comprehensive overview of all project dependencies, the
 - **Documentation**: https://docs.uploadthing.com
 
 ### @uploadthing/react 7.4.0
+
 - **Category**: File Upload (React)
 - **Purpose**: React components for UploadThing
 - **Why Required**: Pre-built upload components and hooks
@@ -249,7 +270,8 @@ This document provides a comprehensive overview of all project dependencies, the
 
 ## AI & Automation
 
-### Microsoft Agent Framework (@microsoft/agents-*) 0.2.2
+### Microsoft Agent Framework (@microsoft/agents-\*) 0.2.2
+
 - **Category**: AI Orchestration
 - **Purpose**: Multi-agent AI system for farm management
 - **Why Required**:
@@ -267,7 +289,8 @@ This document provides a comprehensive overview of all project dependencies, the
 
 ## Monitoring & Observability
 
-### OpenTelemetry (@opentelemetry/*) 1.29.0
+### OpenTelemetry (@opentelemetry/\*) 1.29.0
+
 - **Category**: Observability
 - **Purpose**: Distributed tracing and monitoring
 - **Why Required**:
@@ -285,6 +308,7 @@ This document provides a comprehensive overview of all project dependencies, the
 - **Documentation**: https://opentelemetry.io/docs/
 
 ### @azure/monitor-opentelemetry 1.9.0
+
 - **Category**: Monitoring Integration
 - **Purpose**: Azure Application Insights integration
 - **Why Required**: Send telemetry data to Azure for analysis
@@ -295,6 +319,7 @@ This document provides a comprehensive overview of all project dependencies, the
 ## Development Tools
 
 ### ESLint 9.17.0
+
 - **Category**: Code Quality
 - **Purpose**: JavaScript/TypeScript linter
 - **Why Required**:
@@ -308,6 +333,7 @@ This document provides a comprehensive overview of all project dependencies, the
 - **Documentation**: https://eslint.org/docs/latest/
 
 ### Prettier 3.4.2
+
 - **Category**: Code Formatting
 - **Purpose**: Opinionated code formatter
 - **Why Required**: Consistent code formatting across team
@@ -316,18 +342,21 @@ This document provides a comprehensive overview of all project dependencies, the
 - **Documentation**: https://prettier.io/docs/en/
 
 ### PostCSS 8.5.1
+
 - **Category**: CSS Processing
 - **Purpose**: Transform CSS with JavaScript plugins
 - **Why Required**: Required by Tailwind CSS for processing
 - **Documentation**: https://postcss.org
 
 ### Autoprefixer 10.4.20
+
 - **Category**: CSS Processing
 - **Purpose**: Add vendor prefixes to CSS
 - **Why Required**: Browser compatibility for CSS
 - **Documentation**: https://github.com/postcss/autoprefixer
 
 ### tsx 4.19.2
+
 - **Category**: TypeScript Execution
 - **Purpose**: Run TypeScript files directly
 - **Why Required**: Execute scripts and utilities during development
@@ -338,18 +367,21 @@ This document provides a comprehensive overview of all project dependencies, the
 ## Testing
 
 ### Jest 29.7.0
+
 - **Category**: Testing Framework
 - **Purpose**: JavaScript testing framework
 - **Why Required**: Unit and integration tests
 - **Documentation**: https://jestjs.io
 
 ### @testing-library/react 16.1.0
+
 - **Category**: Testing Utilities
 - **Purpose**: React component testing utilities
 - **Why Required**: Test React components in user-centric way
 - **Documentation**: https://testing-library.com/react
 
 ### @testing-library/jest-dom 6.6.3
+
 - **Category**: Testing Matchers
 - **Purpose**: Custom Jest matchers for DOM
 - **Why Required**: Enhanced assertions for DOM testing
@@ -357,7 +389,7 @@ This document provides a comprehensive overview of all project dependencies, the
 
 ---
 
-## Type Definitions (@types/*)
+## Type Definitions (@types/\*)
 
 Type definitions for libraries that don't include TypeScript types:
 
@@ -371,17 +403,20 @@ Type definitions for libraries that don't include TypeScript types:
 ## Dependency Management Strategy
 
 ### Version Pinning
+
 - **Exact versions**: Core dependencies (Next.js, React, Prisma)
 - **Caret (^)**: Utility libraries (allows minor updates)
 - **Tilde (~)**: Type definitions (patch updates only)
 
 ### Update Policy
+
 1. **Monthly**: Review and update dependencies
 2. **Security**: Immediate updates for vulnerabilities
 3. **Major versions**: Thorough testing before upgrade
 4. **Breaking changes**: Document migration steps
 
 ### Audit Schedule
+
 - **Weekly**: `npm audit` check in CI/CD
 - **Monthly**: Full dependency audit with `npm outdated`
 - **Quarterly**: Review for unused dependencies with `depcheck`
@@ -391,12 +426,14 @@ Type definitions for libraries that don't include TypeScript types:
 ## Security Considerations
 
 ### Known Vulnerabilities
+
 - Run `npm audit` regularly
 - Review severity levels (Critical, High, Medium, Low)
 - Apply fixes promptly: `npm audit fix`
 - For breaking changes: Manual review and testing
 
 ### Supply Chain Security
+
 - Verify package integrity with `npm audit signatures`
 - Use lock file (`package-lock.json`) for reproducible builds
 - Review dependency licenses for compliance
@@ -407,6 +444,7 @@ Type definitions for libraries that don't include TypeScript types:
 ## Removal Candidates
 
 Dependencies removed during cleanup (November 2025):
+
 - Unused UI libraries
 - Duplicate functionality packages
 - Outdated testing utilities
@@ -427,6 +465,7 @@ Before adding a new dependency, consider:
 7. **Alternatives**: Compare with similar packages
 
 ### Approval Process
+
 1. Research and document necessity
 2. Check bundle size impact
 3. Review security and maintenance status
@@ -477,6 +516,7 @@ npm ci
 ## Contact
 
 For dependency-related questions or issues:
+
 - Review this documentation
 - Check `.github/instructions/` for detailed patterns
 - Consult the development team

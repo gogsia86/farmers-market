@@ -7,7 +7,7 @@
 
 import { useEffect } from "react";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 export default function LoginError({
   error,
@@ -44,7 +44,9 @@ export default function LoginError({
                 />
               </svg>
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Something Went Wrong</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              Something Went Wrong
+            </h2>
             <p className="text-gray-600">
               We encountered an error while loading the login page.
             </p>
@@ -53,7 +55,9 @@ export default function LoginError({
           {/* Error Details (Development Only) */}
           {process.env.NODE_ENV === "development" && (
             <div className="mb-6 p-4 bg-gray-50 border border-gray-200 rounded-lg">
-              <p className="text-xs font-semibold text-gray-900 mb-2">Error Details:</p>
+              <p className="text-xs font-semibold text-gray-900 mb-2">
+                Error Details:
+              </p>
               <p className="text-xs text-gray-700 font-mono break-all">
                 {error.message || "Unknown error"}
               </p>
@@ -112,7 +116,10 @@ export default function LoginError({
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
               Still having issues?{" "}
-              <a href="/contact" className="text-green-600 hover:text-green-700 font-semibold">
+              <a
+                href="/contact"
+                className="text-green-600 hover:text-green-700 font-semibold"
+              >
                 Contact Support
               </a>
             </p>

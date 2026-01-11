@@ -19,7 +19,7 @@ import { OTLPTraceExporter as OTLPGrpcExporter } from "@opentelemetry/exporter-t
 // @ts-ignore - Azure module may not be available in all environments
 import { AzureMonitorTraceExporter } from "@azure/monitor-opentelemetry-exporter";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 import type {
   WorkflowConfig,
@@ -107,7 +107,8 @@ export class WorkflowTracer {
     this.initialized = true;
 
     logger.info(
-      `✅ OpenTelemetry tracing initialized with ${this.config.exporter} exporter`);
+      `✅ OpenTelemetry tracing initialized with ${this.config.exporter} exporter`,
+    );
   }
 
   /**

@@ -56,7 +56,7 @@ export function configureLogger(config: Partial<LoggerConfig>): void {
  */
 export function logError(
   error: unknown,
-  additionalContext?: Record<string, any>
+  additionalContext?: Record<string, any>,
 ): void {
   const appError = isAppError(error) ? error : toAppError(error);
 
@@ -87,7 +87,7 @@ export function logError(
 export function logErrorInSpan(
   error: unknown,
   span: Span,
-  additionalContext?: Record<string, any>
+  additionalContext?: Record<string, any>,
 ): void {
   const appError = isAppError(error) ? error : toAppError(error);
 
@@ -140,7 +140,7 @@ function shouldLog(severity: ErrorSeverity): boolean {
  */
 function logToConsole(
   error: AppError,
-  additionalContext?: Record<string, any>
+  additionalContext?: Record<string, any>,
 ): void {
   const logData = {
     errorId: error.errorId,
@@ -188,7 +188,7 @@ function logToConsole(
  */
 function logToTracing(
   error: AppError,
-  additionalContext?: Record<string, any>
+  additionalContext?: Record<string, any>,
 ): void {
   const tracer = trace.getTracer(currentConfig.serviceName);
 
@@ -253,7 +253,7 @@ function logToTracing(
  */
 function flattenContext(
   obj: Record<string, any> | undefined,
-  prefix = ""
+  prefix = "",
 ): Record<string, string | number | boolean> {
   if (!obj) return {};
 
@@ -293,7 +293,7 @@ function flattenContext(
  */
 async function logToExternalService(
   error: AppError,
-  additionalContext?: Record<string, any>
+  additionalContext?: Record<string, any>,
 ): Promise<void> {
   if (!currentConfig.externalEndpoint) {
     return;
@@ -351,7 +351,7 @@ export interface StructuredLogEntry {
  */
 export function createStructuredLog(
   error: AppError,
-  additionalContext?: Record<string, any>
+  additionalContext?: Record<string, any>,
 ): StructuredLogEntry {
   return {
     timestamp: error.timestamp,
@@ -408,7 +408,7 @@ class ErrorAggregator {
           errorId: e.errorId,
           code: e.code,
           severity: e.severity,
-        }))
+        })),
       );
     }
 
@@ -470,7 +470,7 @@ let errorAggregator: ErrorAggregator | null = null;
  */
 export function enableErrorAggregation(
   maxSize?: number,
-  flushInterval?: number
+  flushInterval?: number,
 ): void {
   if (errorAggregator) {
     errorAggregator.destroy();
@@ -524,7 +524,7 @@ class ErrorRateTracker {
     // Check for high error rate
     if (this.timestamps.length > 100) {
       console.warn(
-        `⚠️  High error rate detected: ${this.timestamps.length} errors in last minute`
+        `⚠️  High error rate detected: ${this.timestamps.length} errors in last minute`,
       );
     }
   }
@@ -573,7 +573,7 @@ export function getErrorBreakdown(): Record<string, number> {
  */
 export function logErrorWithContext(
   error: unknown,
-  additionalContext?: Record<string, any>
+  additionalContext?: Record<string, any>,
 ): void {
   const appError = isAppError(error) ? error : toAppError(error);
   const activeContext = context.active();
@@ -602,7 +602,7 @@ export function logDivineError(
     season?: string;
     farmId?: string;
     consciousness?: string;
-  }
+  },
 ): void {
   const enhancedContext = {
     ...agriculturalContext,

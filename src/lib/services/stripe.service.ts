@@ -3,7 +3,7 @@
 
 import Stripe from "stripe";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 // ============================================================================
 // LAZY STRIPE INITIALIZATION
@@ -108,7 +108,7 @@ export class QuantumStripeService {
    * 💳 Create payment intent
    */
   async createPaymentIntent(
-    request: CreatePaymentIntentRequest
+    request: CreatePaymentIntentRequest,
   ): Promise<CreatePaymentIntentResult> {
     const {
       amount,
@@ -157,9 +157,7 @@ export class QuantumStripeService {
   /**
    * ✅ Confirm payment intent
    */
-  async confirmPayment(
-    request: ConfirmPaymentRequest
-  ): Promise<PaymentStatus> {
+  async confirmPayment(request: ConfirmPaymentRequest): Promise<PaymentStatus> {
     const { paymentIntentId, paymentMethodId } = request;
 
     const confirmParams: Stripe.PaymentIntentConfirmParams = {};
@@ -170,7 +168,7 @@ export class QuantumStripeService {
 
     const paymentIntent = await this.getStripeInstance().paymentIntents.confirm(
       paymentIntentId,
-      confirmParams
+      confirmParams,
     );
 
     return this.mapPaymentIntentToStatus(paymentIntent);
@@ -180,9 +178,8 @@ export class QuantumStripeService {
    * 📊 Get payment intent status
    */
   async getPaymentStatus(paymentIntentId: string): Promise<PaymentStatus> {
-    const paymentIntent = await this.getStripeInstance().paymentIntents.retrieve(
-      paymentIntentId
-    );
+    const paymentIntent =
+      await this.getStripeInstance().paymentIntents.retrieve(paymentIntentId);
 
     return this.mapPaymentIntentToStatus(paymentIntent);
   }
@@ -196,7 +193,7 @@ export class QuantumStripeService {
       amount?: number;
       metadata?: Record<string, string>;
       description?: string;
-    }
+    },
   ): Promise<PaymentStatus> {
     const updateParams: Stripe.PaymentIntentUpdateParams = {};
 
@@ -214,7 +211,7 @@ export class QuantumStripeService {
 
     const paymentIntent = await this.getStripeInstance().paymentIntents.update(
       paymentIntentId,
-      updateParams
+      updateParams,
     );
 
     return this.mapPaymentIntentToStatus(paymentIntent);
@@ -224,9 +221,8 @@ export class QuantumStripeService {
    * ❌ Cancel payment intent
    */
   async cancelPaymentIntent(paymentIntentId: string): Promise<PaymentStatus> {
-    const paymentIntent = await this.getStripeInstance().paymentIntents.cancel(
-      paymentIntentId
-    );
+    const paymentIntent =
+      await this.getStripeInstance().paymentIntents.cancel(paymentIntentId);
 
     return this.mapPaymentIntentToStatus(paymentIntent);
   }
@@ -239,22 +235,22 @@ export class QuantumStripeService {
    * 💸 Refund payment
    */
   async refundPayment(
-    request: RefundPaymentRequest
+    request: RefundPaymentRequest,
   ): Promise<RefundPaymentResult> {
     const { paymentIntentId, amount, reason, metadata = {} } = request;
 
     // Get payment intent to get charge ID
-    const paymentIntent = await this.getStripeInstance().paymentIntents.retrieve(
-      paymentIntentId
-    );
+    const paymentIntent =
+      await this.getStripeInstance().paymentIntents.retrieve(paymentIntentId);
 
     if (!paymentIntent.latest_charge) {
       throw new Error("No charge found for this payment intent");
     }
 
-    const chargeId = typeof paymentIntent.latest_charge === 'string'
-      ? paymentIntent.latest_charge
-      : paymentIntent.latest_charge.id;
+    const chargeId =
+      typeof paymentIntent.latest_charge === "string"
+        ? paymentIntent.latest_charge
+        : paymentIntent.latest_charge.id;
 
     // Create refund
     const refundParams: Stripe.RefundCreateParams = {
@@ -350,7 +346,9 @@ export class QuantumStripeService {
   /**
    * 💳 Get customer payment methods
    */
-  async getCustomerPaymentMethods(customerId: string): Promise<Stripe.PaymentMethod[]> {
+  async getCustomerPaymentMethods(
+    customerId: string,
+  ): Promise<Stripe.PaymentMethod[]> {
     const paymentMethods = await this.getStripeInstance().paymentMethods.list({
       customer: customerId,
       type: "card",
@@ -369,17 +367,17 @@ export class QuantumStripeService {
   constructWebhookEvent(
     payload: string | Buffer,
     signature: string,
-    webhookSecret: string
+    webhookSecret: string,
   ): Stripe.Event {
     try {
       return this.getStripeInstance().webhooks.constructEvent(
         payload,
         signature,
-        webhookSecret
+        webhookSecret,
       );
     } catch (error) {
       throw new Error(
-        `Webhook signature verification failed: ${error instanceof Error ? error.message : "Unknown error"}`
+        `Webhook signature verification failed: ${error instanceof Error ? error.message : "Unknown error"}`,
       );
     }
   }
@@ -448,12 +446,14 @@ export class QuantumStripeService {
    * ✅ Handle payment intent succeeded
    */
   private async handlePaymentIntentSucceeded(
-    event: Stripe.Event
+    event: Stripe.Event,
   ): Promise<any> {
     const paymentIntent = event.data.object as Stripe.PaymentIntent;
 
     logger.info(`Payment succeeded: ${paymentIntent.id}`);
-    logger.info(`Amount: ${paymentIntent.amount / 100} ${paymentIntent.currency}`);
+    logger.info(
+      `Amount: ${paymentIntent.amount / 100} ${paymentIntent.currency}`,
+    );
     logger.info(`Customer: ${paymentIntent.customer}`);
     logger.info(`Metadata:`, { data: paymentIntent.metadata });
 
@@ -486,9 +486,7 @@ export class QuantumStripeService {
   /**
    * 🚫 Handle payment intent canceled
    */
-  private async handlePaymentIntentCanceled(
-    event: Stripe.Event
-  ): Promise<any> {
+  private async handlePaymentIntentCanceled(event: Stripe.Event): Promise<any> {
     const paymentIntent = event.data.object as Stripe.PaymentIntent;
 
     logger.info(`Payment canceled: ${paymentIntent.id}`);
@@ -535,9 +533,7 @@ export class QuantumStripeService {
   /**
    * 💳 Handle payment method attached
    */
-  private async handlePaymentMethodAttached(
-    event: Stripe.Event
-  ): Promise<any> {
+  private async handlePaymentMethodAttached(event: Stripe.Event): Promise<any> {
     const paymentMethod = event.data.object as Stripe.PaymentMethod;
 
     logger.info(`Payment method attached: ${paymentMethod.id}`);
@@ -558,7 +554,7 @@ export class QuantumStripeService {
    * 🔄 Map Stripe payment intent to payment status
    */
   private mapPaymentIntentToStatus(
-    paymentIntent: Stripe.PaymentIntent
+    paymentIntent: Stripe.PaymentIntent,
   ): PaymentStatus {
     return {
       paymentIntentId: paymentIntent.id,
@@ -593,7 +589,7 @@ export class QuantumStripeService {
   verifyWebhookSignature(
     payload: string | Buffer,
     signature: string,
-    webhookSecret: string
+    webhookSecret: string,
   ): boolean {
     try {
       this.constructWebhookEvent(payload, signature, webhookSecret);

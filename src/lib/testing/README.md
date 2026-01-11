@@ -87,8 +87,8 @@ src/lib/testing/
 Handles all browser interactions using Playwright:
 
 ```typescript
-import { BrowserManager } from '@/lib/testing/core/browser-manager';
-import { DEFAULT_BOT_CONFIG } from '@/lib/testing/config/bot-config';
+import { BrowserManager } from "@/lib/testing/core/browser-manager";
+import { DEFAULT_BOT_CONFIG } from "@/lib/testing/config/bot-config";
 
 const manager = new BrowserManager(DEFAULT_BOT_CONFIG);
 
@@ -96,22 +96,23 @@ const manager = new BrowserManager(DEFAULT_BOT_CONFIG);
 await manager.initialize();
 
 // Navigate to page
-await manager.navigate('/products');
+await manager.navigate("/products");
 
 // Fill form
-await manager.fillForm('input[name="email"]', 'test@example.com');
+await manager.fillForm('input[name="email"]', "test@example.com");
 
 // Click and wait
 await manager.clickAndWait('button[type="submit"]');
 
 // Take screenshot
-await manager.screenshot('test-result');
+await manager.screenshot("test-result");
 
 // Cleanup
 await manager.cleanup();
 ```
 
 **Features:**
+
 - Automatic browser lifecycle management
 - Built-in retry logic
 - Screenshot capture
@@ -124,7 +125,7 @@ await manager.cleanup();
 Generates realistic test data dynamically:
 
 ```typescript
-import { generateTestData } from '@/lib/testing/utils/test-data';
+import { generateTestData } from "@/lib/testing/utils/test-data";
 
 const data = generateTestData({
   includeFarmer: true,
@@ -133,13 +134,14 @@ const data = generateTestData({
   includePayment: true,
 });
 
-console.log(data.farmer.email);     // farmer.1234567890@farmersmarket.test
-console.log(data.customer.email);   // customer.1234567890@farmersmarket.test
-console.log(data.product.name);     // Fresh Organic Tomatoes
+console.log(data.farmer.email); // farmer.1234567890@farmersmarket.test
+console.log(data.customer.email); // customer.1234567890@farmersmarket.test
+console.log(data.product.name); // Fresh Organic Tomatoes
 console.log(data.payment.cardNumber); // 4242424242424242 (Stripe test)
 ```
 
 **Features:**
+
 - Dynamic data generation with timestamps
 - Realistic names and addresses
 - Product catalog
@@ -151,22 +153,23 @@ console.log(data.payment.cardNumber); // 4242424242424242 (Stripe test)
 Centralized UI element selectors:
 
 ```typescript
-import { SELECTORS } from '@/lib/testing/utils/selectors';
+import { SELECTORS } from "@/lib/testing/utils/selectors";
 
 // Use predefined selectors
-await page.fill(SELECTORS.auth.emailInput, 'test@example.com');
-await page.fill(SELECTORS.auth.passwordInput, 'password');
+await page.fill(SELECTORS.auth.emailInput, "test@example.com");
+await page.fill(SELECTORS.auth.passwordInput, "password");
 await page.click(SELECTORS.auth.submitButton);
 
 // Access by category
-SELECTORS.common.loginButton
-SELECTORS.marketplace.productCard
-SELECTORS.cart.checkoutButton
-SELECTORS.farmer.productNameInput
-SELECTORS.admin.approveButton
+SELECTORS.common.loginButton;
+SELECTORS.marketplace.productCard;
+SELECTORS.cart.checkoutButton;
+SELECTORS.farmer.productNameInput;
+SELECTORS.admin.approveButton;
 ```
 
 **Features:**
+
 - Single source of truth for selectors
 - Grouped by page/feature
 - Fallback selectors
@@ -177,14 +180,14 @@ SELECTORS.admin.approveButton
 Flexible configuration with presets:
 
 ```typescript
-import { createConfig } from '@/lib/testing/config/bot-config';
+import { createConfig } from "@/lib/testing/config/bot-config";
 
 // Use preset
-const config = createConfig('mvp');
+const config = createConfig("mvp");
 
 // Use preset with overrides
-const config = createConfig('debug', {
-  baseUrl: 'https://staging.example.com',
+const config = createConfig("debug", {
+  baseUrl: "https://staging.example.com",
   browser: {
     slowMo: 1000,
   },
@@ -192,8 +195,8 @@ const config = createConfig('debug', {
 
 // From scratch
 const config = createConfig(undefined, {
-  name: 'Custom Test',
-  baseUrl: 'http://localhost:3001',
+  name: "Custom Test",
+  baseUrl: "http://localhost:3001",
   browser: {
     headless: false,
     timeout: 60000,
@@ -206,6 +209,7 @@ const config = createConfig(undefined, {
 ```
 
 **Available Presets:**
+
 - `quick` - Fast validation (critical tests only)
 - `mvp` - Complete MVP validation
 - `monitoring` - Continuous health monitoring
@@ -293,18 +297,21 @@ npm run bot -- help test
 ### Module Categories
 
 #### Authentication
+
 - `auth-login` - User login flow
 - `auth-register-farmer` - Farmer registration
 - `auth-register-customer` - Customer registration
 - `auth-logout` - Logout flow
 
 #### Marketplace
+
 - `marketplace-browse` - Product browsing
 - `marketplace-search` - Search functionality
 - `marketplace-filter` - Category filtering
 - `marketplace-product-detail` - Product page
 
 #### Shopping Cart
+
 - `cart-add` - Add items to cart
 - `cart-update` - Update quantities
 - `cart-remove` - Remove items
@@ -312,6 +319,7 @@ npm run bot -- help test
 - `cart-payment` - Stripe payment
 
 #### Farmer Dashboard
+
 - `farmer-registration` - Complete onboarding
 - `farmer-farm-setup` - Farm profile creation
 - `farmer-product-create` - Add products
@@ -319,11 +327,13 @@ npm run bot -- help test
 - `farmer-orders` - Order dashboard
 
 #### Admin Dashboard
+
 - `admin-farm-approval` - Approve farms
 - `admin-user-management` - Manage users
 - `admin-order-management` - Manage orders
 
 #### Health & Performance
+
 - `health-check` - System health
 - `health-database` - Database connectivity
 - `health-api` - API endpoints
@@ -360,14 +370,14 @@ bot-reports/
 ```typescript
 // src/lib/testing/modules/example/my-test.ts
 
-import type { TestModule, TestContext, TestResult } from '@/lib/testing/types';
+import type { TestModule, TestContext, TestResult } from "@/lib/testing/types";
 
 export const myTestModule: TestModule = {
-  id: 'example-my-test',
-  name: 'My Custom Test',
-  description: 'Description of what this test does',
-  category: 'MARKETPLACE',
-  priority: 'HIGH',
+  id: "example-my-test",
+  name: "My Custom Test",
+  description: "Description of what this test does",
+  category: "MARKETPLACE",
+  priority: "HIGH",
   enabled: true,
   timeout: 30000,
   retries: 2,
@@ -377,16 +387,16 @@ export const myTestModule: TestModule = {
 
     try {
       // Test logic
-      await context.utils.navigate('/products');
+      await context.utils.navigate("/products");
       await context.page.waitForSelector('[data-testid="product-card"]');
 
       const count = await context.page.$$eval(
         '[data-testid="product-card"]',
-        (els) => els.length
+        (els) => els.length,
       );
 
       if (count === 0) {
-        throw new Error('No products found');
+        throw new Error("No products found");
       }
 
       return {
@@ -395,13 +405,12 @@ export const myTestModule: TestModule = {
         name: this.name,
         category: this.category,
         priority: this.priority,
-        status: 'PASSED',
+        status: "PASSED",
         startTime,
         endTime: new Date(),
         duration: Date.now() - startTime.getTime(),
         message: `Found ${count} products`,
       };
-
     } catch (error) {
       return {
         id: `${this.id}-${Date.now()}`,
@@ -409,11 +418,11 @@ export const myTestModule: TestModule = {
         name: this.name,
         category: this.category,
         priority: this.priority,
-        status: 'FAILED',
+        status: "FAILED",
         startTime,
         endTime: new Date(),
         duration: Date.now() - startTime.getTime(),
-        message: 'Test failed',
+        message: "Test failed",
         error: error instanceof Error ? error.message : String(error),
       };
     }
@@ -432,7 +441,7 @@ export const myTestModule: TestModule = {
 ```typescript
 // Always initialize before use
 await manager.initialize();
-await manager.navigate('/');
+await manager.navigate("/");
 await manager.cleanup();
 ```
 
@@ -440,12 +449,12 @@ await manager.cleanup();
 
 ```typescript
 // Use fallback selectors
-import { fallbackSelector } from '@/lib/testing/utils/selectors';
+import { fallbackSelector } from "@/lib/testing/utils/selectors";
 
 const selector = fallbackSelector(
   '[data-testid="email"]',
   'input[type="email"]',
-  'input[name="email"]'
+  'input[name="email"]',
 );
 ```
 
@@ -474,33 +483,33 @@ HEADLESS=false SLOW_MO=500 BOT_LOG_LEVEL=debug npm run bot -- test mvp
 
 ```typescript
 class BrowserManager {
-  constructor(config: BotConfig)
+  constructor(config: BotConfig);
 
   // Lifecycle
-  async initialize(): Promise<void>
-  async cleanup(): Promise<void>
+  async initialize(): Promise<void>;
+  async cleanup(): Promise<void>;
 
   // Browser Access
-  getBrowser(): Browser
-  getContext(): BrowserContext
-  getPage(): Page
-  async newPage(): Promise<Page>
+  getBrowser(): Browser;
+  getContext(): BrowserContext;
+  getPage(): Page;
+  async newPage(): Promise<Page>;
 
   // Navigation
-  async navigate(url: string): Promise<void>
-  async waitForNavigation(): Promise<void>
+  async navigate(url: string): Promise<void>;
+  async waitForNavigation(): Promise<void>;
 
   // Interactions
-  async fillForm(selector: string, value: string): Promise<void>
-  async clickAndWait(selector: string): Promise<void>
-  async waitForSelector(selector: string): Promise<void>
-  async elementExists(selector: string): Promise<boolean>
+  async fillForm(selector: string, value: string): Promise<void>;
+  async clickAndWait(selector: string): Promise<void>;
+  async waitForSelector(selector: string): Promise<void>;
+  async elementExists(selector: string): Promise<boolean>;
 
   // Utilities
-  async screenshot(name: string): Promise<string>
-  async wait(ms: number): Promise<void>
-  async retry<T>(fn: () => Promise<T>, attempts?: number): Promise<T>
-  async clearSession(): Promise<void>
+  async screenshot(name: string): Promise<string>;
+  async wait(ms: number): Promise<void>;
+  async retry<T>(fn: () => Promise<T>, attempts?: number): Promise<T>;
+  async clearSession(): Promise<void>;
 }
 ```
 
@@ -508,19 +517,24 @@ class BrowserManager {
 
 ```typescript
 class TestDataGenerator {
-  generate(options?: GenerateOptions): TestData
-  generateAdmin(): TestData['admin']
-  generateFarmer(): TestData['farmer']
-  generateCustomer(): TestData['customer']
-  generateProduct(): TestData['product']
-  generatePayment(): TestData['payment']
+  generate(options?: GenerateOptions): TestData;
+  generateAdmin(): TestData["admin"];
+  generateFarmer(): TestData["farmer"];
+  generateCustomer(): TestData["customer"];
+  generateProduct(): TestData["product"];
+  generatePayment(): TestData["payment"];
 }
 
 // Helper functions
-function generateTestData(options?: GenerateOptions): TestData
-function getSeededAdmin(): { email: string; password: string }
-function getSeededFarmer(): { email: string; password: string }
-function getStripeTestCard(): { number: string; expiry: string; cvc: string; zip: string }
+function generateTestData(options?: GenerateOptions): TestData;
+function getSeededAdmin(): { email: string; password: string };
+function getSeededFarmer(): { email: string; password: string };
+function getStripeTestCard(): {
+  number: string;
+  expiry: string;
+  cvc: string;
+  zip: string;
+};
 ```
 
 ---
@@ -536,18 +550,18 @@ function getStripeTestCard(): { number: string; expiry: string; cvc: string; zip
 
 ## ✅ Implementation Status
 
-| Component | Status | Progress |
-|-----------|--------|----------|
-| Types & Interfaces | ✅ Complete | 100% |
-| Browser Manager | ✅ Complete | 100% |
-| Test Data Generator | ✅ Complete | 100% |
-| Selectors | ✅ Complete | 100% |
-| Configuration | ✅ Complete | 100% |
-| CLI Interface | ✅ Complete | 100% |
-| Core Engine | 🚧 In Progress | 30% |
-| Test Runner | 🚧 In Progress | 20% |
-| Report Generator | 🚧 In Progress | 20% |
-| Test Modules | 📅 Planned | 0% |
+| Component           | Status         | Progress |
+| ------------------- | -------------- | -------- |
+| Types & Interfaces  | ✅ Complete    | 100%     |
+| Browser Manager     | ✅ Complete    | 100%     |
+| Test Data Generator | ✅ Complete    | 100%     |
+| Selectors           | ✅ Complete    | 100%     |
+| Configuration       | ✅ Complete    | 100%     |
+| CLI Interface       | ✅ Complete    | 100%     |
+| Core Engine         | 🚧 In Progress | 30%      |
+| Test Runner         | 🚧 In Progress | 20%      |
+| Report Generator    | 🚧 In Progress | 20%      |
+| Test Modules        | 📅 Planned     | 0%       |
 
 ---
 
@@ -574,6 +588,7 @@ function getStripeTestCard(): { number: string; expiry: string; cvc: string; zip
 ## 📞 Support
 
 For help:
+
 1. Check this documentation
 2. Review examples in `scripts/bot-cli.ts`
 3. Check troubleshooting section

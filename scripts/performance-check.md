@@ -9,6 +9,7 @@ This guide helps you monitor and optimize the performance of your Farmers Market
 ### 1. Manual Testing with Browser DevTools
 
 #### Chrome DevTools - Performance Tab
+
 ```
 1. Open your production site
 2. Press F12 to open DevTools
@@ -22,6 +23,7 @@ This guide helps you monitor and optimize the performance of your Farmers Market
 ```
 
 #### Chrome DevTools - Lighthouse
+
 ```
 1. Open your production site
 2. Press F12 to open DevTools
@@ -36,6 +38,7 @@ This guide helps you monitor and optimize the performance of your Farmers Market
 ```
 
 **Target Scores:**
+
 - Performance: > 90
 - Accessibility: > 95
 - Best Practices: > 90
@@ -48,11 +51,13 @@ This guide helps you monitor and optimize the performance of your Farmers Market
 ### Using Lighthouse CI
 
 #### Install Lighthouse CLI:
+
 ```bash
 npm install -g @lhci/cli lighthouse
 ```
 
 #### Run Lighthouse from Command Line:
+
 ```bash
 # Basic test
 lighthouse https://your-app.vercel.app --view
@@ -71,6 +76,7 @@ lighthouse https://your-app.vercel.app --preset=desktop --view
 ```
 
 #### Run Multiple Tests:
+
 ```bash
 # Create a test script
 cat > scripts/run-lighthouse.sh << 'EOF'
@@ -115,6 +121,7 @@ chmod +x scripts/run-lighthouse.sh
 ### What to Monitor:
 
 #### LCP (Largest Contentful Paint)
+
 - **Target**: < 2.5s
 - **What it measures**: Time until largest content element is rendered
 - **How to improve**:
@@ -124,6 +131,7 @@ chmod +x scripts/run-lighthouse.sh
   - Use CDN for static assets
 
 #### FID (First Input Delay)
+
 - **Target**: < 100ms
 - **What it measures**: Time from first user interaction to browser response
 - **How to improve**:
@@ -133,6 +141,7 @@ chmod +x scripts/run-lighthouse.sh
   - Remove unused JavaScript
 
 #### CLS (Cumulative Layout Shift)
+
 - **Target**: < 0.1
 - **What it measures**: Visual stability (unexpected layout shifts)
 - **How to improve**:
@@ -200,6 +209,7 @@ export default function RootLayout({ children }) {
 ## 5. Performance Testing Tools
 
 ### WebPageTest
+
 ```
 URL: https://www.webpagetest.org/
 Usage:
@@ -211,6 +221,7 @@ Usage:
 ```
 
 ### GTmetrix
+
 ```
 URL: https://gtmetrix.com/
 Usage:
@@ -222,6 +233,7 @@ Usage:
 ```
 
 ### Pingdom
+
 ```
 URL: https://tools.pingdom.com/
 Usage:
@@ -238,24 +250,29 @@ Usage:
 ### Critical Pages to Test:
 
 #### Homepage (/)
+
 - **Target Load Time**: < 2s
 - **Target FCP**: < 1.5s
 - **Target LCP**: < 2.5s
 
 #### Products Page (/products)
+
 - **Target Load Time**: < 3s
 - **API Response Time**: < 500ms
 - **Image Load Time**: < 2s
 
 #### Product Detail Page (/products/[slug])
+
 - **Target Load Time**: < 2.5s
 - **Time to Interactive**: < 4s
 
 #### Checkout (/checkout)
+
 - **Target Load Time**: < 2s (critical for conversion)
 - **Form Response Time**: < 200ms
 
 #### Admin Dashboard (/admin/dashboard)
+
 - **Target Load Time**: < 3s
 - **Data Fetch Time**: < 1s
 
@@ -309,24 +326,26 @@ autocannon -c 10 -d 30 https://your-app.vercel.app/api/products
 // Add logging to Prisma queries
 const prisma = new PrismaClient({
   log: [
-    { level: 'query', emit: 'event' },
-    { level: 'error', emit: 'stdout' },
-    { level: 'warn', emit: 'stdout' },
+    { level: "query", emit: "event" },
+    { level: "error", emit: "stdout" },
+    { level: "warn", emit: "stdout" },
   ],
 });
 
-prisma.$on('query', (e) => {
-  console.log('Query: ' + e.query);
-  console.log('Duration: ' + e.duration + 'ms');
+prisma.$on("query", (e) => {
+  console.log("Query: " + e.query);
+  console.log("Duration: " + e.duration + "ms");
 });
 ```
 
 ### Slow Query Targets:
+
 - Simple queries: < 100ms
 - Complex joins: < 500ms
 - Aggregations: < 1000ms
 
 ### Optimization Tips:
+
 ```sql
 -- Add indexes for frequently queried fields
 CREATE INDEX idx_products_category ON products(category);
@@ -353,6 +372,7 @@ find ./public -type f \( -name "*.jpg" -o -name "*.png" -o -name "*.webp" \) -ex
 ```
 
 ### Next.js Image Optimization Checklist:
+
 - [ ] Using Next.js `<Image>` component
 - [ ] Specified width and height
 - [ ] Using `priority` for above-the-fold images
@@ -384,11 +404,13 @@ ANALYZE=true npm run build
 ```
 
 ### Bundle Size Targets:
+
 - **First Load JS**: < 250KB
 - **Total Bundle**: < 1MB
 - **Each Route**: < 100KB additional
 
 ### Optimization Techniques:
+
 - [ ] Code splitting by route
 - [ ] Dynamic imports for heavy components
 - [ ] Tree shaking unused code
@@ -409,14 +431,15 @@ export async function GET(request) {
 
   return new Response(JSON.stringify(data), {
     headers: {
-      'Content-Type': 'application/json',
-      'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=30',
+      "Content-Type": "application/json",
+      "Cache-Control": "public, s-maxage=60, stale-while-revalidate=30",
     },
   });
 }
 ```
 
 ### Caching Checklist:
+
 - [ ] Static pages cached with ISR
 - [ ] API routes have appropriate cache headers
 - [ ] CDN caching enabled for static assets
@@ -431,33 +454,36 @@ export async function GET(request) {
 
 Track these metrics daily:
 
-| Metric | Target | Current | Status |
-|--------|--------|---------|--------|
-| Homepage Load Time | < 2s | ___ | ⏸️ |
-| Lighthouse Performance | > 90 | ___ | ⏸️ |
-| API Response Time | < 500ms | ___ | ⏸️ |
-| LCP | < 2.5s | ___ | ⏸️ |
-| FID | < 100ms | ___ | ⏸️ |
-| CLS | < 0.1 | ___ | ⏸️ |
-| Bundle Size | < 250KB | ___ | ⏸️ |
-| Database Query Time | < 100ms | ___ | ⏸️ |
+| Metric                 | Target  | Current | Status |
+| ---------------------- | ------- | ------- | ------ |
+| Homepage Load Time     | < 2s    | \_\_\_  | ⏸️     |
+| Lighthouse Performance | > 90    | \_\_\_  | ⏸️     |
+| API Response Time      | < 500ms | \_\_\_  | ⏸️     |
+| LCP                    | < 2.5s  | \_\_\_  | ⏸️     |
+| FID                    | < 100ms | \_\_\_  | ⏸️     |
+| CLS                    | < 0.1   | \_\_\_  | ⏸️     |
+| Bundle Size            | < 250KB | \_\_\_  | ⏸️     |
+| Database Query Time    | < 100ms | \_\_\_  | ⏸️     |
 
 ---
 
 ## 13. Performance Testing Schedule
 
 ### Daily:
+
 - Check Vercel Analytics dashboard
 - Review Sentry performance issues
 - Monitor error rates
 
 ### Weekly:
+
 - Run Lighthouse audit on key pages
 - Review Core Web Vitals
 - Check bundle size changes
 - Review API response times
 
 ### Monthly:
+
 - Full performance audit with WebPageTest
 - Review and optimize slow queries
 - Update performance benchmarks
@@ -468,6 +494,7 @@ Track these metrics daily:
 ## 14. Performance Optimization Checklist
 
 ### Frontend Optimizations:
+
 - [ ] Images optimized and using Next.js Image
 - [ ] Code splitting implemented
 - [ ] Lazy loading for below-fold content
@@ -478,6 +505,7 @@ Track these metrics daily:
 - [ ] Use production builds
 
 ### Backend Optimizations:
+
 - [ ] Database queries optimized with indexes
 - [ ] API responses cached appropriately
 - [ ] Database connection pooling configured
@@ -486,6 +514,7 @@ Track these metrics daily:
 - [ ] Edge functions for geo-routing
 
 ### Network Optimizations:
+
 - [ ] HTTP/2 enabled
 - [ ] Resource hints (preload, prefetch)
 - [ ] Minimize redirects
@@ -544,12 +573,12 @@ jobs:
     "assert": {
       "preset": "lighthouse:recommended",
       "assertions": {
-        "categories:performance": ["error", {"minScore": 0.9}],
-        "categories:accessibility": ["error", {"minScore": 0.95}],
-        "first-contentful-paint": ["error", {"maxNumericValue": 2000}],
-        "largest-contentful-paint": ["error", {"maxNumericValue": 2500}],
-        "cumulative-layout-shift": ["error", {"maxNumericValue": 0.1}],
-        "total-blocking-time": ["error", {"maxNumericValue": 300}]
+        "categories:performance": ["error", { "minScore": 0.9 }],
+        "categories:accessibility": ["error", { "minScore": 0.95 }],
+        "first-contentful-paint": ["error", { "maxNumericValue": 2000 }],
+        "largest-contentful-paint": ["error", { "maxNumericValue": 2500 }],
+        "cumulative-layout-shift": ["error", { "maxNumericValue": 0.1 }],
+        "total-blocking-time": ["error", { "maxNumericValue": 300 }]
       }
     }
   }
@@ -589,6 +618,7 @@ npm update
 ## 18. Resources
 
 ### Tools:
+
 - **Lighthouse**: https://developers.google.com/web/tools/lighthouse
 - **WebPageTest**: https://www.webpagetest.org/
 - **GTmetrix**: https://gtmetrix.com/
@@ -596,6 +626,7 @@ npm update
 - **Chrome DevTools**: https://developer.chrome.com/docs/devtools/
 
 ### Documentation:
+
 - **Core Web Vitals**: https://web.dev/vitals/
 - **Next.js Performance**: https://nextjs.org/docs/advanced-features/measuring-performance
 - **Image Optimization**: https://nextjs.org/docs/basic-features/image-optimization
@@ -606,13 +637,16 @@ npm update
 ## 19. Common Performance Issues & Fixes
 
 ### Issue: Slow Initial Page Load
+
 **Causes:**
+
 - Large JavaScript bundles
 - Unoptimized images
 - Blocking scripts
 - Slow server response
 
 **Solutions:**
+
 ```javascript
 // 1. Code splitting
 const HeavyComponent = dynamic(() => import('./HeavyComponent'), {
@@ -634,12 +668,15 @@ const HeavyComponent = dynamic(() => import('./HeavyComponent'), {
 ```
 
 ### Issue: High CLS (Layout Shift)
+
 **Causes:**
+
 - Images without dimensions
 - Dynamic content injection
 - Web fonts loading
 
 **Solutions:**
+
 ```javascript
 // 1. Always specify image dimensions
 <Image src="/img.jpg" width={400} height={300} alt="Product" />
@@ -655,12 +692,15 @@ const inter = Inter({ subsets: ['latin'], display: 'swap' });
 ```
 
 ### Issue: Slow API Responses
+
 **Causes:**
+
 - Missing database indexes
 - N+1 queries
 - No caching
 
 **Solutions:**
+
 ```typescript
 // 1. Add database indexes
 // In schema.prisma
@@ -681,17 +721,20 @@ if (cachedData) return cachedData;
 ## 20. Performance Monitoring Workflow
 
 ### Daily Routine (5 minutes):
+
 1. Check Vercel deployment status
 2. Review Sentry performance issues
 3. Check Core Web Vitals in Analytics
 
 ### Weekly Review (30 minutes):
+
 1. Run Lighthouse on key pages
 2. Review API performance metrics
 3. Check bundle size changes
 4. Review user session recordings (if available)
 
 ### Monthly Audit (2 hours):
+
 1. Full performance audit with multiple tools
 2. Review and optimize database queries
 3. Update performance benchmarks

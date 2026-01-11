@@ -9,11 +9,17 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Farmers Market Platform",
-  description: "Connect local farmers with customers - Fresh, local, sustainable",
-  keywords: ["farmers market", "local produce", "organic food", "farm to table"],
+  description:
+    "Connect local farmers with customers - Fresh, local, sustainable",
+  keywords: [
+    "farmers market",
+    "local produce",
+    "organic food",
+    "farm to table",
+  ],
 };
 
-const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || '';
+const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "";
 
 export default async function RootLayout({
   children,

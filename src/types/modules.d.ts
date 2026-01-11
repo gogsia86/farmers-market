@@ -1,7 +1,7 @@
 // Type declarations for external modules without type definitions
 
-declare module '@sentry/nextjs' {
-  export * from '@sentry/nextjs/types';
+declare module "@sentry/nextjs" {
+  export * from "@sentry/nextjs/types";
 
   export interface SentryConfig {
     dsn?: string;
@@ -20,12 +20,12 @@ declare module '@sentry/nextjs' {
   export function withSentryConfig<T>(config: T, options?: any): T;
 }
 
-declare module 'next-auth/react' {
-  import { Session } from 'next-auth';
+declare module "next-auth/react" {
+  import { Session } from "next-auth";
 
   export interface SessionContextValue {
     data: Session | null;
-    status: 'loading' | 'authenticated' | 'unauthenticated';
+    status: "loading" | "authenticated" | "unauthenticated";
     update: (data?: any) => Promise<Session | null>;
   }
 
@@ -46,8 +46,8 @@ declare module 'next-auth/react' {
   export function SessionProvider(props: SessionProviderProps): JSX.Element;
 }
 
-declare module '@prisma/client' {
-  export * from '@prisma/client/index';
+declare module "@prisma/client" {
+  export * from "@prisma/client/index";
 
   // Re-export common types
   export type {
@@ -68,24 +68,28 @@ declare module '@prisma/client' {
     ProductStatus,
     Prisma,
     PrismaClient,
-  } from '@prisma/client/index';
+  } from "@prisma/client/index";
 }
 
-declare module '@hookform/resolvers/zod' {
-  import { FieldValues, ResolverOptions, ResolverResult } from 'react-hook-form';
-  import { z } from 'zod';
+declare module "@hookform/resolvers/zod" {
+  import {
+    FieldValues,
+    ResolverOptions,
+    ResolverResult,
+  } from "react-hook-form";
+  import { z } from "zod";
 
   export function zodResolver<T extends z.ZodType<any, any, any>>(
     schema: T,
     schemaOptions?: Partial<z.ParseParams>,
     resolverOptions?: {
-      mode?: 'async' | 'sync';
+      mode?: "async" | "sync";
       rawValues?: boolean;
-    }
+    },
   ): <TFieldValues extends FieldValues, TContext>(
     values: TFieldValues,
     context: TContext | undefined,
-    options: ResolverOptions<TFieldValues>
+    options: ResolverOptions<TFieldValues>,
   ) => Promise<ResolverResult<TFieldValues>>;
 }
 
@@ -103,7 +107,7 @@ declare global {
       STRIPE_WEBHOOK_SECRET: string;
       SENTRY_DSN: string;
       REDIS_URL?: string;
-      NODE_ENV: 'development' | 'production' | 'test';
+      NODE_ENV: "development" | "production" | "test";
     }
   }
 }

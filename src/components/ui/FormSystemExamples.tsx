@@ -12,7 +12,13 @@ import * as React from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "./button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "./card";
 import {
   AgriculturalCheckboxCard,
   CardRadioGroup,
@@ -20,10 +26,7 @@ import {
   CheckboxGroup,
   RadioGroup,
 } from "./checkbox";
-import {
-  AgriculturalFileUpload,
-  type UploadedFile
-} from "./file-upload";
+import { AgriculturalFileUpload, type UploadedFile } from "./file-upload";
 import {
   Form,
   FormActions,
@@ -41,12 +44,19 @@ import { Input } from "./input";
 import {
   AgriculturalMultiStepForm,
   FormStep,
-  useMultiStepForm
+  useMultiStepForm,
 } from "./multi-step-form";
-import { AgriculturalSelect, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./select";
+import {
+  AgriculturalSelect,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./select";
 import { Textarea } from "./textarea";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 // ============================================================================
 // EXAMPLE 1: BASIC FORM WITH VALIDATION
@@ -921,10 +931,7 @@ export function MultiStepFormExample() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <AgriculturalMultiStepForm
-          steps={steps}
-          onComplete={handleComplete}
-        >
+        <AgriculturalMultiStepForm steps={steps} onComplete={handleComplete}>
           <MultiStepFormContent />
         </AgriculturalMultiStepForm>
       </CardContent>

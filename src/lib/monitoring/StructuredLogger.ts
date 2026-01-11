@@ -3,7 +3,7 @@
  * Enterprise-grade logging with context and metadata
  */
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 export interface LogContext {
   requestId?: string;

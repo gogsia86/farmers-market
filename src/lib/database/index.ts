@@ -36,23 +36,25 @@ const createPrismaClient = (): PrismaClient => {
 
   // Create PostgreSQL connection pool
   // Reuse existing pool in development to prevent connection leaks
-  const pool = globalThis.pgPool ?? new Pool({
-    connectionString: process.env.DATABASE_URL,
-    // Optimize for serverless (Vercel) - reduced for better connection management
-    max: 1, // Single connection per serverless function (prevents pool exhaustion)
-    idleTimeoutMillis: 10000, // Faster cleanup in serverless
-    connectionTimeoutMillis: 5000,
-  });
+  const pool =
+    globalThis.pgPool ??
+    new Pool({
+      connectionString: process.env.DATABASE_URL,
+      // Optimize for serverless (Vercel) - reduced for better connection management
+      max: 1, // Single connection per serverless function (prevents pool exhaustion)
+      idleTimeoutMillis: 10000, // Faster cleanup in serverless
+      connectionTimeoutMillis: 5000,
+    });
 
   // Log pool events
-  pool.on('connect', () => {
+  pool.on("connect", () => {
     if (isDevelopment) {
-      logger.info('🔌 PostgreSQL connection established');
+      logger.info("🔌 PostgreSQL connection established");
     }
   });
 
-  pool.on('error', (err) => {
-    logger.error('🚨 PostgreSQL pool error:', {
+  pool.on("error", (err) => {
+    logger.error("🚨 PostgreSQL pool error:", {
       error: err instanceof Error ? err.message : String(err),
     });
   });
@@ -70,15 +72,15 @@ const createPrismaClient = (): PrismaClient => {
     adapter,
     log: isDevelopment
       ? [
-        { level: "query", emit: "event" },
-        { level: "error", emit: "event" },
-        { level: "warn", emit: "event" },
-        { level: "info", emit: "event" },
-      ]
+          { level: "query", emit: "event" },
+          { level: "error", emit: "event" },
+          { level: "warn", emit: "event" },
+          { level: "info", emit: "event" },
+        ]
       : [
-        { level: "error", emit: "event" },
-        { level: "warn", emit: "event" },
-      ],
+          { level: "error", emit: "event" },
+          { level: "warn", emit: "event" },
+        ],
   });
 
   // Query performance monitoring
@@ -101,13 +103,12 @@ const createPrismaClient = (): PrismaClient => {
       errorDetails.message = e.message;
       errorDetails.name = e.name;
       errorDetails.stack = e.stack;
-    } else if (typeof e === 'object' && e !== null) {
+    } else if (typeof e === "object" && e !== null) {
       // Extract all properties from the error object
-      Object.keys(e).forEach(key => {
+      Object.keys(e).forEach((key) => {
         try {
-          errorDetails[key] = typeof e[key] === 'object'
-            ? JSON.stringify(e[key])
-            : e[key];
+          errorDetails[key] =
+            typeof e[key] === "object" ? JSON.stringify(e[key]) : e[key];
         } catch {
           errorDetails[key] = String(e[key]);
         }
@@ -126,12 +127,11 @@ const createPrismaClient = (): PrismaClient => {
     if (e instanceof Error) {
       warningDetails.message = e.message;
       warningDetails.name = e.name;
-    } else if (typeof e === 'object' && e !== null) {
-      Object.keys(e).forEach(key => {
+    } else if (typeof e === "object" && e !== null) {
+      Object.keys(e).forEach((key) => {
         try {
-          warningDetails[key] = typeof e[key] === 'object'
-            ? JSON.stringify(e[key])
-            : e[key];
+          warningDetails[key] =
+            typeof e[key] === "object" ? JSON.stringify(e[key]) : e[key];
         } catch {
           warningDetails[key] = String(e[key]);
         }
@@ -201,11 +201,13 @@ export async function getDatabaseStats(): Promise<{
   idleConnections: number;
 }> {
   try {
-    const stats = await database.$queryRaw<Array<{
-      total_connections: number;
-      max_connections: number;
-      idle_connections: number;
-    }>>`
+    const stats = await database.$queryRaw<
+      Array<{
+        total_connections: number;
+        max_connections: number;
+        idle_connections: number;
+      }>
+    >`
       SELECT
         (SELECT count(*) FROM pg_stat_activity) as total_connections,
         (SELECT setting::int FROM pg_settings WHERE name = 'max_connections') as max_connections,

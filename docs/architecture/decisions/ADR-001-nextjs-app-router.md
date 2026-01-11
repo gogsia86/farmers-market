@@ -160,18 +160,18 @@ We adopt Next.js 15's App Router architecture, leveraging React Server Component
 
 ### Key Decision Criteria
 
-| Criterion | Weight | Score | Notes |
-|-----------|--------|-------|-------|
-| Performance | HIGH | 🟢 Excellent | RSC + edge = best-in-class performance |
-| Developer Experience | HIGH | 🟢 Excellent | Hot reload, TypeScript, clear patterns |
-| SEO Capabilities | HIGH | 🟢 Excellent | Full SSR/SSG support built-in |
-| Learning Curve | MEDIUM | 🟡 Good | Server Components new but learnable |
-| Ecosystem | HIGH | 🟢 Excellent | Massive library support, active community |
-| Scalability | HIGH | 🟢 Excellent | Edge functions, ISR, distributed caching |
-| Team Expertise | MEDIUM | 🟡 Good | React ✅, Next.js ⚠️, RSC ❌ |
-| Cost | MEDIUM | 🟢 Excellent | Free tier generous, open source |
-| Deployment | HIGH | 🟢 Excellent | Vercel one-click, Docker for self-host |
-| Type Safety | HIGH | 🟢 Excellent | First-class TypeScript support |
+| Criterion            | Weight | Score        | Notes                                     |
+| -------------------- | ------ | ------------ | ----------------------------------------- |
+| Performance          | HIGH   | 🟢 Excellent | RSC + edge = best-in-class performance    |
+| Developer Experience | HIGH   | 🟢 Excellent | Hot reload, TypeScript, clear patterns    |
+| SEO Capabilities     | HIGH   | 🟢 Excellent | Full SSR/SSG support built-in             |
+| Learning Curve       | MEDIUM | 🟡 Good      | Server Components new but learnable       |
+| Ecosystem            | HIGH   | 🟢 Excellent | Massive library support, active community |
+| Scalability          | HIGH   | 🟢 Excellent | Edge functions, ISR, distributed caching  |
+| Team Expertise       | MEDIUM | 🟡 Good      | React ✅, Next.js ⚠️, RSC ❌              |
+| Cost                 | MEDIUM | 🟢 Excellent | Free tier generous, open source           |
+| Deployment           | HIGH   | 🟢 Excellent | Vercel one-click, Docker for self-host    |
+| Type Safety          | HIGH   | 🟢 Excellent | First-class TypeScript support            |
 
 ---
 
@@ -426,22 +426,22 @@ We need a framework to build the platform.
 
 ## 🎨 Comparison Matrix
 
-| Criterion | Next.js 15 App Router | Next.js Pages | CRA | Remix | SvelteKit | Astro |
-|-----------|----------------------|---------------|-----|-------|-----------|-------|
-| **Performance** | 🟢 Excellent | 🟡 Good | 🔴 Poor | 🟢 Excellent | 🟢 Excellent | 🟢 Excellent |
-| **SEO** | 🟢 Excellent | 🟢 Excellent | 🔴 Poor | 🟢 Excellent | 🟢 Excellent | 🟢 Excellent |
-| **Developer Experience** | 🟢 Excellent | 🟢 Excellent | 🟡 Good | 🟢 Excellent | 🟡 Good | 🟢 Excellent |
-| **Learning Curve** | 🟡 Good | 🟢 Excellent | 🟢 Excellent | 🟡 Good | 🔴 Poor | 🟡 Good |
-| **Ecosystem** | 🟢 Excellent | 🟢 Excellent | 🟢 Excellent | 🟡 Good | 🟠 Fair | 🟡 Good |
-| **Team Expertise** | 🟡 Good | 🟢 Excellent | 🟢 Excellent | 🔴 Poor | 🔴 Poor | 🔴 Poor |
-| **Scalability** | 🟢 Excellent | 🟡 Good | 🟡 Good | 🟢 Excellent | 🟡 Good | 🟠 Fair |
-| **Bundle Size** | 🟢 Excellent | 🟡 Good | 🔴 Poor | 🟡 Good | 🟢 Excellent | 🟢 Excellent |
-| **TypeScript** | 🟢 Excellent | 🟢 Excellent | 🟢 Excellent | 🟢 Excellent | 🟡 Good | 🟢 Excellent |
-| **Deployment** | 🟢 Excellent | 🟢 Excellent | 🟢 Excellent | 🟡 Good | 🟡 Good | 🟢 Excellent |
-| **Community** | 🟢 Excellent | 🟢 Excellent | 🟡 Good | 🟡 Good | 🟡 Good | 🟡 Good |
-| **Maintenance** | 🟢 Excellent | 🟡 Good | 🔴 Poor | 🟡 Good | 🟡 Good | 🟡 Good |
-| **App Suitability** | 🟢 Excellent | 🟢 Excellent | 🟢 Excellent | 🟢 Excellent | 🟡 Good | 🔴 Poor |
-| **TOTAL SCORE** | 🟢 93/100 | 🟡 85/100 | 🔴 58/100 | 🟡 82/100 | 🟡 68/100 | 🟡 75/100 |
+| Criterion                | Next.js 15 App Router | Next.js Pages | CRA          | Remix        | SvelteKit    | Astro        |
+| ------------------------ | --------------------- | ------------- | ------------ | ------------ | ------------ | ------------ |
+| **Performance**          | 🟢 Excellent          | 🟡 Good       | 🔴 Poor      | 🟢 Excellent | 🟢 Excellent | 🟢 Excellent |
+| **SEO**                  | 🟢 Excellent          | 🟢 Excellent  | 🔴 Poor      | 🟢 Excellent | 🟢 Excellent | 🟢 Excellent |
+| **Developer Experience** | 🟢 Excellent          | 🟢 Excellent  | 🟡 Good      | 🟢 Excellent | 🟡 Good      | 🟢 Excellent |
+| **Learning Curve**       | 🟡 Good               | 🟢 Excellent  | 🟢 Excellent | 🟡 Good      | 🔴 Poor      | 🟡 Good      |
+| **Ecosystem**            | 🟢 Excellent          | 🟢 Excellent  | 🟢 Excellent | 🟡 Good      | 🟠 Fair      | 🟡 Good      |
+| **Team Expertise**       | 🟡 Good               | 🟢 Excellent  | 🟢 Excellent | 🔴 Poor      | 🔴 Poor      | 🔴 Poor      |
+| **Scalability**          | 🟢 Excellent          | 🟡 Good       | 🟡 Good      | 🟢 Excellent | 🟡 Good      | 🟠 Fair      |
+| **Bundle Size**          | 🟢 Excellent          | 🟡 Good       | 🔴 Poor      | 🟡 Good      | 🟢 Excellent | 🟢 Excellent |
+| **TypeScript**           | 🟢 Excellent          | 🟢 Excellent  | 🟢 Excellent | 🟢 Excellent | 🟡 Good      | 🟢 Excellent |
+| **Deployment**           | 🟢 Excellent          | 🟢 Excellent  | 🟢 Excellent | 🟡 Good      | 🟡 Good      | 🟢 Excellent |
+| **Community**            | 🟢 Excellent          | 🟢 Excellent  | 🟡 Good      | 🟡 Good      | 🟡 Good      | 🟡 Good      |
+| **Maintenance**          | 🟢 Excellent          | 🟡 Good       | 🔴 Poor      | 🟡 Good      | 🟡 Good      | 🟡 Good      |
+| **App Suitability**      | 🟢 Excellent          | 🟢 Excellent  | 🟢 Excellent | 🟢 Excellent | 🟡 Good      | 🔴 Poor      |
+| **TOTAL SCORE**          | 🟢 93/100             | 🟡 85/100     | 🔴 58/100    | 🟡 82/100    | 🟡 68/100    | 🟡 75/100    |
 
 **Rating Scale:** 🟢 Excellent (8-10) | 🟡 Good (6-7) | 🟠 Fair (4-5) | 🔴 Poor (0-3)
 
@@ -609,28 +609,28 @@ src/
 const nextConfig = {
   // Enable experimental features
   experimental: {
-    typedRoutes: true,        // Type-safe routing
+    typedRoutes: true, // Type-safe routing
     serverActions: {
-      bodySizeLimit: '2mb'    // Server Actions payload limit
-    }
+      bodySizeLimit: "2mb", // Server Actions payload limit
+    },
   },
 
   // Image optimization
   images: {
-    formats: ['image/avif', 'image/webp'],
+    formats: ["image/avif", "image/webp"],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    minimumCacheTTL: 60 * 60 * 24 * 365 // 1 year
+    minimumCacheTTL: 60 * 60 * 24 * 365, // 1 year
   },
 
   // Compiler optimizations
   compiler: {
-    removeConsole: process.env.NODE_ENV === 'production'
+    removeConsole: process.env.NODE_ENV === "production",
   },
 
   // Production optimizations
   poweredByHeader: false,
-  compress: true
+  compress: true,
 };
 
 export default nextConfig;
@@ -657,6 +657,7 @@ NEXT_PUBLIC_APP_URL="http://localhost:3000"
 **Future Migration Path:**
 
 If we ever need to migrate away from Next.js:
+
 1. API routes are standard REST endpoints (portable)
 2. React components can be reused in any React framework
 3. Prisma queries can work with any Node.js backend
@@ -703,16 +704,16 @@ If we ever need to migrate away from Next.js:
 
 **How we'll measure success:**
 
-| Metric | Target | Measurement Method | Status |
-|--------|--------|-------------------|--------|
-| Lighthouse Performance | ≥90 | Lighthouse CI on every deploy | ✅ 95 |
-| First Contentful Paint | <1s | Web Vitals monitoring | ✅ 0.8s |
-| Time to Interactive | <2s | Web Vitals monitoring | ✅ 1.2s |
-| Bundle Size | <100KB | Next.js build analyzer | ✅ 68KB |
-| Build Time | <2min | CI/CD pipeline logs | ✅ 90s |
-| Developer Onboarding | <1 week | Team feedback | ✅ 3 days |
-| Page Load Time (p95) | <1.5s | Vercel Analytics | ✅ 1.1s |
-| SEO Score | ≥95 | Lighthouse CI | ✅ 98 |
+| Metric                 | Target  | Measurement Method            | Status    |
+| ---------------------- | ------- | ----------------------------- | --------- |
+| Lighthouse Performance | ≥90     | Lighthouse CI on every deploy | ✅ 95     |
+| First Contentful Paint | <1s     | Web Vitals monitoring         | ✅ 0.8s   |
+| Time to Interactive    | <2s     | Web Vitals monitoring         | ✅ 1.2s   |
+| Bundle Size            | <100KB  | Next.js build analyzer        | ✅ 68KB   |
+| Build Time             | <2min   | CI/CD pipeline logs           | ✅ 90s    |
+| Developer Onboarding   | <1 week | Team feedback                 | ✅ 3 days |
+| Page Load Time (p95)   | <1.5s   | Vercel Analytics              | ✅ 1.1s   |
+| SEO Score              | ≥95     | Lighthouse CI                 | ✅ 98     |
 
 ### Timeline
 
@@ -802,13 +803,13 @@ If we ever need to migrate away from Next.js:
 
 ## 📊 Status History
 
-| Date | Status | Notes | Updated By |
-|------|--------|-------|------------|
-| 2024-01-01 | Proposed | Initial draft created | Tech Lead |
-| 2024-01-08 | In Review | POCs completed, team review | Engineering Team |
-| 2024-01-15 | Accepted | Unanimous approval | Engineering Team |
-| 2024-01-20 | Implementing | Development started | Full Team |
-| 2024-04-15 | Implemented | MVP complete and deployed | Full Team |
+| Date       | Status       | Notes                       | Updated By       |
+| ---------- | ------------ | --------------------------- | ---------------- |
+| 2024-01-01 | Proposed     | Initial draft created       | Tech Lead        |
+| 2024-01-08 | In Review    | POCs completed, team review | Engineering Team |
+| 2024-01-15 | Accepted     | Unanimous approval          | Engineering Team |
+| 2024-01-20 | Implementing | Development started         | Full Team        |
+| 2024-04-15 | Implemented  | MVP complete and deployed   | Full Team        |
 
 ---
 
@@ -820,16 +821,16 @@ If we ever need to migrate away from Next.js:
 
 **Metrics Achieved:**
 
-| Metric | Target | Actual | Status |
-|--------|--------|--------|--------|
-| Lighthouse Performance | ≥90 | 95 | ✅ Exceeded |
-| First Contentful Paint | <1s | 0.8s | ✅ Met |
-| Time to Interactive | <2s | 1.2s | ✅ Met |
-| Bundle Size | <100KB | 68KB | ✅ Exceeded |
-| Build Time | <2min | 90s | ✅ Met |
-| Developer Onboarding | <1 week | 3 days | ✅ Exceeded |
-| Page Load (p95) | <1.5s | 1.1s | ✅ Met |
-| SEO Score | ≥95 | 98 | ✅ Exceeded |
+| Metric                 | Target  | Actual | Status      |
+| ---------------------- | ------- | ------ | ----------- |
+| Lighthouse Performance | ≥90     | 95     | ✅ Exceeded |
+| First Contentful Paint | <1s     | 0.8s   | ✅ Met      |
+| Time to Interactive    | <2s     | 1.2s   | ✅ Met      |
+| Bundle Size            | <100KB  | 68KB   | ✅ Exceeded |
+| Build Time             | <2min   | 90s    | ✅ Met      |
+| Developer Onboarding   | <1 week | 3 days | ✅ Exceeded |
+| Page Load (p95)        | <1.5s   | 1.1s   | ✅ Met      |
+| SEO Score              | ≥95     | 98     | ✅ Exceeded |
 
 ### Lessons Learned
 

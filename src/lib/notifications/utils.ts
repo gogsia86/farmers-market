@@ -64,7 +64,7 @@ export function generateBatchId(): string {
  */
 export function renderTemplate(
   template: NotificationTemplate,
-  variables: TemplateVariables
+  variables: TemplateVariables,
 ): { title: string; message: string } {
   let title = template.title;
   let message = template.message;
@@ -84,7 +84,7 @@ export function renderTemplate(
  */
 export function validateTemplateVariables(
   template: NotificationTemplate,
-  variables: TemplateVariables
+  variables: TemplateVariables,
 ): { valid: boolean; missing: string[] } {
   const missing: string[] = [];
 
@@ -126,7 +126,7 @@ export function extractTemplateVariables(text: string): string[] {
  */
 export function filterNotifications(
   notifications: BaseNotification[],
-  filter: NotificationFilter
+  filter: NotificationFilter,
 ): BaseNotification[] {
   return notifications.filter((notification: any) => {
     // Filter by type
@@ -178,7 +178,7 @@ export function filterNotifications(
     if (filter.tags && filter.tags.length > 0) {
       if (!notification.metadata?.tags) return false;
       const hasTag = filter.tags.some((tag: any) =>
-        notification.metadata!.tags!.includes(tag)
+        notification.metadata!.tags!.includes(tag),
       );
       if (!hasTag) return false;
     }
@@ -213,7 +213,7 @@ export function filterNotifications(
  */
 export function sortNotifications(
   notifications: BaseNotification[],
-  sortOptions: NotificationSortOptions
+  sortOptions: NotificationSortOptions,
 ): BaseNotification[] {
   const sorted = [...notifications];
 
@@ -303,7 +303,10 @@ export function getSeasonalColors(season: Season): {
   secondary: string;
   background: string;
 } {
-  const colors: Record<Season, { primary: string; secondary: string; background: string }> = {
+  const colors: Record<
+    Season,
+    { primary: string; secondary: string; background: string }
+  > = {
     spring: {
       primary: "text-green-600",
       secondary: "text-green-500",
@@ -350,10 +353,12 @@ export function getSeasonalMessagePrefix(season: Season): string {
  */
 export function getSeasonalMessage(season: Season): string {
   const messages: Record<Season, string> = {
-    spring: "Spring is the season of growth and renewal. Perfect time for planting!",
+    spring:
+      "Spring is the season of growth and renewal. Perfect time for planting!",
     summer: "Summer brings warmth and abundance. Time to nurture and harvest!",
     fall: "Fall is harvest season. Gather the fruits of your labor!",
-    winter: "Winter is a time for rest and planning. Prepare for the next cycle!",
+    winter:
+      "Winter is a time for rest and planning. Prepare for the next cycle!",
   };
 
   return messages[season];
@@ -362,7 +367,9 @@ export function getSeasonalMessage(season: Season): string {
 /**
  * Get agricultural event icon
  */
-export function getAgriculturalEventIcon(eventType: AgriculturalEventType): string {
+export function getAgriculturalEventIcon(
+  eventType: AgriculturalEventType,
+): string {
   const icons: Record<AgriculturalEventType, string> = {
     planting: "🌱",
     growing: "🌿",
@@ -387,7 +394,9 @@ export function getAgriculturalEventIcon(eventType: AgriculturalEventType): stri
  * @param eventType - Agricultural event type
  * @returns Tailwind color class
  */
-export function getAgriculturalEventColor(eventType: AgriculturalEventType): string {
+export function getAgriculturalEventColor(
+  eventType: AgriculturalEventType,
+): string {
   const eventColors: Record<AgriculturalEventType, string> = {
     planting: "green",
     growing: "emerald",
@@ -412,7 +421,7 @@ export function getAgriculturalEventColor(eventType: AgriculturalEventType): str
  */
 export function getAgriculturalEventMessage(
   eventType: AgriculturalEventType,
-  metadata?: AgriculturalMetadata
+  metadata?: AgriculturalMetadata,
 ): string {
   const farmName = metadata?.farmName ?? "the farm";
   const productName = metadata?.productName ?? "product";
@@ -441,7 +450,7 @@ export function getAgriculturalEventMessage(
  */
 export function createAgriculturalMetadata(
   eventType: AgriculturalEventType,
-  overrides: Partial<AgriculturalMetadata> = {}
+  overrides: Partial<AgriculturalMetadata> = {},
 ): AgriculturalMetadata {
   return {
     season: getCurrentSeason(),
@@ -459,7 +468,7 @@ export function createAgriculturalMetadata(
  */
 export function isQuietHours(
   quietHours: QuietHours | undefined,
-  date: Date = new Date()
+  date: Date = new Date(),
 ): boolean {
   if (!quietHours || !quietHours.enabled) return false;
 
@@ -470,8 +479,12 @@ export function isQuietHours(
   }
 
   // Parse time strings
-  const [startHour = 0, startMinute = 0] = quietHours.startTime.split(":").map(Number);
-  const [endHour = 0, endMinute = 0] = quietHours.endTime.split(":").map(Number);
+  const [startHour = 0, startMinute = 0] = quietHours.startTime
+    .split(":")
+    .map(Number);
+  const [endHour = 0, endMinute = 0] = quietHours.endTime
+    .split(":")
+    .map(Number);
 
   const currentMinutes = date.getHours() * 60 + date.getMinutes();
   const startMinutes = startHour * 60 + startMinute;
@@ -524,7 +537,7 @@ export function calculateExpiryDate(ttl: number, date?: Date): Date {
  */
 export function calculateExpiryDateFromPriority(
   priority: NotificationPriority,
-  daysToExpire?: number
+  daysToExpire?: number,
 ): Date | undefined {
   if (daysToExpire !== undefined) {
     const expiry = new Date();
@@ -563,7 +576,10 @@ export function isExpired(notification: BaseNotification): boolean {
 /**
  * Validate notification title
  */
-export function validateTitle(title: string): { valid: boolean; error?: string } {
+export function validateTitle(title: string): {
+  valid: boolean;
+  error?: string;
+} {
   if (!title || title.trim().length === 0) {
     return { valid: false, error: "Title is required" };
   }
@@ -578,7 +594,10 @@ export function validateTitle(title: string): { valid: boolean; error?: string }
 /**
  * Validate notification message
  */
-export function validateMessage(message: string): { valid: boolean; error?: string } {
+export function validateMessage(message: string): {
+  valid: boolean;
+  error?: string;
+} {
   if (!message || message.trim().length === 0) {
     return { valid: false, error: "Message is required" };
   }
@@ -601,9 +620,10 @@ export function validateEmail(email: string): boolean {
 /**
  * Validate notification preferences
  */
-export function validatePreferences(
-  preferences: NotificationPreferences
-): { valid: boolean; errors: string[] } {
+export function validatePreferences(preferences: NotificationPreferences): {
+  valid: boolean;
+  errors: string[];
+} {
   const errors: string[] = [];
 
   // Validate quiet hours
@@ -648,14 +668,16 @@ export function validatePreferences(
  */
 export function shouldSendNotification(
   notification: BaseNotification,
-  preferences?: NotificationPreferences
+  preferences?: NotificationPreferences,
 ): boolean {
   // If no preferences, allow all
   if (!preferences) return true;
 
   // Check channel preferences
-  const channelKey = notification.type === "in-app" ? "inApp" : notification.type;
-  const channelPref = preferences.channels?.[channelKey as keyof typeof preferences.channels];
+  const channelKey =
+    notification.type === "in-app" ? "inApp" : notification.type;
+  const channelPref =
+    preferences.channels?.[channelKey as keyof typeof preferences.channels];
 
   // If channel preferences exist but channel is disabled, block notification
   if (preferences.channels && Object.keys(preferences.channels).length > 0) {
@@ -683,7 +705,8 @@ export function shouldSendNotification(
     if (!categoryPref.enabled) return false;
 
     // Check if notification type is allowed for this category
-    const channel = notification.type === "in-app" ? "in-app" : notification.type;
+    const channel =
+      notification.type === "in-app" ? "in-app" : notification.type;
     if (!categoryPref.channels.includes(channel as any)) return false;
   }
 
@@ -692,7 +715,12 @@ export function shouldSendNotification(
     const inQuietHours = isQuietHours(preferences.quietHours);
     if (inQuietHours) {
       // Allow urgent notifications during quiet hours if configured
-      if (!(preferences.quietHours.allowUrgent && notification.priority === "urgent")) {
+      if (
+        !(
+          preferences.quietHours.allowUrgent &&
+          notification.priority === "urgent"
+        )
+      ) {
         return false;
       }
     }
@@ -736,7 +764,7 @@ export function getDefaultPreferences(userId: string): NotificationPreferences {
  * Group notifications by category
  */
 export function groupByCategory(
-  notifications: BaseNotification[]
+  notifications: BaseNotification[],
 ): Map<string, BaseNotification[]> {
   const groups = new Map<string, BaseNotification[]>();
 
@@ -753,7 +781,7 @@ export function groupByCategory(
  * Group notifications by user
  */
 export function groupByUser(
-  notifications: BaseNotification[]
+  notifications: BaseNotification[],
 ): Map<string, BaseNotification[]> {
   const groups = new Map<string, BaseNotification[]>();
 
@@ -785,7 +813,7 @@ export function chunkArray<T>(array: T[], size: number): T[][] {
  * Deduplicate notifications by content
  */
 export function deduplicateNotifications(
-  notifications: BaseNotification[]
+  notifications: BaseNotification[],
 ): BaseNotification[] {
   const groups = new Map<string, BaseNotification[]>();
 
@@ -815,7 +843,7 @@ export function deduplicateNotifications(
  * Find duplicate notifications
  */
 export function findDuplicates(
-  notifications: BaseNotification[]
+  notifications: BaseNotification[],
 ): BaseNotification[][] {
   const groups = new Map<string, BaseNotification[]>();
 
@@ -880,7 +908,8 @@ export function calculateNotificationStats(notifications: BaseNotification[]): {
     stats.byPriority[notification.priority]++;
 
     // Count by type
-    stats.byType[notification.type] = (stats.byType[notification.type] ?? 0) + 1;
+    stats.byType[notification.type] =
+      (stats.byType[notification.type] ?? 0) + 1;
 
     // Calculate age
     const age = Date.now() - notification.createdAt.getTime();
@@ -945,7 +974,7 @@ export function getNotificationStats(notifications: BaseNotification[]): {
  * @returns Notifications grouped by date string
  */
 export function groupNotificationsByDate(
-  notifications: BaseNotification[]
+  notifications: BaseNotification[],
 ): Record<string, BaseNotification[]> {
   const groups: Record<string, BaseNotification[]> = {};
 
@@ -966,7 +995,7 @@ export function groupNotificationsByDate(
  * @returns Notifications grouped by type
  */
 export function groupNotificationsByType(
-  notifications: BaseNotification[]
+  notifications: BaseNotification[],
 ): Record<string, BaseNotification[]> {
   const groups: Record<string, BaseNotification[]> = {};
 
@@ -989,7 +1018,7 @@ export function groupNotificationsByType(
  */
 export function batchNotifications(
   notifications: BaseNotification[],
-  batchSize: number
+  batchSize: number,
 ): Array<{ id: string; notifications: BaseNotification[]; createdAt: Date }> {
   const batches: Array<{
     id: string;
@@ -1013,4 +1042,4 @@ export function batchNotifications(
 // Export all utilities
 // ============================================================================
 
-export { };
+export {};

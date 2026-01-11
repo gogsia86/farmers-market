@@ -84,6 +84,7 @@ The API uses NextAuth v5 for authentication with JWT tokens.
 ### Getting a Token
 
 **Sign In:**
+
 ```http
 POST /api/auth/signin
 Content-Type: application/json
@@ -95,6 +96,7 @@ Content-Type: application/json
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -126,10 +128,10 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 ### Roles & Permissions
 
-| Role | Permissions |
-|------|-------------|
-| **ADMIN** | Full access to all resources |
-| **FARMER** | Manage own farm, products, orders |
+| Role         | Permissions                            |
+| ------------ | -------------------------------------- |
+| **ADMIN**    | Full access to all resources           |
+| **FARMER**   | Manage own farm, products, orders      |
 | **CUSTOMER** | Browse products, place orders, reviews |
 
 ---
@@ -138,99 +140,99 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 ### Health & Monitoring
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/health` | System health check |
-| GET | `/api/ready` | Readiness probe |
+| Method | Endpoint      | Description         |
+| ------ | ------------- | ------------------- |
+| GET    | `/api/health` | System health check |
+| GET    | `/api/ready`  | Readiness probe     |
 
 ### Authentication
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/auth/signin` | Sign in with credentials |
-| POST | `/api/auth/signout` | Sign out current user |
-| GET | `/api/auth/session` | Get current session |
+| Method | Endpoint            | Description              |
+| ------ | ------------------- | ------------------------ |
+| POST   | `/api/auth/signin`  | Sign in with credentials |
+| POST   | `/api/auth/signout` | Sign out current user    |
+| GET    | `/api/auth/session` | Get current session      |
 
 ### Farms
 
-| Method | Endpoint | Description | Auth |
-|--------|----------|-------------|------|
-| GET | `/api/farms` | List all farms | No |
-| POST | `/api/farms` | Create new farm | Yes (FARMER) |
-| GET | `/api/farms/{id}` | Get farm details | No |
-| PUT | `/api/farms/{id}` | Update farm | Yes (Owner/Admin) |
-| DELETE | `/api/farms/{id}` | Delete farm | Yes (Owner/Admin) |
-| GET | `/api/farms/search?q=...` | Search farms | No |
+| Method | Endpoint                  | Description      | Auth              |
+| ------ | ------------------------- | ---------------- | ----------------- |
+| GET    | `/api/farms`              | List all farms   | No                |
+| POST   | `/api/farms`              | Create new farm  | Yes (FARMER)      |
+| GET    | `/api/farms/{id}`         | Get farm details | No                |
+| PUT    | `/api/farms/{id}`         | Update farm      | Yes (Owner/Admin) |
+| DELETE | `/api/farms/{id}`         | Delete farm      | Yes (Owner/Admin) |
+| GET    | `/api/farms/search?q=...` | Search farms     | No                |
 
 ### Products
 
-| Method | Endpoint | Description | Auth |
-|--------|----------|-------------|------|
-| GET | `/api/products` | List all products | No |
-| POST | `/api/products` | Create product | Yes (FARMER) |
-| GET | `/api/products/{id}` | Get product details | No |
-| PUT | `/api/products/{id}` | Update product | Yes (Owner/Admin) |
-| DELETE | `/api/products/{id}` | Delete product | Yes (Owner/Admin) |
-| GET | `/api/products/search?q=...` | Search products | No |
+| Method | Endpoint                     | Description         | Auth              |
+| ------ | ---------------------------- | ------------------- | ----------------- |
+| GET    | `/api/products`              | List all products   | No                |
+| POST   | `/api/products`              | Create product      | Yes (FARMER)      |
+| GET    | `/api/products/{id}`         | Get product details | No                |
+| PUT    | `/api/products/{id}`         | Update product      | Yes (Owner/Admin) |
+| DELETE | `/api/products/{id}`         | Delete product      | Yes (Owner/Admin) |
+| GET    | `/api/products/search?q=...` | Search products     | No                |
 
 ### Cart
 
-| Method | Endpoint | Description | Auth |
-|--------|----------|-------------|------|
-| GET | `/api/cart` | Get user's cart | Yes |
-| POST | `/api/cart/items` | Add item to cart | Yes |
-| PUT | `/api/cart/items/{id}` | Update cart item | Yes |
-| DELETE | `/api/cart/items/{id}` | Remove from cart | Yes |
+| Method | Endpoint               | Description      | Auth |
+| ------ | ---------------------- | ---------------- | ---- |
+| GET    | `/api/cart`            | Get user's cart  | Yes  |
+| POST   | `/api/cart/items`      | Add item to cart | Yes  |
+| PUT    | `/api/cart/items/{id}` | Update cart item | Yes  |
+| DELETE | `/api/cart/items/{id}` | Remove from cart | Yes  |
 
 ### Orders
 
-| Method | Endpoint | Description | Auth |
-|--------|----------|-------------|------|
-| GET | `/api/orders` | List user's orders | Yes |
-| POST | `/api/orders` | Create order | Yes |
-| GET | `/api/orders/{id}` | Get order details | Yes |
-| PATCH | `/api/orders/{id}` | Update order status | Yes (FARMER/Admin) |
+| Method | Endpoint           | Description         | Auth               |
+| ------ | ------------------ | ------------------- | ------------------ |
+| GET    | `/api/orders`      | List user's orders  | Yes                |
+| POST   | `/api/orders`      | Create order        | Yes                |
+| GET    | `/api/orders/{id}` | Get order details   | Yes                |
+| PATCH  | `/api/orders/{id}` | Update order status | Yes (FARMER/Admin) |
 
 ### Checkout
 
-| Method | Endpoint | Description | Auth |
-|--------|----------|-------------|------|
-| POST | `/api/checkout` | Create checkout session | Yes |
+| Method | Endpoint        | Description             | Auth |
+| ------ | --------------- | ----------------------- | ---- |
+| POST   | `/api/checkout` | Create checkout session | Yes  |
 
 ### Search
 
-| Method | Endpoint | Description | Auth |
-|--------|----------|-------------|------|
-| GET | `/api/search?q=...` | Global search | No |
+| Method | Endpoint            | Description   | Auth |
+| ------ | ------------------- | ------------- | ---- |
+| GET    | `/api/search?q=...` | Global search | No   |
 
 ### Favorites
 
-| Method | Endpoint | Description | Auth |
-|--------|----------|-------------|------|
-| GET | `/api/favorites` | Get user favorites | Yes |
-| POST | `/api/favorites` | Add to favorites | Yes |
-| DELETE | `/api/favorites/{id}` | Remove favorite | Yes |
+| Method | Endpoint              | Description        | Auth |
+| ------ | --------------------- | ------------------ | ---- |
+| GET    | `/api/favorites`      | Get user favorites | Yes  |
+| POST   | `/api/favorites`      | Add to favorites   | Yes  |
+| DELETE | `/api/favorites/{id}` | Remove favorite    | Yes  |
 
 ### Notifications
 
-| Method | Endpoint | Description | Auth |
-|--------|----------|-------------|------|
-| GET | `/api/notifications` | List notifications | Yes |
-| POST | `/api/notifications/{id}/read` | Mark as read | Yes |
+| Method | Endpoint                       | Description        | Auth |
+| ------ | ------------------------------ | ------------------ | ---- |
+| GET    | `/api/notifications`           | List notifications | Yes  |
+| POST   | `/api/notifications/{id}/read` | Mark as read       | Yes  |
 
 ### User Profile
 
-| Method | Endpoint | Description | Auth |
-|--------|----------|-------------|------|
-| GET | `/api/user/profile` | Get user profile | Yes |
-| PUT | `/api/user/profile` | Update profile | Yes |
+| Method | Endpoint            | Description      | Auth |
+| ------ | ------------------- | ---------------- | ---- |
+| GET    | `/api/user/profile` | Get user profile | Yes  |
+| PUT    | `/api/user/profile` | Update profile   | Yes  |
 
 ### Admin
 
-| Method | Endpoint | Description | Auth |
-|--------|----------|-------------|------|
-| GET | `/api/admin/users` | List all users | Yes (ADMIN) |
-| POST | `/api/admin/farms/{id}/verify` | Verify farm | Yes (ADMIN) |
+| Method | Endpoint                       | Description    | Auth        |
+| ------ | ------------------------------ | -------------- | ----------- |
+| GET    | `/api/admin/users`             | List all users | Yes (ADMIN) |
+| POST   | `/api/admin/farms/{id}/verify` | Verify farm    | Yes (ADMIN) |
 
 ---
 
@@ -288,56 +290,56 @@ All API endpoints return a standardized `ServiceResponse<T>` format:
 
 ### HTTP Status Codes
 
-| Code | Description | Common Scenarios |
-|------|-------------|------------------|
-| **200** | OK | Successful GET/PUT/PATCH |
-| **201** | Created | Successful POST |
-| **204** | No Content | Successful DELETE |
-| **400** | Bad Request | Validation error, invalid input |
-| **401** | Unauthorized | Missing or invalid token |
-| **403** | Forbidden | Insufficient permissions |
-| **404** | Not Found | Resource doesn't exist |
-| **409** | Conflict | Duplicate resource |
-| **422** | Unprocessable Entity | Business logic error |
-| **429** | Too Many Requests | Rate limit exceeded |
-| **500** | Internal Server Error | Server error |
-| **503** | Service Unavailable | Maintenance mode |
+| Code    | Description           | Common Scenarios                |
+| ------- | --------------------- | ------------------------------- |
+| **200** | OK                    | Successful GET/PUT/PATCH        |
+| **201** | Created               | Successful POST                 |
+| **204** | No Content            | Successful DELETE               |
+| **400** | Bad Request           | Validation error, invalid input |
+| **401** | Unauthorized          | Missing or invalid token        |
+| **403** | Forbidden             | Insufficient permissions        |
+| **404** | Not Found             | Resource doesn't exist          |
+| **409** | Conflict              | Duplicate resource              |
+| **422** | Unprocessable Entity  | Business logic error            |
+| **429** | Too Many Requests     | Rate limit exceeded             |
+| **500** | Internal Server Error | Server error                    |
+| **503** | Service Unavailable   | Maintenance mode                |
 
 ### Error Codes
 
-| Code | Description |
-|------|-------------|
-| `VALIDATION_ERROR` | Input validation failed |
-| `AUTHENTICATION_REQUIRED` | User must be authenticated |
-| `INSUFFICIENT_PERMISSIONS` | User lacks required permissions |
-| `RESOURCE_NOT_FOUND` | Requested resource doesn't exist |
-| `DUPLICATE_RESOURCE` | Resource already exists |
-| `BUSINESS_LOGIC_ERROR` | Business rule violation |
-| `RATE_LIMIT_EXCEEDED` | Too many requests |
-| `INTERNAL_ERROR` | Unexpected server error |
+| Code                       | Description                      |
+| -------------------------- | -------------------------------- |
+| `VALIDATION_ERROR`         | Input validation failed          |
+| `AUTHENTICATION_REQUIRED`  | User must be authenticated       |
+| `INSUFFICIENT_PERMISSIONS` | User lacks required permissions  |
+| `RESOURCE_NOT_FOUND`       | Requested resource doesn't exist |
+| `DUPLICATE_RESOURCE`       | Resource already exists          |
+| `BUSINESS_LOGIC_ERROR`     | Business rule violation          |
+| `RATE_LIMIT_EXCEEDED`      | Too many requests                |
+| `INTERNAL_ERROR`           | Unexpected server error          |
 
 ### Error Handling Example
 
 ```typescript
 try {
-  const response = await fetch('/api/farms', {
-    method: 'POST',
+  const response = await fetch("/api/farms", {
+    method: "POST",
     headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify(farmData)
+    body: JSON.stringify(farmData),
   });
 
   const result = await response.json();
 
   if (!result.success) {
-    console.error('Error:', result.error.code);
-    console.error('Message:', result.error.message);
-    console.error('Details:', result.error.details);
+    console.error("Error:", result.error.code);
+    console.error("Message:", result.error.message);
+    console.error("Details:", result.error.details);
   }
 } catch (error) {
-  console.error('Network error:', error);
+  console.error("Network error:", error);
 }
 ```
 
@@ -383,12 +385,12 @@ List endpoints support pagination via query parameters.
 
 ### Parameters
 
-| Parameter | Type | Default | Max | Description |
-|-----------|------|---------|-----|-------------|
-| `page` | integer | 1 | - | Page number (1-based) |
-| `pageSize` | integer | 20 | 100 | Items per page |
-| `sortBy` | string | - | - | Sort field |
-| `sortOrder` | enum | desc | - | `asc` or `desc` |
+| Parameter   | Type    | Default | Max | Description           |
+| ----------- | ------- | ------- | --- | --------------------- |
+| `page`      | integer | 1       | -   | Page number (1-based) |
+| `pageSize`  | integer | 20      | 100 | Items per page        |
+| `sortBy`    | string  | -       | -   | Sort field            |
+| `sortOrder` | enum    | desc    | -   | `asc` or `desc`       |
 
 ### Example Request
 
@@ -401,7 +403,9 @@ GET /api/farms?page=2&pageSize=50&sortBy=name&sortOrder=asc
 ```json
 {
   "success": true,
-  "data": [ /* farms */ ],
+  "data": [
+    /* farms */
+  ],
   "meta": {
     "pagination": {
       "page": 2,
@@ -495,27 +499,27 @@ npm install @farmersmarket/api-client
 ```
 
 ```typescript
-import { FarmersMarketAPI } from '@farmersmarket/api-client';
+import { FarmersMarketAPI } from "@farmersmarket/api-client";
 
 const api = new FarmersMarketAPI({
-  token: 'YOUR_JWT_TOKEN'
+  token: "YOUR_JWT_TOKEN",
 });
 
 // List farms
 const farms = await api.farms.list({
   page: 1,
   pageSize: 20,
-  status: 'ACTIVE'
+  status: "ACTIVE",
 });
 
 // Create product
 const product = await api.products.create({
-  name: 'Organic Tomatoes',
-  description: 'Fresh, locally grown',
+  name: "Organic Tomatoes",
+  description: "Fresh, locally grown",
   price: 4.99,
-  unit: 'LB',
-  farmId: 'farm_123',
-  categoryId: 'cat_456'
+  unit: "LB",
+  farmId: "farm_123",
+  categoryId: "cat_456",
 });
 ```
 
@@ -557,6 +561,7 @@ The API uses semantic versioning (SemVer):
 - **Bug fixes** increment patch version
 
 Version is included in response headers:
+
 ```http
 X-API-Version: 1.0.0
 ```

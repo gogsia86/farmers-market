@@ -40,7 +40,7 @@ const checkboxVariants = cva(
       variant: "default",
       checkboxSize: "default",
     },
-  }
+  },
 );
 
 // ============================================================================
@@ -48,8 +48,9 @@ const checkboxVariants = cva(
 // ============================================================================
 
 export interface CheckboxProps
-  extends React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root>,
-  VariantProps<typeof checkboxVariants> { }
+  extends
+    React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root>,
+    VariantProps<typeof checkboxVariants> {}
 
 const Checkbox = React.forwardRef<
   React.ElementRef<typeof CheckboxPrimitive.Root>,
@@ -97,7 +98,7 @@ const CheckboxGroup = React.forwardRef<HTMLDivElement, CheckboxGroupProps>(
       orientation = "vertical",
       className,
     },
-    ref
+    ref,
   ) => {
     const handleChange = (optionValue: string, checked: boolean) => {
       if (checked) {
@@ -113,7 +114,7 @@ const CheckboxGroup = React.forwardRef<HTMLDivElement, CheckboxGroupProps>(
         className={cn(
           "space-y-3",
           orientation === "horizontal" && "flex flex-wrap gap-6 space-y-0",
-          className
+          className,
         )}
       >
         {options.map((option: any) => (
@@ -132,7 +133,7 @@ const CheckboxGroup = React.forwardRef<HTMLDivElement, CheckboxGroupProps>(
                 htmlFor={`checkbox-${option.value}`}
                 className={cn(
                   "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer",
-                  option.disabled && "opacity-50 cursor-not-allowed"
+                  option.disabled && "opacity-50 cursor-not-allowed",
                 )}
               >
                 {option.label}
@@ -147,7 +148,7 @@ const CheckboxGroup = React.forwardRef<HTMLDivElement, CheckboxGroupProps>(
         ))}
       </div>
     );
-  }
+  },
 );
 CheckboxGroup.displayName = "CheckboxGroup";
 
@@ -184,7 +185,7 @@ const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>(
       orientation = "vertical",
       className,
     },
-    ref
+    ref,
   ) => {
     const variantStyles = {
       default: "text-primary",
@@ -199,7 +200,7 @@ const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>(
         className={cn(
           "space-y-3",
           orientation === "horizontal" && "flex flex-wrap gap-6 space-y-0",
-          className
+          className,
         )}
         role="radiogroup"
       >
@@ -217,7 +218,7 @@ const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>(
                 className={cn(
                   "h-4 w-4 border-gray-300 focus:ring-2 focus:ring-offset-2 transition-all duration-200 cursor-pointer",
                   variantStyles[variant],
-                  option.disabled && "opacity-50 cursor-not-allowed"
+                  option.disabled && "opacity-50 cursor-not-allowed",
                 )}
               />
             </div>
@@ -230,7 +231,7 @@ const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>(
                   htmlFor={`radio-${name}-${option.value}`}
                   className={cn(
                     "text-sm font-medium leading-none cursor-pointer",
-                    option.disabled && "opacity-50 cursor-not-allowed"
+                    option.disabled && "opacity-50 cursor-not-allowed",
                   )}
                 >
                   {option.label}
@@ -246,7 +247,7 @@ const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>(
         ))}
       </div>
     );
-  }
+  },
 );
 RadioGroup.displayName = "RadioGroup";
 
@@ -266,8 +267,16 @@ interface CardRadioGroupProps {
 
 const CardRadioGroup = React.forwardRef<HTMLDivElement, CardRadioGroupProps>(
   (
-    { options, value, onChange, name, variant = "default", columns = 2, className },
-    ref
+    {
+      options,
+      value,
+      onChange,
+      name,
+      variant = "default",
+      columns = 2,
+      className,
+    },
+    ref,
   ) => {
     const variantStyles = {
       default: "border-primary ring-primary",
@@ -284,7 +293,7 @@ const CardRadioGroup = React.forwardRef<HTMLDivElement, CardRadioGroupProps>(
             "grid-cols-1 md:grid-cols-2": columns === 2,
             "grid-cols-1 md:grid-cols-3": columns === 3,
           },
-          className
+          className,
         )}
         role="radiogroup"
       >
@@ -297,7 +306,7 @@ const CardRadioGroup = React.forwardRef<HTMLDivElement, CardRadioGroupProps>(
               value === option.value
                 ? `border-2 ring-2 ring-offset-2 ${variantStyles[variant]}`
                 : "border-gray-300",
-              option.disabled && "opacity-50 cursor-not-allowed"
+              option.disabled && "opacity-50 cursor-not-allowed",
             )}
           >
             <input
@@ -329,7 +338,7 @@ const CardRadioGroup = React.forwardRef<HTMLDivElement, CardRadioGroupProps>(
                   "h-5 w-5 flex-shrink-0 transition-all",
                   value === option.value
                     ? "text-primary fill-primary"
-                    : "text-gray-300"
+                    : "text-gray-300",
                 )}
               />
             </div>
@@ -337,7 +346,7 @@ const CardRadioGroup = React.forwardRef<HTMLDivElement, CardRadioGroupProps>(
         ))}
       </div>
     );
-  }
+  },
 );
 CardRadioGroup.displayName = "CardRadioGroup";
 
@@ -371,7 +380,7 @@ const AgriculturalCheckboxCard = React.forwardRef<
       disabled = false,
       className,
     },
-    ref
+    ref,
   ) => {
     return (
       <div
@@ -382,7 +391,7 @@ const AgriculturalCheckboxCard = React.forwardRef<
             ? "border-green-500 ring-2 ring-green-500 ring-offset-2"
             : "border-gray-300",
           disabled && "opacity-50 cursor-not-allowed",
-          className
+          className,
         )}
         onClick={() => !disabled && onCheckedChange(!checked)}
       >
@@ -417,7 +426,7 @@ const AgriculturalCheckboxCard = React.forwardRef<
         </div>
       </div>
     );
-  }
+  },
 );
 AgriculturalCheckboxCard.displayName = "AgriculturalCheckboxCard";
 
@@ -430,6 +439,5 @@ export {
   CardRadioGroup,
   Checkbox,
   CheckboxGroup,
-  RadioGroup
+  RadioGroup,
 };
-

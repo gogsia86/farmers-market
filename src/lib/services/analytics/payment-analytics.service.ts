@@ -158,7 +158,7 @@ export class PaymentAnalyticsService {
    * Calculate payment metrics for a given period
    */
   async calculatePaymentMetrics(
-    options: CalculatePaymentMetricsOptions
+    options: CalculatePaymentMetricsOptions,
   ): Promise<PaymentMetrics> {
     const { startDate, endDate, farmId, paymentMethod, status } = options;
 
@@ -207,15 +207,15 @@ export class PaymentAnalyticsService {
 
     // Calculate status counts
     const successfulTransactions = payments.filter(
-      (p) => p.status === "PAID"
+      (p) => p.status === "PAID",
     ).length;
 
     const failedTransactions = payments.filter(
-      (p) => p.status === "FAILED"
+      (p) => p.status === "FAILED",
     ).length;
 
     const pendingTransactions = payments.filter(
-      (p) => p.status === "PENDING" || p.status === "PROCESSING"
+      (p) => p.status === "PENDING" || p.status === "PROCESSING",
     ).length;
 
     const totalTransactions = payments.length;
@@ -258,7 +258,7 @@ export class PaymentAnalyticsService {
   async getPaymentMethodMetrics(
     startDate: Date,
     endDate: Date,
-    farmId?: string
+    farmId?: string,
   ): Promise<PaymentMethodMetrics[]> {
     const whereBase: Prisma.PaymentWhereInput = {
       createdAt: {
@@ -267,9 +267,7 @@ export class PaymentAnalyticsService {
       },
     };
 
-    const where = farmId
-      ? { ...whereBase, order: { farmId } }
-      : whereBase;
+    const where = farmId ? { ...whereBase, order: { farmId } } : whereBase;
 
     // Group by payment method
     const results = await database.payment.groupBy({
@@ -315,7 +313,7 @@ export class PaymentAnalyticsService {
           successRate,
           averageValue,
         };
-      })
+      }),
     );
 
     return methodMetrics as PaymentMethodMetrics[];
@@ -327,7 +325,7 @@ export class PaymentAnalyticsService {
   async getFarmRevenueMetrics(
     startDate: Date,
     endDate: Date,
-    limit: number = 10
+    limit: number = 10,
   ): Promise<FarmRevenueMetrics[]> {
     const payments = await database.payment.findMany({
       where: {
@@ -352,11 +350,14 @@ export class PaymentAnalyticsService {
     });
 
     // Group by farm
-    const farmMap = new Map<string, {
-      farmName: string;
-      totalRevenue: number;
-      transactionCount: number;
-    }>();
+    const farmMap = new Map<
+      string,
+      {
+        farmName: string;
+        totalRevenue: number;
+        transactionCount: number;
+      }
+    >();
 
     payments.forEach((payment: any) => {
       if (!payment.order?.farm) return;
@@ -399,7 +400,7 @@ export class PaymentAnalyticsService {
   async getPaymentTrends(
     startDate: Date,
     endDate: Date,
-    granularity: "day" | "week" | "month" = "day"
+    granularity: "day" | "week" | "month" = "day",
   ): Promise<PaymentTrendPoint[]> {
     const payments = await database.payment.findMany({
       where: {
@@ -419,17 +420,20 @@ export class PaymentAnalyticsService {
     });
 
     // Group by date
-    const trendMap = new Map<string, {
-      transactions: number;
-      revenue: number;
-      successfulTransactions: number;
-      failedTransactions: number;
-    }>();
+    const trendMap = new Map<
+      string,
+      {
+        transactions: number;
+        revenue: number;
+        successfulTransactions: number;
+        failedTransactions: number;
+      }
+    >();
 
     payments.forEach((payment: any) => {
       const dateKey = this.formatDateByGranularity(
         payment.createdAt,
-        granularity
+        granularity,
       );
 
       if (!trendMap.has(dateKey)) {
@@ -468,7 +472,7 @@ export class PaymentAnalyticsService {
    */
   async getTotalPlatformRevenue(
     startDate?: Date,
-    endDate?: Date
+    endDate?: Date,
   ): Promise<number> {
     const where: Prisma.PaymentWhereInput = {
       status: "PAID",
@@ -495,7 +499,7 @@ export class PaymentAnalyticsService {
    */
   async getPaymentSuccessRate(
     startDate?: Date,
-    endDate?: Date
+    endDate?: Date,
   ): Promise<number> {
     const where: Prisma.PaymentWhereInput = {};
 
@@ -523,7 +527,7 @@ export class PaymentAnalyticsService {
    */
   private formatDateByGranularity(
     date: Date,
-    granularity: "day" | "week" | "month"
+    granularity: "day" | "week" | "month",
   ): string {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -544,7 +548,7 @@ export class PaymentAnalyticsService {
    */
   private getWeekNumber(date: Date): number {
     const d = new Date(
-      Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
+      Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()),
     );
     const dayNum = d.getUTCDay() || 7;
     d.setUTCDate(d.getUTCDate() + 4 - dayNum);
@@ -556,7 +560,7 @@ export class PaymentAnalyticsService {
    * Get revenue by payment method (TEST EXPECTED METHOD)
    */
   async getRevenueByPaymentMethod(
-    filter: DateRangeFilter
+    filter: DateRangeFilter,
   ): Promise<RevenueByPaymentMethod[]> {
     const { startDate, endDate, farmId } = filter;
 
@@ -601,7 +605,7 @@ export class PaymentAnalyticsService {
     // Calculate totals for percentage
     const grandTotal = Array.from(methodMap.values()).reduce(
       (sum, item) => sum + item.totalAmount,
-      0
+      0,
     );
 
     // Convert to array with percentages
@@ -623,7 +627,7 @@ export class PaymentAnalyticsService {
    */
   async getTimeSeriesData(
     filter: DateRangeFilter,
-    interval: "hour" | "day" | "week" | "month"
+    interval: "hour" | "day" | "week" | "month",
   ): Promise<TimeSeriesDataPoint[]> {
     const { startDate, endDate, farmId } = filter;
 
@@ -657,11 +661,14 @@ export class PaymentAnalyticsService {
     }
 
     // Group by time interval
-    const timeMap = new Map<string, {
-      revenue: number;
-      transactionCount: number;
-      successCount: number;
-    }>();
+    const timeMap = new Map<
+      string,
+      {
+        revenue: number;
+        transactionCount: number;
+        successCount: number;
+      }
+    >();
 
     payments.forEach((payment: any) => {
       const timeKey = this.formatDateByInterval(payment.createdAt, interval);
@@ -704,7 +711,7 @@ export class PaymentAnalyticsService {
    */
   async getTopFarmsByRevenue(
     filter: DateRangeFilter,
-    limit: number = 10
+    limit: number = 10,
   ): Promise<TopFarmByRevenue[]> {
     const { startDate, endDate } = filter;
 
@@ -731,11 +738,14 @@ export class PaymentAnalyticsService {
     });
 
     // Group by farm
-    const farmMap = new Map<string, {
-      farmName: string;
-      totalRevenue: number;
-      transactionCount: number;
-    }>();
+    const farmMap = new Map<
+      string,
+      {
+        farmName: string;
+        totalRevenue: number;
+        transactionCount: number;
+      }
+    >();
 
     payments.forEach((payment: any) => {
       if (!payment.order || !payment.order.farm) return;
@@ -787,7 +797,7 @@ export class PaymentAnalyticsService {
       includeTimeSeries?: boolean;
       includeTrends?: boolean;
       includeTopFarms?: boolean;
-    }
+    },
   ): Promise<ComprehensiveAnalyticsResponse> {
     try {
       const { startDate, endDate, farmId } = filter;
@@ -848,7 +858,7 @@ export class PaymentAnalyticsService {
    */
   private formatDateByInterval(
     date: Date,
-    interval: "hour" | "day" | "week" | "month"
+    interval: "hour" | "day" | "week" | "month",
   ): string {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -870,7 +880,10 @@ export class PaymentAnalyticsService {
   /**
    * Parse time key back to Date
    */
-  private parseTimeKey(timeKey: string, interval: "hour" | "day" | "week" | "month"): Date {
+  private parseTimeKey(
+    timeKey: string,
+    interval: "hour" | "day" | "week" | "month",
+  ): Date {
     if (interval === "hour") {
       // Format: 2024-01-15T10
       const parts = timeKey.split("T");

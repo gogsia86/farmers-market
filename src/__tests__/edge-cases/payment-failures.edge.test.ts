@@ -14,10 +14,17 @@
  * @module __tests__/edge-cases/payment-failures.edge.test
  */
 
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from '@jest/globals';
+import {
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+} from "@jest/globals";
 
 // Mock Stripe before imports
-jest.mock('stripe', () => {
+jest.mock("stripe", () => {
   const mockStripe = {
     paymentIntents: {
       create: jest.fn(),
@@ -40,7 +47,14 @@ jest.mock('stripe', () => {
 // Types
 interface PaymentIntent {
   id: string;
-  status: 'requires_payment_method' | 'requires_confirmation' | 'requires_action' | 'processing' | 'succeeded' | 'canceled' | 'failed';
+  status:
+    | "requires_payment_method"
+    | "requires_confirmation"
+    | "requires_action"
+    | "processing"
+    | "succeeded"
+    | "canceled"
+    | "failed";
   amount: number;
   currency: string;
   metadata?: Record<string, string>;
@@ -49,7 +63,7 @@ interface PaymentIntent {
 interface Order {
   id: string;
   userId: string;
-  status: 'PENDING' | 'PROCESSING' | 'PAID' | 'FAILED' | 'CANCELED';
+  status: "PENDING" | "PROCESSING" | "PAID" | "FAILED" | "CANCELED";
   total: number;
   paymentIntentId?: string;
   items: OrderItem[];
@@ -97,23 +111,26 @@ class PaymentService {
     this.stripe = stripeInstance;
   }
 
-  async createPaymentIntent(orderId: string, amount: number): Promise<PaymentIntent> {
+  async createPaymentIntent(
+    orderId: string,
+    amount: number,
+  ): Promise<PaymentIntent> {
     const order = await mockDatabase.order.findUnique({
       where: { id: orderId },
       include: { items: true },
     });
 
     if (!order) {
-      throw new Error('Order not found');
+      throw new Error("Order not found");
     }
 
-    if (order.status !== 'PENDING') {
-      throw new Error('Order is not in pending state');
+    if (order.status !== "PENDING") {
+      throw new Error("Order is not in pending state");
     }
 
     const paymentIntent = await this.stripe.paymentIntents.create({
       amount: amount * 100, // Convert to cents
-      currency: 'usd',
+      currency: "usd",
       metadata: { orderId },
     });
 
@@ -121,7 +138,7 @@ class PaymentService {
       where: { id: orderId },
       data: {
         paymentIntentId: paymentIntent.id,
-        status: 'PROCESSING',
+        status: "PROCESSING",
       },
     });
 
@@ -129,14 +146,15 @@ class PaymentService {
   }
 
   async handlePaymentSuccess(paymentIntentId: string): Promise<void> {
-    const paymentIntent = await this.stripe.paymentIntents.retrieve(paymentIntentId);
+    const paymentIntent =
+      await this.stripe.paymentIntents.retrieve(paymentIntentId);
     const orderId = paymentIntent.metadata.orderId;
 
     await mockDatabase.$transaction(async (tx: any) => {
       // Update order status
       await mockDatabase.order.update({
         where: { id: orderId },
-        data: { status: 'PAID' },
+        data: { status: "PAID" },
       });
 
       // Record payment
@@ -145,14 +163,18 @@ class PaymentService {
           orderId,
           paymentIntentId,
           amount: paymentIntent.amount / 100,
-          status: 'SUCCEEDED',
+          status: "SUCCEEDED",
         },
       });
     });
   }
 
-  async handlePaymentFailure(paymentIntentId: string, reason: string): Promise<void> {
-    const paymentIntent = await this.stripe.paymentIntents.retrieve(paymentIntentId);
+  async handlePaymentFailure(
+    paymentIntentId: string,
+    reason: string,
+  ): Promise<void> {
+    const paymentIntent =
+      await this.stripe.paymentIntents.retrieve(paymentIntentId);
     const orderId = paymentIntent.metadata.orderId;
 
     await mockDatabase.$transaction(async (tx: any) => {
@@ -177,7 +199,7 @@ class PaymentService {
       // Update order status
       await mockDatabase.order.update({
         where: { id: orderId },
-        data: { status: 'FAILED' },
+        data: { status: "FAILED" },
       });
 
       // Record failed payment
@@ -186,7 +208,7 @@ class PaymentService {
           orderId,
           paymentIntentId,
           amount: paymentIntent.amount / 100,
-          status: 'FAILED',
+          status: "FAILED",
           failureReason: reason,
         },
       });
@@ -200,11 +222,11 @@ class PaymentService {
     });
 
     if (!order || !order.paymentIntentId) {
-      throw new Error('Payment not found');
+      throw new Error("Payment not found");
     }
 
-    if (order.status !== 'PAID') {
-      throw new Error('Order must be paid to refund');
+    if (order.status !== "PAID") {
+      throw new Error("Order must be paid to refund");
     }
 
     const refund = await this.stripe.refunds.create({
@@ -215,7 +237,8 @@ class PaymentService {
     await mockDatabase.payment.update({
       where: { orderId },
       data: {
-        status: amount && amount < order.total ? 'PARTIALLY_REFUNDED' : 'REFUNDED',
+        status:
+          amount && amount < order.total ? "PARTIALLY_REFUNDED" : "REFUNDED",
         refundedAmount: amount || order.total,
       },
     });
@@ -223,7 +246,7 @@ class PaymentService {
     if (!amount || amount === order.total) {
       await mockDatabase.order.update({
         where: { id: orderId },
-        data: { status: 'CANCELED' },
+        data: { status: "CANCELED" },
       });
     }
   }
@@ -232,33 +255,36 @@ class PaymentService {
     const event = this.stripe.webhooks.constructEvent(
       payload,
       signature,
-      process.env.STRIPE_WEBHOOK_SECRET
+      process.env.STRIPE_WEBHOOK_SECRET,
     );
 
     switch (event.type) {
-      case 'payment_intent.succeeded':
+      case "payment_intent.succeeded":
         await this.handlePaymentSuccess(event.data.object.id);
         break;
-      case 'payment_intent.payment_failed':
+      case "payment_intent.payment_failed":
         await this.handlePaymentFailure(
           event.data.object.id,
-          event.data.object.last_payment_error?.message || 'Unknown error'
+          event.data.object.last_payment_error?.message || "Unknown error",
         );
         break;
-      case 'payment_intent.canceled':
-        await this.handlePaymentFailure(event.data.object.id, 'Payment canceled');
+      case "payment_intent.canceled":
+        await this.handlePaymentFailure(
+          event.data.object.id,
+          "Payment canceled",
+        );
         break;
     }
   }
 }
 
-describe('Payment Failure Edge Cases', () => {
+describe("Payment Failure Edge Cases", () => {
   let paymentService: PaymentService;
   let mockStripe: any;
 
   beforeAll(() => {
     // Import Stripe mock
-    const Stripe = require('stripe').default;
+    const Stripe = require("stripe").default;
     mockStripe = Stripe();
   });
 
@@ -276,279 +302,277 @@ describe('Payment Failure Edge Cases', () => {
     jest.clearAllTimers();
   });
 
-  describe('Payment Intent Creation Failures', () => {
-    it('should fail payment intent creation for non-existent order', async () => {
+  describe("Payment Intent Creation Failures", () => {
+    it("should fail payment intent creation for non-existent order", async () => {
       mockDatabase.order.findUnique.mockResolvedValue(null);
 
       await expect(
-        paymentService.createPaymentIntent('order_nonexistent', 100)
-      ).rejects.toThrow('Order not found');
+        paymentService.createPaymentIntent("order_nonexistent", 100),
+      ).rejects.toThrow("Order not found");
 
       expect(mockStripe.paymentIntents.create).not.toHaveBeenCalled();
     });
 
-    it('should fail payment intent creation for already processed order', async () => {
+    it("should fail payment intent creation for already processed order", async () => {
       mockDatabase.order.findUnique.mockResolvedValue({
-        id: 'order_123',
-        status: 'PAID',
+        id: "order_123",
+        status: "PAID",
         total: 100,
       });
 
       await expect(
-        paymentService.createPaymentIntent('order_123', 100)
-      ).rejects.toThrow('Order is not in pending state');
+        paymentService.createPaymentIntent("order_123", 100),
+      ).rejects.toThrow("Order is not in pending state");
     });
 
-    it('should handle Stripe API failure during intent creation', async () => {
+    it("should handle Stripe API failure during intent creation", async () => {
       mockDatabase.order.findUnique.mockResolvedValue({
-        id: 'order_123',
-        status: 'PENDING',
+        id: "order_123",
+        status: "PENDING",
         total: 100,
       });
 
       mockStripe.paymentIntents.create.mockRejectedValue(
-        new Error('Stripe API error: Rate limit exceeded')
+        new Error("Stripe API error: Rate limit exceeded"),
       );
 
       await expect(
-        paymentService.createPaymentIntent('order_123', 100)
-      ).rejects.toThrow('Stripe API error');
+        paymentService.createPaymentIntent("order_123", 100),
+      ).rejects.toThrow("Stripe API error");
 
       // Order should not be updated on Stripe failure
       expect(mockDatabase.order.update).not.toHaveBeenCalled();
     });
 
-    it('should handle network timeout during intent creation', async () => {
+    it("should handle network timeout during intent creation", async () => {
       mockDatabase.order.findUnique.mockResolvedValue({
-        id: 'order_123',
-        status: 'PENDING',
+        id: "order_123",
+        status: "PENDING",
         total: 100,
       });
 
-      const timeoutError = new Error('Network timeout');
-      (timeoutError as any).code = 'ETIMEDOUT';
+      const timeoutError = new Error("Network timeout");
+      (timeoutError as any).code = "ETIMEDOUT";
       mockStripe.paymentIntents.create.mockRejectedValue(timeoutError);
 
       await expect(
-        paymentService.createPaymentIntent('order_123', 100)
-      ).rejects.toThrow('Network timeout');
+        paymentService.createPaymentIntent("order_123", 100),
+      ).rejects.toThrow("Network timeout");
     });
   });
 
-  describe('Payment Method Failures', () => {
-    it('should handle insufficient funds error', async () => {
-      const paymentIntentId = 'pi_insufficient_funds';
+  describe("Payment Method Failures", () => {
+    it("should handle insufficient funds error", async () => {
+      const paymentIntentId = "pi_insufficient_funds";
 
       mockStripe.paymentIntents.retrieve.mockResolvedValue({
         id: paymentIntentId,
-        status: 'failed',
+        status: "failed",
         amount: 10000,
-        currency: 'usd',
-        metadata: { orderId: 'order_123' },
+        currency: "usd",
+        metadata: { orderId: "order_123" },
         last_payment_error: {
-          code: 'card_declined',
-          decline_code: 'insufficient_funds',
-          message: 'Your card has insufficient funds',
+          code: "card_declined",
+          decline_code: "insufficient_funds",
+          message: "Your card has insufficient funds",
         },
       });
 
       mockDatabase.order.findUnique.mockResolvedValue({
-        id: 'order_123',
-        status: 'PROCESSING',
-        items: [
-          { productId: 'prod_1', quantity: 2, price: 50 },
-        ],
+        id: "order_123",
+        status: "PROCESSING",
+        items: [{ productId: "prod_1", quantity: 2, price: 50 }],
       });
 
       await paymentService.handlePaymentFailure(
         paymentIntentId,
-        'Your card has insufficient funds'
+        "Your card has insufficient funds",
       );
 
       // Verify inventory restored
       expect(mockDatabase.product.update).toHaveBeenCalledWith({
-        where: { id: 'prod_1' },
+        where: { id: "prod_1" },
         data: { inventory: { increment: 2 } },
       });
 
       // Verify order marked as failed
       expect(mockDatabase.order.update).toHaveBeenCalledWith({
-        where: { id: 'order_123' },
-        data: { status: 'FAILED' },
+        where: { id: "order_123" },
+        data: { status: "FAILED" },
       });
 
       // Verify payment record created
       expect(mockDatabase.payment.create).toHaveBeenCalledWith({
         data: expect.objectContaining({
-          orderId: 'order_123',
-          status: 'FAILED',
-          failureReason: 'Your card has insufficient funds',
+          orderId: "order_123",
+          status: "FAILED",
+          failureReason: "Your card has insufficient funds",
         }),
       });
     });
 
-    it('should handle expired card error', async () => {
-      const paymentIntentId = 'pi_expired_card';
+    it("should handle expired card error", async () => {
+      const paymentIntentId = "pi_expired_card";
 
       mockStripe.paymentIntents.retrieve.mockResolvedValue({
         id: paymentIntentId,
-        status: 'failed',
+        status: "failed",
         amount: 5000,
-        currency: 'usd',
-        metadata: { orderId: 'order_456' },
+        currency: "usd",
+        metadata: { orderId: "order_456" },
         last_payment_error: {
-          code: 'card_declined',
-          decline_code: 'expired_card',
-          message: 'Your card has expired',
+          code: "card_declined",
+          decline_code: "expired_card",
+          message: "Your card has expired",
         },
       });
 
       mockDatabase.order.findUnique.mockResolvedValue({
-        id: 'order_456',
-        status: 'PROCESSING',
-        items: [
-          { productId: 'prod_2', quantity: 1, price: 50 },
-        ],
+        id: "order_456",
+        status: "PROCESSING",
+        items: [{ productId: "prod_2", quantity: 1, price: 50 }],
       });
 
       await paymentService.handlePaymentFailure(
         paymentIntentId,
-        'Your card has expired'
+        "Your card has expired",
       );
 
       expect(mockDatabase.order.update).toHaveBeenCalledWith({
-        where: { id: 'order_456' },
-        data: { status: 'FAILED' },
+        where: { id: "order_456" },
+        data: { status: "FAILED" },
       });
     });
 
-    it('should handle fraudulent payment detection', async () => {
-      const paymentIntentId = 'pi_fraud_detected';
+    it("should handle fraudulent payment detection", async () => {
+      const paymentIntentId = "pi_fraud_detected";
 
       mockStripe.paymentIntents.retrieve.mockResolvedValue({
         id: paymentIntentId,
-        status: 'canceled',
+        status: "canceled",
         amount: 20000,
-        currency: 'usd',
-        metadata: { orderId: 'order_789' },
+        currency: "usd",
+        metadata: { orderId: "order_789" },
         last_payment_error: {
-          code: 'card_declined',
-          decline_code: 'fraudulent',
-          message: 'Payment blocked due to suspected fraud',
+          code: "card_declined",
+          decline_code: "fraudulent",
+          message: "Payment blocked due to suspected fraud",
         },
       });
 
       mockDatabase.order.findUnique.mockResolvedValue({
-        id: 'order_789',
-        status: 'PROCESSING',
-        items: [
-          { productId: 'prod_3', quantity: 5, price: 40 },
-        ],
+        id: "order_789",
+        status: "PROCESSING",
+        items: [{ productId: "prod_3", quantity: 5, price: 40 }],
       });
 
       await paymentService.handlePaymentFailure(
         paymentIntentId,
-        'Payment blocked due to suspected fraud'
+        "Payment blocked due to suspected fraud",
       );
 
       expect(mockDatabase.payment.create).toHaveBeenCalledWith({
         data: expect.objectContaining({
-          failureReason: 'Payment blocked due to suspected fraud',
+          failureReason: "Payment blocked due to suspected fraud",
         }),
       });
     });
   });
 
-  describe('Webhook Handling Failures', () => {
-    it('should reject webhook with invalid signature', async () => {
+  describe("Webhook Handling Failures", () => {
+    it("should reject webhook with invalid signature", async () => {
       const payload = JSON.stringify({
-        type: 'payment_intent.succeeded',
-        data: { object: { id: 'pi_123' } },
+        type: "payment_intent.succeeded",
+        data: { object: { id: "pi_123" } },
       });
 
       mockStripe.webhooks.constructEvent.mockImplementation(() => {
-        throw new Error('Invalid signature');
+        throw new Error("Invalid signature");
       });
 
       await expect(
-        paymentService.handleWebhook('invalid_signature', payload)
-      ).rejects.toThrow('Invalid signature');
+        paymentService.handleWebhook("invalid_signature", payload),
+      ).rejects.toThrow("Invalid signature");
 
       expect(mockDatabase.order.update).not.toHaveBeenCalled();
     });
 
-    it('should handle duplicate webhook delivery (idempotency)', async () => {
+    it("should handle duplicate webhook delivery (idempotency)", async () => {
       const webhookEvent = {
-        id: 'evt_123',
-        type: 'payment_intent.succeeded',
+        id: "evt_123",
+        type: "payment_intent.succeeded",
         data: {
           object: {
-            id: 'pi_123',
-            status: 'succeeded',
-            metadata: { orderId: 'order_123' },
+            id: "pi_123",
+            status: "succeeded",
+            metadata: { orderId: "order_123" },
           },
         },
       };
 
       mockStripe.webhooks.constructEvent.mockReturnValue(webhookEvent);
-      mockStripe.paymentIntents.retrieve.mockResolvedValue(webhookEvent.data.object);
+      mockStripe.paymentIntents.retrieve.mockResolvedValue(
+        webhookEvent.data.object,
+      );
 
       mockDatabase.order.findUnique.mockResolvedValue({
-        id: 'order_123',
-        status: 'PAID', // Already processed
+        id: "order_123",
+        status: "PAID", // Already processed
       });
 
       // First webhook
-      await paymentService.handleWebhook('sig_1', JSON.stringify(webhookEvent));
+      await paymentService.handleWebhook("sig_1", JSON.stringify(webhookEvent));
 
       // Duplicate webhook
-      await paymentService.handleWebhook('sig_1', JSON.stringify(webhookEvent));
+      await paymentService.handleWebhook("sig_1", JSON.stringify(webhookEvent));
 
       // Should only update once (implement idempotency in real code)
       // This test documents the expected behavior
     });
 
-    it('should handle out-of-order webhook delivery', async () => {
+    it("should handle out-of-order webhook delivery", async () => {
       // Simulate receiving payment_failed before payment_processing
       const failedEvent = {
-        id: 'evt_failed',
-        type: 'payment_intent.payment_failed',
+        id: "evt_failed",
+        type: "payment_intent.payment_failed",
         data: {
           object: {
-            id: 'pi_123',
-            status: 'failed',
+            id: "pi_123",
+            status: "failed",
             amount: 10000,
-            currency: 'usd',
-            metadata: { orderId: 'order_123' },
-            last_payment_error: { message: 'Card declined' },
+            currency: "usd",
+            metadata: { orderId: "order_123" },
+            last_payment_error: { message: "Card declined" },
           },
         },
       };
 
       mockStripe.webhooks.constructEvent.mockReturnValue(failedEvent);
-      mockStripe.paymentIntents.retrieve.mockResolvedValue(failedEvent.data.object);
+      mockStripe.paymentIntents.retrieve.mockResolvedValue(
+        failedEvent.data.object,
+      );
 
       mockDatabase.order.findUnique.mockResolvedValue({
-        id: 'order_123',
-        status: 'PROCESSING',
-        items: [{ productId: 'prod_1', quantity: 1, price: 100 }],
+        id: "order_123",
+        status: "PROCESSING",
+        items: [{ productId: "prod_1", quantity: 1, price: 100 }],
       });
 
-      await paymentService.handleWebhook('sig_1', JSON.stringify(failedEvent));
+      await paymentService.handleWebhook("sig_1", JSON.stringify(failedEvent));
 
       expect(mockDatabase.order.update).toHaveBeenCalledWith({
-        where: { id: 'order_123' },
-        data: { status: 'FAILED' },
+        where: { id: "order_123" },
+        data: { status: "FAILED" },
       });
     });
 
-    it('should handle webhook processing timeout', async () => {
+    it("should handle webhook processing timeout", async () => {
       const event = {
-        type: 'payment_intent.succeeded',
+        type: "payment_intent.succeeded",
         data: {
           object: {
-            id: 'pi_timeout',
-            metadata: { orderId: 'order_timeout' },
+            id: "pi_timeout",
+            metadata: { orderId: "order_timeout" },
           },
         },
       };
@@ -563,7 +587,10 @@ describe('Payment Failure Edge Cases', () => {
 
       jest.useFakeTimers();
 
-      const webhookPromise = paymentService.handleWebhook('sig_1', JSON.stringify(event));
+      const webhookPromise = paymentService.handleWebhook(
+        "sig_1",
+        JSON.stringify(event),
+      );
 
       jest.advanceTimersByTime(30000);
 
@@ -573,71 +600,71 @@ describe('Payment Failure Edge Cases', () => {
     });
   });
 
-  describe('Refund Failures', () => {
-    it('should handle full refund successfully', async () => {
+  describe("Refund Failures", () => {
+    it("should handle full refund successfully", async () => {
       mockDatabase.order.findUnique.mockResolvedValue({
-        id: 'order_refund',
-        status: 'PAID',
+        id: "order_refund",
+        status: "PAID",
         total: 100,
-        paymentIntentId: 'pi_refund',
+        paymentIntentId: "pi_refund",
         payment: {
-          orderId: 'order_refund',
-          status: 'SUCCEEDED',
+          orderId: "order_refund",
+          status: "SUCCEEDED",
         },
       });
 
       mockStripe.refunds.create.mockResolvedValue({
-        id: 'ref_123',
+        id: "ref_123",
         amount: 10000,
-        status: 'succeeded',
+        status: "succeeded",
       });
 
-      await paymentService.refundPayment('order_refund');
+      await paymentService.refundPayment("order_refund");
 
       expect(mockStripe.refunds.create).toHaveBeenCalledWith({
-        payment_intent: 'pi_refund',
+        payment_intent: "pi_refund",
         amount: undefined, // Full refund
       });
 
       expect(mockDatabase.payment.update).toHaveBeenCalledWith({
-        where: { orderId: 'order_refund' },
+        where: { orderId: "order_refund" },
         data: {
-          status: 'REFUNDED',
+          status: "REFUNDED",
           refundedAmount: 100,
         },
       });
 
       expect(mockDatabase.order.update).toHaveBeenCalledWith({
-        where: { id: 'order_refund' },
-        data: { status: 'CANCELED' },
+        where: { id: "order_refund" },
+        data: { status: "CANCELED" },
       });
     });
 
-    it('should handle partial refund successfully', async () => {
+    it("should handle partial refund successfully", async () => {
       mockDatabase.order.findUnique.mockResolvedValue({
-        id: 'order_partial',
-        status: 'PAID',
+        id: "order_partial",
+        status: "PAID",
         total: 100,
-        paymentIntentId: 'pi_partial',
+        paymentIntentId: "pi_partial",
       });
 
       mockStripe.refunds.create.mockResolvedValue({
-        id: 'ref_partial',
+        id: "ref_partial",
         amount: 5000,
-        status: 'succeeded',
+        status: "succeeded",
       });
 
-      await paymentService.refundPayment('order_partial', 50);
+      await paymentService.refundPayment("order_partial", 50);
 
       expect(mockStripe.refunds.create).toHaveBeenCalledWith({
-        payment_intent: 'pi_partial',
+        payment_intent: "pi_partial",
         amount: 5000,
       });
 
       expect(mockDatabase.payment.update).toHaveBeenCalledWith({
-        where: { orderId: 'order_partial' },
+        where: { orderId: "order_partial" },
         data: {
-          status: 'PARTIALLY_REFUNDED',
+          status: "PARTIALLY_REFUNDED",
           refundedAmount: 50,
         },
       });
@@ -646,45 +673,45 @@ describe('Payment Failure Edge Cases', () => {
       expect(mockDatabase.order.update).not.toHaveBeenCalled();
     });
 
-    it('should fail refund for non-paid order', async () => {
+    it("should fail refund for non-paid order", async () => {
       mockDatabase.order.findUnique.mockResolvedValue({
-        id: 'order_pending',
-        status: 'PENDING',
+        id: "order_pending",
+        status: "PENDING",
         total: 100,
       });
 
       await expect(
-        paymentService.refundPayment('order_pending')
-      ).rejects.toThrow('Order must be paid to refund');
+        paymentService.refundPayment("order_pending"),
+      ).rejects.toThrow("Order must be paid to refund");
 
       expect(mockStripe.refunds.create).not.toHaveBeenCalled();
     });
 
-    it('should handle Stripe refund failure', async () => {
+    it("should handle Stripe refund failure", async () => {
       mockDatabase.order.findUnique.mockResolvedValue({
-        id: 'order_refund_fail',
-        status: 'PAID',
+        id: "order_refund_fail",
+        status: "PAID",
         total: 100,
-        paymentIntentId: 'pi_refund_fail',
+        paymentIntentId: "pi_refund_fail",
       });
 
       mockStripe.refunds.create.mockRejectedValue(
-        new Error('Refund already issued')
+        new Error("Refund already issued"),
       );
 
       await expect(
-        paymentService.refundPayment('order_refund_fail')
-      ).rejects.toThrow('Refund already issued');
+        paymentService.refundPayment("order_refund_fail"),
+      ).rejects.toThrow("Refund already issued");
 
       expect(mockDatabase.payment.update).not.toHaveBeenCalled();
     });
   });
 
-  describe('Concurrent Payment Attempts', () => {
-    it('should prevent multiple payment intents for same order', async () => {
+  describe("Concurrent Payment Attempts", () => {
+    it("should prevent multiple payment intents for same order", async () => {
       const order = {
-        id: 'order_concurrent',
-        status: 'PENDING',
+        id: "order_concurrent",
+        status: "PENDING",
         total: 100,
         items: [],
       };
@@ -692,34 +719,42 @@ describe('Payment Failure Edge Cases', () => {
       mockDatabase.order.findUnique.mockResolvedValue(order);
 
       mockStripe.paymentIntents.create
-        .mockResolvedValueOnce({ id: 'pi_1', status: 'requires_payment_method' })
-        .mockResolvedValueOnce({ id: 'pi_2', status: 'requires_payment_method' });
+        .mockResolvedValueOnce({
+          id: "pi_1",
+          status: "requires_payment_method",
+        })
+        .mockResolvedValueOnce({
+          id: "pi_2",
+          status: "requires_payment_method",
+        });
 
       // Simulate concurrent requests
       const [result1, result2] = await Promise.allSettled([
-        paymentService.createPaymentIntent('order_concurrent', 100),
-        paymentService.createPaymentIntent('order_concurrent', 100),
+        paymentService.createPaymentIntent("order_concurrent", 100),
+        paymentService.createPaymentIntent("order_concurrent", 100),
       ]);
 
       // One should succeed, one should fail or be idempotent
       // In production, implement proper locking mechanism
-      expect(result1.status === 'fulfilled' || result2.status === 'fulfilled').toBe(true);
+      expect(
+        result1.status === "fulfilled" || result2.status === "fulfilled",
+      ).toBe(true);
     });
 
-    it('should handle race condition in payment confirmation', async () => {
-      const paymentIntentId = 'pi_race';
+    it("should handle race condition in payment confirmation", async () => {
+      const paymentIntentId = "pi_race";
       const order = {
-        id: 'order_race',
-        status: 'PROCESSING',
+        id: "order_race",
+        status: "PROCESSING",
         items: [],
       };
 
       mockStripe.paymentIntents.retrieve.mockResolvedValue({
         id: paymentIntentId,
-        status: 'succeeded',
+        status: "succeeded",
         amount: 10000,
-        currency: 'usd',
-        metadata: { orderId: 'order_race' },
+        currency: "usd",
+        metadata: { orderId: "order_race" },
       });
 
       mockDatabase.order.findUnique.mockResolvedValue(order);
@@ -735,89 +770,90 @@ describe('Payment Failure Edge Cases', () => {
     });
   });
 
-  describe('Inventory Rollback on Payment Failure', () => {
-    it('should restore inventory when payment fails', async () => {
-      const paymentIntentId = 'pi_inventory_rollback';
+  describe("Inventory Rollback on Payment Failure", () => {
+    it("should restore inventory when payment fails", async () => {
+      const paymentIntentId = "pi_inventory_rollback";
 
       mockStripe.paymentIntents.retrieve.mockResolvedValue({
         id: paymentIntentId,
-        status: 'failed',
+        status: "failed",
         amount: 10000,
-        currency: 'usd',
-        metadata: { orderId: 'order_inventory' },
+        currency: "usd",
+        metadata: { orderId: "order_inventory" },
       });
 
       mockDatabase.order.findUnique.mockResolvedValue({
-        id: 'order_inventory',
-        status: 'PROCESSING',
+        id: "order_inventory",
+        status: "PROCESSING",
         items: [
-          { productId: 'prod_1', quantity: 5, price: 20 },
-          { productId: 'prod_2', quantity: 3, price: 10 },
+          { productId: "prod_1", quantity: 5, price: 20 },
+          { productId: "prod_2", quantity: 3, price: 10 },
         ],
       });
 
-      await paymentService.handlePaymentFailure(paymentIntentId, 'Payment failed');
+      await paymentService.handlePaymentFailure(
+        paymentIntentId,
+        "Payment failed",
+      );
 
       // Verify all products have inventory restored
       expect(mockDatabase.product.update).toHaveBeenCalledTimes(2);
       expect(mockDatabase.product.update).toHaveBeenCalledWith({
-        where: { id: 'prod_1' },
+        where: { id: "prod_1" },
         data: { inventory: { increment: 5 } },
       });
       expect(mockDatabase.product.update).toHaveBeenCalledWith({
-        where: { id: 'prod_2' },
+        where: { id: "prod_2" },
         data: { inventory: { increment: 3 } },
       });
     });
 
-    it('should rollback all changes if inventory restore fails', async () => {
-      const paymentIntentId = 'pi_rollback_fail';
+    it("should rollback all changes if inventory restore fails", async () => {
+      const paymentIntentId = "pi_rollback_fail";
 
       mockStripe.paymentIntents.retrieve.mockResolvedValue({
         id: paymentIntentId,
-        status: 'failed',
+        status: "failed",
         amount: 10000,
-        currency: 'usd',
-        metadata: { orderId: 'order_rollback' },
+        currency: "usd",
+        metadata: { orderId: "order_rollback" },
       });
 
       mockDatabase.order.findUnique.mockResolvedValue({
-        id: 'order_rollback',
-        status: 'PROCESSING',
-        items: [
-          { productId: 'prod_fail', quantity: 2, price: 50 },
-        ],
+        id: "order_rollback",
+        status: "PROCESSING",
+        items: [{ productId: "prod_fail", quantity: 2, price: 50 }],
       });
 
       // Simulate inventory update failure
       mockDatabase.product.update.mockRejectedValue(
-        new Error('Product not found')
+        new Error("Product not found"),
       );
 
       // Transaction should rollback
       mockDatabase.$transaction.mockRejectedValue(
-        new Error('Transaction failed: Product not found')
+        new Error("Transaction failed: Product not found"),
       );
 
       await expect(
-        paymentService.handlePaymentFailure(paymentIntentId, 'Payment failed')
-      ).rejects.toThrow('Transaction failed');
+        paymentService.handlePaymentFailure(paymentIntentId, "Payment failed"),
+      ).rejects.toThrow("Transaction failed");
 
       // Order should not be updated if transaction fails
       expect(mockDatabase.order.update).not.toHaveBeenCalled();
     });
   });
 
-  describe('Payment Status Consistency', () => {
-    it('should maintain consistency between order and payment status', async () => {
-      const paymentIntentId = 'pi_consistency';
+  describe("Payment Status Consistency", () => {
+    it("should maintain consistency between order and payment status", async () => {
+      const paymentIntentId = "pi_consistency";
 
       mockStripe.paymentIntents.retrieve.mockResolvedValue({
         id: paymentIntentId,
-        status: 'succeeded',
+        status: "succeeded",
         amount: 10000,
-        currency: 'usd',
-        metadata: { orderId: 'order_consistent' },
+        currency: "usd",
+        metadata: { orderId: "order_consistent" },
       });
 
       await paymentService.handlePaymentSuccess(paymentIntentId);
@@ -825,29 +861,29 @@ describe('Payment Failure Edge Cases', () => {
       // Verify both order and payment are updated atomically
       expect(mockDatabase.$transaction).toHaveBeenCalled();
       expect(mockDatabase.order.update).toHaveBeenCalledWith({
-        where: { id: 'order_consistent' },
-        data: { status: 'PAID' },
+        where: { id: "order_consistent" },
+        data: { status: "PAID" },
       });
       expect(mockDatabase.payment.create).toHaveBeenCalledWith({
         data: expect.objectContaining({
-          orderId: 'order_consistent',
-          status: 'SUCCEEDED',
+          orderId: "order_consistent",
+          status: "SUCCEEDED",
         }),
       });
     });
 
-    it('should handle payment timeout gracefully', async () => {
+    it("should handle payment timeout gracefully", async () => {
       // Simulate payment that takes too long
-      const paymentIntentId = 'pi_timeout';
+      const paymentIntentId = "pi_timeout";
 
       mockStripe.paymentIntents.retrieve.mockImplementation(async () => {
         await new Promise((resolve) => setTimeout(resolve, 60000));
         return {
           id: paymentIntentId,
-          status: 'processing',
+          status: "processing",
           amount: 10000,
-          currency: 'usd',
-          metadata: { orderId: 'order_timeout' },
+          currency: "usd",
+          metadata: { orderId: "order_timeout" },
         };
       });
 
@@ -856,43 +892,46 @@ describe('Payment Failure Edge Cases', () => {
     });
   });
 
-  describe('Error Recovery', () => {
-    it('should allow retry after transient failure', async () => {
+  describe("Error Recovery", () => {
+    it("should allow retry after transient failure", async () => {
       mockDatabase.order.findUnique.mockResolvedValue({
-        id: 'order_retry',
-        status: 'PENDING',
+        id: "order_retry",
+        status: "PENDING",
         total: 100,
       });
 
       // First attempt fails
       mockStripe.paymentIntents.create
-        .mockRejectedValueOnce(new Error('Network error'))
+        .mockRejectedValueOnce(new Error("Network error"))
         .mockResolvedValueOnce({
-          id: 'pi_retry',
-          status: 'requires_payment_method',
+          id: "pi_retry",
+          status: "requires_payment_method",
           amount: 10000,
-          currency: 'usd',
+          currency: "usd",
         });
 
       // First attempt
       await expect(
-        paymentService.createPaymentIntent('order_retry', 100)
-      ).rejects.toThrow('Network error');
+        paymentService.createPaymentIntent("order_retry", 100),
+      ).rejects.toThrow("Network error");
 
       // Retry should succeed
-      const result = await paymentService.createPaymentIntent('order_retry', 100);
-      expect(result.id).toBe('pi_retry');
+      const result = await paymentService.createPaymentIntent(
+        "order_retry",
+        100,
+      );
+      expect(result.id).toBe("pi_retry");
     });
 
-    it('should handle partial webhook processing failure', async () => {
+    it("should handle partial webhook processing failure", async () => {
       const event = {
-        type: 'payment_intent.succeeded',
+        type: "payment_intent.succeeded",
         data: {
           object: {
-            id: 'pi_partial_fail',
+            id: "pi_partial_fail",
             amount: 10000,
-            currency: 'usd',
-            metadata: { orderId: 'order_partial_fail' },
+            currency: "usd",
+            metadata: { orderId: "order_partial_fail" },
           },
         },
       };
@@ -903,16 +942,16 @@ describe('Payment Failure Edge Cases', () => {
       // Order update succeeds but payment create fails
       mockDatabase.order.update.mockResolvedValue({});
       mockDatabase.payment.create.mockRejectedValue(
-        new Error('Payment record creation failed')
+        new Error("Payment record creation failed"),
       );
 
       mockDatabase.$transaction.mockRejectedValue(
-        new Error('Transaction failed')
+        new Error("Transaction failed"),
       );
 
       await expect(
-        paymentService.handleWebhook('sig_1', JSON.stringify(event))
-      ).rejects.toThrow('Transaction failed');
+        paymentService.handleWebhook("sig_1", JSON.stringify(event)),
+      ).rejects.toThrow("Transaction failed");
 
       // Should be able to retry the webhook
     });

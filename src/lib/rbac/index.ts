@@ -1,6 +1,6 @@
 import { UserRole } from "@prisma/client";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 /**
  * Divine Role-Based Access Control (RBAC) System
@@ -123,7 +123,9 @@ export function hasAllPermissions(
   role: UserRole,
   permissions: Permission[],
 ): boolean {
-  return permissions.every((permission: any) => hasPermission(role, permission));
+  return permissions.every((permission: any) =>
+    hasPermission(role, permission),
+  );
 }
 
 /**
@@ -165,7 +167,7 @@ export function canVerifyFarms(role: UserRole): boolean {
  * Divine agricultural consciousness permission checker
  */
 export class DivinePermissionChecker {
-  constructor(private role: UserRole) { }
+  constructor(private role: UserRole) {}
 
   can(permission: Permission): boolean {
     return hasPermission(this.role, permission);

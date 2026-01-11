@@ -8,8 +8,9 @@
 ## 🚀 Quick Start
 
 ### Display Notifications in Dashboard
+
 ```tsx
-import { NotificationCenter } from '@/components/features/notifications/notification-center';
+import { NotificationCenter } from "@/components/features/notifications/notification-center";
 
 export default function DashboardPage() {
   return (
@@ -21,8 +22,9 @@ export default function DashboardPage() {
 ```
 
 ### Add Notification Preferences Page
+
 ```tsx
-import { NotificationPreferences } from '@/components/features/notifications/notification-preferences';
+import { NotificationPreferences } from "@/components/features/notifications/notification-preferences";
 
 export default function SettingsPage() {
   return (
@@ -34,19 +36,20 @@ export default function SettingsPage() {
 ```
 
 ### Send a Notification
+
 ```typescript
-import { notificationService } from '@/lib/services/notification.service';
+import { notificationService } from "@/lib/services/notification.service";
 
 await notificationService.createNotification({
   userId: user.id,
-  type: 'ORDER_CONFIRMED',
-  channels: ['EMAIL', 'IN_APP', 'PUSH'],
-  title: 'Order Confirmed!',
-  body: 'Your order #12345 has been confirmed',
+  type: "ORDER_CONFIRMED",
+  channels: ["EMAIL", "IN_APP", "PUSH"],
+  title: "Order Confirmed!",
+  body: "Your order #12345 has been confirmed",
   data: {
     orderId: order.id,
-    orderNumber: order.orderNumber
-  }
+    orderNumber: order.orderNumber,
+  },
 });
 ```
 
@@ -55,16 +58,20 @@ await notificationService.createNotification({
 ## 📡 API Endpoints
 
 ### GET /api/notifications
+
 **Fetch user notifications (paginated)**
 
 Query Parameters:
+
 - `page` (number, default: 1)
 - `limit` (number, default: 20, max: 100)
 - `unreadOnly` (boolean, default: false)
 - `type` (NotificationType, optional)
 
 ```typescript
-const response = await fetch('/api/notifications?page=1&limit=20&unreadOnly=true');
+const response = await fetch(
+  "/api/notifications?page=1&limit=20&unreadOnly=true",
+);
 const data = await response.json();
 // data.data.notifications: Notification[]
 // data.data.unreadCount: number
@@ -72,46 +79,50 @@ const data = await response.json();
 ```
 
 ### PATCH /api/notifications/[id]
+
 **Mark notification as read**
 
 ```typescript
 await fetch(`/api/notifications/${notificationId}`, {
-  method: 'PATCH',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ isRead: true })
+  method: "PATCH",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ isRead: true }),
 });
 ```
 
 ### DELETE /api/notifications
+
 **Clear all read notifications**
 
 ```typescript
-const response = await fetch('/api/notifications', { method: 'DELETE' });
+const response = await fetch("/api/notifications", { method: "DELETE" });
 const data = await response.json();
 // data.data.cleared: number (count of deleted notifications)
 ```
 
 ### GET /api/notifications/preferences
+
 **Get user notification preferences**
 
 ```typescript
-const response = await fetch('/api/notifications/preferences');
+const response = await fetch("/api/notifications/preferences");
 const data = await response.json();
 // data.data: NotificationPreferences
 ```
 
 ### PATCH /api/notifications/preferences
+
 **Update notification preferences**
 
 ```typescript
-await fetch('/api/notifications/preferences', {
-  method: 'PATCH',
-  headers: { 'Content-Type': 'application/json' },
+await fetch("/api/notifications/preferences", {
+  method: "PATCH",
+  headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
     emailOrders: true,
     emailReviews: false,
-    pushOrders: true
-  })
+    pushOrders: true,
+  }),
 });
 ```
 
@@ -120,6 +131,7 @@ await fetch('/api/notifications/preferences', {
 ## 🎨 Component Props
 
 ### NotificationCenter
+
 ```typescript
 <NotificationCenter
   className="shadow-lg"           // Optional styling
@@ -129,6 +141,7 @@ await fetch('/api/notifications/preferences', {
 ```
 
 ### NotificationPreferences
+
 ```typescript
 <NotificationPreferences
   className="max-w-4xl mx-auto"   // Optional styling
@@ -163,38 +176,39 @@ type NotificationType =
 ## 🎯 Common Use Cases
 
 ### 1. Send Order Notification
+
 ```typescript
-import { notificationService } from '@/lib/services/notification.service';
+import { notificationService } from "@/lib/services/notification.service";
 
 await notificationService.sendOrderNotification(
   order.userId,
   order,
-  'CONFIRMED' // or 'PENDING', 'READY', 'FULFILLED', 'CANCELLED'
+  "CONFIRMED", // or 'PENDING', 'READY', 'FULFILLED', 'CANCELLED'
 );
 ```
 
 ### 2. Send Payment Notification
+
 ```typescript
 await notificationService.sendPaymentNotification(
   payment.userId,
   payment,
-  'Payment received for order #' + order.orderNumber
+  "Payment received for order #" + order.orderNumber,
 );
 ```
 
 ### 3. Send Low Stock Alert
+
 ```typescript
-await notificationService.sendLowStockAlert(
-  product.farmId,
-  product
-);
+await notificationService.sendLowStockAlert(product.farmId, product);
 ```
 
 ### 4. Send Bulk Announcement
+
 ```typescript
 await notificationService.sendSystemAnnouncement(
-  'Platform maintenance scheduled for tonight',
-  'We will be performing maintenance from 11 PM to 1 AM PST.'
+  "Platform maintenance scheduled for tonight",
+  "We will be performing maintenance from 11 PM to 1 AM PST.",
 );
 ```
 
@@ -206,7 +220,7 @@ All API endpoints require authentication. Session is handled automatically:
 
 ```typescript
 // In API routes
-import { auth } from '@/lib/auth';
+import { auth } from "@/lib/auth";
 
 export async function GET(request: NextRequest) {
   const session = await auth();
@@ -214,7 +228,7 @@ export async function GET(request: NextRequest) {
   if (!session?.user?.id) {
     return NextResponse.json(
       { success: false, error: { code: "UNAUTHORIZED", message: "..." } },
-      { status: 401 }
+      { status: 401 },
     );
   }
 
@@ -229,6 +243,7 @@ Components don't need to pass userId - it's extracted from session in the API.
 ## 💾 Database Schema
 
 ### Notification Model
+
 ```prisma
 model Notification {
   id        String              @id @default(cuid())
@@ -251,6 +266,7 @@ model Notification {
 ```
 
 ### NotificationPreferences Model
+
 ```prisma
 model NotificationPreferences {
   id              String   @id @default(cuid())
@@ -275,6 +291,7 @@ model NotificationPreferences {
 ## 🎨 UI Features
 
 ### NotificationCenter
+
 - ✅ Auto-refresh every 30 seconds
 - ✅ Unread count badge
 - ✅ Filter: All / Unread
@@ -286,6 +303,7 @@ model NotificationPreferences {
 - ✅ Manual refresh button
 
 ### NotificationPreferences
+
 - ✅ Email preferences (4 types)
 - ✅ In-App preferences (3 types)
 - ✅ Push preferences (3 types)
@@ -298,17 +316,20 @@ model NotificationPreferences {
 ## 🐛 Troubleshooting
 
 ### Notifications not showing?
+
 1. Check user is authenticated: `const session = await auth()`
 2. Verify notifications exist in database
 3. Check browser console for errors
 4. Verify API endpoint returns data: `/api/notifications`
 
 ### Can't mark as read?
+
 1. Check network tab for API call
 2. Verify notification belongs to current user
 3. Check response status code (should be 200)
 
 ### Preferences not saving?
+
 1. Verify PATCH request is sent (not POST)
 2. Check request body format matches API
 3. Verify user is authenticated
@@ -319,11 +340,13 @@ model NotificationPreferences {
 ## 📈 Performance Tips
 
 ### Frontend
+
 - Use `autoRefresh={false}` if real-time updates not needed
 - Increase `refreshInterval` to reduce API calls
 - Implement pagination for large notification lists
 
 ### Backend
+
 - Notifications are indexed on `userId`, `isRead`, `createdAt`
 - Use `limit` parameter to control page size
 - Consider Redis caching for unread counts
@@ -344,6 +367,7 @@ model NotificationPreferences {
 ## 📚 Full Documentation
 
 For complete documentation, see:
+
 - `docs/PRIORITY_5_PHASE_2_NOTIFICATION_API_INTEGRATION.md` - Complete system guide
 - `docs/CONTINUOUS_SESSION_09_NOTIFICATION_INTEGRATION.md` - Implementation details
 

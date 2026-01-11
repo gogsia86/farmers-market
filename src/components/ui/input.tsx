@@ -16,7 +16,8 @@ const inputVariants = cva(
         default: "border-gray-300 hover:border-gray-400 focus:border-blue-500",
         error: "border-red-500 focus:border-red-600 focus:ring-red-500",
         success: "border-green-500 focus:border-green-600 focus:ring-green-500",
-        agricultural: "border-green-300 hover:border-green-400 focus:border-green-500 focus:ring-green-500",
+        agricultural:
+          "border-green-300 hover:border-green-400 focus:border-green-500 focus:ring-green-500",
       },
       inputSize: {
         sm: "h-8 text-xs px-2",
@@ -28,12 +29,13 @@ const inputVariants = cva(
       variant: "default",
       inputSize: "default",
     },
-  }
+  },
 );
 
 export interface InputProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size">,
-  VariantProps<typeof inputVariants> { }
+  extends
+    Omit<React.InputHTMLAttributes<HTMLInputElement>, "size">,
+    VariantProps<typeof inputVariants> {}
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, variant, inputSize, type, ...props }, ref) => {
@@ -45,7 +47,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {...props}
       />
     );
-  }
+  },
 );
 Input.displayName = "Input";
 

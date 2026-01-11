@@ -16,9 +16,9 @@
  *   tsx scripts/validation/validate-prisma-usage.ts --fix (auto-fix where possible)
  */
 
-import * as fs from 'fs';
-import * as path from 'path';
-import { glob } from 'glob';
+import * as fs from "fs";
+import * as path from "path";
+import { glob } from "glob";
 
 // ============================================
 // TYPES
@@ -44,19 +44,19 @@ interface ValidationError {
 // ============================================
 
 const CONFIG = {
-  schemaPath: 'prisma/schema.prisma',
-  sourcePatterns: ['src/**/*.{ts,tsx}', 'pages/**/*.{ts,tsx}'],
+  schemaPath: "prisma/schema.prisma",
+  sourcePatterns: ["src/**/*.{ts,tsx}", "pages/**/*.{ts,tsx}"],
   excludePatterns: [
-    '**/node_modules/**',
-    '**/.next/**',
-    '**/dist/**',
-    '**/coverage/**',
-    '**/*.test.ts',
-    '**/*.test.tsx',
-    '**/*.spec.ts',
-    '**/*.spec.tsx',
+    "**/node_modules/**",
+    "**/.next/**",
+    "**/dist/**",
+    "**/coverage/**",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
   ],
-  autoFix: process.argv.includes('--fix'),
+  autoFix: process.argv.includes("--fix"),
 };
 
 // ============================================
@@ -67,7 +67,7 @@ const CONFIG = {
  * Parse the Prisma schema file and extract models with their relations
  */
 function parseSchema(schemaPath: string): Map<string, SchemaModel> {
-  const schemaContent = fs.readFileSync(schemaPath, 'utf-8');
+  const schemaContent = fs.readFileSync(schemaPath, "utf-8");
   const models = new Map<string, SchemaModel>();
 
   // Match model blocks
@@ -115,7 +115,7 @@ function parseSchema(schemaPath: string): Map<string, SchemaModel> {
  * Scan TypeScript files for Prisma queries and validate them
  */
 async function scanFiles(
-  models: Map<string, SchemaModel>
+  models: Map<string, SchemaModel>,
 ): Promise<ValidationError[]> {
   const errors: ValidationError[] = [];
 
@@ -126,11 +126,12 @@ async function scanFiles(
   console.log(`\n📁 Scanning ${files.length} files...\n`);
 
   for (const file of files) {
-    const content = fs.readFileSync(file, 'utf-8');
-    const lines = content.split('\n');
+    const content = fs.readFileSync(file, "utf-8");
+    const lines = content.split("\n");
 
     // Find Prisma queries: database.model.findMany, etc.
-    const queryRegex = /database\.(\w+)\.(?:findMany|findUnique|findFirst|create|update|delete|upsert)\s*\(/g;
+    const queryRegex =
+      /database\.(\w+)\.(?:findMany|findUnique|findFirst|create|update|delete|upsert)\s*\(/g;
     let match;
 
     while ((match = queryRegex.exec(content)) !== null) {
@@ -138,7 +139,7 @@ async function scanFiles(
       const queryStartPos = match.index;
 
       // Get line number
-      const lineNumber = content.substring(0, queryStartPos).split('\n').length;
+      const lineNumber = content.substring(0, queryStartPos).split("\n").length;
 
       // Extract the query block (find matching braces)
       const queryBlock = extractQueryBlock(content, queryStartPos);
@@ -153,8 +154,8 @@ async function scanFiles(
           file,
           line: lineNumber,
           model: modelName,
-          invalidRelation: '',
-          message: `Unknown model '${modelName}'. Did you mean one of: ${Array.from(models.keys()).join(', ')}?`,
+          invalidRelation: "",
+          message: `Unknown model '${modelName}'. Did you mean one of: ${Array.from(models.keys()).join(", ")}?`,
         });
         continue;
       }
@@ -166,7 +167,7 @@ async function scanFiles(
         modelName,
         queryBlock,
         model,
-        models
+        models,
       );
 
       errors.push(...includeErrors);
@@ -182,15 +183,15 @@ async function scanFiles(
 function extractQueryBlock(content: string, startPos: number): string | null {
   let depth = 0;
   let inString = false;
-  let stringChar = '';
+  let stringChar = "";
   let blockStart = -1;
 
   for (let i = startPos; i < content.length; i++) {
     const char = content[i];
-    const prevChar = i > 0 ? content[i - 1] : '';
+    const prevChar = i > 0 ? content[i - 1] : "";
 
     // Handle string literals
-    if ((char === '"' || char === "'" || char === '`') && prevChar !== '\\') {
+    if ((char === '"' || char === "'" || char === "`") && prevChar !== "\\") {
       if (!inString) {
         inString = true;
         stringChar = char;
@@ -201,10 +202,10 @@ function extractQueryBlock(content: string, startPos: number): string | null {
 
     if (inString) continue;
 
-    if (char === '{') {
+    if (char === "{") {
       if (depth === 0) blockStart = i;
       depth++;
-    } else if (char === '}') {
+    } else if (char === "}") {
       depth--;
       if (depth === 0 && blockStart !== -1) {
         return content.substring(blockStart, i + 1);
@@ -224,7 +225,7 @@ function validateIncludes(
   modelName: string,
   queryBlock: string,
   model: SchemaModel,
-  allModels: Map<string, SchemaModel>
+  allModels: Map<string, SchemaModel>,
 ): ValidationError[] {
   const errors: ValidationError[] = [];
 
@@ -243,7 +244,11 @@ function validateIncludes(
       const relationName = relationMatch[1];
 
       // Skip special Prisma keywords
-      if (['select', 'where', 'orderBy', 'take', 'skip', 'include'].includes(relationName)) {
+      if (
+        ["select", "where", "orderBy", "take", "skip", "include"].includes(
+          relationName,
+        )
+      ) {
         continue;
       }
 
@@ -259,8 +264,8 @@ function validateIncludes(
           invalidRelation: relationName,
           suggestedRelation: suggestion,
           message: `Model '${modelName}' does not have relation '${relationName}'.${
-            suggestion ? ` Did you mean '${suggestion}'?` : ''
-          } Available relations: ${Array.from(model.relations.keys()).join(', ') || 'none'}`,
+            suggestion ? ` Did you mean '${suggestion}'?` : ""
+          } Available relations: ${Array.from(model.relations.keys()).join(", ") || "none"}`,
         });
       }
     }
@@ -274,7 +279,7 @@ function validateIncludes(
  */
 function findClosestRelation(
   target: string,
-  relations: Map<string, string>
+  relations: Map<string, string>,
 ): string | undefined {
   const relationNames = Array.from(relations.keys());
 
@@ -317,7 +322,7 @@ function levenshteinDistance(a: string, b: string): number {
         matrix[i][j] = Math.min(
           matrix[i - 1][j - 1] + 1,
           matrix[i][j - 1] + 1,
-          matrix[i - 1][j] + 1
+          matrix[i - 1][j] + 1,
         );
       }
     }
@@ -350,7 +355,7 @@ function autoFixErrors(errors: ValidationError[]): number {
 
   // Fix each file
   for (const [file, fileErrors] of errorsByFile) {
-    let content = fs.readFileSync(file, 'utf-8');
+    let content = fs.readFileSync(file, "utf-8");
     let modified = false;
 
     for (const error of fileErrors) {
@@ -359,24 +364,26 @@ function autoFixErrors(errors: ValidationError[]): number {
       // Replace the invalid relation name with the suggested one
       const regex = new RegExp(
         `(include\\s*:\\s*\\{[^}]*?)\\b${error.invalidRelation}\\b(\\s*:)`,
-        'g'
+        "g",
       );
 
       const newContent = content.replace(
         regex,
-        `$1${error.suggestedRelation}$2`
+        `$1${error.suggestedRelation}$2`,
       );
 
       if (newContent !== content) {
         content = newContent;
         modified = true;
         fixedCount++;
-        console.log(`  ✅ Fixed: ${error.invalidRelation} → ${error.suggestedRelation}`);
+        console.log(
+          `  ✅ Fixed: ${error.invalidRelation} → ${error.suggestedRelation}`,
+        );
       }
     }
 
     if (modified) {
-      fs.writeFileSync(file, content, 'utf-8');
+      fs.writeFileSync(file, content, "utf-8");
       console.log(`  💾 Updated: ${file}\n`);
     }
   }
@@ -393,7 +400,7 @@ function autoFixErrors(errors: ValidationError[]): number {
  */
 function reportErrors(errors: ValidationError[]): void {
   if (errors.length === 0) {
-    console.log('✅ No Prisma usage errors found!\n');
+    console.log("✅ No Prisma usage errors found!\n");
     return;
   }
 
@@ -417,12 +424,14 @@ function reportErrors(errors: ValidationError[]): void {
       console.log(`   Line ${error.line}: ${error.message}`);
 
       if (error.suggestedRelation) {
-        console.log(`   💡 Suggestion: Replace '${error.invalidRelation}' with '${error.suggestedRelation}'`);
+        console.log(
+          `   💡 Suggestion: Replace '${error.invalidRelation}' with '${error.suggestedRelation}'`,
+        );
       }
     }
   }
 
-  console.log('\n');
+  console.log("\n");
 }
 
 // ============================================
@@ -430,8 +439,8 @@ function reportErrors(errors: ValidationError[]): void {
 // ============================================
 
 async function main() {
-  console.log('🔍 PRISMA SCHEMA USAGE VALIDATOR\n');
-  console.log('━'.repeat(60));
+  console.log("🔍 PRISMA SCHEMA USAGE VALIDATOR\n");
+  console.log("━".repeat(60));
 
   // Check if schema file exists
   if (!fs.existsSync(CONFIG.schemaPath)) {
@@ -444,10 +453,12 @@ async function main() {
   console.log(`✅ Found ${models.size} models\n`);
 
   // List models
-  console.log('📦 Models in schema:');
+  console.log("📦 Models in schema:");
   for (const [, model] of models) {
     const relationCount = model.relations.size;
-    console.log(`   - ${model.name} (${relationCount} relation${relationCount !== 1 ? 's' : ''})`);
+    console.log(
+      `   - ${model.name} (${relationCount} relation${relationCount !== 1 ? "s" : ""})`,
+    );
   }
 
   // Scan files
@@ -455,7 +466,7 @@ async function main() {
 
   // Auto-fix if requested
   if (CONFIG.autoFix && errors.length > 0) {
-    console.log('\n🔧 Auto-fixing errors...\n');
+    console.log("\n🔧 Auto-fixing errors...\n");
     const fixedCount = autoFixErrors(errors);
     console.log(`\n✅ Fixed ${fixedCount} error(s)\n`);
 
@@ -464,24 +475,28 @@ async function main() {
     reportErrors(remainingErrors);
 
     if (remainingErrors.length > 0) {
-      console.log('⚠️  Some errors could not be auto-fixed. Please fix manually.\n');
+      console.log(
+        "⚠️  Some errors could not be auto-fixed. Please fix manually.\n",
+      );
       process.exit(1);
     }
   } else {
     reportErrors(errors);
 
     if (errors.length > 0) {
-      console.log('💡 Run with --fix flag to auto-fix errors where possible.\n');
+      console.log(
+        "💡 Run with --fix flag to auto-fix errors where possible.\n",
+      );
       process.exit(1);
     }
   }
 
-  console.log('✅ Validation complete!\n');
+  console.log("✅ Validation complete!\n");
   process.exit(0);
 }
 
 // Run the validator
 main().catch((error) => {
-  console.error('❌ Validation failed:', error);
+  console.error("❌ Validation failed:", error);
   process.exit(1);
 });

@@ -22,7 +22,7 @@ import {
 } from "./workflows/predefined-workflows";
 import { createWorkflowExecutor } from "./workflows/workflow-executor";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 // ============================================================================
 // DIVINE MONITORING BOT
@@ -109,11 +109,14 @@ export class DivineMonitoringBot {
     }
 
     logger.info(
-      "\n╔════════════════════════════════════════════════════════════╗");
+      "\n╔════════════════════════════════════════════════════════════╗",
+    );
     logger.info(
-      "║ 🤖 DIVINE WORKFLOW MONITORING BOT STARTING                ║");
+      "║ 🤖 DIVINE WORKFLOW MONITORING BOT STARTING                ║",
+    );
     logger.info(
-      "╠════════════════════════════════════════════════════════════╣");
+      "╠════════════════════════════════════════════════════════════╣",
+    );
     logger.info(`║ 🔮 NAME: ${this.config.name.padEnd(48)} ║`);
     logger.info(`║ 📌 VERSION: ${this.config.version.padEnd(45)} ║`);
     logger.info(`║ 🌐 BASE URL: ${this.config.baseUrl.padEnd(44)} ║`);
@@ -124,7 +127,8 @@ export class DivineMonitoringBot {
       `║ 🌾 AGRICULTURE: ${this.config.agricultureConsciousness.enabled ? "ENABLED" : "DISABLED"}${" ".repeat(39 - (this.config.agricultureConsciousness.enabled ? 7 : 8))} ║`,
     );
     logger.info(
-      "╚════════════════════════════════════════════════════════════╝\n");
+      "╚════════════════════════════════════════════════════════════╝\n",
+    );
 
     this.isRunning = true;
 
@@ -225,7 +229,9 @@ export class DivineMonitoringBot {
    * ✅ RUN WORKFLOW BY ID - Execute specific workflow
    */
   async runWorkflow(workflowId: string): Promise<WorkflowResult> {
-    const workflow = this.config.workflows.find((w: any) => w.id === workflowId);
+    const workflow = this.config.workflows.find(
+      (w: any) => w.id === workflowId,
+    );
 
     if (!workflow) {
       throw new Error(`Workflow not found: ${workflowId}`);
@@ -311,7 +317,8 @@ export class DivineMonitoringBot {
       const intervalMs = workflow.schedule.interval * 60 * 1000; // Convert minutes to ms
 
       logger.info(
-        `   ⏰ Scheduling ${workflow.name} every ${workflow.schedule.interval} minutes`);
+        `   ⏰ Scheduling ${workflow.name} every ${workflow.schedule.interval} minutes`,
+      );
 
       // Schedule workflow execution
       const interval = setInterval(async () => {
@@ -319,12 +326,9 @@ export class DivineMonitoringBot {
           logger.info(`\n⏰ Scheduled execution: ${workflow.name}`);
           await this.runWorkflow(workflow.id);
         } catch (error) {
-          logger.error(
-            `❌ Scheduled workflow failed: ${workflow.name}`,
-            {
-              error: error instanceof Error ? error.message : String(error)
-            }
-          );
+          logger.error(`❌ Scheduled workflow failed: ${workflow.name}`, {
+            error: error instanceof Error ? error.message : String(error),
+          });
         }
       }, intervalMs);
 

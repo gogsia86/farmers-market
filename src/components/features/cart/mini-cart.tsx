@@ -27,14 +27,8 @@ interface MiniCartProps {
 export function MiniCart({ isOpen, onClose, userId }: MiniCartProps) {
   const [isMounted, setIsMounted] = useState(false);
 
-  const {
-    cart,
-    count,
-    isLoading,
-    isEmpty,
-    updateCartItem,
-    removeFromCart,
-  } = useCart();
+  const { cart, count, isLoading, isEmpty, updateCartItem, removeFromCart } =
+    useCart();
 
   useEffect(() => {
     setIsMounted(true);
@@ -94,8 +88,9 @@ export function MiniCart({ isOpen, onClose, userId }: MiniCartProps) {
 
       {/* Sidebar */}
       <div
-        className={`fixed right-0 top-0 z-50 h-full w-full transform bg-white shadow-2xl transition-transform duration-300 ease-in-out sm:w-96 ${isOpen ? "translate-x-0" : "translate-x-full"
-          }`}
+        className={`fixed right-0 top-0 z-50 h-full w-full transform bg-white shadow-2xl transition-transform duration-300 ease-in-out sm:w-96 ${
+          isOpen ? "translate-x-0" : "translate-x-full"
+        }`}
       >
         {/* Header */}
         <div className="flex items-center justify-between border-b px-6 py-4">
@@ -154,11 +149,11 @@ export function MiniCart({ isOpen, onClose, userId }: MiniCartProps) {
                   {cart.items.map((item: any) => {
                     const product = item.product;
                     const productImages = product.images as string[] | null;
-                    const primaryImage: string = (
-                      productImages && productImages.length > 0
+                    const primaryImage: string =
+                      (productImages && productImages.length > 0
                         ? productImages[0]
-                        : "/images/placeholder-product.jpg"
-                    ) || "/images/placeholder-product.jpg";
+                        : "/images/placeholder-product.jpg") ||
+                      "/images/placeholder-product.jpg";
                     const itemTotal =
                       item.quantity.toNumber() * item.priceAtAdd.toNumber();
 
@@ -262,11 +257,7 @@ export function MiniCart({ isOpen, onClose, userId }: MiniCartProps) {
                     </Button>
                   </Link>
                   <Link href="/cart" onClick={handleViewCart}>
-                    <Button
-                      variant="outline"
-                      size="lg"
-                      className="w-full"
-                    >
+                    <Button variant="outline" size="lg" className="w-full">
                       View Full Cart
                     </Button>
                   </Link>

@@ -174,11 +174,14 @@ class PerformanceDashboard {
 
     return {
       averageConsciousness:
-        recent.reduce((sum: any, m: any) => sum + m.consciousness, 0) / recent.length,
+        recent.reduce((sum: any, m: any) => sum + m.consciousness, 0) /
+        recent.length,
       averageBiodynamicScore:
-        recent.reduce((sum: any, m: any) => sum + m.biodynamicScore, 0) / recent.length,
+        recent.reduce((sum: any, m: any) => sum + m.biodynamicScore, 0) /
+        recent.length,
       averageSoilHealth:
-        recent.reduce((sum: any, m: any) => sum + m.soilHealth, 0) / recent.length,
+        recent.reduce((sum: any, m: any) => sum + m.soilHealth, 0) /
+        recent.length,
       currentSeason: recent[recent.length - 1]?.season || "UNKNOWN",
       history: recent,
     };

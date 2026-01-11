@@ -38,12 +38,12 @@ npm run dev
 ### 1. Health Checks Module
 
 - [ ] Run legacy health checks: `tsx scripts/website-checker-bot.ts`
-  - [ ] Record: Tests passed: ____/____
-  - [ ] Record: Duration: ____ seconds
+  - [ ] Record: Tests passed: \_**\_/\_\_**
+  - [ ] Record: Duration: \_\_\_\_ seconds
   - [ ] Record: Success: YES / NO
 - [ ] Run UBF health checks: `npm run validate:ubf:health`
-  - [ ] Record: Tests passed: ____/____
-  - [ ] Record: Duration: ____ seconds
+  - [ ] Record: Tests passed: \_**\_/\_\_**
+  - [ ] Record: Duration: \_\_\_\_ seconds
   - [ ] Record: Success: YES / NO
 - [ ] Review comparison report
   - [ ] Recommendation: PASS / INVESTIGATE / FAIL
@@ -51,6 +51,7 @@ npm run dev
   - [ ] Action required: YES / NO
 
 **Notes:**
+
 ```
 _____________________________________________________________
 _____________________________________________________________
@@ -61,12 +62,12 @@ _____________________________________________________________
 ### 2. Marketplace Module
 
 - [ ] Run legacy marketplace checks
-  - [ ] Record: Tests passed: ____/____
-  - [ ] Record: Duration: ____ seconds
+  - [ ] Record: Tests passed: \_**\_/\_\_**
+  - [ ] Record: Duration: \_\_\_\_ seconds
   - [ ] Record: Success: YES / NO
 - [ ] Run UBF marketplace validation: `npm run validate:ubf:marketplace`
-  - [ ] Record: Tests passed: ____/____
-  - [ ] Record: Duration: ____ seconds
+  - [ ] Record: Tests passed: \_**\_/\_\_**
+  - [ ] Record: Duration: \_\_\_\_ seconds
   - [ ] Record: Success: YES / NO
 - [ ] Review comparison report
   - [ ] Recommendation: PASS / INVESTIGATE / FAIL
@@ -74,6 +75,7 @@ _____________________________________________________________
   - [ ] Action required: YES / NO
 
 **Notes:**
+
 ```
 _____________________________________________________________
 _____________________________________________________________
@@ -84,12 +86,12 @@ _____________________________________________________________
 ### 3. Cart & Checkout Module
 
 - [ ] Run legacy cart/checkout checks
-  - [ ] Record: Tests passed: ____/____
-  - [ ] Record: Duration: ____ seconds
+  - [ ] Record: Tests passed: \_**\_/\_\_**
+  - [ ] Record: Duration: \_\_\_\_ seconds
   - [ ] Record: Success: YES / NO
 - [ ] Run UBF cart validation: `npm run validate:ubf:cart`
-  - [ ] Record: Tests passed: ____/____
-  - [ ] Record: Duration: ____ seconds
+  - [ ] Record: Tests passed: \_**\_/\_\_**
+  - [ ] Record: Duration: \_\_\_\_ seconds
   - [ ] Record: Success: YES / NO
 - [ ] Review comparison report
   - [ ] Recommendation: PASS / INVESTIGATE / FAIL
@@ -97,6 +99,7 @@ _____________________________________________________________
   - [ ] Action required: YES / NO
 
 **Notes:**
+
 ```
 _____________________________________________________________
 _____________________________________________________________
@@ -116,11 +119,11 @@ _____________________________________________________________
 
 ### Summary Results
 
-| Module | Legacy Pass | UBF Pass | Recommendation | Status |
-|--------|-------------|----------|----------------|--------|
-| Health | ☐ | ☐ | PASS / INVESTIGATE / FAIL | ☐ |
-| Marketplace | ☐ | ☐ | PASS / INVESTIGATE / FAIL | ☐ |
-| Cart & Checkout | ☐ | ☐ | PASS / INVESTIGATE / FAIL | ☐ |
+| Module          | Legacy Pass | UBF Pass | Recommendation            | Status |
+| --------------- | ----------- | -------- | ------------------------- | ------ |
+| Health          | ☐           | ☐        | PASS / INVESTIGATE / FAIL | ☐      |
+| Marketplace     | ☐           | ☐        | PASS / INVESTIGATE / FAIL | ☐      |
+| Cart & Checkout | ☐           | ☐        | PASS / INVESTIGATE / FAIL | ☐      |
 
 **Overall Status:** PASS / INVESTIGATE / FAIL
 
@@ -132,9 +135,10 @@ _____________________________________________________________
 
 For each module with INVESTIGATE or FAIL recommendation:
 
-#### Module: ________________
+#### Module: ******\_\_\_\_******
 
 **Difference Type:**
+
 - [ ] Success status differs
 - [ ] Test count differs
 - [ ] Success rate differs
@@ -142,12 +146,14 @@ For each module with INVESTIGATE or FAIL recommendation:
 - [ ] Error patterns differ
 
 **Severity:**
+
 - [ ] CRITICAL - Functionality broken
 - [ ] HIGH - Significant degradation
 - [ ] MEDIUM - Notable differences
 - [ ] LOW - Minor variations
 
 **Analysis:**
+
 ```
 Root cause: _________________________________________________
 Expected behavior: __________________________________________
@@ -156,6 +162,7 @@ Impact: _____________________________________________________
 ```
 
 **Action Plan:**
+
 - [ ] Fix UBF module
 - [ ] Update test logic
 - [ ] Improve selectors
@@ -163,6 +170,7 @@ Impact: _____________________________________________________
 - [ ] Update legacy comparison
 
 **Resolution:**
+
 ```
 What was done: ______________________________________________
 Re-validation result: PASS / FAIL
@@ -206,6 +214,7 @@ If INVESTIGATE recommendations exist:
 ### Critical Functionality (Must Work)
 
 #### Health Checks
+
 - [ ] Homepage loads
 - [ ] API endpoints respond
 - [ ] Database connects
@@ -213,6 +222,7 @@ If INVESTIGATE recommendations exist:
 - [ ] Performance acceptable
 
 #### Marketplace
+
 - [ ] Product listing displays
 - [ ] Search functionality works
 - [ ] Filters apply correctly
@@ -220,6 +230,7 @@ If INVESTIGATE recommendations exist:
 - [ ] Responsive on mobile
 
 #### Cart & Checkout
+
 - [ ] Add to cart works
 - [ ] Cart persists
 - [ ] Checkout flow completes
@@ -232,11 +243,12 @@ If INVESTIGATE recommendations exist:
 
 ### Technical Review
 
-**Reviewed by:** _______________________________
-**Date:** __________
+**Reviewed by:** **************\_\_\_**************
+**Date:** ****\_\_****
 **Result:** APPROVED / NEEDS WORK / REJECTED
 
 **Comments:**
+
 ```
 _____________________________________________________________
 _____________________________________________________________
@@ -245,17 +257,19 @@ _____________________________________________________________
 
 ### QA Sign-Off
 
-**QA Lead:** _______________________________
-**Date:** __________
+**QA Lead:** **************\_\_\_**************
+**Date:** ****\_\_****
 **Result:** APPROVED / NEEDS WORK / REJECTED
 
 **Test Coverage Assessment:**
+
 - [ ] All critical paths validated
 - [ ] Edge cases considered
 - [ ] Error handling verified
 - [ ] Performance acceptable
 
 **Comments:**
+
 ```
 _____________________________________________________________
 _____________________________________________________________
@@ -264,17 +278,19 @@ _____________________________________________________________
 
 ### Product Owner Approval
 
-**PO:** _______________________________
-**Date:** __________
+**PO:** **************\_\_\_**************
+**Date:** ****\_\_****
 **Decision:** PROCEED / HOLD / REVERT
 
 **Business Impact:**
+
 - [ ] No user-facing regressions
 - [ ] Critical features work
 - [ ] Acceptable user experience
 - [ ] Ready for production
 
 **Comments:**
+
 ```
 _____________________________________________________________
 _____________________________________________________________
@@ -318,8 +334,8 @@ _____________________________________________________________
 
 Run validation **3 times** to check for flaky tests:
 
-| Run | Health | Marketplace | Cart | Overall |
-|-----|--------|-------------|------|---------|
+| Run | Health        | Marketplace   | Cart          | Overall       |
+| --- | ------------- | ------------- | ------------- | ------------- |
 | 1   | ☐ PASS ☐ FAIL | ☐ PASS ☐ FAIL | ☐ PASS ☐ FAIL | ☐ PASS ☐ FAIL |
 | 2   | ☐ PASS ☐ FAIL | ☐ PASS ☐ FAIL | ☐ PASS ☐ FAIL | ☐ PASS ☐ FAIL |
 | 3   | ☐ PASS ☐ FAIL | ☐ PASS ☐ FAIL | ☐ PASS ☐ FAIL | ☐ PASS ☐ FAIL |
@@ -327,12 +343,14 @@ Run validation **3 times** to check for flaky tests:
 **Consistency:** STABLE / FLAKY / UNSTABLE
 
 **Flaky Tests Identified:**
+
 ```
 _____________________________________________________________
 _____________________________________________________________
 ```
 
 **Action Items:**
+
 - [ ] Fix flaky tests
 - [ ] Improve selectors
 - [ ] Add retries
@@ -345,14 +363,15 @@ _____________________________________________________________
 
 ### Execution Time
 
-| Module | Legacy (avg) | UBF (avg) | Difference | Acceptable? |
-|--------|--------------|-----------|------------|-------------|
-| Health | ___s | ___s | ___% | ☐ YES ☐ NO |
-| Marketplace | ___s | ___s | ___% | ☐ YES ☐ NO |
-| Cart | ___s | ___s | ___% | ☐ YES ☐ NO |
-| **Total** | **___s** | **___s** | **___%** | ☐ YES ☐ NO |
+| Module      | Legacy (avg) | UBF (avg)   | Difference  | Acceptable? |
+| ----------- | ------------ | ----------- | ----------- | ----------- |
+| Health      | \_\_\_s      | \_\_\_s     | \_\_\_%     | ☐ YES ☐ NO  |
+| Marketplace | \_\_\_s      | \_\_\_s     | \_\_\_%     | ☐ YES ☐ NO  |
+| Cart        | \_\_\_s      | \_\_\_s     | \_\_\_%     | ☐ YES ☐ NO  |
+| **Total**   | **\_\_\_s**  | **\_\_\_s** | **\_\_\_%** | ☐ YES ☐ NO  |
 
 **Performance Assessment:**
+
 - [ ] UBF is faster (positive)
 - [ ] UBF is comparable (±50%)
 - [ ] UBF is slower but acceptable (<100% slower)
@@ -384,6 +403,7 @@ _____________________________________________________________
 - [ ] Documentation team notified
 
 **Notification Template:**
+
 ```
 Subject: UBF Validation Complete - [PASS/INVESTIGATE/FAIL]
 
@@ -429,7 +449,7 @@ Questions? Contact: [Your Name]
 
 **Final Sign-Off:**
 
-**Project Lead:** _______________________________ Date: __________
+**Project Lead:** **************\_\_\_************** Date: ****\_\_****
 
 **Validation Status:** ✅ APPROVED / ⚠️ CONDITIONAL / ❌ REJECTED
 
@@ -467,6 +487,6 @@ tsx scripts/mvp-validation-bot.ts
 
 ---
 
-**Validation Date:** __________
-**Completed By:** _______________________________
+**Validation Date:** ****\_\_****
+**Completed By:** **************\_\_\_**************
 **Final Status:** ✅ PASS / ⚠️ INVESTIGATE / ❌ FAIL

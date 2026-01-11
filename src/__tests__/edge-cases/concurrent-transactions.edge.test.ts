@@ -14,15 +14,15 @@
  * @reference .cursorrules - Claude Sonnet 4.5 Testing Patterns
  */
 
-import { database } from '@/lib/database';
-import { afterEach, beforeEach, describe, expect, it } from '@jest/globals';
-import type { Farm, Product, User } from '@prisma/client';
+import { database } from "@/lib/database";
+import { afterEach, beforeEach, describe, expect, it } from "@jest/globals";
+import type { Farm, Product, User } from "@prisma/client";
 
 // ============================================================================
 // TEST SETUP
 // ============================================================================
 
-describe('Edge Case: Concurrent Transactions', () => {
+describe("Edge Case: Concurrent Transactions", () => {
   let testUser: User;
   let testFarm: Farm;
   let testProduct: Product;
@@ -32,9 +32,9 @@ describe('Edge Case: Concurrent Transactions', () => {
     testUser = await database.user.create({
       data: {
         email: `test-${Date.now()}@example.com`,
-        name: 'Test User',
-        role: 'CONSUMER',
-        password: 'hashedpassword',
+        name: "Test User",
+        role: "CONSUMER",
+        password: "hashedpassword",
       },
     });
 
@@ -44,16 +44,16 @@ describe('Edge Case: Concurrent Transactions', () => {
         name: `Test Farm ${Date.now()}`,
         slug: `test-farm-${Date.now()}`,
         ownerId: testUser.id,
-        email: 'farm@test.com',
-        phone: '555-0100',
-        address: '123 Test St',
-        city: 'Test City',
-        state: 'CA',
-        zipCode: '12345',
-        country: 'US',
+        email: "farm@test.com",
+        phone: "555-0100",
+        address: "123 Test St",
+        city: "Test City",
+        state: "CA",
+        zipCode: "12345",
+        country: "US",
         latitude: 40.7128,
         longitude: -74.006,
-        status: 'ACTIVE',
+        status: "ACTIVE",
       },
     });
 
@@ -62,13 +62,13 @@ describe('Edge Case: Concurrent Transactions', () => {
       data: {
         name: `Test Product ${Date.now()}`,
         slug: `test-product-${Date.now()}`,
-        description: 'Test product for concurrent operations',
+        description: "Test product for concurrent operations",
         price: 10.0,
-        unit: 'EACH',
+        unit: "EACH",
         farmId: testFarm.id,
         inventory: 100,
-        status: 'AVAILABLE',
-        category: 'VEGETABLES',
+        status: "AVAILABLE",
+        category: "VEGETABLES",
       },
     });
   });
@@ -96,8 +96,8 @@ describe('Edge Case: Concurrent Transactions', () => {
   // CONCURRENT INVENTORY UPDATES
   // ============================================================================
 
-  describe('Concurrent Inventory Updates', () => {
-    it('should handle 10 concurrent inventory decrements correctly', async () => {
+  describe("Concurrent Inventory Updates", () => {
+    it("should handle 10 concurrent inventory decrements correctly", async () => {
       const initialInventory = 100;
       const decrementAmount = 5;
       const concurrentOperations = 10;
@@ -117,14 +117,14 @@ describe('Edge Case: Concurrent Transactions', () => {
           });
 
           if (!product || product.inventory < decrementAmount) {
-            throw new Error('Insufficient inventory');
+            throw new Error("Insufficient inventory");
           }
 
           return tx.product.update({
             where: { id: testProduct.id },
             data: { inventory: { decrement: decrementAmount } },
           });
-        })
+        }),
       );
 
       // Execute all operations concurrently
@@ -136,14 +136,17 @@ describe('Edge Case: Concurrent Transactions', () => {
       });
 
       // Verify results
-      const successfulOps = results.filter((r: any) => r.status === 'fulfilled').length;
-      const expectedInventory = initialInventory - successfulOps * decrementAmount;
+      const successfulOps = results.filter(
+        (r: any) => r.status === "fulfilled",
+      ).length;
+      const expectedInventory =
+        initialInventory - successfulOps * decrementAmount;
 
       expect(finalProduct?.inventory).toBe(expectedInventory);
       expect(finalProduct?.inventory).toBeGreaterThanOrEqual(0);
     });
 
-    it('should prevent overselling when inventory is low', async () => {
+    it("should prevent overselling when inventory is low", async () => {
       const lowInventory = 10;
       const requestedQuantity = 15;
 
@@ -160,7 +163,7 @@ describe('Edge Case: Concurrent Transactions', () => {
         });
 
         if (!product || product.inventory < requestedQuantity) {
-          throw new Error('Insufficient inventory');
+          throw new Error("Insufficient inventory");
         }
 
         return tx.product.update({
@@ -169,7 +172,7 @@ describe('Edge Case: Concurrent Transactions', () => {
         });
       });
 
-      await expect(purchaseAttempt).rejects.toThrow('Insufficient inventory');
+      await expect(purchaseAttempt).rejects.toThrow("Insufficient inventory");
 
       // Verify inventory unchanged
       const finalProduct = await database.product.findUnique({
@@ -178,7 +181,7 @@ describe('Edge Case: Concurrent Transactions', () => {
       expect(finalProduct?.inventory).toBe(lowInventory);
     });
 
-    it('should handle race condition with last-item scenario', async () => {
+    it("should handle race condition with last-item scenario", async () => {
       const lastItemInventory = 1;
 
       // Set inventory to 1
@@ -195,21 +198,23 @@ describe('Edge Case: Concurrent Transactions', () => {
           });
 
           if (!product || product.inventory < 1) {
-            throw new Error('Out of stock');
+            throw new Error("Out of stock");
           }
 
           return tx.product.update({
             where: { id: testProduct.id },
             data: { inventory: { decrement: 1 } },
           });
-        })
+        }),
       );
 
       const results = await Promise.allSettled(buyAttempts);
 
       // Only one should succeed
-      const successful = results.filter((r: any) => r.status === 'fulfilled').length;
-      const failed = results.filter((r: any) => r.status === 'rejected').length;
+      const successful = results.filter(
+        (r: any) => r.status === "fulfilled",
+      ).length;
+      const failed = results.filter((r: any) => r.status === "rejected").length;
 
       expect(successful).toBe(1);
       expect(failed).toBe(4);
@@ -226,8 +231,8 @@ describe('Edge Case: Concurrent Transactions', () => {
   // CONCURRENT ORDER CREATION
   // ============================================================================
 
-  describe('Concurrent Order Creation', () => {
-    it('should handle multiple users creating orders simultaneously', async () => {
+  describe("Concurrent Order Creation", () => {
+    it("should handle multiple users creating orders simultaneously", async () => {
       // Create multiple test users
       const users = await Promise.all(
         Array.from({ length: 5 }, (_, i) =>
@@ -235,11 +240,11 @@ describe('Edge Case: Concurrent Transactions', () => {
             data: {
               email: `concurrent-user-${i}-${Date.now()}@test.com`,
               name: `Concurrent User ${i}`,
-              role: 'CONSUMER',
-              password: 'hashedpassword',
+              role: "CONSUMER",
+              password: "hashedpassword",
             },
-          })
-        )
+          }),
+        ),
       );
 
       // Each user creates an order concurrently
@@ -249,7 +254,7 @@ describe('Edge Case: Concurrent Transactions', () => {
           const order = await tx.order.create({
             data: {
               userId: user.id,
-              status: 'PENDING',
+              status: "PENDING",
               subtotal: 10.0,
               tax: 1.0,
               total: 11.0,
@@ -274,14 +279,16 @@ describe('Edge Case: Concurrent Transactions', () => {
           });
 
           return order;
-        })
+        }),
       );
 
       // Execute all order creations
       const results = await Promise.allSettled(orderCreations);
 
       // All should succeed (we have enough inventory)
-      const successful = results.filter((r: any) => r.status === 'fulfilled').length;
+      const successful = results.filter(
+        (r: any) => r.status === "fulfilled",
+      ).length;
       expect(successful).toBe(5);
 
       // Verify inventory decreased by 5
@@ -300,7 +307,7 @@ describe('Edge Case: Concurrent Transactions', () => {
       }
     });
 
-    it('should rollback order if inventory check fails mid-transaction', async () => {
+    it("should rollback order if inventory check fails mid-transaction", async () => {
       // Set low inventory
       await database.product.update({
         where: { id: testProduct.id },
@@ -317,7 +324,7 @@ describe('Edge Case: Concurrent Transactions', () => {
         const order = await tx.order.create({
           data: {
             userId: testUser.id,
-            status: 'PENDING',
+            status: "PENDING",
             subtotal: 100.0,
             tax: 10.0,
             total: 110.0,
@@ -326,7 +333,7 @@ describe('Edge Case: Concurrent Transactions', () => {
 
         // Check inventory (should fail)
         if (!product || product.inventory < 10) {
-          throw new Error('Insufficient inventory');
+          throw new Error("Insufficient inventory");
         }
 
         // This should never execute
@@ -343,7 +350,7 @@ describe('Edge Case: Concurrent Transactions', () => {
         return order;
       });
 
-      await expect(orderAttempt).rejects.toThrow('Insufficient inventory');
+      await expect(orderAttempt).rejects.toThrow("Insufficient inventory");
 
       // Verify no order was created (transaction rolled back)
       const orders = await database.order.findMany({
@@ -363,8 +370,8 @@ describe('Edge Case: Concurrent Transactions', () => {
   // OPTIMISTIC LOCKING
   // ============================================================================
 
-  describe('Optimistic Locking', () => {
-    it('should detect concurrent updates using version field', async () => {
+  describe("Optimistic Locking", () => {
+    it("should detect concurrent updates using version field", async () => {
       // Add version field to product for this test
       const productWithVersion = await database.product.update({
         where: { id: testProduct.id },
@@ -415,20 +422,20 @@ describe('Edge Case: Concurrent Transactions', () => {
   // DEADLOCK PREVENTION
   // ============================================================================
 
-  describe('Deadlock Prevention', () => {
-    it('should handle potential deadlock scenarios gracefully', async () => {
+  describe("Deadlock Prevention", () => {
+    it("should handle potential deadlock scenarios gracefully", async () => {
       // Create second product
       const product2 = await database.product.create({
         data: {
           name: `Test Product 2 ${Date.now()}`,
           slug: `test-product-2-${Date.now()}`,
-          description: 'Second test product',
+          description: "Second test product",
           price: 15.0,
-          unit: 'EACH',
+          unit: "EACH",
           farmId: testFarm.id,
           inventory: 100,
-          status: 'AVAILABLE',
-          category: 'FRUITS',
+          status: "AVAILABLE",
+          category: "FRUITS",
         },
       });
 
@@ -468,7 +475,9 @@ describe('Edge Case: Concurrent Transactions', () => {
       const results = await Promise.allSettled([transaction1, transaction2]);
 
       // At least one should succeed
-      const successful = results.filter((r: any) => r.status === 'fulfilled').length;
+      const successful = results.filter(
+        (r: any) => r.status === "fulfilled",
+      ).length;
       expect(successful).toBeGreaterThanOrEqual(1);
 
       // Cleanup
@@ -480,8 +489,8 @@ describe('Edge Case: Concurrent Transactions', () => {
   // CONCURRENT CART OPERATIONS
   // ============================================================================
 
-  describe('Concurrent Cart Operations', () => {
-    it('should handle simultaneous cart item additions', async () => {
+  describe("Concurrent Cart Operations", () => {
+    it("should handle simultaneous cart item additions", async () => {
       // Create cart
       const cart = await database.cart.create({
         data: {
@@ -517,7 +526,7 @@ describe('Edge Case: Concurrent Transactions', () => {
               },
             });
           }
-        })
+        }),
       );
 
       await Promise.all(addOperations);
@@ -531,7 +540,7 @@ describe('Edge Case: Concurrent Transactions', () => {
       // (or multiple items due to race condition, which is also valid)
       const totalQuantity = cartItems.reduce(
         (sum, item) => sum + item.quantity,
-        0
+        0,
       );
       expect(totalQuantity).toBe(5);
 
@@ -545,8 +554,8 @@ describe('Edge Case: Concurrent Transactions', () => {
   // STRESS TEST
   // ============================================================================
 
-  describe('High Concurrency Stress Test', () => {
-    it('should handle 50 concurrent operations without data corruption', async () => {
+  describe("High Concurrency Stress Test", () => {
+    it("should handle 50 concurrent operations without data corruption", async () => {
       const initialInventory = 1000;
       await database.product.update({
         where: { id: testProduct.id },
@@ -561,20 +570,22 @@ describe('Edge Case: Concurrent Transactions', () => {
           });
 
           if (!product || product.inventory < 10) {
-            throw new Error('Insufficient inventory');
+            throw new Error("Insufficient inventory");
           }
 
           return tx.product.update({
             where: { id: testProduct.id },
             data: { inventory: { decrement: 10 } },
           });
-        })
+        }),
       );
 
       const results = await Promise.allSettled(operations);
 
-      const successful = results.filter((r: any) => r.status === 'fulfilled').length;
-      const failed = results.filter((r: any) => r.status === 'rejected').length;
+      const successful = results.filter(
+        (r: any) => r.status === "fulfilled",
+      ).length;
+      const failed = results.filter((r: any) => r.status === "rejected").length;
 
       // Verify integrity
       const finalProduct = await database.product.findUnique({

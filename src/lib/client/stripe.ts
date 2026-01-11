@@ -6,7 +6,7 @@
 
 import { loadStripe, Stripe } from "@stripe/stripe-js";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 // ============================================================================
 // STRIPE INSTANCE
@@ -53,7 +53,7 @@ export interface ConfirmPaymentResult {
  * This should be called after order creation to complete the payment
  */
 export async function confirmPayment(
-  params: ConfirmPaymentParams
+  params: ConfirmPaymentParams,
 ): Promise<ConfirmPaymentResult> {
   try {
     const stripe = await getStripe();
@@ -71,15 +71,16 @@ export async function confirmPayment(
     const { error, paymentIntent } = await stripe.confirmPayment({
       clientSecret,
       confirmParams: {
-        return_url: returnUrl || `${window.location.origin}/orders/confirmation`,
+        return_url:
+          returnUrl || `${window.location.origin}/orders/confirmation`,
       },
       redirect: "if_required", // Don't redirect unless necessary (e.g., 3D Secure)
     });
 
     if (error) {
       logger.error("Payment confirmation error:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
       return {
         success: false,
         error: error.message || "Payment confirmation failed",
@@ -113,7 +114,7 @@ export async function confirmPayment(
  * Retrieve payment intent status
  */
 export async function retrievePaymentIntent(
-  clientSecret: string
+  clientSecret: string,
 ): Promise<ConfirmPaymentResult> {
   try {
     const stripe = await getStripe();
@@ -125,9 +126,8 @@ export async function retrievePaymentIntent(
       };
     }
 
-    const { paymentIntent, error } = await stripe.retrievePaymentIntent(
-      clientSecret
-    );
+    const { paymentIntent, error } =
+      await stripe.retrievePaymentIntent(clientSecret);
 
     if (error) {
       return {
@@ -163,7 +163,7 @@ export async function retrievePaymentIntent(
  * Handle payment that requires additional action (e.g., 3D Secure)
  */
 export async function handlePaymentAction(
-  clientSecret: string
+  clientSecret: string,
 ): Promise<ConfirmPaymentResult> {
   try {
     const stripe = await getStripe();
@@ -175,9 +175,8 @@ export async function handlePaymentAction(
       };
     }
 
-    const { error, paymentIntent } = await stripe.handleCardAction(
-      clientSecret
-    );
+    const { error, paymentIntent } =
+      await stripe.handleCardAction(clientSecret);
 
     if (error) {
       return {

@@ -171,7 +171,9 @@ export async function sendBatchEmailsLazy(
 ): Promise<boolean[]> {
   const { emailService } = await import("./email.service");
 
-  return Promise.all(emails.map((options: any) => emailService.sendEmail(options)));
+  return Promise.all(
+    emails.map((options: any) => emailService.sendEmail(options)),
+  );
 }
 
 /**

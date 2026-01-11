@@ -13,10 +13,12 @@ This directory contains automated CI/CD workflows for the Farmers Market Platfor
 **Purpose**: Automatically deploy to production on every push to master
 
 **Triggers**:
+
 - Push to `master` or `main` branch
 - Manual trigger via GitHub UI
 
 **What it does**:
+
 1. ✅ Runs quality checks (ESLint, TypeScript)
 2. 🏗️ Tests the build
 3. 🚀 Deploys to Vercel production
@@ -35,10 +37,12 @@ This directory contains automated CI/CD workflows for the Farmers Market Platfor
 **Purpose**: Create isolated preview environments for pull requests
 
 **Triggers**:
+
 - Pull request opened, updated, or reopened
 - Manual trigger via GitHub UI
 
 **What it does**:
+
 1. ✅ Runs quality checks
 2. 🏗️ Tests the build
 3. 🚀 Deploys to Vercel preview
@@ -56,11 +60,11 @@ This directory contains automated CI/CD workflows for the Farmers Market Platfor
 
 These must be set in GitHub repository settings:
 
-| Secret Name | Description | Example |
-|------------|-------------|---------|
-| `VERCEL_TOKEN` | Vercel authentication token | `abc123...` |
-| `VERCEL_ORG_ID` | Vercel organization ID | `gogsias-projects` |
-| `VERCEL_PROJECT_ID` | Vercel project ID | `prj_xxxxx` |
+| Secret Name         | Description                 | Example            |
+| ------------------- | --------------------------- | ------------------ |
+| `VERCEL_TOKEN`      | Vercel authentication token | `abc123...`        |
+| `VERCEL_ORG_ID`     | Vercel organization ID      | `gogsias-projects` |
+| `VERCEL_PROJECT_ID` | Vercel project ID           | `prj_xxxxx`        |
 
 **Setup Guide**: See `GITHUB_ACTIONS_SETUP.md` for detailed instructions
 
@@ -71,12 +75,14 @@ These must be set in GitHub repository settings:
 ### Trigger Manual Deployment
 
 **Via GitHub UI**:
+
 1. Go to **Actions** tab
 2. Select "Deploy to Vercel Production"
 3. Click **Run workflow**
 4. Select branch and click **Run workflow**
 
 **Via GitHub CLI**:
+
 ```bash
 # Production deployment
 gh workflow run vercel-production.yml
@@ -146,11 +152,13 @@ gh run list --status=failure
 ### Check Recent Deployments
 
 **GitHub UI**:
+
 - Go to **Actions** tab
 - Filter by workflow
 - Click on any run to see details
 
 **Vercel Dashboard**:
+
 - Visit: https://vercel.com/gogsias-projects/farmers-market-platform
 - Click **Deployments** tab
 
@@ -161,6 +169,7 @@ gh run list --status=failure
 ### Workflow Not Running?
 
 **Check**:
+
 1. Secrets are correctly set (Settings → Secrets and variables → Actions)
 2. Workflows are enabled (Settings → Actions → General)
 3. YAML syntax is valid (use a YAML validator)
@@ -169,6 +178,7 @@ gh run list --status=failure
 ### Deployment Failed?
 
 **Steps**:
+
 1. Check workflow logs in Actions tab
 2. Verify Vercel token is valid
 3. Check Vercel dashboard for errors
@@ -176,6 +186,7 @@ gh run list --status=failure
 5. Verify environment variables in Vercel
 
 **Common Issues**:
+
 - ❌ Invalid/expired Vercel token → Create new token
 - ❌ Build errors → Check TypeScript/ESLint errors
 - ❌ Missing dependencies → Run `npm install` locally
@@ -184,6 +195,7 @@ gh run list --status=failure
 ### Health Checks Failing?
 
 **Steps**:
+
 1. Check Vercel runtime logs: `npx vercel logs [url]`
 2. Verify DATABASE_URL is set correctly
 3. Check database connectivity
@@ -195,15 +207,18 @@ gh run list --status=failure
 ## 📚 Documentation
 
 ### Setup & Configuration
+
 - [GitHub Actions Setup Guide](../GITHUB_ACTIONS_SETUP.md) - Complete setup instructions
 - [Deployment Troubleshooting](../DEPLOYMENT_TROUBLESHOOTING.md) - Common issues and solutions
 
 ### Vercel & Deployment
+
 - [Vercel Build Fixes](../VERCEL_BUILD_FIXES.md) - Build configuration
 - [Environment Variables Setup](../ADD_ENV_VARS.md) - Required environment variables
 - [Deployment Checklist](../DEPLOYMENT_FIX_CHECKLIST.md) - Pre-deployment checks
 
 ### Project Documentation
+
 - [Next Steps Guide](../NEXT_STEPS.md) - Post-deployment actions
 - [Deployment Status](../DEPLOYMENT_STATUS.md) - Current deployment info
 
@@ -235,8 +250,8 @@ on:
   push:
     branches: [master]
     paths-ignore:
-      - '**.md'
-      - 'docs/**'
+      - "**.md"
+      - "docs/**"
 ```
 
 ### Add Email Notifications
@@ -259,18 +274,21 @@ on:
 ## 🔒 Security Best Practices
 
 ### Secrets Management
+
 - ✅ Never commit secrets to git
 - ✅ Rotate tokens every 90 days
 - ✅ Use least-privilege tokens
 - ✅ Audit secret access regularly
 
 ### Token Rotation
+
 1. Create new Vercel token (https://vercel.com/account/tokens)
 2. Update `VERCEL_TOKEN` in GitHub Secrets
 3. Test with manual workflow run
 4. Delete old token from Vercel
 
 ### Access Control
+
 - Review team access to secrets monthly
 - Use environment protection rules for production
 - Require PR reviews before merging to master
@@ -280,12 +298,14 @@ on:
 ## 📈 Performance Tips
 
 ### Faster Builds
+
 1. ✅ Dependency caching (already enabled)
 2. ✅ Parallel job execution
 3. Consider: Self-hosted runners for better network
 4. Consider: Incremental builds
 
 ### Optimize Workflow
+
 - Skip quality checks for trusted commits
 - Use conditional job execution
 - Cache build artifacts between jobs
@@ -296,10 +316,12 @@ on:
 ## 📞 Support
 
 ### Issues & Questions
+
 - **GitHub Issues**: https://github.com/gogsia86/farmers-market/issues
 - **Discussions**: https://github.com/gogsia86/farmers-market/discussions
 
 ### External Resources
+
 - **GitHub Actions Docs**: https://docs.github.com/en/actions
 - **Vercel Docs**: https://vercel.com/docs
 - **Vercel Support**: support@vercel.com
@@ -309,15 +331,18 @@ on:
 ## 🔄 Maintenance Schedule
 
 ### Weekly
+
 - [ ] Review failed workflows
 - [ ] Check deployment metrics
 
 ### Monthly
+
 - [ ] Review GitHub Actions usage
 - [ ] Audit secret access
 - [ ] Review workflow performance
 
 ### Quarterly
+
 - [ ] Rotate Vercel tokens
 - [ ] Update Node.js version
 - [ ] Review deployment strategy

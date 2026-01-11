@@ -54,7 +54,10 @@ type CheckoutStep = 1 | 2 | 3 | 4;
 interface WizardProps {
   cart: (CartItem & {
     product: Product & {
-      farm: Pick<Farm, "id" | "name" | "slug" | "address" | "city" | "state" | "zipCode">;
+      farm: Pick<
+        Farm,
+        "id" | "name" | "slug" | "address" | "city" | "state" | "zipCode"
+      >;
     };
   })[];
   savedAddresses: UserAddress[];
@@ -90,7 +93,7 @@ export function CheckoutWizard({ cart, savedAddresses, userId }: WizardProps) {
   // Track checkout initiation on mount
   useEffect(() => {
     trackBeginCheckout({
-      items: cart.map(item => ({
+      items: cart.map((item) => ({
         id: item.product.id,
         name: item.product.name,
         price: Number(item.priceAtAdd),
@@ -115,7 +118,9 @@ export function CheckoutWizard({ cart, savedAddresses, userId }: WizardProps) {
   // ==========================================================================
 
   const handleStepComplete = (stepData: any) => {
-    const currentStepKey = steps.find((s: any) => s.number === currentStep)?.key;
+    const currentStepKey = steps.find(
+      (s: any) => s.number === currentStep,
+    )?.key;
 
     if (currentStepKey && currentStepKey !== "review") {
       // Save step data
@@ -181,17 +186,19 @@ export function CheckoutWizard({ cart, savedAddresses, userId }: WizardProps) {
                   <button
                     onClick={() => handleEditStep(step.number)}
                     disabled={step.number > currentStep}
-                    className={`flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all ${step.number === currentStep
-                      ? "border-green-600 bg-green-600 text-white"
-                      : isStepComplete(step.number)
-                        ? "border-green-600 bg-green-100 text-green-600 hover:bg-green-200"
-                        : "border-gray-300 bg-white text-gray-400"
-                      } ${step.number < currentStep
+                    className={`flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all ${
+                      step.number === currentStep
+                        ? "border-green-600 bg-green-600 text-white"
+                        : isStepComplete(step.number)
+                          ? "border-green-600 bg-green-100 text-green-600 hover:bg-green-200"
+                          : "border-gray-300 bg-white text-gray-400"
+                    } ${
+                      step.number < currentStep
                         ? "cursor-pointer"
                         : step.number === currentStep
                           ? "cursor-default"
                           : "cursor-not-allowed"
-                      }`}
+                    }`}
                   >
                     {isStepComplete(step.number) ? (
                       <CheckCircle2 className="h-5 w-5" />
@@ -203,12 +210,13 @@ export function CheckoutWizard({ cart, savedAddresses, userId }: WizardProps) {
                   {/* Step Label */}
                   <div className="ml-2">
                     <p
-                      className={`text-sm font-medium ${step.number === currentStep
-                        ? "text-green-600"
-                        : isStepComplete(step.number)
+                      className={`text-sm font-medium ${
+                        step.number === currentStep
                           ? "text-green-600"
-                          : "text-gray-400"
-                        }`}
+                          : isStepComplete(step.number)
+                            ? "text-green-600"
+                            : "text-gray-400"
+                      }`}
                     >
                       {step.name}
                     </p>
@@ -217,10 +225,11 @@ export function CheckoutWizard({ cart, savedAddresses, userId }: WizardProps) {
                   {/* Connector Line */}
                   {index < steps.length - 1 && (
                     <div
-                      className={`mx-4 h-0.5 w-12 ${isStepComplete(step.number)
-                        ? "bg-green-600"
-                        : "bg-gray-300"
-                        }`}
+                      className={`mx-4 h-0.5 w-12 ${
+                        isStepComplete(step.number)
+                          ? "bg-green-600"
+                          : "bg-gray-300"
+                      }`}
                     />
                   )}
                 </div>

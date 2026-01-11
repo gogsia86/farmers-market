@@ -16,7 +16,7 @@ import * as React from "react";
 import type {
   ProgressConfig,
   SeasonalLoadingTheme,
-  StepProgressConfig
+  StepProgressConfig,
 } from "@/lib/loading/types";
 import {
   formatProgress,
@@ -71,7 +71,7 @@ const progressBarVariants = cva(
       variant: "default",
       animated: false,
     },
-  }
+  },
 );
 
 // ============================================================================
@@ -79,9 +79,10 @@ const progressBarVariants = cva(
 // ============================================================================
 
 export interface LinearProgressProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-  Omit<Partial<ProgressConfig>, 'size' | 'variant'>,
-  VariantProps<typeof progressVariants> {
+  extends
+    React.HTMLAttributes<HTMLDivElement>,
+    Omit<Partial<ProgressConfig>, "size" | "variant">,
+    VariantProps<typeof progressVariants> {
   value?: number;
   max?: number;
   showLabel?: boolean;
@@ -100,7 +101,10 @@ export interface LinearProgressProps
  * <LinearProgress indeterminate label="Processing..." />
  * ```
  */
-export const LinearProgress = React.forwardRef<HTMLDivElement, LinearProgressProps>(
+export const LinearProgress = React.forwardRef<
+  HTMLDivElement,
+  LinearProgressProps
+>(
   (
     {
       value = 0,
@@ -114,7 +118,7 @@ export const LinearProgress = React.forwardRef<HTMLDivElement, LinearProgressPro
       className,
       ...props
     },
-    ref
+    ref,
   ) => {
     const percentage = Math.min(100, Math.max(0, (value / max) * 100));
 
@@ -142,7 +146,7 @@ export const LinearProgress = React.forwardRef<HTMLDivElement, LinearProgressPro
           <div
             className={cn(
               progressBarVariants({ variant, animated: indeterminate }),
-              "rounded-full"
+              "rounded-full",
             )}
             style={{
               width: indeterminate ? "30%" : `${percentage}%`,
@@ -151,7 +155,7 @@ export const LinearProgress = React.forwardRef<HTMLDivElement, LinearProgressPro
         </div>
       </div>
     );
-  }
+  },
 );
 
 LinearProgress.displayName = "LinearProgress";
@@ -161,8 +165,9 @@ LinearProgress.displayName = "LinearProgress";
 // ============================================================================
 
 export interface CircularProgressProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-  Omit<Partial<ProgressConfig>, 'size'> {
+  extends
+    React.HTMLAttributes<HTMLDivElement>,
+    Omit<Partial<ProgressConfig>, "size"> {
   value?: number;
   max?: number;
   size?: number;
@@ -202,7 +207,7 @@ export const CircularProgress = React.forwardRef<
       className,
       ...props
     },
-    ref
+    ref,
   ) => {
     const percentage = Math.min(100, Math.max(0, (value / max) * 100));
     const radius = (size - thickness) / 2;
@@ -212,7 +217,10 @@ export const CircularProgress = React.forwardRef<
     return (
       <div
         ref={ref}
-        className={cn("relative inline-flex items-center justify-center", className)}
+        className={cn(
+          "relative inline-flex items-center justify-center",
+          className,
+        )}
         style={{ width: size, height: size }}
         {...props}
       >
@@ -266,7 +274,7 @@ export const CircularProgress = React.forwardRef<
         </span>
       </div>
     );
-  }
+  },
 );
 
 CircularProgress.displayName = "CircularProgress";
@@ -276,8 +284,7 @@ CircularProgress.displayName = "CircularProgress";
 // ============================================================================
 
 export interface StepProgressProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-  StepProgressConfig {
+  extends React.HTMLAttributes<HTMLDivElement>, StepProgressConfig {
   variant?: "default" | "simple" | "minimal";
   size?: "sm" | "md" | "lg";
 }
@@ -309,7 +316,7 @@ export const StepProgress = React.forwardRef<HTMLDivElement, StepProgressProps>(
       className,
       ...props
     },
-    ref
+    ref,
   ) => {
     const sizeClasses = {
       sm: { circle: "w-6 h-6 text-xs", text: "text-xs", line: "h-0.5" },
@@ -327,7 +334,7 @@ export const StepProgress = React.forwardRef<HTMLDivElement, StepProgressProps>(
         className={cn(
           "flex",
           isVertical ? "flex-col" : "flex-row items-center",
-          className
+          className,
         )}
         role="progressbar"
         aria-valuenow={currentStep}
@@ -341,7 +348,7 @@ export const StepProgress = React.forwardRef<HTMLDivElement, StepProgressProps>(
             <div
               className={cn(
                 "flex",
-                isVertical ? "flex-row items-start" : "flex-col items-center"
+                isVertical ? "flex-row items-start" : "flex-col items-center",
               )}
             >
               {/* Circle indicator */}
@@ -350,13 +357,13 @@ export const StepProgress = React.forwardRef<HTMLDivElement, StepProgressProps>(
                   circle,
                   "rounded-full flex items-center justify-center font-medium transition-all",
                   step.state === "completed" &&
-                  "bg-green-600 text-white border-2 border-green-600",
+                    "bg-green-600 text-white border-2 border-green-600",
                   step.state === "active" &&
-                  "bg-primary text-white border-2 border-primary ring-4 ring-primary/20",
+                    "bg-primary text-white border-2 border-primary ring-4 ring-primary/20",
                   step.state === "error" &&
-                  "bg-red-600 text-white border-2 border-red-600",
+                    "bg-red-600 text-white border-2 border-red-600",
                   step.state === "pending" &&
-                  "bg-gray-200 text-gray-500 border-2 border-gray-300"
+                    "bg-gray-200 text-gray-500 border-2 border-gray-300",
                 )}
               >
                 {step.state === "completed" ? (
@@ -373,7 +380,7 @@ export const StepProgress = React.forwardRef<HTMLDivElement, StepProgressProps>(
                 <div
                   className={cn(
                     "flex flex-col",
-                    isVertical ? "ml-3 mb-4" : "mt-2 text-center"
+                    isVertical ? "ml-3 mb-4" : "mt-2 text-center",
                   )}
                 >
                   <span
@@ -381,7 +388,7 @@ export const StepProgress = React.forwardRef<HTMLDivElement, StepProgressProps>(
                       text,
                       "font-medium",
                       step.state === "active" && "text-primary",
-                      step.state === "pending" && "text-muted-foreground"
+                      step.state === "pending" && "text-muted-foreground",
                     )}
                   >
                     {step.label}
@@ -405,7 +412,7 @@ export const StepProgress = React.forwardRef<HTMLDivElement, StepProgressProps>(
                     : cn("flex-1 min-w-[32px]", line),
                   index < currentStep
                     ? "bg-green-600"
-                    : "bg-gray-300 dark:bg-gray-600"
+                    : "bg-gray-300 dark:bg-gray-600",
                 )}
               />
             )}
@@ -413,7 +420,7 @@ export const StepProgress = React.forwardRef<HTMLDivElement, StepProgressProps>(
         ))}
       </div>
     );
-  }
+  },
 );
 
 StepProgress.displayName = "StepProgress";
@@ -422,8 +429,10 @@ StepProgress.displayName = "StepProgress";
 // AGRICULTURAL PROGRESS
 // ============================================================================
 
-export interface AgriculturalProgressProps
-  extends Omit<LinearProgressProps, "variant"> {
+export interface AgriculturalProgressProps extends Omit<
+  LinearProgressProps,
+  "variant"
+> {
   season?: SeasonalLoadingTheme;
   stage?: "PLANTING" | "GROWING" | "HARVESTING" | "PROCESSING";
 }
@@ -457,7 +466,7 @@ export const AgriculturalProgress = React.forwardRef<
       className,
       ...props
     },
-    ref
+    ref,
   ) => {
     const currentSeason = season || getCurrentSeason();
     const colors = getSeasonalColors(currentSeason);
@@ -509,7 +518,7 @@ export const AgriculturalProgress = React.forwardRef<
           <div
             className={cn(
               "h-full transition-all duration-500 ease-out rounded-full",
-              `bg-gradient-to-r ${colors.gradient}`
+              `bg-gradient-to-r ${colors.gradient}`,
             )}
             style={{
               width: `${percentage}%`,
@@ -528,7 +537,7 @@ export const AgriculturalProgress = React.forwardRef<
         </div>
       </div>
     );
-  }
+  },
 );
 
 AgriculturalProgress.displayName = "AgriculturalProgress";
@@ -563,7 +572,7 @@ export const ProgressRing = React.forwardRef<HTMLDivElement, ProgressRingProps>(
       className,
       ...props
     },
-    ref
+    ref,
   ) => {
     const percentage = Math.min(100, Math.max(0, (value / max) * 100));
     const radius = (size - strokeWidth) / 2;
@@ -599,7 +608,7 @@ export const ProgressRing = React.forwardRef<HTMLDivElement, ProgressRingProps>(
             strokeDashoffset={offset}
             className={cn(
               showAnimation && "transition-all duration-500 ease-out",
-              !color && "text-primary"
+              !color && "text-primary",
             )}
           />
         </svg>
@@ -613,7 +622,7 @@ export const ProgressRing = React.forwardRef<HTMLDivElement, ProgressRingProps>(
         )}
       </div>
     );
-  }
+  },
 );
 
 ProgressRing.displayName = "ProgressRing";
@@ -651,19 +660,16 @@ export interface MultiProgressProps extends React.HTMLAttributes<HTMLDivElement>
  * />
  * ```
  */
-export const MultiProgress = React.forwardRef<HTMLDivElement, MultiProgressProps>(
+export const MultiProgress = React.forwardRef<
+  HTMLDivElement,
+  MultiProgressProps
+>(
   (
-    {
-      segments,
-      total,
-      size = "md",
-      showLegend = false,
-      className,
-      ...props
-    },
-    ref
+    { segments, total, size = "md", showLegend = false, className, ...props },
+    ref,
   ) => {
-    const maxValue = total || segments.reduce((sum: any, seg: any) => sum + seg.value, 0);
+    const maxValue =
+      total || segments.reduce((sum: any, seg: any) => sum + seg.value, 0);
 
     return (
       <div ref={ref} className={cn("w-full", className)} {...props}>
@@ -680,7 +686,7 @@ export const MultiProgress = React.forwardRef<HTMLDivElement, MultiProgressProps
                 className={cn(
                   "h-full transition-all duration-300",
                   index === 0 && "rounded-l-full",
-                  index === segments.length - 1 && "rounded-r-full"
+                  index === segments.length - 1 && "rounded-r-full",
                 )}
                 style={{
                   width: `${percentage}%`,
@@ -709,7 +715,7 @@ export const MultiProgress = React.forwardRef<HTMLDivElement, MultiProgressProps
         )}
       </div>
     );
-  }
+  },
 );
 
 MultiProgress.displayName = "MultiProgress";

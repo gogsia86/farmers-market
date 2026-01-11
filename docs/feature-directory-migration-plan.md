@@ -19,6 +19,7 @@ The codebase currently has TWO competing feature directory patterns:
 2. **Domain-driven pattern**: `src/features/`
 
 This duplication causes:
+
 - Developer confusion about where to place new code
 - Potential for duplicate implementations
 - Inconsistent import paths
@@ -30,6 +31,7 @@ This duplication causes:
 **Consolidate to domain-driven architecture**: `src/features/` (recommended)
 
 **Rationale**:
+
 - Aligns with agricultural domain consciousness
 - Scales better for enterprise (kilo-scale architecture)
 - Clearer separation of concerns
@@ -256,6 +258,7 @@ features/<domain>/
 **Duration**: 2 hours
 
 #### 1.1 Create Backup Branch
+
 ```bash
 git checkout -b backup/pre-features-migration
 git push origin backup/pre-features-migration
@@ -264,6 +267,7 @@ git checkout -b feature/consolidate-features-directory
 ```
 
 #### 1.2 Audit Current State
+
 ```bash
 # Find all files in components/features
 find src/components/features -type f -name "*.tsx" -o -name "*.ts"
@@ -274,6 +278,7 @@ grep -r "from.*@/components/features" src/ | wc -l
 ```
 
 #### 1.3 Run Full Test Suite
+
 ```bash
 npm run test
 npm run type-check
@@ -283,7 +288,9 @@ npm run lint
 **Checkpoint**: All tests passing, no TypeScript errors
 
 #### 1.4 Document Current Imports
+
 Create a mapping file for reference:
+
 ```bash
 # Generate import map
 find src/components/features -type f \( -name "*.tsx" -o -name "*.ts" \) -exec echo {} \; > migration-map.txt
@@ -467,18 +474,23 @@ Ensure path aliases support new structure:
 **Duration**: 2 hours
 
 #### 5.1 TypeScript Verification
+
 ```bash
 npm run type-check
 ```
+
 **Expected**: No TypeScript errors
 
 #### 5.2 ESLint Check
+
 ```bash
 npm run lint
 ```
+
 **Expected**: No linting errors (or only minor warnings)
 
 #### 5.3 Test Suite Execution
+
 ```bash
 # Run all tests
 npm run test
@@ -489,6 +501,7 @@ npm run test -- product
 npm run test -- order
 npm run test -- checkout
 ```
+
 **Expected**: All tests passing
 
 #### 5.4 Manual Testing Checklist
@@ -505,9 +518,11 @@ npm run test -- checkout
 - [ ] Admin dashboard accessible
 
 #### 5.5 Build Verification
+
 ```bash
 npm run build
 ```
+
 **Expected**: Successful production build
 
 ---
@@ -517,6 +532,7 @@ npm run build
 **Duration**: 30 minutes
 
 #### 6.1 Remove Old Directory
+
 ```bash
 # After confirming everything works
 rm -rf src/components/features
@@ -525,12 +541,14 @@ rm -rf src/components/features
 #### 6.2 Update Documentation
 
 Update these files:
+
 - [ ] `README.md` - Update architecture section
 - [ ] `.cursorrules` - Update directory references
 - [ ] `.github/instructions/*.md` - Update import patterns
 - [ ] `docs/dependencies.md` - Update if needed
 
 #### 6.3 Commit Changes
+
 ```bash
 git add .
 git commit -m "feat: consolidate features directory to domain-driven architecture
@@ -554,6 +572,7 @@ git push origin feature/consolidate-features-directory
 If critical issues arise during migration:
 
 ### Immediate Rollback
+
 ```bash
 # Discard all changes
 git reset --hard HEAD
@@ -564,6 +583,7 @@ git checkout backup/pre-features-migration
 ```
 
 ### Partial Rollback
+
 ```bash
 # Revert specific commits
 git revert <commit-hash>
@@ -579,6 +599,7 @@ git checkout HEAD~1 -- src/components/features
 ### 1. Update Developer Documentation
 
 Create `docs/architecture/features.md`:
+
 - Explain domain-driven feature structure
 - Provide templates for new features
 - Document naming conventions
@@ -630,12 +651,12 @@ module.exports = {
         patterns: [
           {
             group: ["@/components/features/*"],
-            message: "Import from @/features/* instead"
-          }
-        ]
-      }
-    ]
-  }
+            message: "Import from @/features/* instead",
+          },
+        ],
+      },
+    ],
+  },
 };
 ```
 
@@ -683,44 +704,47 @@ Migration is considered successful when:
 
 ## Risk Assessment
 
-| Risk | Probability | Impact | Mitigation |
-|------|------------|--------|------------|
-| Broken imports | Medium | High | Automated testing, thorough verification |
-| Type errors | Low | Medium | TypeScript strict mode, incremental migration |
-| Test failures | Low | High | Run tests frequently during migration |
-| Production issues | Low | High | Staging deployment, rollback plan ready |
-| Developer confusion | Medium | Low | Clear documentation, team communication |
+| Risk                | Probability | Impact | Mitigation                                    |
+| ------------------- | ----------- | ------ | --------------------------------------------- |
+| Broken imports      | Medium      | High   | Automated testing, thorough verification      |
+| Type errors         | Low         | Medium | TypeScript strict mode, incremental migration |
+| Test failures       | Low         | High   | Run tests frequently during migration         |
+| Production issues   | Low         | High   | Staging deployment, rollback plan ready       |
+| Developer confusion | Medium      | Low    | Clear documentation, team communication       |
 
 ---
 
 ## Timeline
 
-| Phase | Duration | Dependencies | Deliverable |
-|-------|----------|--------------|-------------|
-| Pre-Migration | 2 hours | None | Backup, audit, baseline |
-| Structure Creation | 1 hour | Pre-Migration | New directories |
-| File Migration | 3-4 hours | Structure Creation | Files in new location |
-| Import Updates | 2 hours | File Migration | Updated imports |
-| Verification | 2 hours | Import Updates | All tests passing |
-| Cleanup | 30 min | Verification | Old directory removed |
-| **Total** | **10-11 hours** | | **Complete migration** |
+| Phase              | Duration        | Dependencies       | Deliverable             |
+| ------------------ | --------------- | ------------------ | ----------------------- |
+| Pre-Migration      | 2 hours         | None               | Backup, audit, baseline |
+| Structure Creation | 1 hour          | Pre-Migration      | New directories         |
+| File Migration     | 3-4 hours       | Structure Creation | Files in new location   |
+| Import Updates     | 2 hours         | File Migration     | Updated imports         |
+| Verification       | 2 hours         | Import Updates     | All tests passing       |
+| Cleanup            | 30 min          | Verification       | Old directory removed   |
+| **Total**          | **10-11 hours** |                    | **Complete migration**  |
 
 ---
 
 ## Team Communication
 
 ### Before Migration
+
 - [ ] Notify team of upcoming migration
 - [ ] Schedule migration during low-traffic period
 - [ ] Assign migration owner
 - [ ] Prepare rollback contacts
 
 ### During Migration
+
 - [ ] Post updates in team chat
 - [ ] Block new PRs to affected directories
 - [ ] Monitor for issues
 
 ### After Migration
+
 - [ ] Announce completion
 - [ ] Share new import patterns
 - [ ] Conduct team walkthrough
@@ -731,6 +755,7 @@ Migration is considered successful when:
 ## Appendix A: Import Pattern Examples
 
 ### Before (Old Pattern)
+
 ```typescript
 // ❌ OLD - Don't use anymore
 import { FarmCard } from "@/components/features/farms/FarmCard";
@@ -739,6 +764,7 @@ import { useCart } from "@/components/features/cart/useCart";
 ```
 
 ### After (New Pattern)
+
 ```typescript
 // ✅ NEW - Use this pattern
 import { FarmCard } from "@/features/farm/components/FarmCard";
@@ -756,6 +782,7 @@ import { useCart } from "@/features/cart";
 ## Appendix B: Divine Consciousness Integration
 
 ### Agricultural Feature Naming
+
 ```typescript
 // ✅ Divine consciousness in new structure
 // src/features/farm/components/QuantumFarmCard.tsx
@@ -772,6 +799,7 @@ export function QuantumFarmCard({ farm }: QuantumFarmCardProps) {
 ```
 
 ### Seasonal Context Integration
+
 ```typescript
 // ✅ Domain features aware of agricultural cycles
 // src/features/farm/hooks/useSeasonalFarm.ts
@@ -781,10 +809,10 @@ export function useSeasonalFarm(farmId: string) {
 
   return {
     farm,
-    seasonalProducts: farm?.products.filter(p =>
-      isSeasonallyAppropriate(p, season)
+    seasonalProducts: farm?.products.filter((p) =>
+      isSeasonallyAppropriate(p, season),
     ),
-    currentSeason: season
+    currentSeason: season,
   };
 }
 ```

@@ -20,46 +20,49 @@
  * @requires k6 v0.47.0+
  */
 
-import http from 'k6/http';
-import { check, group, sleep } from 'k6';
-import { Counter, Rate, Trend } from 'k6/metrics';
-import { randomIntBetween, randomItem } from 'https://jslib.k6.io/k6-utils/1.4.0/index.js';
+import http from "k6/http";
+import { check, group, sleep } from "k6";
+import { Counter, Rate, Trend } from "k6/metrics";
+import {
+  randomIntBetween,
+  randomItem,
+} from "https://jslib.k6.io/k6-utils/1.4.0/index.js";
 
 // ============================================================================
 // Configuration
 // ============================================================================
 
-const BASE_URL = __ENV.BASE_URL || 'http://localhost:3001';
+const BASE_URL = __ENV.BASE_URL || "http://localhost:3001";
 const API_URL = `${BASE_URL}/api`;
 
 // Test stages - gradual ramp-up and sustained load
 export const options = {
   stages: [
-    { duration: '30s', target: 10 },   // Warm-up: 10 users
-    { duration: '1m', target: 30 },    // Ramp-up: 30 users
-    { duration: '2m', target: 50 },    // Peak load: 50 users
-    { duration: '1m', target: 100 },   // Stress test: 100 users
-    { duration: '2m', target: 50 },    // Cool-down: back to 50
-    { duration: '30s', target: 0 },    // Wind-down
+    { duration: "30s", target: 10 }, // Warm-up: 10 users
+    { duration: "1m", target: 30 }, // Ramp-up: 30 users
+    { duration: "2m", target: 50 }, // Peak load: 50 users
+    { duration: "1m", target: 100 }, // Stress test: 100 users
+    { duration: "2m", target: 50 }, // Cool-down: back to 50
+    { duration: "30s", target: 0 }, // Wind-down
   ],
   thresholds: {
     // HTTP request success rate
-    'http_req_failed': ['rate<0.05'],          // < 5% error rate
+    http_req_failed: ["rate<0.05"], // < 5% error rate
 
     // Response time thresholds
-    'http_req_duration': ['p(95)<2000'],        // 95% of requests < 2s
-    'http_req_duration{type:api}': ['p(95)<500'], // API endpoints < 500ms
-    'http_req_duration{type:page}': ['p(95)<1500'], // Pages < 1.5s
+    http_req_duration: ["p(95)<2000"], // 95% of requests < 2s
+    "http_req_duration{type:api}": ["p(95)<500"], // API endpoints < 500ms
+    "http_req_duration{type:page}": ["p(95)<1500"], // Pages < 1.5s
 
     // Specific operation thresholds
-    'order_creation_duration': ['p(95)<3000'],  // Order creation < 3s
-    'payment_duration': ['p(95)<5000'],         // Payment processing < 5s
-    'cart_operation_duration': ['p(95)<500'],   // Cart ops < 500ms
+    order_creation_duration: ["p(95)<3000"], // Order creation < 3s
+    payment_duration: ["p(95)<5000"], // Payment processing < 5s
+    cart_operation_duration: ["p(95)<500"], // Cart ops < 500ms
 
     // Business metrics
-    'order_success_rate': ['rate>0.95'],        // > 95% order success
-    'payment_success_rate': ['rate>0.98'],      // > 98% payment success
-    'inventory_consistency_rate': ['rate>0.99'], // > 99% inventory consistency
+    order_success_rate: ["rate>0.95"], // > 95% order success
+    payment_success_rate: ["rate>0.98"], // > 98% payment success
+    inventory_consistency_rate: ["rate>0.99"], // > 99% inventory consistency
   },
 };
 
@@ -67,31 +70,41 @@ export const options = {
 // Custom Metrics
 // ============================================================================
 
-const orderCreationDuration = new Trend('order_creation_duration');
-const paymentDuration = new Trend('payment_duration');
-const cartOperationDuration = new Trend('cart_operation_duration');
+const orderCreationDuration = new Trend("order_creation_duration");
+const paymentDuration = new Trend("payment_duration");
+const cartOperationDuration = new Trend("cart_operation_duration");
 
-const orderSuccessRate = new Rate('order_success_rate');
-const paymentSuccessRate = new Rate('payment_success_rate');
-const inventoryConsistencyRate = new Rate('inventory_consistency_rate');
+const orderSuccessRate = new Rate("order_success_rate");
+const paymentSuccessRate = new Rate("payment_success_rate");
+const inventoryConsistencyRate = new Rate("inventory_consistency_rate");
 
-const concurrentOrderAttempts = new Counter('concurrent_order_attempts');
-const inventoryConflicts = new Counter('inventory_conflicts');
-const paymentFailures = new Counter('payment_failures');
+const concurrentOrderAttempts = new Counter("concurrent_order_attempts");
+const inventoryConflicts = new Counter("inventory_conflicts");
+const paymentFailures = new Counter("payment_failures");
 
 // ============================================================================
 // Test Data
 // ============================================================================
 
 const TEST_PRODUCTS = [
-  { id: 'prod_1', name: 'Organic Tomatoes', price: 4.99, initialInventory: 100 },
-  { id: 'prod_2', name: 'Fresh Carrots', price: 3.49, initialInventory: 50 },
-  { id: 'prod_3', name: 'Heirloom Lettuce', price: 2.99, initialInventory: 30 },
-  { id: 'prod_4', name: 'Sweet Peppers', price: 5.99, initialInventory: 75 },
-  { id: 'prod_5', name: 'Organic Cucumbers', price: 3.99, initialInventory: 60 },
+  {
+    id: "prod_1",
+    name: "Organic Tomatoes",
+    price: 4.99,
+    initialInventory: 100,
+  },
+  { id: "prod_2", name: "Fresh Carrots", price: 3.49, initialInventory: 50 },
+  { id: "prod_3", name: "Heirloom Lettuce", price: 2.99, initialInventory: 30 },
+  { id: "prod_4", name: "Sweet Peppers", price: 5.99, initialInventory: 75 },
+  {
+    id: "prod_5",
+    name: "Organic Cucumbers",
+    price: 3.99,
+    initialInventory: 60,
+  },
 ];
 
-const USER_ROLES = ['CUSTOMER', 'FARMER', 'ADMIN'];
+const USER_ROLES = ["CUSTOMER", "FARMER", "ADMIN"];
 
 // ============================================================================
 // Helper Functions
@@ -110,9 +123,9 @@ function generateEmail() {
 function generateUserData() {
   return {
     email: generateEmail(),
-    password: 'LoadTest123!',
+    password: "LoadTest123!",
     name: `Load Test User ${__VU}`,
-    role: 'CUSTOMER',
+    role: "CUSTOMER",
   };
 }
 
@@ -122,10 +135,16 @@ function generateUserData() {
 function generateAddress() {
   return {
     street: `${randomIntBetween(100, 9999)} Test Street`,
-    city: randomItem(['Springfield', 'Portland', 'Austin', 'Denver', 'Seattle']),
-    state: randomItem(['CA', 'OR', 'TX', 'CO', 'WA']),
+    city: randomItem([
+      "Springfield",
+      "Portland",
+      "Austin",
+      "Denver",
+      "Seattle",
+    ]),
+    state: randomItem(["CA", "OR", "TX", "CO", "WA"]),
     zipCode: `${randomIntBetween(10000, 99999)}`,
-    country: 'USA',
+    country: "USA",
   };
 }
 
@@ -135,25 +154,25 @@ function generateAddress() {
 function apiRequest(method, endpoint, data, token) {
   const params = {
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
-    tags: { type: 'api' },
+    tags: { type: "api" },
   };
 
   if (token) {
-    params.headers['Authorization'] = `Bearer ${token}`;
+    params.headers["Authorization"] = `Bearer ${token}`;
   }
 
   const url = `${API_URL}${endpoint}`;
 
   let response;
-  if (method === 'GET') {
+  if (method === "GET") {
     response = http.get(url, params);
-  } else if (method === 'POST') {
+  } else if (method === "POST") {
     response = http.post(url, JSON.stringify(data), params);
-  } else if (method === 'PATCH') {
+  } else if (method === "PATCH") {
     response = http.patch(url, JSON.stringify(data), params);
-  } else if (method === 'DELETE') {
+  } else if (method === "DELETE") {
     response = http.del(url, null, params);
   }
 
@@ -167,30 +186,36 @@ function authenticateUser() {
   const userData = generateUserData();
 
   // Register
-  const registerRes = apiRequest('POST', '/auth/register', userData);
+  const registerRes = apiRequest("POST", "/auth/register", userData);
 
-  if (!check(registerRes, {
-    'registration successful': (r) => r.status === 201 || r.status === 200,
-  })) {
-    console.error(`Registration failed for ${userData.email}: ${registerRes.status}`);
+  if (
+    !check(registerRes, {
+      "registration successful": (r) => r.status === 201 || r.status === 200,
+    })
+  ) {
+    console.error(
+      `Registration failed for ${userData.email}: ${registerRes.status}`,
+    );
     return null;
   }
 
   // Login
-  const loginRes = apiRequest('POST', '/auth/login', {
+  const loginRes = apiRequest("POST", "/auth/login", {
     email: userData.email,
     password: userData.password,
   });
 
-  if (!check(loginRes, {
-    'login successful': (r) => r.status === 200,
-    'token received': (r) => r.json('data.token') !== undefined,
-  })) {
+  if (
+    !check(loginRes, {
+      "login successful": (r) => r.status === 200,
+      "token received": (r) => r.json("data.token") !== undefined,
+    })
+  ) {
     console.error(`Login failed for ${userData.email}`);
     return null;
   }
 
-  const loginData = loginRes.json('data');
+  const loginData = loginRes.json("data");
   return {
     token: loginData.token,
     userId: loginData.user.id,
@@ -202,14 +227,19 @@ function authenticateUser() {
  * Browse products
  */
 function browseProducts(token) {
-  const response = apiRequest('GET', '/products?page=1&limit=20&inStock=true', null, token);
+  const response = apiRequest(
+    "GET",
+    "/products?page=1&limit=20&inStock=true",
+    null,
+    token,
+  );
 
   check(response, {
-    'products loaded': (r) => r.status === 200,
-    'products returned': (r) => r.json('data') && r.json('data').length > 0,
+    "products loaded": (r) => r.status === 200,
+    "products returned": (r) => r.json("data") && r.json("data").length > 0,
   });
 
-  return response.json('data') || [];
+  return response.json("data") || [];
 }
 
 /**
@@ -218,16 +248,21 @@ function browseProducts(token) {
 function addToCart(token, productId, quantity) {
   const start = Date.now();
 
-  const response = apiRequest('POST', '/cart/items', {
-    productId,
-    quantity,
-  }, token);
+  const response = apiRequest(
+    "POST",
+    "/cart/items",
+    {
+      productId,
+      quantity,
+    },
+    token,
+  );
 
   const duration = Date.now() - start;
   cartOperationDuration.add(duration);
 
   const success = check(response, {
-    'add to cart successful': (r) => r.status === 200 || r.status === 201,
+    "add to cart successful": (r) => r.status === 200 || r.status === 201,
   });
 
   if (!success && response.status === 409) {
@@ -241,13 +276,13 @@ function addToCart(token, productId, quantity) {
  * Get cart contents
  */
 function getCart(token) {
-  const response = apiRequest('GET', '/cart', null, token);
+  const response = apiRequest("GET", "/cart", null, token);
 
   check(response, {
-    'cart retrieved': (r) => r.status === 200,
+    "cart retrieved": (r) => r.status === 200,
   });
 
-  return response.json('data');
+  return response.json("data");
 }
 
 /**
@@ -261,18 +296,18 @@ function createOrder(token) {
   const orderData = {
     shippingAddress: generateAddress(),
     billingAddress: generateAddress(),
-    paymentMethod: 'STRIPE',
+    paymentMethod: "STRIPE",
     notes: `Load test order from VU ${__VU}`,
   };
 
-  const response = apiRequest('POST', '/orders', orderData, token);
+  const response = apiRequest("POST", "/orders", orderData, token);
 
   const duration = Date.now() - start;
   orderCreationDuration.add(duration);
 
   const success = check(response, {
-    'order created': (r) => r.status === 201 || r.status === 200,
-    'order has ID': (r) => r.json('data.id') !== undefined,
+    "order created": (r) => r.status === 201 || r.status === 200,
+    "order has ID": (r) => r.json("data.id") !== undefined,
   });
 
   orderSuccessRate.add(success);
@@ -282,12 +317,14 @@ function createOrder(token) {
       inventoryConflicts.add(1);
       console.log(`Inventory conflict detected for VU ${__VU}`);
     } else {
-      console.error(`Order creation failed: ${response.status} - ${response.body}`);
+      console.error(
+        `Order creation failed: ${response.status} - ${response.body}`,
+      );
     }
     return null;
   }
 
-  return response.json('data');
+  return response.json("data");
 }
 
 /**
@@ -297,36 +334,48 @@ function processPayment(token, orderId, amount) {
   const start = Date.now();
 
   // Create payment intent
-  const intentRes = apiRequest('POST', '/payments/intent', {
-    orderId,
-    amount,
-    currency: 'usd',
-  }, token);
+  const intentRes = apiRequest(
+    "POST",
+    "/payments/intent",
+    {
+      orderId,
+      amount,
+      currency: "usd",
+    },
+    token,
+  );
 
-  if (!check(intentRes, {
-    'payment intent created': (r) => r.status === 200 || r.status === 201,
-  })) {
+  if (
+    !check(intentRes, {
+      "payment intent created": (r) => r.status === 200 || r.status === 201,
+    })
+  ) {
     paymentFailures.add(1);
     paymentSuccessRate.add(false);
     return false;
   }
 
-  const paymentIntentId = intentRes.json('data.paymentIntentId');
+  const paymentIntentId = intentRes.json("data.paymentIntentId");
 
   // Simulate payment processing delay
   sleep(randomIntBetween(1, 3));
 
   // Confirm payment
-  const confirmRes = apiRequest('POST', '/payments/confirm', {
-    orderId,
-    paymentIntentId,
-  }, token);
+  const confirmRes = apiRequest(
+    "POST",
+    "/payments/confirm",
+    {
+      orderId,
+      paymentIntentId,
+    },
+    token,
+  );
 
   const duration = Date.now() - start;
   paymentDuration.add(duration);
 
   const success = check(confirmRes, {
-    'payment confirmed': (r) => r.status === 200,
+    "payment confirmed": (r) => r.status === 200,
   });
 
   paymentSuccessRate.add(success);
@@ -342,11 +391,11 @@ function processPayment(token, orderId, amount) {
  * Verify inventory consistency
  */
 function verifyInventory(token, productId) {
-  const response = apiRequest('GET', `/products/${productId}`, null, token);
+  const response = apiRequest("GET", `/products/${productId}`, null, token);
 
   const consistent = check(response, {
-    'product exists': (r) => r.status === 200,
-    'inventory is non-negative': (r) => r.json('data.inventory') >= 0,
+    "product exists": (r) => r.status === 200,
+    "inventory is non-negative": (r) => r.json("data.inventory") >= 0,
   });
 
   inventoryConsistencyRate.add(consistent);
@@ -363,7 +412,7 @@ export default function () {
   const vu = __VU;
   const iter = __ITER;
 
-  group('User Authentication', () => {
+  group("User Authentication", () => {
     const user = authenticateUser();
 
     if (!user) {
@@ -374,7 +423,7 @@ export default function () {
 
     sleep(randomIntBetween(1, 3));
 
-    group('Product Browsing', () => {
+    group("Product Browsing", () => {
       const products = browseProducts(user.token);
 
       if (products.length === 0) {
@@ -385,12 +434,12 @@ export default function () {
 
       // Browse multiple pages
       for (let page = 1; page <= 3; page++) {
-        apiRequest('GET', `/products?page=${page}&limit=10`, null, user.token);
+        apiRequest("GET", `/products?page=${page}&limit=10`, null, user.token);
         sleep(randomIntBetween(1, 2));
       }
     });
 
-    group('Shopping Cart Operations', () => {
+    group("Shopping Cart Operations", () => {
       // Add random products to cart
       const numProducts = randomIntBetween(1, 3);
 
@@ -414,18 +463,25 @@ export default function () {
       // Update cart item quantity
       if (cart.items.length > 0) {
         const itemToUpdate = randomItem(cart.items);
-        apiRequest('PATCH', `/cart/items/${itemToUpdate.productId}`, {
-          quantity: randomIntBetween(1, 10),
-        }, user.token);
+        apiRequest(
+          "PATCH",
+          `/cart/items/${itemToUpdate.productId}`,
+          {
+            quantity: randomIntBetween(1, 10),
+          },
+          user.token,
+        );
         sleep(1);
       }
     });
 
-    group('Order Creation (Concurrent)', () => {
+    group("Order Creation (Concurrent)", () => {
       const order = createOrder(user.token);
 
       if (!order) {
-        console.log(`VU ${vu}: Order creation failed, likely due to concurrency`);
+        console.log(
+          `VU ${vu}: Order creation failed, likely due to concurrency`,
+        );
         sleep(2);
         return;
       }
@@ -433,8 +489,12 @@ export default function () {
       console.log(`VU ${vu}: Order ${order.id} created successfully`);
       sleep(randomIntBetween(1, 2));
 
-      group('Payment Processing', () => {
-        const paymentSuccess = processPayment(user.token, order.id, order.total);
+      group("Payment Processing", () => {
+        const paymentSuccess = processPayment(
+          user.token,
+          order.id,
+          order.total,
+        );
 
         if (paymentSuccess) {
           console.log(`VU ${vu}: Payment for order ${order.id} successful`);
@@ -445,18 +505,23 @@ export default function () {
         sleep(randomIntBetween(1, 2));
 
         // Verify order status
-        const orderStatusRes = apiRequest('GET', `/orders/${order.id}`, null, user.token);
+        const orderStatusRes = apiRequest(
+          "GET",
+          `/orders/${order.id}`,
+          null,
+          user.token,
+        );
         check(orderStatusRes, {
-          'order status updated': (r) => r.status === 200,
-          'order is paid or processing': (r) => {
-            const status = r.json('data.status');
-            return status === 'PAID' || status === 'PROCESSING';
+          "order status updated": (r) => r.status === 200,
+          "order is paid or processing": (r) => {
+            const status = r.json("data.status");
+            return status === "PAID" || status === "PROCESSING";
           },
         });
       });
     });
 
-    group('Inventory Verification', () => {
+    group("Inventory Verification", () => {
       // Verify inventory for random products
       const productToCheck = randomItem(TEST_PRODUCTS);
       verifyInventory(user.token, productToCheck.id);
@@ -464,7 +529,7 @@ export default function () {
     });
 
     // Cleanup: Logout
-    apiRequest('POST', '/auth/logout', null, user.token);
+    apiRequest("POST", "/auth/logout", null, user.token);
   });
 
   // Think time between iterations
@@ -476,24 +541,28 @@ export default function () {
 // ============================================================================
 
 export function setup() {
-  console.log('========================================');
-  console.log('K6 Load Test - Concurrent Order Scenarios');
-  console.log('========================================');
+  console.log("========================================");
+  console.log("K6 Load Test - Concurrent Order Scenarios");
+  console.log("========================================");
   console.log(`Base URL: ${BASE_URL}`);
   console.log(`API URL: ${API_URL}`);
-  console.log('');
-  console.log('Test Configuration:');
-  console.log(`  - Max VUs: ${options.stages.reduce((max, s) => Math.max(max, s.target), 0)}`);
-  console.log(`  - Total Duration: ${options.stages.reduce((sum, s) => sum + parseDuration(s.duration), 0)}s`);
-  console.log('');
-  console.log('Starting load test...');
-  console.log('========================================');
+  console.log("");
+  console.log("Test Configuration:");
+  console.log(
+    `  - Max VUs: ${options.stages.reduce((max, s) => Math.max(max, s.target), 0)}`,
+  );
+  console.log(
+    `  - Total Duration: ${options.stages.reduce((sum, s) => sum + parseDuration(s.duration), 0)}s`,
+  );
+  console.log("");
+  console.log("Starting load test...");
+  console.log("========================================");
 
   // Health check
   const healthRes = http.get(`${API_URL}/health`);
   if (healthRes.status !== 200) {
-    console.error('Health check failed! API may not be available.');
-    throw new Error('API health check failed');
+    console.error("Health check failed! API may not be available.");
+    throw new Error("API health check failed");
   }
 
   return {
@@ -504,13 +573,13 @@ export function setup() {
 export function teardown(data) {
   const duration = (Date.now() - data.startTime) / 1000;
 
-  console.log('========================================');
-  console.log('Load Test Complete');
-  console.log('========================================');
+  console.log("========================================");
+  console.log("Load Test Complete");
+  console.log("========================================");
   console.log(`Total Duration: ${duration}s`);
-  console.log('');
-  console.log('Check the test summary above for detailed metrics.');
-  console.log('========================================');
+  console.log("");
+  console.log("Check the test summary above for detailed metrics.");
+  console.log("========================================");
 }
 
 // Helper to parse duration strings
@@ -522,10 +591,14 @@ function parseDuration(duration) {
   const unit = match[2];
 
   switch (unit) {
-    case 's': return value;
-    case 'm': return value * 60;
-    case 'h': return value * 3600;
-    default: return 0;
+    case "s":
+      return value;
+    case "m":
+      return value * 60;
+    case "h":
+      return value * 3600;
+    default:
+      return 0;
   }
 }
 
@@ -544,8 +617,8 @@ export function handleSummary(data) {
       },
       http_request_duration: {
         avg: data.metrics.http_req_duration.values.avg,
-        p95: data.metrics.http_req_duration.values['p(95)'],
-        p99: data.metrics.http_req_duration.values['p(99)'],
+        p95: data.metrics.http_req_duration.values["p(95)"],
+        p99: data.metrics.http_req_duration.values["p(99)"],
       },
       orders: {
         attempts: data.metrics.concurrent_order_attempts?.values.count || 0,
@@ -558,7 +631,8 @@ export function handleSummary(data) {
         failures: data.metrics.payment_failures?.values.count || 0,
       },
       inventory: {
-        consistency_rate: data.metrics.inventory_consistency_rate?.values.rate || 0,
+        consistency_rate:
+          data.metrics.inventory_consistency_rate?.values.rate || 0,
         conflicts: data.metrics.inventory_conflicts?.values.count || 0,
       },
       errors: {
@@ -568,7 +642,7 @@ export function handleSummary(data) {
   };
 
   return {
-    'stdout': textSummary(data, { indent: '  ', enableColors: true }),
-    'load-test-results.json': JSON.stringify(summary, null, 2),
+    stdout: textSummary(data, { indent: "  ", enableColors: true }),
+    "load-test-results.json": JSON.stringify(summary, null, 2),
   };
 }

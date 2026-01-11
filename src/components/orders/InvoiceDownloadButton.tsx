@@ -3,20 +3,20 @@
 // 🌾 Domain: Order Management & Invoice Generation
 // ⚡ Performance: Optimized PDF download with analytics tracking
 
-'use client';
+"use client";
 
-import { useAnalytics } from '@/hooks/useAnalytics';
-import { Download, Loader2 } from 'lucide-react';
-import { useState } from 'react';
-import { toast } from 'sonner';
+import { useAnalytics } from "@/hooks/useAnalytics";
+import { Download, Loader2 } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 interface InvoiceDownloadButtonProps {
   orderId: string;
   orderNumber?: string;
-  variant?: 'primary' | 'secondary' | 'outline';
-  size?: 'sm' | 'md' | 'lg';
+  variant?: "primary" | "secondary" | "outline";
+  size?: "sm" | "md" | "lg";
   className?: string;
 }
 
@@ -32,9 +32,9 @@ interface InvoiceDownloadButtonProps {
 export function InvoiceDownloadButton({
   orderId,
   orderNumber,
-  variant = 'primary',
-  size = 'md',
-  className = '',
+  variant = "primary",
+  size = "md",
+  className = "",
 }: InvoiceDownloadButtonProps) {
   const [loading, setLoading] = useState(false);
   const { trackDownloadInvoice, trackError } = useAnalytics();
@@ -50,15 +50,15 @@ export function InvoiceDownloadButton({
 
       // Fetch invoice PDF
       const response = await fetch(`/api/orders/${orderId}/invoice`, {
-        method: 'GET',
+        method: "GET",
         headers: {
-          'Content-Type': 'application/pdf',
+          "Content-Type": "application/pdf",
         },
       });
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || 'Failed to generate invoice');
+        throw new Error(errorData.error || "Failed to generate invoice");
       }
 
       // Get the PDF blob
@@ -66,7 +66,7 @@ export function InvoiceDownloadButton({
 
       // Create download link
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
       a.download = `invoice-${orderNumber || orderId}.pdf`;
 
@@ -79,25 +79,26 @@ export function InvoiceDownloadButton({
       window.URL.revokeObjectURL(url);
 
       // Success notification
-      toast.success('Invoice downloaded successfully! 🌾', {
+      toast.success("Invoice downloaded successfully! 🌾", {
         description: `Invoice for order ${orderNumber || orderId}`,
       });
-
     } catch (error) {
-      logger.error('Invoice download failed:', {
-      error: error instanceof Error ? error.message : String(error),
-    });
+      logger.error("Invoice download failed:", {
+        error: error instanceof Error ? error.message : String(error),
+      });
 
       // Track error
       trackError({
-        message: error instanceof Error ? error.message : 'Invoice download failed',
-        page: '/orders',
+        message:
+          error instanceof Error ? error.message : "Invoice download failed",
+        page: "/orders",
         fatal: false,
       });
 
       // Error notification
-      toast.error('Failed to download invoice', {
-        description: error instanceof Error ? error.message : 'Please try again later',
+      toast.error("Failed to download invoice", {
+        description:
+          error instanceof Error ? error.message : "Please try again later",
       });
     } finally {
       setLoading(false);
@@ -106,16 +107,16 @@ export function InvoiceDownloadButton({
 
   // Variant styles
   const variantStyles = {
-    primary: 'bg-green-600 hover:bg-green-700 text-white',
-    secondary: 'bg-gray-600 hover:bg-gray-700 text-white',
-    outline: 'border-2 border-green-600 text-green-600 hover:bg-green-50',
+    primary: "bg-green-600 hover:bg-green-700 text-white",
+    secondary: "bg-gray-600 hover:bg-gray-700 text-white",
+    outline: "border-2 border-green-600 text-green-600 hover:bg-green-50",
   };
 
   // Size styles
   const sizeStyles = {
-    sm: 'px-3 py-1.5 text-sm',
-    md: 'px-4 py-2 text-base',
-    lg: 'px-6 py-3 text-lg',
+    sm: "px-3 py-1.5 text-sm",
+    md: "px-4 py-2 text-base",
+    lg: "px-6 py-3 text-lg",
   };
 
   return (
@@ -155,8 +156,8 @@ export function InvoiceDownloadButton({
 export function InvoiceDownloadIconButton({
   orderId,
   orderNumber,
-  className = '',
-}: Pick<InvoiceDownloadButtonProps, 'orderId' | 'orderNumber' | 'className'>) {
+  className = "",
+}: Pick<InvoiceDownloadButtonProps, "orderId" | "orderNumber" | "className">) {
   const [loading, setLoading] = useState(false);
   const { trackDownloadInvoice, trackError } = useAnalytics();
 
@@ -171,12 +172,12 @@ export function InvoiceDownloadIconButton({
       const response = await fetch(`/api/orders/${orderId}/invoice`);
 
       if (!response.ok) {
-        throw new Error('Failed to generate invoice');
+        throw new Error("Failed to generate invoice");
       }
 
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
       a.download = `invoice-${orderNumber || orderId}.pdf`;
       document.body.appendChild(a);
@@ -184,16 +185,16 @@ export function InvoiceDownloadIconButton({
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
 
-      toast.success('Invoice downloaded! 🌾');
-
+      toast.success("Invoice downloaded! 🌾");
     } catch (error) {
       trackError({
-        message: error instanceof Error ? error.message : 'Invoice download failed',
-        page: '/orders',
+        message:
+          error instanceof Error ? error.message : "Invoice download failed",
+        page: "/orders",
         fatal: false,
       });
 
-      toast.error('Failed to download invoice');
+      toast.error("Failed to download invoice");
     } finally {
       setLoading(false);
     }

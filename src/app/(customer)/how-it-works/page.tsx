@@ -8,7 +8,8 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "How It Works | Farmers Market",
-  description: "Learn how to buy fresh produce from local farms or sell your farm products",
+  description:
+    "Learn how to buy fresh produce from local farms or sell your farm products",
 };
 
 export default function HowItWorksPage() {
@@ -31,7 +32,9 @@ export default function HowItWorksPage() {
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
               <span className="text-3xl">🛒</span>
             </div>
-            <h2 className="mb-2 text-3xl font-bold text-gray-900">For Customers</h2>
+            <h2 className="mb-2 text-3xl font-bold text-gray-900">
+              For Customers
+            </h2>
             <p className="text-lg text-gray-600">
               Fresh produce delivered from local farms to your door
             </p>
@@ -50,7 +53,8 @@ export default function HowItWorksPage() {
                 Browse Local Farms
               </h3>
               <p className="text-gray-600">
-                Discover farms in your area and explore their fresh, seasonal produce. Filter by organic, certifications, and more.
+                Discover farms in your area and explore their fresh, seasonal
+                produce. Filter by organic, certifications, and more.
               </p>
             </div>
 
@@ -66,7 +70,8 @@ export default function HowItWorksPage() {
                 Add to Cart
               </h3>
               <p className="text-gray-600">
-                Select products from multiple farms, choose quantities, and add them to your cart. See real-time availability and pricing.
+                Select products from multiple farms, choose quantities, and add
+                them to your cart. See real-time availability and pricing.
               </p>
             </div>
 
@@ -82,7 +87,8 @@ export default function HowItWorksPage() {
                 Secure Checkout
               </h3>
               <p className="text-gray-600">
-                Complete your order with secure payment processing. Choose delivery or pickup options based on farm preferences.
+                Complete your order with secure payment processing. Choose
+                delivery or pickup options based on farm preferences.
               </p>
             </div>
 
@@ -98,7 +104,8 @@ export default function HowItWorksPage() {
                 Receive Fresh Produce
               </h3>
               <p className="text-gray-600">
-                Get your fresh produce delivered or pick it up from the farm. Track your orders and communicate directly with farmers.
+                Get your fresh produce delivered or pick it up from the farm.
+                Track your orders and communicate directly with farmers.
               </p>
             </div>
           </div>
@@ -123,7 +130,9 @@ export default function HowItWorksPage() {
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
               <span className="text-3xl">🌾</span>
             </div>
-            <h2 className="mb-2 text-3xl font-bold text-gray-900">For Farmers</h2>
+            <h2 className="mb-2 text-3xl font-bold text-gray-900">
+              For Farmers
+            </h2>
             <p className="text-lg text-gray-600">
               Sell directly to customers and grow your farm business
             </p>
@@ -142,7 +151,8 @@ export default function HowItWorksPage() {
                 Create Your Farm Profile
               </h3>
               <p className="text-gray-600">
-                Register your farm with photos, story, certifications, and location. Showcase what makes your farm unique.
+                Register your farm with photos, story, certifications, and
+                location. Showcase what makes your farm unique.
               </p>
             </div>
 
@@ -158,7 +168,8 @@ export default function HowItWorksPage() {
                 List Your Products
               </h3>
               <p className="text-gray-600">
-                Add your fresh produce with photos, descriptions, pricing, and availability. Update inventory in real-time.
+                Add your fresh produce with photos, descriptions, pricing, and
+                availability. Update inventory in real-time.
               </p>
             </div>
 
@@ -174,7 +185,8 @@ export default function HowItWorksPage() {
                 Receive Orders
               </h3>
               <p className="text-gray-600">
-                Get instant notifications when customers place orders. Manage orders through your farmer dashboard.
+                Get instant notifications when customers place orders. Manage
+                orders through your farmer dashboard.
               </p>
             </div>
 
@@ -190,7 +202,8 @@ export default function HowItWorksPage() {
                 Get Paid Directly
               </h3>
               <p className="text-gray-600">
-                Receive payments directly to your bank account. Track sales, revenue, and analytics from your dashboard.
+                Receive payments directly to your bank account. Track sales,
+                revenue, and analytics from your dashboard.
               </p>
             </div>
           </div>
@@ -222,7 +235,8 @@ export default function HowItWorksPage() {
                 Farm-to-Table Direct
               </h3>
               <p className="text-gray-600">
-                Skip the middleman and connect directly with local farmers. Fresher produce, better prices, and support local agriculture.
+                Skip the middleman and connect directly with local farmers.
+                Fresher produce, better prices, and support local agriculture.
               </p>
             </div>
 
@@ -235,7 +249,9 @@ export default function HowItWorksPage() {
                 Verified Farms
               </h3>
               <p className="text-gray-600">
-                All farms are verified and many hold organic or other certifications. Shop with confidence knowing where your food comes from.
+                All farms are verified and many hold organic or other
+                certifications. Shop with confidence knowing where your food
+                comes from.
               </p>
             </div>
 
@@ -248,7 +264,8 @@ export default function HowItWorksPage() {
                 Sustainable Impact
               </h3>
               <p className="text-gray-600">
-                Reduce carbon footprint with local sourcing, support sustainable farming practices, and help build resilient local food systems.
+                Reduce carbon footprint with local sourcing, support sustainable
+                farming practices, and help build resilient local food systems.
               </p>
             </div>
           </div>
@@ -263,73 +280,145 @@ export default function HowItWorksPage() {
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             <div className="flex items-start">
               <div className="mr-4 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-green-100">
-                <svg className="h-5 w-5 text-green-700" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                <svg
+                  className="h-5 w-5 text-green-700"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clipRule="evenodd"
+                  />
                 </svg>
               </div>
               <div>
-                <h4 className="mb-1 font-semibold text-gray-900">Real-Time Inventory</h4>
-                <p className="text-sm text-gray-600">See what's available right now</p>
+                <h4 className="mb-1 font-semibold text-gray-900">
+                  Real-Time Inventory
+                </h4>
+                <p className="text-sm text-gray-600">
+                  See what's available right now
+                </p>
               </div>
             </div>
 
             <div className="flex items-start">
               <div className="mr-4 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-green-100">
-                <svg className="h-5 w-5 text-green-700" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                <svg
+                  className="h-5 w-5 text-green-700"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clipRule="evenodd"
+                  />
                 </svg>
               </div>
               <div>
-                <h4 className="mb-1 font-semibold text-gray-900">Multiple Payment Options</h4>
-                <p className="text-sm text-gray-600">Credit cards, digital wallets supported</p>
+                <h4 className="mb-1 font-semibold text-gray-900">
+                  Multiple Payment Options
+                </h4>
+                <p className="text-sm text-gray-600">
+                  Credit cards, digital wallets supported
+                </p>
               </div>
             </div>
 
             <div className="flex items-start">
               <div className="mr-4 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-green-100">
-                <svg className="h-5 w-5 text-green-700" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                <svg
+                  className="h-5 w-5 text-green-700"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clipRule="evenodd"
+                  />
                 </svg>
               </div>
               <div>
-                <h4 className="mb-1 font-semibold text-gray-900">Order Tracking</h4>
-                <p className="text-sm text-gray-600">Track your order from farm to door</p>
+                <h4 className="mb-1 font-semibold text-gray-900">
+                  Order Tracking
+                </h4>
+                <p className="text-sm text-gray-600">
+                  Track your order from farm to door
+                </p>
               </div>
             </div>
 
             <div className="flex items-start">
               <div className="mr-4 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-green-100">
-                <svg className="h-5 w-5 text-green-700" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                <svg
+                  className="h-5 w-5 text-green-700"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clipRule="evenodd"
+                  />
                 </svg>
               </div>
               <div>
-                <h4 className="mb-1 font-semibold text-gray-900">Direct Messaging</h4>
-                <p className="text-sm text-gray-600">Chat with farmers directly</p>
+                <h4 className="mb-1 font-semibold text-gray-900">
+                  Direct Messaging
+                </h4>
+                <p className="text-sm text-gray-600">
+                  Chat with farmers directly
+                </p>
               </div>
             </div>
 
             <div className="flex items-start">
               <div className="mr-4 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-green-100">
-                <svg className="h-5 w-5 text-green-700" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                <svg
+                  className="h-5 w-5 text-green-700"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clipRule="evenodd"
+                  />
                 </svg>
               </div>
               <div>
-                <h4 className="mb-1 font-semibold text-gray-900">Reviews & Ratings</h4>
-                <p className="text-sm text-gray-600">Share and read customer experiences</p>
+                <h4 className="mb-1 font-semibold text-gray-900">
+                  Reviews & Ratings
+                </h4>
+                <p className="text-sm text-gray-600">
+                  Share and read customer experiences
+                </p>
               </div>
             </div>
 
             <div className="flex items-start">
               <div className="mr-4 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-green-100">
-                <svg className="h-5 w-5 text-green-700" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                <svg
+                  className="h-5 w-5 text-green-700"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clipRule="evenodd"
+                  />
                 </svg>
               </div>
               <div>
-                <h4 className="mb-1 font-semibold text-gray-900">Mobile Friendly</h4>
-                <p className="text-sm text-gray-600">Shop on any device, anywhere</p>
+                <h4 className="mb-1 font-semibold text-gray-900">
+                  Mobile Friendly
+                </h4>
+                <p className="text-sm text-gray-600">
+                  Shop on any device, anywhere
+                </p>
               </div>
             </div>
           </div>

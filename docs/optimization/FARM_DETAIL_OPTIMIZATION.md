@@ -11,6 +11,7 @@
 The farm detail page has been comprehensively optimized to eliminate slow rendering and database query bottlenecks. Through strategic query optimization, multi-layer caching, and React Suspense streaming, we've achieved significant performance improvements.
 
 ### Key Metrics (Before → After)
+
 - **Page Load Time:** ~3.2s → ~0.8s (75% improvement)
 - **Database Query Time:** ~1.5s → ~0.3s (80% improvement)
 - **Payload Size:** ~450KB → ~180KB (60% reduction)
@@ -22,6 +23,7 @@ The farm detail page has been comprehensively optimized to eliminate slow render
 ## 🎯 Problem Statement
 
 ### Issues Identified in Audit
+
 1. **Slow Rendering:** Farm detail page (`/farms/[slug]`) timing out during tests (h1 not found within 30s timeout)
 2. **Unoptimized Queries:** Full table scans, excessive includes, N+1 query problems
 3. **No Caching:** Every request hit the database directly
@@ -52,22 +54,24 @@ async findCertificationsByFarmId(farmId: string)
 #### Query Optimizations Applied
 
 **Before (Unoptimized):**
+
 ```typescript
 const farm = await database.farm.findUnique({
   where: { slug },
   include: {
-    owner: true,           // All owner fields (30+ fields)
-    photos: true,          // All photo records (unlimited)
-    products: true,        // All products (could be 100+)
-    certifications: true,  // All certifications
-    reviews: true,         // All reviews
-    teamMembers: true,     // All team members
+    owner: true, // All owner fields (30+ fields)
+    photos: true, // All photo records (unlimited)
+    products: true, // All products (could be 100+)
+    certifications: true, // All certifications
+    reviews: true, // All reviews
+    teamMembers: true, // All team members
     // ... many more relations
-  }
+  },
 });
 ```
 
 **After (Optimized):**
+
 ```typescript
 const farm = await database.farm.findUnique({
   where: { slug },
@@ -112,6 +116,7 @@ const farm = await database.farm.findUnique({
 ```
 
 **Performance Impact:**
+
 - Query time: 1.5s → 0.2s (87% faster)
 - Payload size: 450KB → 120KB (73% smaller)
 - Database load: 15 queries → 3 queries (80% fewer)
@@ -168,16 +173,19 @@ async getFarmCertifications(farmId: string)
 ```
 
 **Cache Keys:**
+
 - `farm:detail:{slug}` - Complete farm detail data (TTL: 15 min)
 - `farm:products:{farmId}:{limit}` - Farm products (TTL: 10 min)
 - `farm:certifications:{farmId}` - Farm certifications (TTL: 30 min)
 
 **Cache Invalidation:**
+
 - On farm update: Clear all `farm:*` keys
 - On product update: Clear `farm:products:*` keys
 - On certification update: Clear `farm:certifications:*` keys
 
 **Performance Impact:**
+
 - Cache hit rate: 85-90% (after warm-up)
 - Cached response time: 10-20ms (vs 300ms from DB)
 - Database load reduction: 85%
@@ -196,6 +204,7 @@ export const revalidate = 300; // 5 minutes
 ```
 
 **Benefits:**
+
 - First request cached at CDN edge
 - Subsequent requests served from cache
 - Background revalidation keeps data fresh
@@ -204,6 +213,7 @@ export const revalidate = 300; // 5 minutes
 #### React Suspense Boundaries
 
 **Before (Blocking Render):**
+
 ```typescript
 export default async function FarmDetailPage({ params }) {
   const farm = await getFarm(params.slug);
@@ -216,6 +226,7 @@ export default async function FarmDetailPage({ params }) {
 ```
 
 **After (Streaming Render):**
+
 ```typescript
 export default async function FarmDetailPage({ params }) {
   const farm = await getFarm(params.slug); // Fast (cached)
@@ -240,6 +251,7 @@ export default async function FarmDetailPage({ params }) {
 ```
 
 **Performance Impact:**
+
 - Time to Interactive (TTI): 3.2s → 0.8s (75% faster)
 - User sees content: Immediately vs after 3+ seconds
 - Perceived performance: Dramatically improved
@@ -250,7 +262,7 @@ export default async function FarmDetailPage({ params }) {
 ### 4. Request Deduplication with React Cache
 
 ```typescript
-import { cache } from 'react';
+import { cache } from "react";
 
 // Deduplicate identical requests within same render cycle
 const getFarmData = cache(async (slug: string) => {
@@ -259,6 +271,7 @@ const getFarmData = cache(async (slug: string) => {
 ```
 
 **Benefits:**
+
 - Multiple components can call `getFarmData(slug)` without duplicate queries
 - Metadata generation + page rendering share same data fetch
 - Reduces database load by 30-40%
@@ -290,16 +303,16 @@ const getFarmData = cache(async (slug: string) => {
 
 ```typescript
 // OpenTelemetry tracing (already configured)
-import { trace } from '@opentelemetry/api';
+import { trace } from "@opentelemetry/api";
 
 // Azure Application Insights (already configured)
-import { appInsights } from '@/lib/monitoring/app-insights';
+import { appInsights } from "@/lib/monitoring/app-insights";
 
 // Custom performance logging
-logger.info('Farm detail page rendered', {
+logger.info("Farm detail page rendered", {
   slug,
   renderTime: endTime - startTime,
-  cacheHit: cached ? 'yes' : 'no',
+  cacheHit: cached ? "yes" : "no",
   queryTime: dbQueryTime,
 });
 ```
@@ -312,21 +325,21 @@ logger.info('Farm detail page rendered', {
 
 ```typescript
 // tests/performance/farm-detail.perf.test.ts
-describe('Farm Detail Page Performance', () => {
-  it('should load in under 1 second', async () => {
+describe("Farm Detail Page Performance", () => {
+  it("should load in under 1 second", async () => {
     const start = Date.now();
-    const response = await fetch('/farms/green-valley');
+    const response = await fetch("/farms/green-valley");
     const duration = Date.now() - start;
 
     expect(response.status).toBe(200);
     expect(duration).toBeLessThan(1000);
   });
 
-  it('should serve from cache on second request', async () => {
-    await fetch('/farms/green-valley'); // Prime cache
+  it("should serve from cache on second request", async () => {
+    await fetch("/farms/green-valley"); // Prime cache
 
     const start = Date.now();
-    const response = await fetch('/farms/green-valley');
+    const response = await fetch("/farms/green-valley");
     const duration = Date.now() - start;
 
     expect(duration).toBeLessThan(100); // Should be cached
@@ -346,27 +359,27 @@ k6 run tests/load/farm-detail.js
 
 ```javascript
 // tests/load/farm-detail.js
-import http from 'k6/http';
-import { check, sleep } from 'k6';
+import http from "k6/http";
+import { check, sleep } from "k6";
 
 export const options = {
   stages: [
-    { duration: '2m', target: 100 },  // Ramp up to 100 users
-    { duration: '5m', target: 100 },  // Stay at 100 users
-    { duration: '2m', target: 0 },    // Ramp down
+    { duration: "2m", target: 100 }, // Ramp up to 100 users
+    { duration: "5m", target: 100 }, // Stay at 100 users
+    { duration: "2m", target: 0 }, // Ramp down
   ],
   thresholds: {
-    http_req_duration: ['p(95)<1000'], // 95% of requests under 1s
+    http_req_duration: ["p(95)<1000"], // 95% of requests under 1s
   },
 };
 
 export default function () {
-  const res = http.get('http://localhost:3001/farms/green-valley');
+  const res = http.get("http://localhost:3001/farms/green-valley");
 
   check(res, {
-    'status is 200': (r) => r.status === 200,
-    'response time < 1s': (r) => r.timings.duration < 1000,
-    'contains farm name': (r) => r.body.includes('Green Valley'),
+    "status is 200": (r) => r.status === 200,
+    "response time < 1s": (r) => r.timings.duration < 1000,
+    "contains farm name": (r) => r.body.includes("Green Valley"),
   });
 
   sleep(1);
@@ -407,7 +420,7 @@ export default {
 
   // Optimize images
   images: {
-    formats: ['image/avif', 'image/webp'],
+    formats: ["image/avif", "image/webp"],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],
     minimumCacheTTL: 86400, // 24 hours
   },
@@ -450,16 +463,20 @@ export default {
 ### Issue: Cache Not Working
 
 **Symptoms:**
+
 - Cache hit rate < 20%
 - Database queries on every request
 
 **Solutions:**
+
 1. Verify Redis connection:
+
    ```bash
    redis-cli ping  # Should return PONG
    ```
 
 2. Check cache keys:
+
    ```bash
    redis-cli keys "farm:*"
    ```
@@ -472,10 +489,12 @@ export default {
 ### Issue: Stale Data Showing
 
 **Symptoms:**
+
 - Farm updates not reflected on detail page
 - Cache showing old product prices
 
 **Solutions:**
+
 1. Verify cache invalidation on updates
 2. Reduce cache TTL if needed
 3. Force cache clear:
@@ -486,12 +505,15 @@ export default {
 ### Issue: Slow First Request
 
 **Symptoms:**
+
 - First request after deploy takes 3+ seconds
 - Subsequent requests fast
 
 **Solutions:**
+
 1. This is expected (cold start)
 2. Implement cache warming:
+
    ```typescript
    // scripts/warm-cache.ts
    async function warmCache() {
@@ -518,16 +540,19 @@ export default {
 ## 🎓 Learning Resources
 
 ### Database Optimization
+
 - [N+1 Query Problem Explained](https://secure.phabricator.com/book/phabcontrib/article/n_plus_one/)
 - [PostgreSQL Query Optimization](https://www.postgresql.org/docs/current/performance-tips.html)
 - [Prisma Select vs Include](https://www.prisma.io/docs/concepts/components/prisma-client/select-fields)
 
 ### Caching Strategies
+
 - [Multi-Layer Caching Architecture](https://aws.amazon.com/caching/best-practices/)
 - [Cache Invalidation Strategies](https://stackoverflow.com/questions/1188587/cache-invalidation-is-there-a-general-solution)
 - [Redis Best Practices](https://redis.io/docs/manual/patterns/)
 
 ### React Performance
+
 - [React 18 Streaming SSR](https://github.com/reactwg/react-18/discussions/37)
 - [Next.js 15 App Router Performance](https://nextjs.org/docs/app/building-your-application/optimizing)
 - [Web Vitals Guide](https://web.dev/vitals/)
@@ -537,6 +562,7 @@ export default {
 ## ✅ Success Criteria
 
 ### Technical Success
+
 - [x] Page load time < 1 second (95th percentile)
 - [x] Database query time < 300ms
 - [x] Cache hit rate > 85%
@@ -545,6 +571,7 @@ export default {
 - [x] Test suite passes with stable assertions
 
 ### Business Success
+
 - [ ] Bounce rate reduction > 30%
 - [ ] Time on page increase > 50%
 - [ ] Conversion rate improvement > 20%
@@ -556,6 +583,7 @@ export default {
 ## 🔮 Future Optimizations
 
 ### Phase 2 (Next Quarter)
+
 1. **Edge Caching with Vercel Edge Network**
    - Move farm detail pages to edge runtime
    - Deploy to 100+ global edge locations
@@ -572,6 +600,7 @@ export default {
    - Use intersection observer for smart prefetch
 
 ### Phase 3 (Future)
+
 1. **GraphQL API Layer**
    - Allow clients to request exact fields needed
    - Reduce over-fetching by 90%
@@ -592,12 +621,14 @@ export default {
 ## 👥 Team & Acknowledgments
 
 **Optimization Team:**
+
 - Backend: Database query optimization, caching strategy
 - Frontend: React Suspense, ISR implementation
 - DevOps: Redis setup, monitoring configuration
 - QA: Performance testing, load testing
 
 **Claude Sonnet 4.5 Contributions:**
+
 - Architecture design and review
 - Code implementation
 - Documentation writing
@@ -608,6 +639,7 @@ export default {
 ## 📝 Changelog
 
 ### v1.0.0 - January 2025
+
 - ✅ Initial optimization implementation
 - ✅ Multi-layer caching added
 - ✅ Repository methods optimized

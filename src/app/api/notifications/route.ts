@@ -9,7 +9,7 @@ import { notificationService } from "@/lib/services/notification.service";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 // ============================================================================
 // Validation Schemas
@@ -19,20 +19,22 @@ const GetNotificationsSchema = z.object({
   page: z.coerce.number().int().positive().default(1),
   limit: z.coerce.number().int().positive().max(100).default(20),
   unreadOnly: z.coerce.boolean().default(false),
-  type: z.enum([
-    "ORDER_PLACED",
-    "ORDER_CONFIRMED",
-    "ORDER_READY",
-    "ORDER_FULFILLED",
-    "ORDER_CANCELLED",
-    "PAYMENT_RECEIVED",
-    "PAYOUT_PROCESSED",
-    "NEW_MESSAGE",
-    "REVIEW_RECEIVED",
-    "QUALITY_ISSUE",
-    "LOW_STOCK",
-    "SYSTEM_ANNOUNCEMENT",
-  ]).optional(),
+  type: z
+    .enum([
+      "ORDER_PLACED",
+      "ORDER_CONFIRMED",
+      "ORDER_READY",
+      "ORDER_FULFILLED",
+      "ORDER_CANCELLED",
+      "PAYMENT_RECEIVED",
+      "PAYOUT_PROCESSED",
+      "NEW_MESSAGE",
+      "REVIEW_RECEIVED",
+      "QUALITY_ISSUE",
+      "LOW_STOCK",
+      "SYSTEM_ANNOUNCEMENT",
+    ])
+    .optional(),
 });
 
 // ============================================================================
@@ -52,7 +54,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
             message: "Authentication required",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -75,7 +77,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
             details: validation.error.flatten(),
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -88,7 +90,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         limit,
         unreadOnly,
         type,
-      }
+      },
     );
 
     return NextResponse.json({
@@ -114,10 +116,12 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         error: {
           code: "FETCH_NOTIFICATIONS_ERROR",
           message:
-            error instanceof Error ? error.message : "Failed to fetch notifications",
+            error instanceof Error
+              ? error.message
+              : "Failed to fetch notifications",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -139,12 +143,12 @@ export async function DELETE(request: NextRequest): Promise<NextResponse> {
             message: "Authentication required",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
     const count = await notificationService.clearReadNotifications(
-      session.user.id
+      session.user.id,
     );
 
     return NextResponse.json({
@@ -163,10 +167,12 @@ export async function DELETE(request: NextRequest): Promise<NextResponse> {
         error: {
           code: "CLEAR_NOTIFICATIONS_ERROR",
           message:
-            error instanceof Error ? error.message : "Failed to clear notifications",
+            error instanceof Error
+              ? error.message
+              : "Failed to clear notifications",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -17,17 +17,17 @@
  * @reference .cursorrules - Claude Sonnet 4.5 Monitoring Patterns
  */
 
-import { nanoid } from 'nanoid';
+import { nanoid } from "nanoid";
 
 // ============================================================================
 // TYPES & INTERFACES
 // ============================================================================
 
 export enum LogLevel {
-  DEBUG = 'DEBUG',
-  INFO = 'INFO',
-  WARN = 'WARN',
-  ERROR = 'ERROR',
+  DEBUG = "DEBUG",
+  INFO = "INFO",
+  WARN = "WARN",
+  ERROR = "ERROR",
 }
 
 export interface LogContext {
@@ -70,8 +70,8 @@ class Logger {
   private maxMetricsSize = 1000; // Keep last 1000 metrics
 
   constructor() {
-    this.isDevelopment = process.env.NODE_ENV === 'development';
-    this.isProduction = process.env.NODE_ENV === 'production';
+    this.isDevelopment = process.env.NODE_ENV === "development";
+    this.isProduction = process.env.NODE_ENV === "production";
   }
 
   /**
@@ -87,10 +87,10 @@ class Logger {
   private formatMessage(
     level: LogLevel,
     message: string,
-    context?: LogContext
+    context?: LogContext,
   ): string {
     const timestamp = new Date().toISOString();
-    const requestId = context?.requestId || 'no-request-id';
+    const requestId = context?.requestId || "no-request-id";
 
     return `[${timestamp}] [${level}] [${requestId}] ${message}`;
   }
@@ -100,7 +100,7 @@ class Logger {
    */
   private formatContext(context?: LogContext): string {
     if (!context || Object.keys(context).length === 0) {
-      return '';
+      return "";
     }
 
     try {
@@ -117,7 +117,7 @@ class Logger {
     if (!this.isDevelopment) return;
 
     const formatted = this.formatMessage(LogLevel.DEBUG, message, context);
-    console.log(formatted, context ? this.formatContext(context) : '');
+    console.log(formatted, context ? this.formatContext(context) : "");
   }
 
   /**
@@ -125,7 +125,7 @@ class Logger {
    */
   info(message: string, context?: LogContext): void {
     const formatted = this.formatMessage(LogLevel.INFO, message, context);
-    console.log(formatted, context ? this.formatContext(context) : '');
+    console.log(formatted, context ? this.formatContext(context) : "");
   }
 
   /**
@@ -133,7 +133,7 @@ class Logger {
    */
   warn(message: string, context?: LogContext): void {
     const formatted = this.formatMessage(LogLevel.WARN, message, context);
-    console.warn(formatted, context ? this.formatContext(context) : '');
+    console.warn(formatted, context ? this.formatContext(context) : "");
   }
 
   /**
@@ -156,7 +156,7 @@ class Logger {
         context: context ? this.formatContext(context) : undefined,
       });
     } else {
-      console.error(formatted, context ? this.formatContext(context) : '');
+      console.error(formatted, context ? this.formatContext(context) : "");
     }
 
     // In production, send to error tracking service (e.g., Sentry)
@@ -177,8 +177,8 @@ class Logger {
 
     // Log slow queries
     if (metrics.duration > this.slowQueryThreshold) {
-      this.warn('Slow query detected', {
-        operation: 'database_query',
+      this.warn("Slow query detected", {
+        operation: "database_query",
         query: metrics.query.substring(0, 100), // First 100 chars
         duration: metrics.duration,
         model: metrics.model,
@@ -188,8 +188,8 @@ class Logger {
 
     // Debug logging for all queries in development
     if (this.isDevelopment) {
-      this.debug('Database query', {
-        operation: metrics.operation || 'query',
+      this.debug("Database query", {
+        operation: metrics.operation || "query",
         model: metrics.model,
         duration: metrics.duration,
         query: metrics.query.substring(0, 200),
@@ -205,11 +205,14 @@ class Logger {
     path: string,
     statusCode: number,
     duration: number,
-    context?: LogContext
+    context?: LogContext,
   ): void {
-    const level = statusCode >= 500 ? LogLevel.ERROR :
-      statusCode >= 400 ? LogLevel.WARN :
-        LogLevel.INFO;
+    const level =
+      statusCode >= 500
+        ? LogLevel.ERROR
+        : statusCode >= 400
+          ? LogLevel.WARN
+          : LogLevel.INFO;
 
     const message = `${method} ${path} - ${statusCode} (${duration}ms)`;
 
@@ -225,7 +228,10 @@ class Logger {
   /**
    * Start performance tracking
    */
-  startPerformanceTracking(operation: string, metadata?: Record<string, any>): string {
+  startPerformanceTracking(
+    operation: string,
+    metadata?: Record<string, any>,
+  ): string {
     const requestId = this.generateRequestId();
     const startTime = Date.now();
 
@@ -244,7 +250,7 @@ class Logger {
   endPerformanceTracking(
     requestId: string,
     operation: string,
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ): number {
     const endTime = Date.now();
     const duration = endTime - (metadata?.startTime || endTime);
@@ -281,12 +287,12 @@ class Logger {
   logAgriculturalOperation(
     operation: string,
     farmId: string,
-    context?: LogContext
+    context?: LogContext,
   ): void {
     this.info(`🌾 Agricultural operation: ${operation}`, {
       operation,
       farmId,
-      biodynamicEnergy: 'PURE',
+      biodynamicEnergy: "PURE",
       ...context,
     });
   }
@@ -311,15 +317,16 @@ class Logger {
       };
     }
 
-    const durations = this.queryMetrics.map(m => m.duration);
+    const durations = this.queryMetrics.map((m) => m.duration);
     const slowQueries = this.queryMetrics.filter(
-      m => m.duration > this.slowQueryThreshold
+      (m) => m.duration > this.slowQueryThreshold,
     ).length;
 
     return {
       total: this.queryMetrics.length,
       slowQueries,
-      averageDuration: durations.reduce((a: any, b: any) => a + b, 0) / durations.length,
+      averageDuration:
+        durations.reduce((a: any, b: any) => a + b, 0) / durations.length,
       maxDuration: Math.max(...durations),
       minDuration: Math.min(...durations),
     };
@@ -345,7 +352,7 @@ class Logger {
       };
     }
 
-    const durations = this.performanceMetrics.map(m => m.duration);
+    const durations = this.performanceMetrics.map((m) => m.duration);
     const byOperation: Record<string, number> = {};
 
     for (const metric of this.performanceMetrics) {
@@ -354,7 +361,8 @@ class Logger {
 
     return {
       total: this.performanceMetrics.length,
-      averageDuration: durations.reduce((a: any, b: any) => a + b, 0) / durations.length,
+      averageDuration:
+        durations.reduce((a: any, b: any) => a + b, 0) / durations.length,
       maxDuration: Math.max(...durations),
       minDuration: Math.min(...durations),
       byOperation,
@@ -367,7 +375,7 @@ class Logger {
   clearMetrics(): void {
     this.queryMetrics.length = 0;
     this.performanceMetrics.length = 0;
-    this.info('Metrics cleared');
+    this.info("Metrics cleared");
   }
 
   /**
@@ -378,7 +386,7 @@ class Logger {
     // For now, just log to console
     if (process.env.SENTRY_DSN) {
       // Sentry integration would go here
-      this.debug('Error sent to tracking service', {
+      this.debug("Error sent to tracking service", {
         errorName: error.name,
         errorMessage: error.message,
         ...context,
@@ -411,7 +419,10 @@ export class StructuredLogger {
   }
 
   info(message: string, context?: LogContext): void {
-    this.logger.info(`[${this.context}] ${message}`, this.buildContext(context));
+    this.logger.info(
+      `[${this.context}] ${message}`,
+      this.buildContext(context),
+    );
   }
 
   error(message: string, errorOrContext?: Error | LogContext): void {
@@ -420,22 +431,28 @@ export class StructuredLogger {
 
     this.logger.error(
       `[${this.context}] ${message}`,
-      isError ? errorOrContext : this.buildContext(context)
+      isError ? errorOrContext : this.buildContext(context),
     );
   }
 
   warn(message: string, context?: LogContext): void {
-    this.logger.warn(`[${this.context}] ${message}`, this.buildContext(context));
+    this.logger.warn(
+      `[${this.context}] ${message}`,
+      this.buildContext(context),
+    );
   }
 
   debug(message: string, context?: LogContext): void {
-    this.logger.debug(`[${this.context}] ${message}`, this.buildContext(context));
+    this.logger.debug(
+      `[${this.context}] ${message}`,
+      this.buildContext(context),
+    );
   }
 
   logQuery(metrics: QueryMetrics): void {
     this.logger.logQuery({
       ...metrics,
-      operation: `${this.context}:${metrics.operation || 'query'}`,
+      operation: `${this.context}:${metrics.operation || "query"}`,
     });
   }
 }
@@ -458,7 +475,7 @@ export class DatabaseQueryLogger {
     query: string,
     params: string,
     duration: number,
-    target?: string
+    target?: string,
   ): void {
     const metrics: QueryMetrics = {
       query,
@@ -477,7 +494,7 @@ export class DatabaseQueryLogger {
    */
   private extractOperation(query: string): string {
     const match = query.match(/^(SELECT|INSERT|UPDATE|DELETE|BEGIN|COMMIT)/i);
-    return match?.[1]?.toUpperCase() ?? 'UNKNOWN';
+    return match?.[1]?.toUpperCase() ?? "UNKNOWN";
   }
 
   /**

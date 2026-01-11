@@ -79,12 +79,14 @@ The Farmers Market Platform uses the **Unified Bot Framework (UBF)** for automat
 ## 🔧 Prerequisites
 
 ### Required Software
+
 - GitHub repository with Actions enabled
 - Node.js 18+ (specified in workflow)
 - PostgreSQL database (for test environment)
 - npm or yarn package manager
 
 ### Required Permissions
+
 - Repository admin access (to add secrets)
 - GitHub Actions enabled for the repository
 - Write permissions for bot to comment on PRs
@@ -104,9 +106,11 @@ The Farmers Market Platform uses the **Unified Bot Framework (UBF)** for automat
 #### Database Configuration
 
 **`TEST_DATABASE_URL`** (Required)
+
 ```
 postgresql://username:password@host:5432/farmers_market_test
 ```
+
 - **Purpose:** Test database connection string
 - **Format:** PostgreSQL connection URL
 - **Example:** `postgresql://postgres:secret@localhost:5432/fm_test`
@@ -116,17 +120,21 @@ postgresql://username:password@host:5432/farmers_market_test
 #### Authentication Secrets
 
 **`NEXTAUTH_SECRET`** (Required)
+
 ```
 openssl rand -base64 32
 ```
+
 - **Purpose:** NextAuth.js encryption key
 - **Generate:** Run `openssl rand -base64 32` in terminal
 - **Example:** `IYu8QvBh0LfKJxMT5wPNnZ9kF2rXmGcA3jDsVbUe4tE=`
 
 **`NEXTAUTH_URL`** (Optional but Recommended)
+
 ```
 http://localhost:3001
 ```
+
 - **Purpose:** Base URL for authentication callbacks
 - **CI/CD Value:** `http://localhost:3001`
 - **Production:** `https://yourdomain.com`
@@ -134,17 +142,21 @@ http://localhost:3001
 #### Optional Secrets (for full functionality)
 
 **`STRIPE_SECRET_KEY`** (For payment tests)
+
 ```
 sk_test_xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
+
 - Use Stripe test mode keys only!
 - Get from: https://dashboard.stripe.com/test/apikeys
 
 **`GOOGLE_CLIENT_ID`** and **`GOOGLE_CLIENT_SECRET`** (For OAuth tests)
+
 - Required only if testing Google authentication
 - Get from: https://console.cloud.google.com/
 
 **`SENTRY_DSN`** (For error monitoring)
+
 - Optional: Only if using Sentry in tests
 - Get from: https://sentry.io/
 
@@ -161,6 +173,7 @@ After adding secrets, verify they appear in the secrets list (values are hidden 
 **Location:** `.github/workflows/ubf-tests.yml`
 
 **Triggers:**
+
 - Push to `master`, `main`, or `develop` → Runs critical tests
 - Pull requests → Runs critical tests + comments results
 - Daily at 2 AM UTC → Runs full test suite
@@ -205,6 +218,7 @@ After adding secrets, verify they appear in the secrets list (values are hidden 
 ### Option 1: Enable for All Pushes (Recommended)
 
 The workflow is **already enabled** for:
+
 - Push to `master`, `main`, `develop`
 - All pull requests
 - Daily scheduled runs
@@ -297,6 +311,7 @@ npm run bot:test:auth -- --baseUrl=http://localhost:3001 --headless
 ### Step 6: Review Results
 
 Check the `reports/` directory for:
+
 - `test-report-[timestamp].json` - Machine-readable results
 - `test-report-[timestamp].md` - Human-readable summary
 - `test-report-[timestamp].html` - Visual report
@@ -308,6 +323,7 @@ Check the `reports/` directory for:
 ### GitHub Actions Dashboard
 
 **View Test Results:**
+
 1. Go to **Actions** tab
 2. Click on a workflow run
 3. Click on a job (e.g., "Critical Tests")
@@ -316,6 +332,7 @@ Check the `reports/` directory for:
 ### PR Comments
 
 When tests run on a pull request, a bot will automatically comment with:
+
 - ✅/❌ Overall status
 - Pass/fail counts
 - Success rate percentage
@@ -323,16 +340,17 @@ When tests run on a pull request, a bot will automatically comment with:
 - Link to full report
 
 Example:
+
 ```markdown
 ## ✅ UBF Critical Tests
 
-| Metric | Value |
-|--------|-------|
-| Total Tests | 13 |
-| Passed | 13 |
-| Failed | 0 |
-| Success Rate | 100% |
-| Duration | 5.06s |
+| Metric       | Value |
+| ------------ | ----- |
+| Total Tests  | 13    |
+| Passed       | 13    |
+| Failed       | 0     |
+| Success Rate | 100%  |
+| Duration     | 5.06s |
 
 ### ✅ All tests passed!
 
@@ -342,11 +360,13 @@ Example:
 ### Email Notifications
 
 GitHub Actions sends email notifications for:
+
 - Workflow failures
 - First failure after success
 - Success after failure
 
 **Configure:**
+
 1. Go to GitHub Settings → Notifications
 2. Adjust "Actions" notification preferences
 
@@ -386,17 +406,20 @@ Add `SLACK_WEBHOOK_URL` to repository secrets.
 #### Issue: "Database connection failed"
 
 **Symptoms:**
+
 ```
 Error: Connection refused at localhost:5432
 ```
 
 **Solutions:**
+
 1. Verify `TEST_DATABASE_URL` secret is set correctly
 2. Ensure database server is accessible from GitHub Actions runners
 3. Use a cloud-hosted test database (e.g., Railway, Supabase)
 4. Check database credentials are correct
 
 **Alternative:** Use SQLite for tests:
+
 ```bash
 DATABASE_URL="file:./test.db"
 ```
@@ -406,11 +429,13 @@ DATABASE_URL="file:./test.db"
 #### Issue: "Playwright browser not found"
 
 **Symptoms:**
+
 ```
 Error: Executable doesn't exist at /home/runner/.cache/ms-playwright/chromium-1097/chrome-linux/chrome
 ```
 
 **Solutions:**
+
 1. Ensure workflow includes: `npx playwright install --with-deps chromium`
 2. Update Playwright version: `npm install -D @playwright/test@latest`
 3. Clear GitHub Actions cache
@@ -420,11 +445,13 @@ Error: Executable doesn't exist at /home/runner/.cache/ms-playwright/chromium-10
 #### Issue: "Tests timeout"
 
 **Symptoms:**
+
 ```
 Test exceeded timeout of 60000ms
 ```
 
 **Solutions:**
+
 1. Increase `wait-on` timeout in workflow:
    ```bash
    npx wait-on http://localhost:3001 --timeout 120000
@@ -438,11 +465,13 @@ Test exceeded timeout of 60000ms
 #### Issue: "Secret not found"
 
 **Symptoms:**
+
 ```
 Error: Secret NEXTAUTH_SECRET not found
 ```
 
 **Solutions:**
+
 1. Verify secret name matches exactly (case-sensitive)
 2. Re-add the secret in GitHub Settings
 3. Check secret is added at repository level (not organization)
@@ -453,11 +482,13 @@ Error: Secret NEXTAUTH_SECRET not found
 #### Issue: "Application not starting"
 
 **Symptoms:**
+
 ```
 wait-on: Timeout waiting for http://localhost:3001
 ```
 
 **Solutions:**
+
 1. Check build errors in workflow logs
 2. Verify `PORT=3001` in environment
 3. Use `next start -p 3001` explicitly:
@@ -482,6 +513,7 @@ wait-on: Timeout waiting for http://localhost:3001
 Tests work on local machine but fail in GitHub Actions
 
 **Solutions:**
+
 1. Check environment differences (Node version, OS)
 2. Verify all dependencies are in `package.json` (not global)
 3. Use `npm ci` instead of `npm install` locally to match CI
@@ -498,8 +530,8 @@ Enable verbose logging in workflow:
 - name: 🧪 Run tests (Debug Mode)
   run: npm run bot:test:critical -- --baseUrl=${{ env.BASE_URL }} --headless --debug
   env:
-    DEBUG: "pw:api"  # Playwright debug
-    VERBOSE: "true"   # UBF verbose mode
+    DEBUG: "pw:api" # Playwright debug
+    VERBOSE: "true" # UBF verbose mode
 ```
 
 ---
@@ -601,28 +633,33 @@ Add test status badges to README:
 ## 📝 Best Practices
 
 ### 1. Keep Tests Fast
+
 - Critical tests should complete in < 5 minutes
 - Use test database with minimal seed data
 - Run full suite on schedule, not on every push
 
 ### 2. Handle Flaky Tests
+
 - Add retries (UBF supports 2 retries by default)
 - Use proper waits instead of hard sleeps
 - Isolate tests (don't depend on previous test state)
 
 ### 3. Secure Secrets
+
 - Never commit secrets to repository
 - Use GitHub secrets for all sensitive data
 - Rotate secrets regularly
 - Use minimal permissions
 
 ### 4. Monitor Test Health
+
 - Review failed tests immediately
 - Track test duration trends
 - Update tests when application changes
 - Keep dependencies updated
 
 ### 5. Documentation
+
 - Document test failures and resolutions
 - Update this guide when adding new tests
 - Comment complex test logic
@@ -633,16 +670,19 @@ Add test status badges to README:
 ## 📚 Additional Resources
 
 ### UBF Documentation
+
 - [UBF Status Report](./testing/UBF_STATUS_2026-01-08.md)
 - [Session Completion](./testing/SESSION_COMPLETE_2026-01-08.md)
 - [Test Modules](../src/lib/testing/modules/)
 
 ### GitHub Actions
+
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)
 - [Workflow Syntax](https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions)
 - [Secrets Management](https://docs.github.com/en/actions/security-guides/encrypted-secrets)
 
 ### Playwright
+
 - [Playwright Documentation](https://playwright.dev/)
 - [Best Practices](https://playwright.dev/docs/best-practices)
 - [CI/CD Guide](https://playwright.dev/docs/ci)
@@ -667,16 +707,19 @@ Add test status badges to README:
 ## 🆘 Support
 
 **Issues with CI/CD:**
+
 - Check [Troubleshooting](#troubleshooting) section
 - Review workflow logs in GitHub Actions
 - Test locally to isolate CI-specific issues
 
 **Issues with Tests:**
+
 - Review test reports in `reports/` directory
 - Check screenshots (if tests failed)
 - Run tests with `--debug` flag locally
 
 **Need Help?**
+
 - Create an issue in the repository
 - Contact the development team
 - Review UBF documentation
@@ -687,4 +730,4 @@ Add test status badges to README:
 **Version:** 1.0.0
 **Status:** ✅ Production Ready
 
-*This guide is maintained as part of the Farmers Market Platform documentation.*
+_This guide is maintained as part of the Farmers Market Platform documentation._

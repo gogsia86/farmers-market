@@ -110,11 +110,12 @@ const config: Config = {
         "slide-up": "slideUp 0.5s ease-out",
         "bounce-slow": "bounce 3s infinite",
         // Loading animations
-        "shimmer": "shimmer 2s infinite",
+        shimmer: "shimmer 2s infinite",
         "shimmer-sweep": "shimmerSweep 2s infinite",
-        "wave": "wave 1.5s infinite",
+        wave: "wave 1.5s infinite",
         "wave-sweep": "waveSweep 1.5s infinite",
-        "progress-indeterminate": "progressIndeterminate 1.5s ease-in-out infinite",
+        "progress-indeterminate":
+          "progressIndeterminate 1.5s ease-in-out infinite",
       },
       keyframes: {
         fadeIn: {

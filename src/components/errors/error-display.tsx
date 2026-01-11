@@ -13,7 +13,14 @@ import type { AppError, RecoveryAction } from "@/lib/errors/types";
 import { ErrorCategory, ErrorSeverity } from "@/lib/errors/types";
 import { cn } from "@/lib/utils";
 import { cva, type VariantProps } from "class-variance-authority";
-import { AlertCircle, AlertTriangle, CheckCircle, Info, RefreshCw, X } from "lucide-react";
+import {
+  AlertCircle,
+  AlertTriangle,
+  CheckCircle,
+  Info,
+  RefreshCw,
+  X,
+} from "lucide-react";
 import { useState } from "react";
 
 // ============================================================================
@@ -41,10 +48,12 @@ const errorAlertVariants = cva(
       severity: "ERROR",
       size: "md",
     },
-  }
+  },
 );
 
-export interface ErrorAlertProps extends VariantProps<typeof errorAlertVariants> {
+export interface ErrorAlertProps extends VariantProps<
+  typeof errorAlertVariants
+> {
   error: AppError;
   onDismiss?: () => void;
   onRetry?: () => void;
@@ -81,7 +90,7 @@ export function ErrorAlert({
     <div
       className={cn(
         errorAlertVariants({ severity: severity || error.severity, size }),
-        className
+        className,
       )}
       role="alert"
     >
@@ -96,16 +105,19 @@ export function ErrorAlert({
           <h3 className="font-semibold mb-1">{error.userDetails.title}</h3>
           <p className="text-sm opacity-90">{error.userDetails.message}</p>
 
-          {error.userDetails.suggestions && error.userDetails.suggestions.length > 0 && (
-            <ul className="mt-2 text-sm space-y-1 opacity-80">
-              {error.userDetails.suggestions.map((suggestion: any, index: any) => (
-                <li key={index} className="flex items-start gap-2">
-                  <span className="mt-0.5">•</span>
-                  <span>{suggestion}</span>
-                </li>
-              ))}
-            </ul>
-          )}
+          {error.userDetails.suggestions &&
+            error.userDetails.suggestions.length > 0 && (
+              <ul className="mt-2 text-sm space-y-1 opacity-80">
+                {error.userDetails.suggestions.map(
+                  (suggestion: any, index: any) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <span className="mt-0.5">•</span>
+                      <span>{suggestion}</span>
+                    </li>
+                  ),
+                )}
+              </ul>
+            )}
 
           {(onRetry || error.retryable) && (
             <button
@@ -157,27 +169,26 @@ export function ErrorCard({
   actions = [],
 }: ErrorCardProps) {
   const Icon = getErrorIcon(error.severity);
-  const allActions = [
-    ...actions,
-    ...(error.userDetails.actions || []),
-  ];
+  const allActions = [...actions, ...(error.userDetails.actions || [])];
 
   return (
     <div
       className={cn(
         "bg-white rounded-lg shadow-lg border-2 p-6",
         getSeverityBorderColor(error.severity),
-        className
+        className,
       )}
     >
       <div className="flex items-start gap-4">
         <div
           className={cn(
             "flex-shrink-0 p-3 rounded-full",
-            getSeverityBackgroundColor(error.severity)
+            getSeverityBackgroundColor(error.severity),
           )}
         >
-          <Icon className={cn("h-6 w-6", getSeverityTextColor(error.severity))} />
+          <Icon
+            className={cn("h-6 w-6", getSeverityTextColor(error.severity))}
+          />
         </div>
 
         <div className="flex-1 min-w-0">
@@ -186,21 +197,27 @@ export function ErrorCard({
           </h2>
           <p className="text-gray-600 mb-4">{error.userDetails.message}</p>
 
-          {error.userDetails.suggestions && error.userDetails.suggestions.length > 0 && (
-            <div className="mb-4">
-              <p className="text-sm font-medium text-gray-700 mb-2">
-                What you can do:
-              </p>
-              <ul className="space-y-2">
-                {error.userDetails.suggestions.map((suggestion: any, index: any) => (
-                  <li key={index} className="flex items-start gap-2 text-sm text-gray-600">
-                    <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                    <span>{suggestion}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+          {error.userDetails.suggestions &&
+            error.userDetails.suggestions.length > 0 && (
+              <div className="mb-4">
+                <p className="text-sm font-medium text-gray-700 mb-2">
+                  What you can do:
+                </p>
+                <ul className="space-y-2">
+                  {error.userDetails.suggestions.map(
+                    (suggestion: any, index: any) => (
+                      <li
+                        key={index}
+                        className="flex items-start gap-2 text-sm text-gray-600"
+                      >
+                        <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
+                        <span>{suggestion}</span>
+                      </li>
+                    ),
+                  )}
+                </ul>
+              </div>
+            )}
 
           {allActions.length > 0 && (
             <div className="flex flex-wrap gap-3 mb-4">
@@ -211,11 +228,11 @@ export function ErrorCard({
                   className={cn(
                     "px-4 py-2 rounded-md font-medium transition-colors",
                     action.type === "primary" &&
-                    "bg-blue-600 text-white hover:bg-blue-700",
+                      "bg-blue-600 text-white hover:bg-blue-700",
                     action.type === "secondary" &&
-                    "bg-gray-200 text-gray-700 hover:bg-gray-300",
+                      "bg-gray-200 text-gray-700 hover:bg-gray-300",
                     action.type === "tertiary" &&
-                    "text-blue-600 hover:text-blue-700 hover:underline"
+                      "text-blue-600 hover:text-blue-700 hover:underline",
                   )}
                 >
                   {action.label}
@@ -243,11 +260,15 @@ export function ErrorCard({
                 <dl className="space-y-2">
                   <div>
                     <dt className="font-medium text-gray-700">Error ID:</dt>
-                    <dd className="text-gray-600 font-mono text-xs">{error.errorId}</dd>
+                    <dd className="text-gray-600 font-mono text-xs">
+                      {error.errorId}
+                    </dd>
                   </div>
                   <div>
                     <dt className="font-medium text-gray-700">Error Code:</dt>
-                    <dd className="text-gray-600 font-mono text-xs">{error.code}</dd>
+                    <dd className="text-gray-600 font-mono text-xs">
+                      {error.code}
+                    </dd>
                   </div>
                   <div>
                     <dt className="font-medium text-gray-700">Category:</dt>
@@ -292,9 +313,18 @@ export interface InlineErrorProps {
 /**
  * Inline error message for form fields
  */
-export function InlineError({ message, className, icon = true }: InlineErrorProps) {
+export function InlineError({
+  message,
+  className,
+  icon = true,
+}: InlineErrorProps) {
   return (
-    <div className={cn("flex items-start gap-2 text-sm text-red-600 mt-1", className)}>
+    <div
+      className={cn(
+        "flex items-start gap-2 text-sm text-red-600 mt-1",
+        className,
+      )}
+    >
       {icon && <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />}
       <span>{message}</span>
     </div>
@@ -331,10 +361,15 @@ export function ErrorPage({
             <div
               className={cn(
                 "p-4 rounded-full mb-6",
-                getSeverityBackgroundColor(error.severity)
+                getSeverityBackgroundColor(error.severity),
               )}
             >
-              <Icon className={cn("h-12 w-12", getSeverityTextColor(error.severity))} />
+              <Icon
+                className={cn(
+                  "h-12 w-12",
+                  getSeverityTextColor(error.severity),
+                )}
+              />
             </div>
 
             <h1 className="text-3xl font-bold text-gray-900 mb-4">
@@ -345,21 +380,28 @@ export function ErrorPage({
               {error.userDetails.message}
             </p>
 
-            {error.userDetails.suggestions && error.userDetails.suggestions.length > 0 && (
-              <div className="w-full max-w-md mb-8 text-left">
-                <p className="font-medium text-gray-700 mb-3">What you can try:</p>
-                <ul className="space-y-3">
-                  {error.userDetails.suggestions.map((suggestion: any, index: any) => (
-                    <li key={index} className="flex items-start gap-3">
-                      <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-sm font-medium">
-                        {index + 1}
-                      </span>
-                      <span className="text-gray-600 pt-0.5">{suggestion}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+            {error.userDetails.suggestions &&
+              error.userDetails.suggestions.length > 0 && (
+                <div className="w-full max-w-md mb-8 text-left">
+                  <p className="font-medium text-gray-700 mb-3">
+                    What you can try:
+                  </p>
+                  <ul className="space-y-3">
+                    {error.userDetails.suggestions.map(
+                      (suggestion: any, index: any) => (
+                        <li key={index} className="flex items-start gap-3">
+                          <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-sm font-medium">
+                            {index + 1}
+                          </span>
+                          <span className="text-gray-600 pt-0.5">
+                            {suggestion}
+                          </span>
+                        </li>
+                      ),
+                    )}
+                  </ul>
+                </div>
+              )}
 
             <div className="flex flex-wrap gap-4 justify-center">
               {onRetry && error.retryable && (
@@ -431,7 +473,7 @@ export function AgriculturalErrorDisplay({
     <div
       className={cn(
         "bg-gradient-to-br from-green-50 to-blue-50 rounded-lg border-2 border-green-200 p-6",
-        className
+        className,
       )}
     >
       <div className="flex items-start gap-4">
@@ -448,7 +490,9 @@ export function AgriculturalErrorDisplay({
           {season && (
             <div className="mb-4 p-3 bg-white rounded-md border border-green-200">
               <p className="text-sm">
-                <span className="font-medium text-green-800">Current Season:</span>{" "}
+                <span className="font-medium text-green-800">
+                  Current Season:
+                </span>{" "}
                 <span className="text-gray-700">{season}</span>
               </p>
             </div>
@@ -468,16 +512,22 @@ export function AgriculturalErrorDisplay({
             </div>
           )}
 
-          {error.userDetails.suggestions && error.userDetails.suggestions.length > 0 && (
-            <ul className="space-y-2 mb-4">
-              {error.userDetails.suggestions.map((suggestion: any, index: any) => (
-                <li key={index} className="flex items-start gap-2 text-sm text-gray-700">
-                  <span className="text-green-600 mt-0.5">✓</span>
-                  <span>{suggestion}</span>
-                </li>
-              ))}
-            </ul>
-          )}
+          {error.userDetails.suggestions &&
+            error.userDetails.suggestions.length > 0 && (
+              <ul className="space-y-2 mb-4">
+                {error.userDetails.suggestions.map(
+                  (suggestion: any, index: any) => (
+                    <li
+                      key={index}
+                      className="flex items-start gap-2 text-sm text-gray-700"
+                    >
+                      <span className="text-green-600 mt-0.5">✓</span>
+                      <span>{suggestion}</span>
+                    </li>
+                  ),
+                )}
+              </ul>
+            )}
 
           {onRetry && error.retryable && (
             <button

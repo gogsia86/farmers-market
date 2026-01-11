@@ -16,7 +16,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 import type { Product } from "@prisma/client";
 
@@ -173,7 +173,10 @@ export const useCartStore = create<CartState>()(
       // Computed Properties
       // ======================================================================
       get itemCount() {
-        return get().items.reduce((count: any, item: any) => count + item.quantity, 0);
+        return get().items.reduce(
+          (count: any, item: any) => count + item.quantity,
+          0,
+        );
       },
 
       get isEmpty() {
@@ -429,8 +432,8 @@ export const useCartStore = create<CartState>()(
           }
         } catch (error) {
           logger.error("Cart sync error:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+            error: error instanceof Error ? error.message : String(error),
+          });
           // Don't show error to user for background syncs
         } finally {
           set({ isSyncing: false });
@@ -473,8 +476,8 @@ export const useCartStore = create<CartState>()(
           });
         } catch (error) {
           logger.error("Cart merge error:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+            error: error instanceof Error ? error.message : String(error),
+          });
           set({ error: "Failed to merge carts" });
         } finally {
           set({ isLoading: false });

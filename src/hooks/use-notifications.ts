@@ -39,7 +39,7 @@ import type {
   NotificationFilter,
   NotificationPreferences,
   ToastNotification,
-  ToastOptions
+  ToastOptions,
 } from "@/lib/notifications/types";
 import {
   calculateNotificationStats,
@@ -51,7 +51,7 @@ import {
 } from "@/lib/notifications/utils";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 // ============================================================================
 // Notification Context Hook
@@ -81,8 +81,8 @@ export function useNotifications(options?: { persistKey?: string }) {
         }
       } catch (error) {
         logger.error("Failed to restore notifications from localStorage:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+          error: error instanceof Error ? error.message : String(error),
+        });
       }
     }
     return [];
@@ -98,42 +98,46 @@ export function useNotifications(options?: { persistKey?: string }) {
         localStorage.setItem(persistKey, JSON.stringify(notifications));
       } catch (error) {
         logger.error("Failed to persist notifications to localStorage:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+          error: error instanceof Error ? error.message : String(error),
+        });
       }
     }
   }, [notifications, persistKey]);
 
   // Calculate unread count
   const unreadCount = useMemo(() => {
-    return notifications.filter(
-      (n) => !n.readAt && n.status !== "read"
-    ).length;
+    return notifications.filter((n) => !n.readAt && n.status !== "read").length;
   }, [notifications]);
 
   // Add notification
-  const addNotification = useCallback((notification: Omit<BaseNotification, 'id' | 'createdAt' | 'status'>) => {
-    const fullNotification: BaseNotification = {
-      id: generateNotificationId(),
-      createdAt: new Date(),
-      status: "pending",
-      ...notification,
-    };
+  const addNotification = useCallback(
+    (notification: Omit<BaseNotification, "id" | "createdAt" | "status">) => {
+      const fullNotification: BaseNotification = {
+        id: generateNotificationId(),
+        createdAt: new Date(),
+        status: "pending",
+        ...notification,
+      };
 
-    setNotifications((prev) => [fullNotification, ...prev]);
+      setNotifications((prev) => [fullNotification, ...prev]);
 
-    // Also add to appropriate active list
-    if (fullNotification.type === "toast") {
-      setActiveToasts((prev) => [fullNotification as ToastNotification, ...prev]);
-    } else if (fullNotification.type === "banner") {
-      setActiveBanners((prev) => [
-        fullNotification as BannerNotification,
-        ...prev,
-      ]);
-    }
+      // Also add to appropriate active list
+      if (fullNotification.type === "toast") {
+        setActiveToasts((prev) => [
+          fullNotification as ToastNotification,
+          ...prev,
+        ]);
+      } else if (fullNotification.type === "banner") {
+        setActiveBanners((prev) => [
+          fullNotification as BannerNotification,
+          ...prev,
+        ]);
+      }
 
-    return fullNotification;
-  }, []);
+      return fullNotification;
+    },
+    [],
+  );
 
   // Remove notification
   const removeNotification = useCallback((id: string) => {
@@ -146,10 +150,8 @@ export function useNotifications(options?: { persistKey?: string }) {
   const markAsRead = useCallback((id: string) => {
     setNotifications((prev) =>
       prev.map((n: any) =>
-        n.id === id
-          ? { ...n, readAt: new Date(), status: "read" as const }
-          : n
-      )
+        n.id === id ? { ...n, readAt: new Date(), status: "read" as const } : n,
+      ),
     );
   }, []);
 
@@ -157,7 +159,7 @@ export function useNotifications(options?: { persistKey?: string }) {
   const markAllAsRead = useCallback(() => {
     const now = new Date();
     setNotifications((prev) =>
-      prev.map((n: any) => ({ ...n, readAt: now, status: "read" as const }))
+      prev.map((n: any) => ({ ...n, readAt: now, status: "read" as const })),
     );
   }, []);
 
@@ -213,7 +215,13 @@ export function useToast(options?: { maxToasts?: number }) {
 
   // Show toast from options object
   const showToastFromOptions = useCallback(
-    (options: { title?: string; message: string; variant?: string; duration?: number; position?: ToastNotification['position'] }): ToastNotification & { variant?: string } => {
+    (options: {
+      title?: string;
+      message: string;
+      variant?: string;
+      duration?: number;
+      position?: ToastNotification["position"];
+    }): ToastNotification & { variant?: string } => {
       const id = generateNotificationId();
       const duration = options.duration ?? 5000;
       const variant = options.variant ?? "info";
@@ -263,15 +271,12 @@ export function useToast(options?: { maxToasts?: number }) {
 
       return toast;
     },
-    []
+    [],
   );
 
   // Show toast from message and options
   const showToast = useCallback(
-    (
-      message: string,
-      options: ToastOptions = {}
-    ): string => {
+    (message: string, options: ToastOptions = {}): string => {
       const id = generateNotificationId();
       const duration = options.duration ?? 5000;
       const variant = options.severity ?? "info";
@@ -322,7 +327,7 @@ export function useToast(options?: { maxToasts?: number }) {
 
       return id;
     },
-    []
+    [],
   );
 
   // Dismiss toast
@@ -350,38 +355,44 @@ export function useToast(options?: { maxToasts?: number }) {
 
   // Toast function (callable)
   const toast = useCallback(
-    (options: { title?: string; message: string; variant?: string; duration?: number; position?: ToastNotification['position'] }) => {
+    (options: {
+      title?: string;
+      message: string;
+      variant?: string;
+      duration?: number;
+      position?: ToastNotification["position"];
+    }) => {
       return showToastFromOptions(options);
     },
-    [showToastFromOptions]
+    [showToastFromOptions],
   );
 
   // Info toast
   const info = useCallback(
     (message: string, options?: Omit<ToastOptions, "severity">) =>
       showToast(message, { ...options, severity: "info" }),
-    [showToast]
+    [showToast],
   );
 
   // Success toast
   const success = useCallback(
     (message: string, options?: Omit<ToastOptions, "severity">) =>
       showToast(message, { ...options, severity: "success" }),
-    [showToast]
+    [showToast],
   );
 
   // Warning toast
   const warning = useCallback(
     (message: string, options?: Omit<ToastOptions, "severity">) =>
       showToast(message, { ...options, severity: "warning" }),
-    [showToast]
+    [showToast],
   );
 
   // Error toast
   const error = useCallback(
     (message: string, options?: Omit<ToastOptions, "severity">) =>
       showToast(message, { ...options, severity: "error", duration: 0 }),
-    [showToast]
+    [showToast],
   );
 
   // Agricultural toast
@@ -398,7 +409,7 @@ export function useToast(options?: { maxToasts?: number }) {
           },
         },
       }),
-    [showToast]
+    [showToast],
   );
 
   // Cleanup on unmount
@@ -410,13 +421,13 @@ export function useToast(options?: { maxToasts?: number }) {
 
   // Promise toast
   const promise = useCallback(
-    async <T,>(
+    async <T>(
       promise: Promise<T>,
       options: {
         loading: string;
         success: string | ((data: T) => string);
         error: string | ((error: any) => string);
-      }
+      },
     ) => {
       const loadingId = showToast("", {
         severity: "info",
@@ -428,8 +439,8 @@ export function useToast(options?: { maxToasts?: number }) {
         prev.map((t: any) =>
           t.id === loadingId
             ? { ...t, title: options.loading, message: "" }
-            : t
-        )
+            : t,
+        ),
       );
 
       try {
@@ -493,7 +504,7 @@ export function useToast(options?: { maxToasts?: number }) {
         throw err;
       }
     },
-    [showToast, dismissToast]
+    [showToast, dismissToast],
   );
 
   return {
@@ -526,7 +537,7 @@ export function useNotificationCenter(initialFilter?: NotificationFilter) {
     order: "asc" | "desc";
   }>({
     field: "createdAt",
-    order: "desc"
+    order: "desc",
   });
 
   // Filtered and sorted notifications
@@ -563,18 +574,21 @@ export function useNotificationCenter(initialFilter?: NotificationFilter) {
   }, [notifications]);
 
   // Add notification
-  const addNotification = useCallback((notification: Omit<InAppNotification, "id"> & { type?: string }) => {
-    const id = generateNotificationId();
-    const newNotification: InAppNotification = {
-      ...notification,
-      id,
-      type: (notification.type || "in-app") as any,
-      createdAt: notification.createdAt ?? new Date(),
-    };
+  const addNotification = useCallback(
+    (notification: Omit<InAppNotification, "id"> & { type?: string }) => {
+      const id = generateNotificationId();
+      const newNotification: InAppNotification = {
+        ...notification,
+        id,
+        type: (notification.type || "in-app") as any,
+        createdAt: notification.createdAt ?? new Date(),
+      };
 
-    setNotifications((prev) => [newNotification, ...prev]);
-    return newNotification;
-  }, []);
+      setNotifications((prev) => [newNotification, ...prev]);
+      return newNotification;
+    },
+    [],
+  );
 
   // Remove notification
   const removeNotification = useCallback((id: string) => {
@@ -585,10 +599,8 @@ export function useNotificationCenter(initialFilter?: NotificationFilter) {
   const markAsRead = useCallback((id: string) => {
     setNotifications((prev) =>
       prev.map((n: any) =>
-        n.id === id
-          ? { ...n, readAt: new Date(), status: "read" as const }
-          : n
-      )
+        n.id === id ? { ...n, readAt: new Date(), status: "read" as const } : n,
+      ),
     );
   }, []);
 
@@ -596,35 +608,35 @@ export function useNotificationCenter(initialFilter?: NotificationFilter) {
   const markAllAsRead = useCallback(() => {
     const now = new Date();
     setNotifications((prev) =>
-      prev.map((n: any) => ({ ...n, readAt: now, status: "read" as const }))
+      prev.map((n: any) => ({ ...n, readAt: now, status: "read" as const })),
     );
   }, []);
 
   // Archive notification
   const archiveNotification = useCallback((id: string) => {
     setNotifications((prev) =>
-      prev.map((n: any) => (n.id === id ? { ...n, archived: true } : n))
+      prev.map((n: any) => (n.id === id ? { ...n, archived: true } : n)),
     );
   }, []);
 
   // Unarchive notification
   const unarchiveNotification = useCallback((id: string) => {
     setNotifications((prev) =>
-      prev.map((n: any) => (n.id === id ? { ...n, archived: false } : n))
+      prev.map((n: any) => (n.id === id ? { ...n, archived: false } : n)),
     );
   }, []);
 
   // Pin notification
   const pinNotification = useCallback((id: string) => {
     setNotifications((prev) =>
-      prev.map((n: any) => (n.id === id ? { ...n, pinned: true } : n))
+      prev.map((n: any) => (n.id === id ? { ...n, pinned: true } : n)),
     );
   }, []);
 
   // Unpin notification
   const unpinNotification = useCallback((id: string) => {
     setNotifications((prev) =>
-      prev.map((n: any) => (n.id === id ? { ...n, pinned: false } : n))
+      prev.map((n: any) => (n.id === id ? { ...n, pinned: false } : n)),
     );
   }, []);
 
@@ -687,10 +699,15 @@ export function useBanner() {
 
       setBanners((prev) => {
         const position = newBanner.position || "top";
-        const positionBanners = prev.filter((b: any) => (b.position || "top") === position);
+        const positionBanners = prev.filter(
+          (b: any) => (b.position || "top") === position,
+        );
 
         // If at limit, remove oldest banner at this position
-        if (positionBanners.length >= MAX_BANNERS_PER_POSITION && positionBanners[0]) {
+        if (
+          positionBanners.length >= MAX_BANNERS_PER_POSITION &&
+          positionBanners[0]
+        ) {
           const toRemove = positionBanners[0].id;
           return [...prev.filter((b: any) => b.id !== toRemove), newBanner];
         }
@@ -699,7 +716,7 @@ export function useBanner() {
       });
       return newBanner;
     },
-    []
+    [],
   );
 
   // Hide banner (alias for dismiss)
@@ -730,7 +747,7 @@ export function useBanner() {
       info: (
         title: string,
         message: string,
-        options?: Partial<Omit<BannerNotification, "id" | "type">>
+        options?: Partial<Omit<BannerNotification, "id" | "type">>,
       ) =>
         showBanner({
           severity: "info",
@@ -745,7 +762,7 @@ export function useBanner() {
       success: (
         title: string,
         message: string,
-        options?: Partial<Omit<BannerNotification, "id" | "type">>
+        options?: Partial<Omit<BannerNotification, "id" | "type">>,
       ) =>
         showBanner({
           severity: "success",
@@ -760,7 +777,7 @@ export function useBanner() {
       warning: (
         title: string,
         message: string,
-        options?: Partial<Omit<BannerNotification, "id" | "type">>
+        options?: Partial<Omit<BannerNotification, "id" | "type">>,
       ) =>
         showBanner({
           severity: "warning",
@@ -775,7 +792,7 @@ export function useBanner() {
       error: (
         title: string,
         message: string,
-        options?: Partial<Omit<BannerNotification, "id" | "type">>
+        options?: Partial<Omit<BannerNotification, "id" | "type">>,
       ) =>
         showBanner({
           severity: "error",
@@ -790,7 +807,7 @@ export function useBanner() {
       agricultural: (
         title: string,
         message: string,
-        options?: Partial<Omit<BannerNotification, "id" | "type">>
+        options?: Partial<Omit<BannerNotification, "id" | "type">>,
       ) =>
         showBanner({
           severity: "agricultural",
@@ -812,7 +829,7 @@ export function useBanner() {
       dismiss: dismissBanner,
       dismissAll,
     }),
-    [showBanner, dismissBanner, dismissAll]
+    [showBanner, dismissBanner, dismissAll],
   );
 
   return {
@@ -848,7 +865,10 @@ export function useAgriculturalNotifications() {
     }) => {
       const season = options.season ?? getCurrentSeason();
       const id = generateNotificationId();
-      const toastNotification: ToastNotification & { variant?: string; agricultural?: any } = {
+      const toastNotification: ToastNotification & {
+        variant?: string;
+        agricultural?: any;
+      } = {
         id,
         type: "toast",
         severity: "agricultural",
@@ -876,7 +896,7 @@ export function useAgriculturalNotifications() {
       setNotifications((prev) => [toastNotification, ...prev]);
       return id;
     },
-    [toast]
+    [toast],
   );
 
   // Send seasonal alert
@@ -911,16 +931,12 @@ export function useAgriculturalNotifications() {
       setNotifications((prev) => [toastNotification, ...prev]);
       return id;
     },
-    [toast]
+    [toast],
   );
 
   // Send harvest notification
   const sendHarvestNotification = useCallback(
-    (options: {
-      title: string;
-      message: string;
-      cropName: string;
-    }) => {
+    (options: { title: string; message: string; cropName: string }) => {
       const id = generateNotificationId();
       const toastNotification: BaseNotification & { agricultural?: any } = {
         id,
@@ -948,16 +964,12 @@ export function useAgriculturalNotifications() {
       setNotifications((prev) => [toastNotification, ...prev]);
       return id;
     },
-    [toast]
+    [toast],
   );
 
   // Send weather alert
   const sendWeatherAlert = useCallback(
-    (options: {
-      title: string;
-      message: string;
-      severity: string;
-    }) => {
+    (options: { title: string; message: string; severity: string }) => {
       const id = generateNotificationId();
       const toastNotification: BaseNotification & { agricultural?: any } = {
         id,
@@ -983,18 +995,17 @@ export function useAgriculturalNotifications() {
       setNotifications((prev) => [toastNotification, ...prev]);
       return id;
     },
-    [toast]
+    [toast],
   );
 
   // Send market update
   const sendMarketUpdate = useCallback(
-    (options: {
-      title: string;
-      message: string;
-      marketData?: any;
-    }) => {
+    (options: { title: string; message: string; marketData?: any }) => {
       const id = generateNotificationId();
-      const toastNotification: BaseNotification & { agricultural?: any; marketData?: any } = {
+      const toastNotification: BaseNotification & {
+        agricultural?: any;
+        marketData?: any;
+      } = {
         id,
         type: "toast",
         severity: "info",
@@ -1022,7 +1033,7 @@ export function useAgriculturalNotifications() {
       setNotifications((prev) => [toastNotification, ...prev]);
       return id;
     },
-    [toast]
+    [toast],
   );
 
   // Notify planting
@@ -1040,10 +1051,10 @@ export function useAgriculturalNotifications() {
               ...metadata,
             },
           },
-        }
+        },
       );
     },
-    [agricultural]
+    [agricultural],
   );
 
   // Notify harvesting
@@ -1061,15 +1072,18 @@ export function useAgriculturalNotifications() {
               ...metadata,
             },
           },
-        }
+        },
       );
     },
-    [agricultural]
+    [agricultural],
   );
 
   // Notify season change
   const notifySeasonChange = useCallback(
-    (season: "spring" | "summer" | "fall" | "winter", options?: ToastOptions) => {
+    (
+      season: "spring" | "summer" | "fall" | "winter",
+      options?: ToastOptions,
+    ) => {
       const messages = {
         spring: "🌱 Spring has arrived! Time to plant new crops.",
         summer: "☀️ Summer season begins! Keep your crops hydrated.",
@@ -1088,7 +1102,7 @@ export function useAgriculturalNotifications() {
         },
       });
     },
-    [agricultural]
+    [agricultural],
   );
 
   // Notify harvest complete
@@ -1106,10 +1120,10 @@ export function useAgriculturalNotifications() {
               ...metadata,
             },
           },
-        }
+        },
       );
     },
-    [agricultural]
+    [agricultural],
   );
 
   // Notify low stock
@@ -1127,10 +1141,10 @@ export function useAgriculturalNotifications() {
               ...metadata,
             },
           },
-        }
+        },
       );
     },
-    [warning]
+    [warning],
   );
 
   // Notify market opening
@@ -1151,10 +1165,10 @@ export function useAgriculturalNotifications() {
             },
           },
           ...bannerOptions,
-        }
+        },
       );
     },
-    [banner]
+    [banner],
   );
 
   // Notify weather alert
@@ -1162,7 +1176,7 @@ export function useAgriculturalNotifications() {
     (
       message: string,
       severity: "low" | "medium" | "high",
-      options?: ToastOptions
+      options?: ToastOptions,
     ) => {
       return warning(message, {
         ...options,
@@ -1176,7 +1190,7 @@ export function useAgriculturalNotifications() {
         },
       });
     },
-    [warning]
+    [warning],
   );
 
   return {
@@ -1207,44 +1221,50 @@ export function useNotificationPreferences(userId: string) {
   const storageKey = `notification-preferences-${userId}`;
 
   // Initialize from localStorage
-  const [preferences, setPreferences] = useState<NotificationPreferences>(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const stored = localStorage.getItem(storageKey);
-        if (stored) {
-          const parsed = JSON.parse(stored);
-          return {
-            ...parsed,
-            createdAt: parsed.createdAt ? new Date(parsed.createdAt) : new Date(),
-            updatedAt: parsed.updatedAt ? new Date(parsed.updatedAt) : new Date(),
-          };
+  const [preferences, setPreferences] = useState<NotificationPreferences>(
+    () => {
+      if (typeof window !== "undefined") {
+        try {
+          const stored = localStorage.getItem(storageKey);
+          if (stored) {
+            const parsed = JSON.parse(stored);
+            return {
+              ...parsed,
+              createdAt: parsed.createdAt
+                ? new Date(parsed.createdAt)
+                : new Date(),
+              updatedAt: parsed.updatedAt
+                ? new Date(parsed.updatedAt)
+                : new Date(),
+            };
+          }
+        } catch (error) {
+          logger.error("Failed to restore preferences from localStorage:", {
+            error: error instanceof Error ? error.message : String(error),
+          });
         }
-      } catch (error) {
-        logger.error("Failed to restore preferences from localStorage:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
       }
-    }
 
-    return {
-      userId,
-      channels: {},
-      categories: {},
-      quietHours: {
-        enabled: false,
-        startTime: "22:00",
-        endTime: "08:00",
-        timezone: "UTC",
-        allowUrgent: true,
-      },
-      frequencyLimits: {
-        perHour: 10,
-        perDay: 50,
-      },
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-  });
+      return {
+        userId,
+        channels: {},
+        categories: {},
+        quietHours: {
+          enabled: false,
+          startTime: "22:00",
+          endTime: "08:00",
+          timezone: "UTC",
+          allowUrgent: true,
+        },
+        frequencyLimits: {
+          perHour: 10,
+          perDay: 50,
+        },
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+    },
+  );
 
   // Persist to localStorage when preferences change
   useEffect(() => {
@@ -1253,8 +1273,8 @@ export function useNotificationPreferences(userId: string) {
         localStorage.setItem(storageKey, JSON.stringify(preferences));
       } catch (error) {
         logger.error("Failed to persist preferences to localStorage:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+          error: error instanceof Error ? error.message : String(error),
+        });
       }
     }
   }, [preferences, storageKey]);
@@ -1264,7 +1284,7 @@ export function useNotificationPreferences(userId: string) {
     (updates: Partial<NotificationPreferences>) => {
       setPreferences((prev) => ({ ...prev, ...updates }));
     },
-    []
+    [],
   );
 
   // Toggle channel
@@ -1281,7 +1301,7 @@ export function useNotificationPreferences(userId: string) {
         },
       }));
     },
-    []
+    [],
   );
 
   // Toggle quiet hours
@@ -1307,7 +1327,7 @@ export function useNotificationPreferences(userId: string) {
         updatedAt: new Date(),
       }));
     },
-    []
+    [],
   );
 
   // Update quiet hours
@@ -1318,8 +1338,16 @@ export function useNotificationPreferences(userId: string) {
         ...prev.quietHours,
         ...quietHours,
         // Map start/end to startTime/endTime if provided
-        startTime: quietHours.start || quietHours.startTime || prev.quietHours?.startTime || "22:00",
-        endTime: quietHours.end || quietHours.endTime || prev.quietHours?.endTime || "08:00",
+        startTime:
+          quietHours.start ||
+          quietHours.startTime ||
+          prev.quietHours?.startTime ||
+          "22:00",
+        endTime:
+          quietHours.end ||
+          quietHours.endTime ||
+          prev.quietHours?.endTime ||
+          "08:00",
       },
       updatedAt: new Date(),
     }));

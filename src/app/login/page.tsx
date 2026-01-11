@@ -2,7 +2,6 @@ import { LoginForm } from "@/components/features/auth/LoginForm";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 
-
 export const metadata: Metadata = {
   title: "Login | Farmers Market Platform",
   description: "Sign in to your Farmers Market account",
@@ -55,9 +54,12 @@ function LoginError() {
               />
             </svg>
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Unable to Load Login Form</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            Unable to Load Login Form
+          </h2>
           <p className="text-gray-600">
-            There was an error loading the login page. Please refresh or try again later.
+            There was an error loading the login page. Please refresh or try
+            again later.
           </p>
         </div>
         <div className="space-y-4">

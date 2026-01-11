@@ -11,7 +11,7 @@ import { database } from "@/lib/database";
 import { farmService } from "@/lib/services/farm.service";
 import { revalidatePath } from "next/cache";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 /**
  * Response type for farm actions
@@ -25,7 +25,9 @@ interface FarmActionResponse {
 /**
  * Create new farm action
  */
-export async function createFarmAction(formData: FormData): Promise<FarmActionResponse> {
+export async function createFarmAction(
+  formData: FormData,
+): Promise<FarmActionResponse> {
   try {
     // Check authentication
     const session = await auth();
@@ -190,7 +192,7 @@ export async function createFarmAction(formData: FormData): Promise<FarmActionRe
  */
 export async function updateFarmAction(
   farmId: string,
-  formData: FormData
+  formData: FormData,
 ): Promise<FarmActionResponse> {
   try {
     // Check authentication
@@ -215,7 +217,10 @@ export async function updateFarmAction(
       };
     }
 
-    if (existingFarm.ownerId !== session.user.id && session.user.role !== "ADMIN") {
+    if (
+      existingFarm.ownerId !== session.user.id &&
+      session.user.role !== "ADMIN"
+    ) {
       return {
         success: false,
         error: "Unauthorized to update this farm",
@@ -273,7 +278,9 @@ export async function updateFarmAction(
 /**
  * Delete farm action
  */
-export async function deleteFarmAction(farmId: string): Promise<FarmActionResponse> {
+export async function deleteFarmAction(
+  farmId: string,
+): Promise<FarmActionResponse> {
   try {
     // Check authentication
     const session = await auth();
@@ -328,7 +335,9 @@ export async function deleteFarmAction(farmId: string): Promise<FarmActionRespon
 /**
  * Toggle farm favorite action
  */
-export async function toggleFarmFavoriteAction(farmId: string): Promise<FarmActionResponse> {
+export async function toggleFarmFavoriteAction(
+  farmId: string,
+): Promise<FarmActionResponse> {
   try {
     // Check authentication
     const session = await auth();
@@ -381,7 +390,8 @@ export async function toggleFarmFavoriteAction(farmId: string): Promise<FarmActi
     });
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Failed to toggle favorite",
+      error:
+        error instanceof Error ? error.message : "Failed to toggle favorite",
     };
   }
 }
@@ -392,7 +402,7 @@ export async function toggleFarmFavoriteAction(farmId: string): Promise<FarmActi
 export async function submitFarmReviewAction(
   farmId: string,
   rating: number,
-  comment: string
+  comment: string,
 ): Promise<FarmActionResponse> {
   try {
     // Check authentication
@@ -449,7 +459,8 @@ export async function submitFarmReviewAction(
     });
 
     const averageRating =
-      reviews.reduce((sum: number, review: any) => sum + review.rating, 0) / reviews.length;
+      reviews.reduce((sum: number, review: any) => sum + review.rating, 0) /
+      reviews.length;
 
     await database.farm.update({
       where: { id: farmId },

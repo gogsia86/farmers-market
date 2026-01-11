@@ -4,8 +4,8 @@
  * Handles reconnection and error recovery
  */
 
-import { logger } from '@/lib/monitoring/logger';
-import Redis from 'ioredis';
+import { logger } from "@/lib/monitoring/logger";
+import Redis from "ioredis";
 
 // ============================================================================
 // REDIS CLIENT SINGLETON
@@ -23,11 +23,10 @@ class RedisClient {
 
   private initialize(): void {
     // Skip Redis in test environment or if not configured
-    if (
-      process.env.NODE_ENV === 'test' ||
-      !process.env.REDIS_URL
-    ) {
-      logger.info('Redis client not initialized (test mode or REDIS_URL not set)');
+    if (process.env.NODE_ENV === "test" || !process.env.REDIS_URL) {
+      logger.info(
+        "Redis client not initialized (test mode or REDIS_URL not set)",
+      );
       return;
     }
 
@@ -38,8 +37,8 @@ class RedisClient {
         lazyConnect: false,
         retryStrategy: (times) => {
           if (times > this.maxReconnectAttempts) {
-            logger.error('Redis max reconnection attempts reached', {
-              attempts: times
+            logger.error("Redis max reconnection attempts reached", {
+              attempts: times,
             });
             return null; // Stop retrying
           }
@@ -49,44 +48,44 @@ class RedisClient {
       });
 
       // Event handlers
-      this.client.on('connect', () => {
+      this.client.on("connect", () => {
         this.isConnected = true;
         this.reconnectAttempts = 0;
-        logger.info('Redis client connected');
+        logger.info("Redis client connected");
       });
 
-      this.client.on('ready', () => {
-        logger.info('Redis client ready');
+      this.client.on("ready", () => {
+        logger.info("Redis client ready");
       });
 
-      this.client.on('error', (error) => {
+      this.client.on("error", (error) => {
         this.isConnected = false;
-        logger.error('Redis client error', {
-          error: error instanceof Error ? error.message : String(error)
+        logger.error("Redis client error", {
+          error: error instanceof Error ? error.message : String(error),
         });
       });
 
-      this.client.on('close', () => {
+      this.client.on("close", () => {
         this.isConnected = false;
-        logger.warn('Redis client connection closed');
+        logger.warn("Redis client connection closed");
       });
 
-      this.client.on('reconnecting', () => {
+      this.client.on("reconnecting", () => {
         this.reconnectAttempts++;
-        logger.info('Redis client reconnecting', {
-          attempt: this.reconnectAttempts
+        logger.info("Redis client reconnecting", {
+          attempt: this.reconnectAttempts,
         });
       });
 
       // Attempt connection
       this.client.connect().catch((error) => {
-        logger.error('Failed to connect to Redis', {
-          error: error instanceof Error ? error.message : String(error)
+        logger.error("Failed to connect to Redis", {
+          error: error instanceof Error ? error.message : String(error),
         });
       });
     } catch (error) {
-      logger.error('Redis initialization failed', {
-        error: error instanceof Error ? error.message : String(error)
+      logger.error("Redis initialization failed", {
+        error: error instanceof Error ? error.message : String(error),
       });
     }
   }
@@ -102,9 +101,9 @@ class RedisClient {
 
       return JSON.parse(value) as T;
     } catch (error) {
-      logger.error('Redis GET error', {
+      logger.error("Redis GET error", {
         key,
-        error: error instanceof Error ? error.message : String(error)
+        error: error instanceof Error ? error.message : String(error),
       });
       return null;
     }
@@ -124,9 +123,9 @@ class RedisClient {
       }
       return true;
     } catch (error) {
-      logger.error('Redis SET error', {
+      logger.error("Redis SET error", {
         key,
-        error: error instanceof Error ? error.message : String(error)
+        error: error instanceof Error ? error.message : String(error),
       });
       return false;
     }
@@ -140,9 +139,9 @@ class RedisClient {
     try {
       return await this.client.del(key);
     } catch (error) {
-      logger.error('Redis delete error', {
+      logger.error("Redis delete error", {
         key,
-        error: error instanceof Error ? error.message : String(error)
+        error: error instanceof Error ? error.message : String(error),
       });
       return 0;
     }
@@ -159,9 +158,9 @@ class RedisClient {
 
       return await this.client.del(...keys);
     } catch (error) {
-      logger.error('Redis DELETE PATTERN error', {
+      logger.error("Redis DELETE PATTERN error", {
         pattern,
-        error: error instanceof Error ? error.message : String(error)
+        error: error instanceof Error ? error.message : String(error),
       });
       return 0;
     }
@@ -176,9 +175,9 @@ class RedisClient {
       const result = await this.client.exists(key);
       return result === 1;
     } catch (error) {
-      logger.error('Redis EXISTS error', {
+      logger.error("Redis EXISTS error", {
         key,
-        error: error instanceof Error ? error.message : String(error)
+        error: error instanceof Error ? error.message : String(error),
       });
       return false;
     }
@@ -191,10 +190,10 @@ class RedisClient {
 
     try {
       await this.client.flushall();
-      logger.info('Redis cache cleared');
+      logger.info("Redis cache cleared");
     } catch (error) {
-      logger.error('Redis FLUSHALL error', {
-        error: error instanceof Error ? error.message : String(error)
+      logger.error("Redis FLUSHALL error", {
+        error: error instanceof Error ? error.message : String(error),
       });
     }
   }
@@ -206,10 +205,10 @@ class RedisClient {
 
     try {
       const result = await this.client.ping();
-      return result === 'PONG';
+      return result === "PONG";
     } catch (error) {
-      logger.error('Redis PING error', {
-        error: error instanceof Error ? error.message : String(error)
+      logger.error("Redis PING error", {
+        error: error instanceof Error ? error.message : String(error),
       });
       return false;
     }
@@ -230,10 +229,10 @@ class RedisClient {
       try {
         await this.client.quit();
         this.isConnected = false;
-        logger.info('Redis client disconnected');
+        logger.info("Redis client disconnected");
       } catch (error) {
-        logger.error('Redis disconnect error', {
-          error: error instanceof Error ? error.message : String(error)
+        logger.error("Redis disconnect error", {
+          error: error instanceof Error ? error.message : String(error),
         });
       }
     }

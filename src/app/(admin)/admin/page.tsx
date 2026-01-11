@@ -6,7 +6,13 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   AlertCircle,
@@ -20,7 +26,7 @@ import {
   Store,
   TrendingDown,
   TrendingUp,
-  Users
+  Users,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -182,9 +188,7 @@ export default function AdminDashboardPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-          <p className="text-gray-600 mt-1">
-            Platform overview and analytics
-          </p>
+          <p className="text-gray-600 mt-1">Platform overview and analytics</p>
         </div>
         <div className="flex items-center gap-3">
           <select
@@ -224,10 +228,11 @@ export default function AdminDashboardPage() {
                 <TrendingDown className="h-4 w-4 text-red-600" />
               )}
               <span
-                className={`text-sm ${analytics.overview.revenueGrowth >= 0
+                className={`text-sm ${
+                  analytics.overview.revenueGrowth >= 0
                     ? "text-green-600"
                     : "text-red-600"
-                  }`}
+                }`}
               >
                 {formatPercent(analytics.overview.revenueGrowth)}
               </span>
@@ -255,10 +260,11 @@ export default function AdminDashboardPage() {
                 <TrendingDown className="h-4 w-4 text-red-600" />
               )}
               <span
-                className={`text-sm ${analytics.overview.orderGrowth >= 0
+                className={`text-sm ${
+                  analytics.overview.orderGrowth >= 0
                     ? "text-green-600"
                     : "text-red-600"
-                  }`}
+                }`}
               >
                 {formatPercent(analytics.overview.orderGrowth)}
               </span>
@@ -286,10 +292,11 @@ export default function AdminDashboardPage() {
                 <TrendingDown className="h-4 w-4 text-red-600" />
               )}
               <span
-                className={`text-sm ${analytics.users.userGrowth >= 0
+                className={`text-sm ${
+                  analytics.users.userGrowth >= 0
                     ? "text-green-600"
                     : "text-red-600"
-                  }`}
+                }`}
               >
                 {formatPercent(analytics.users.userGrowth)}
               </span>
@@ -343,7 +350,10 @@ export default function AdminDashboardPage() {
                 <div className="space-y-3">
                   {Object.entries(analytics.orders.byStatus).map(
                     ([status, count]) => (
-                      <div key={status} className="flex items-center justify-between">
+                      <div
+                        key={status}
+                        className="flex items-center justify-between"
+                      >
                         <div className="flex items-center gap-2">
                           {status === "DELIVERED" && (
                             <CheckCircle className="h-4 w-4 text-green-600" />
@@ -358,7 +368,7 @@ export default function AdminDashboardPage() {
                         </div>
                         <span className="text-sm font-bold">{count}</span>
                       </div>
-                    )
+                    ),
                   )}
                 </div>
               </CardContent>
@@ -372,12 +382,19 @@ export default function AdminDashboardPage() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {Object.entries(analytics.users.byRole).map(([role, count]) => (
-                    <div key={role} className="flex items-center justify-between">
-                      <span className="text-sm font-medium">{role}</span>
-                      <span className="text-sm font-bold">{formatNumber(count)}</span>
-                    </div>
-                  ))}
+                  {Object.entries(analytics.users.byRole).map(
+                    ([role, count]) => (
+                      <div
+                        key={role}
+                        className="flex items-center justify-between"
+                      >
+                        <span className="text-sm font-medium">{role}</span>
+                        <span className="text-sm font-bold">
+                          {formatNumber(count)}
+                        </span>
+                      </div>
+                    ),
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -391,25 +408,33 @@ export default function AdminDashboardPage() {
               <CardContent>
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Total Products</span>
+                    <span className="text-sm text-gray-600">
+                      Total Products
+                    </span>
                     <span className="text-sm font-bold">
                       {formatNumber(analytics.products.total)}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Active Products</span>
+                    <span className="text-sm text-gray-600">
+                      Active Products
+                    </span>
                     <span className="text-sm font-bold">
                       {formatNumber(analytics.products.active)}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Average Order Value</span>
+                    <span className="text-sm text-gray-600">
+                      Average Order Value
+                    </span>
                     <span className="text-sm font-bold">
                       {formatCurrency(analytics.overview.avgOrderValue)}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Average Rating</span>
+                    <span className="text-sm text-gray-600">
+                      Average Rating
+                    </span>
                     <div className="flex items-center gap-1">
                       <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />
                       <span className="text-sm font-bold">
@@ -430,7 +455,9 @@ export default function AdminDashboardPage() {
               <CardContent>
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Pending Reviews</span>
+                    <span className="text-sm text-gray-600">
+                      Pending Reviews
+                    </span>
                     <span className="text-sm font-bold text-yellow-600">
                       {analytics.reviews.pending}
                     </span>
@@ -465,9 +492,12 @@ export default function AdminDashboardPage() {
                     className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50"
                   >
                     <div className="flex-1">
-                      <div className="font-medium">Order #{order.orderNumber}</div>
+                      <div className="font-medium">
+                        Order #{order.orderNumber}
+                      </div>
                       <div className="text-sm text-gray-600">
-                        {order.customer?.name || "Guest"} • {order.customer?.email}
+                        {order.customer?.name || "Guest"} •{" "}
+                        {order.customer?.email}
                       </div>
                       <div className="text-xs text-gray-500 mt-1">
                         {new Date(order.createdAt).toLocaleString()}
@@ -478,12 +508,13 @@ export default function AdminDashboardPage() {
                         {formatCurrency(order.totalPrice)}
                       </div>
                       <div
-                        className={`text-xs px-2 py-1 rounded-full mt-1 ${order.status === "DELIVERED"
+                        className={`text-xs px-2 py-1 rounded-full mt-1 ${
+                          order.status === "DELIVERED"
                             ? "bg-green-100 text-green-800"
                             : order.status === "CANCELLED"
                               ? "bg-red-100 text-red-800"
                               : "bg-yellow-100 text-yellow-800"
-                          }`}
+                        }`}
                       >
                         {order.status}
                       </div>
@@ -500,7 +531,9 @@ export default function AdminDashboardPage() {
           <Card>
             <CardHeader>
               <CardTitle>Top Performing Farms</CardTitle>
-              <CardDescription>Farms with most products and reviews</CardDescription>
+              <CardDescription>
+                Farms with most products and reviews
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -585,7 +618,9 @@ export default function AdminDashboardPage() {
                     <div className="text-3xl font-bold text-gray-900">
                       {formatNumber(analytics.reviews.total)}
                     </div>
-                    <div className="text-sm text-gray-600 mt-1">Total Reviews</div>
+                    <div className="text-sm text-gray-600 mt-1">
+                      Total Reviews
+                    </div>
                   </div>
                   <div className="text-center p-6 bg-yellow-50 rounded-lg">
                     <div className="text-3xl font-bold text-yellow-800">
@@ -600,7 +635,9 @@ export default function AdminDashboardPage() {
                       <Star className="h-8 w-8 text-yellow-500 fill-yellow-500" />
                       {analytics.reviews.averageRating.toFixed(1)}
                     </div>
-                    <div className="text-sm text-gray-600 mt-1">Average Rating</div>
+                    <div className="text-sm text-gray-600 mt-1">
+                      Average Rating
+                    </div>
                   </div>
                 </div>
                 {analytics.reviews.pending > 0 && (

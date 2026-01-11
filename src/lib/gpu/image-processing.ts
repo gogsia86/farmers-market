@@ -9,7 +9,7 @@
  * NOTE: TypeScript checks disabled - TensorFlow types not available in this environment
  */
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 let tf: any;
 let GPU: any;
@@ -171,7 +171,9 @@ export class GPUImageProcessor {
     const startTime = performance.now();
 
     const results = await Promise.all(
-      images.map((img: any) => this.resizeImage(img, targetWidth, targetHeight)),
+      images.map((img: any) =>
+        this.resizeImage(img, targetWidth, targetHeight),
+      ),
     );
 
     const duration = performance.now() - startTime;
@@ -386,7 +388,10 @@ export class GPUPerformanceMonitor {
       averageDuration:
         this.metrics.reduce((sum: any, m: any) => sum + m.duration, 0) /
         this.metrics.length,
-      totalMemoryUsed: this.metrics.reduce((sum: any, m: any) => sum + m.memoryUsed, 0),
+      totalMemoryUsed: this.metrics.reduce(
+        (sum: any, m: any) => sum + m.memoryUsed,
+        0,
+      ),
       metrics: this.metrics,
     };
   }

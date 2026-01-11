@@ -206,7 +206,7 @@ describe("🔐 Webhook Integration Tests", () => {
 
       // Timestamps should be the same (not updated)
       expect(secondProcessed?.processedAt?.getTime()).toBe(
-        firstProcessed?.processedAt?.getTime()
+        firstProcessed?.processedAt?.getTime(),
       );
       expect(secondProcessed?.attempts).toBe(1); // Still 1, not incremented
     });
@@ -252,7 +252,9 @@ describe("🔐 Webhook Integration Tests", () => {
       expect(isProcessed).toBe(true);
 
       // Non-existent event
-      isProcessed = await webhookEventService.isProcessed("test_evt_nonexistent");
+      isProcessed = await webhookEventService.isProcessed(
+        "test_evt_nonexistent",
+      );
       expect(isProcessed).toBe(false);
     });
   });
@@ -297,7 +299,7 @@ describe("🔐 Webhook Integration Tests", () => {
       const { events } = await webhookEventService.getEvents(
         { provider: "STRIPE" },
         100,
-        0
+        0,
       );
 
       expect(events).toHaveLength(2);
@@ -308,12 +310,12 @@ describe("🔐 Webhook Integration Tests", () => {
       const { events: processed } = await webhookEventService.getEvents(
         { processed: true },
         100,
-        0
+        0,
       );
       const { events: unprocessed } = await webhookEventService.getEvents(
         { processed: false },
         100,
-        0
+        0,
       );
 
       expect(processed.length).toBeGreaterThanOrEqual(1);
@@ -324,12 +326,17 @@ describe("🔐 Webhook Integration Tests", () => {
 
     it("should get failed events for retry", async () => {
       // Mark one as failed
-      await webhookEventService.markAsFailed("test_evt_101", "Processing error");
+      await webhookEventService.markAsFailed(
+        "test_evt_101",
+        "Processing error",
+      );
 
       const failedEvents = await webhookEventService.getFailedEvents(5, 100);
 
       expect(failedEvents.length).toBeGreaterThanOrEqual(1);
-      const failedEvent = failedEvents.find((e: any) => e.eventId === "test_evt_101");
+      const failedEvent = failedEvents.find(
+        (e: any) => e.eventId === "test_evt_101",
+      );
       expect(failedEvent).toBeDefined();
       expect(failedEvent?.processed).toBe(false);
       expect(failedEvent?.attempts).toBeGreaterThan(0);
@@ -364,7 +371,10 @@ describe("🔐 Webhook Integration Tests", () => {
         expect(payload.test).toBe("data");
       };
 
-      const result = await webhookEventService.retryEvent("test_evt_200", handler);
+      const result = await webhookEventService.retryEvent(
+        "test_evt_200",
+        handler,
+      );
 
       expect(result.success).toBe(true);
       expect(result.alreadyProcessed).toBe(false);
@@ -387,7 +397,10 @@ describe("🔐 Webhook Integration Tests", () => {
         throw new Error("Simulated failure");
       };
 
-      const result = await webhookEventService.retryEvent("test_evt_201", handler);
+      const result = await webhookEventService.retryEvent(
+        "test_evt_201",
+        handler,
+      );
 
       expect(result.success).toBe(false);
       expect(result.error).toBe("Simulated failure");
@@ -414,7 +427,10 @@ describe("🔐 Webhook Integration Tests", () => {
         handlerCalled = true;
       };
 
-      const result = await webhookEventService.retryEvent("test_evt_202", handler);
+      const result = await webhookEventService.retryEvent(
+        "test_evt_202",
+        handler,
+      );
 
       expect(result.success).toBe(true);
       expect(result.alreadyProcessed).toBe(true);
@@ -554,9 +570,12 @@ describe("🔐 Webhook Integration Tests", () => {
 
   describe("🔐 Stripe Signature Verification", () => {
     it("should verify valid Stripe webhook signature", () => {
-      const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_test_key", {
-        apiVersion: "2025-12-15.clover",
-      });
+      const stripe = new Stripe(
+        process.env.STRIPE_SECRET_KEY || "sk_test_key",
+        {
+          apiVersion: "2025-12-15.clover",
+        },
+      );
 
       const webhookSecret = "whsec_test_secret";
       const payload = JSON.stringify({
@@ -585,9 +604,12 @@ describe("🔐 Webhook Integration Tests", () => {
     });
 
     it("should reject webhook with invalid signature", () => {
-      const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_test_key", {
-        apiVersion: "2025-12-15.clover",
-      });
+      const stripe = new Stripe(
+        process.env.STRIPE_SECRET_KEY || "sk_test_key",
+        {
+          apiVersion: "2025-12-15.clover",
+        },
+      );
 
       const webhookSecret = "whsec_test_secret";
       const payload = JSON.stringify({
@@ -599,7 +621,11 @@ describe("🔐 Webhook Integration Tests", () => {
 
       // Attempt to verify invalid signature
       expect(() => {
-        stripe.webhooks.constructEvent(payload, invalidSignature, webhookSecret);
+        stripe.webhooks.constructEvent(
+          payload,
+          invalidSignature,
+          webhookSecret,
+        );
       }).toThrow();
     });
 
@@ -643,7 +669,7 @@ describe("🔐 Webhook Integration Tests", () => {
 
       const duplicates = await webhookEventService.findDuplicates("STRIPE");
       const testDuplicates = duplicates.filter((d: any) =>
-        d.eventId.startsWith("test_evt_50")
+        d.eventId.startsWith("test_evt_50"),
       );
 
       expect(testDuplicates).toHaveLength(0);
@@ -673,7 +699,9 @@ describe("🔐 Webhook Integration Tests", () => {
       });
 
       const duplicates = await webhookEventService.findDuplicates("STRIPE");
-      const testDuplicate = duplicates.find((d: any) => d.eventId === "test_evt_502");
+      const testDuplicate = duplicates.find(
+        (d: any) => d.eventId === "test_evt_502",
+      );
 
       expect(testDuplicate).toBeDefined();
       expect(testDuplicate?.count).toBe(2);

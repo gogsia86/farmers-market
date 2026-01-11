@@ -50,11 +50,9 @@ import {
  * };
  * ```
  */
-export function useLoadingState(
-  initialState?: Partial<BaseLoadingState>
-) {
+export function useLoadingState(initialState?: Partial<BaseLoadingState>) {
   const [loadingState, setLoadingState] = useState<BaseLoadingState>(() =>
-    createLoadingState(initialState)
+    createLoadingState(initialState),
   );
 
   const startLoading = useCallback(() => {
@@ -120,7 +118,7 @@ export interface UseAsyncOptions<T> {
  */
 export function useAsync<T, Args extends any[] = []>(
   asyncFunction: (...args: Args) => Promise<T>,
-  options: UseAsyncOptions<T> = {}
+  options: UseAsyncOptions<T> = {},
 ) {
   const {
     immediate = false,
@@ -198,7 +196,7 @@ export function useAsync<T, Args extends any[] = []>(
         throw err;
       }
     },
-    [asyncFunction, onSuccess, onError]
+    [asyncFunction, onSuccess, onError],
   );
 
   const reset = useCallback(() => {
@@ -260,7 +258,7 @@ export interface UseLoadingCallbackOptions {
  */
 export function useLoadingCallback<Args extends any[]>(
   callback: (...args: Args) => Promise<void>,
-  options: UseLoadingCallbackOptions = {}
+  options: UseLoadingCallbackOptions = {},
 ): [(...args: Args) => Promise<void>, boolean] {
   const { minLoadingTime = 0, onSuccess, onError } = options;
   const [isLoading, setIsLoading] = useState(false);
@@ -285,7 +283,7 @@ export function useLoadingCallback<Args extends any[]>(
           const elapsed = Date.now() - startTime;
           if (elapsed < minLoadingTime) {
             await new Promise((resolve) =>
-              setTimeout(resolve, minLoadingTime - elapsed)
+              setTimeout(resolve, minLoadingTime - elapsed),
             );
           }
         }
@@ -303,7 +301,7 @@ export function useLoadingCallback<Args extends any[]>(
         }
       }
     },
-    [callback, minLoadingTime, onSuccess, onError]
+    [callback, minLoadingTime, onSuccess, onError],
   );
 
   return [wrappedCallback, isLoading];
@@ -324,10 +322,7 @@ export function useLoadingCallback<Args extends any[]>(
  * return showLoading ? <Spinner /> : <Content />;
  * ```
  */
-export function useLoadingDelay(
-  isLoading: boolean,
-  delay = 300
-): boolean {
+export function useLoadingDelay(isLoading: boolean, delay = 300): boolean {
   const [showLoading, setShowLoading] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
@@ -373,7 +368,7 @@ export function useLoadingDelay(
 export function useLoadingTimeout(
   isLoading: boolean,
   timeout = 30000,
-  onTimeout?: () => void
+  onTimeout?: () => void,
 ): boolean {
   const [isTimeout, setIsTimeout] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
@@ -530,52 +525,49 @@ export function useSequentialLoading<T = any>() {
     currentIndex: -1,
   });
 
-  const execute = useCallback(
-    async (operations: Array<() => Promise<T>>) => {
-      setState({
-        isLoading: true,
-        progress: 0,
-        results: [],
-        currentIndex: 0,
-      });
+  const execute = useCallback(async (operations: Array<() => Promise<T>>) => {
+    setState({
+      isLoading: true,
+      progress: 0,
+      results: [],
+      currentIndex: 0,
+    });
 
-      const results: T[] = [];
+    const results: T[] = [];
 
-      try {
-        for (let i = 0; i < operations.length; i++) {
-          setState((prev) => ({
-            ...prev,
-            currentIndex: i,
-            progress: (i / operations.length) * 100,
-          }));
-
-          const operation = operations[i];
-          if (operation) {
-            const result = await operation();
-            results.push(result);
-          }
-        }
-
-        setState({
-          isLoading: false,
-          progress: 100,
-          results,
-          currentIndex: operations.length,
-        });
-
-        return results;
-      } catch (error) {
-        const err = error instanceof Error ? error : new Error(String(error));
+    try {
+      for (let i = 0; i < operations.length; i++) {
         setState((prev) => ({
           ...prev,
-          isLoading: false,
-          error: err,
+          currentIndex: i,
+          progress: (i / operations.length) * 100,
         }));
-        throw err;
+
+        const operation = operations[i];
+        if (operation) {
+          const result = await operation();
+          results.push(result);
+        }
       }
-    },
-    []
-  );
+
+      setState({
+        isLoading: false,
+        progress: 100,
+        results,
+        currentIndex: operations.length,
+      });
+
+      return results;
+    } catch (error) {
+      const err = error instanceof Error ? error : new Error(String(error));
+      setState((prev) => ({
+        ...prev,
+        isLoading: false,
+        error: err,
+      }));
+      throw err;
+    }
+  }, []);
 
   return {
     ...state,

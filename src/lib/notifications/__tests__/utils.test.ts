@@ -52,7 +52,7 @@ import type {
   NotificationPreferences,
   NotificationSortOptions,
   NotificationTemplate,
-  QuietHours
+  QuietHours,
 } from "../types";
 
 // ============================================================================
@@ -60,7 +60,7 @@ import type {
 // ============================================================================
 
 function createMockNotification(
-  overrides: Partial<BaseNotification> = {}
+  overrides: Partial<BaseNotification> = {},
 ): BaseNotification {
   return {
     id: generateNotificationId(),
@@ -856,8 +856,9 @@ describe("Grouping and Batching", () => {
 
   describe("batchNotifications", () => {
     it("should create batches of specified size", () => {
-      const notifications: BaseNotification[] = Array.from({ length: 10 }, (_, i) =>
-        createMockNotification({ id: `${i + 1}` })
+      const notifications: BaseNotification[] = Array.from(
+        { length: 10 },
+        (_, i) => createMockNotification({ id: `${i + 1}` }),
       );
 
       const batches = batchNotifications(notifications, 3);

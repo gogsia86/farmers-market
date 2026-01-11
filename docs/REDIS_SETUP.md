@@ -5,6 +5,7 @@
 **Your Redis credentials were exposed in the conversation history!**
 
 You shared:
+
 - Host: `redis-18095.crce198.eu-central-1-3.ec2.cloud.redislabs.com`
 - Port: `18095`
 - Password: `9MaIaT7jeI8L7cmS0PUDbTWI2RQ3o0kK` ⚠️
@@ -60,6 +61,7 @@ node scripts/test-redis.js
 ```
 
 Expected output:
+
 ```
 ✅ Successfully connected to Redis!
 ✅ PING test passed
@@ -91,6 +93,7 @@ curl http://localhost:3000/api/health/cache
 ```
 
 Expected response:
+
 ```json
 {
   "status": "healthy",
@@ -110,6 +113,7 @@ Expected response:
 **Error:** `ECONNREFUSED`
 
 **Solutions:**
+
 - Verify `REDIS_HOST` and `REDIS_PORT` are correct
 - Check Redis Labs dashboard - database must be active
 - Verify your IP is not blocked (Redis Labs has IP whitelisting)
@@ -119,6 +123,7 @@ Expected response:
 **Error:** `NOAUTH` or `ERR invalid password`
 
 **Solutions:**
+
 - Verify `REDIS_PASSWORD` is correct (copy-paste to avoid typos)
 - Ensure you've reset the password after exposure
 - Check for extra spaces in environment variable value
@@ -128,6 +133,7 @@ Expected response:
 **Error:** `Connection timeout`
 
 **Solutions:**
+
 - Check your internet connection
 - Verify Redis Labs database is in "Active" state
 - Try increasing connection timeout in Redis config
@@ -137,6 +143,7 @@ Expected response:
 **Error:** `ENOTFOUND`
 
 **Solutions:**
+
 - Double-check `REDIS_HOST` spelling
 - Ensure DNS resolution is working
 - Try pinging the host: `ping redis-18095.crce198.eu-central-1-3.ec2.cloud.redislabs.com`
@@ -149,22 +156,22 @@ Expected response:
 
 ```typescript
 // lib/cache/index.ts
-import { Redis } from 'ioredis';
+import { Redis } from "ioredis";
 
 const redis = new Redis({
   host: process.env.REDIS_HOST,
-  port: parseInt(process.env.REDIS_PORT || '6379'),
+  port: parseInt(process.env.REDIS_PORT || "6379"),
   password: process.env.REDIS_PASSWORD,
   maxRetriesPerRequest: 3,
   enableReadyCheck: true,
-  lazyConnect: true
+  lazyConnect: true,
 });
 
 // Set cache
-await redis.setex('key', 3600, JSON.stringify(data));
+await redis.setex("key", 3600, JSON.stringify(data));
 
 // Get cache
-const cached = await redis.get('key');
+const cached = await redis.get("key");
 ```
 
 ### Use Cases in Farmers Market App
@@ -192,6 +199,7 @@ const cached = await redis.get('key');
 ## 🔐 Security Best Practices
 
 ### ✅ DO:
+
 - Store credentials in `.env.local` (never commit)
 - Use environment variables in Vercel
 - Reset passwords if exposed
@@ -200,6 +208,7 @@ const cached = await redis.get('key');
 - Set appropriate TTL (expiration) on cached data
 
 ### ❌ DON'T:
+
 - Commit `.env.local` to Git
 - Share credentials in chat, tickets, or emails
 - Use default passwords
@@ -215,6 +224,7 @@ const cached = await redis.get('key');
 Monitor your database at: https://app.redislabs.com/
 
 Key metrics to watch:
+
 - **Memory Usage**: Should stay below 80% of limit
 - **Operations/sec**: Track request rate
 - **Connected Clients**: Monitor connections
@@ -226,7 +236,7 @@ Key metrics to watch:
 // Check Redis health
 const health = await redis.ping();
 const info = await redis.info();
-const memory = await redis.info('memory');
+const memory = await redis.info("memory");
 ```
 
 ---
@@ -238,7 +248,7 @@ const memory = await redis.info('memory');
 ```typescript
 const redis = new Redis({
   host: process.env.REDIS_HOST,
-  port: parseInt(process.env.REDIS_PORT || '6379'),
+  port: parseInt(process.env.REDIS_PORT || "6379"),
   password: process.env.REDIS_PASSWORD,
   maxRetriesPerRequest: 3,
   enableReadyCheck: true,
@@ -246,12 +256,12 @@ const redis = new Redis({
   // Connection pool settings
   retryStrategy: (times) => Math.min(times * 50, 2000),
   reconnectOnError: (err) => {
-    const targetError = 'READONLY';
+    const targetError = "READONLY";
     if (err.message.includes(targetError)) {
       return true;
     }
     return false;
-  }
+  },
 });
 ```
 

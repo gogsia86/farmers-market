@@ -53,9 +53,10 @@ export function CartItemCard({
 
   // Get product image
   const productImages = product.images as string[] | null;
-  const primaryImage: string = (productImages && productImages.length > 0
-    ? productImages[0]
-    : "/images/placeholder-product.jpg") || "/images/placeholder-product.jpg";
+  const primaryImage: string =
+    (productImages && productImages.length > 0
+      ? productImages[0]
+      : "/images/placeholder-product.jpg") || "/images/placeholder-product.jpg";
 
   // ==========================================================================
   // HANDLERS
@@ -155,8 +156,9 @@ export function CartItemCard({
                   </span>
                   {priceChanged && (
                     <span
-                      className={`text-xs ${priceIncreased ? "text-red-600" : "text-green-600"
-                        }`}
+                      className={`text-xs ${
+                        priceIncreased ? "text-red-600" : "text-green-600"
+                      }`}
                     >
                       {priceIncreased ? "↑" : "↓"} ${currentPrice.toFixed(2)}
                     </span>
@@ -170,7 +172,9 @@ export function CartItemCard({
                     {isOutOfStock ? (
                       <span>Out of stock</span>
                     ) : (
-                      <span>Only {availableStock} {item.unit} available</span>
+                      <span>
+                        Only {availableStock} {item.unit} available
+                      </span>
                     )}
                   </div>
                 )}
@@ -186,7 +190,9 @@ export function CartItemCard({
                   size="icon"
                   className="h-8 w-8"
                   onClick={handleDecrement}
-                  disabled={quantity <= 1 || isLoading || isUpdating || isOutOfStock}
+                  disabled={
+                    quantity <= 1 || isLoading || isUpdating || isOutOfStock
+                  }
                 >
                   <Minus className="h-4 w-4" />
                 </Button>
@@ -201,15 +207,16 @@ export function CartItemCard({
                   className="h-8 w-8"
                   onClick={handleIncrement}
                   disabled={
-                    quantity >= availableStock || isLoading || isUpdating || isOutOfStock
+                    quantity >= availableStock ||
+                    isLoading ||
+                    isUpdating ||
+                    isOutOfStock
                   }
                 >
                   <Plus className="h-4 w-4" />
                 </Button>
 
-                <span className="text-sm text-gray-600">
-                  {item.unit}
-                </span>
+                <span className="text-sm text-gray-600">{item.unit}</span>
               </div>
 
               {/* Item Total & Remove */}
@@ -242,20 +249,21 @@ export function CartItemCard({
         {/* Price Change Notice */}
         {priceChanged && (
           <div
-            className={`mt-3 rounded-md border px-3 py-2 text-sm ${priceIncreased
-              ? "border-amber-200 bg-amber-50 text-amber-800"
-              : "border-green-200 bg-green-50 text-green-800"
-              }`}
+            className={`mt-3 rounded-md border px-3 py-2 text-sm ${
+              priceIncreased
+                ? "border-amber-200 bg-amber-50 text-amber-800"
+                : "border-green-200 bg-green-50 text-green-800"
+            }`}
           >
             {priceIncreased ? (
               <>
-                Price increased from ${priceAtAdd.toFixed(2)} to ${currentPrice.toFixed(2)}{" "}
-                per {item.unit}
+                Price increased from ${priceAtAdd.toFixed(2)} to $
+                {currentPrice.toFixed(2)} per {item.unit}
               </>
             ) : (
               <>
-                Price decreased from ${priceAtAdd.toFixed(2)} to ${currentPrice.toFixed(2)}{" "}
-                per {item.unit}
+                Price decreased from ${priceAtAdd.toFixed(2)} to $
+                {currentPrice.toFixed(2)} per {item.unit}
               </>
             )}
           </div>
@@ -264,8 +272,8 @@ export function CartItemCard({
         {/* Out of Stock Notice */}
         {isOutOfStock && (
           <div className="mt-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
-            This item is currently out of stock and cannot be purchased. Please remove it
-            from your cart.
+            This item is currently out of stock and cannot be purchased. Please
+            remove it from your cart.
           </div>
         )}
       </CardBody>

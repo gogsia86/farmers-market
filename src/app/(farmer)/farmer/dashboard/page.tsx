@@ -29,44 +29,55 @@ export default async function FarmerDashboardPage() {
   });
 
   // Get farmer's statistics
-  const farmIds = farms.map(f => f.id);
+  const farmIds = farms.map((f) => f.id);
 
   // Calculate monthly revenue and orders
-  const orders = farmIds.length > 0 ? await database.order.findMany({
-    where: {
-      farmId: {
-        in: farmIds,
-      },
-      createdAt: {
-        gte: startOfMonth(new Date()),
-      },
-    },
-    select: {
-      total: true,
-      status: true,
-      createdAt: true,
-    },
-  }) : [];
+  const orders =
+    farmIds.length > 0
+      ? await database.order.findMany({
+          where: {
+            farmId: {
+              in: farmIds,
+            },
+            createdAt: {
+              gte: startOfMonth(new Date()),
+            },
+          },
+          select: {
+            total: true,
+            status: true,
+            createdAt: true,
+          },
+        })
+      : [];
 
-  const monthlyRevenue = orders.reduce((sum: any, order: any) => sum + Number(order.total), 0);
+  const monthlyRevenue = orders.reduce(
+    (sum: any, order: any) => sum + Number(order.total),
+    0,
+  );
   const totalOrders = orders.length;
-  const activeOrders = orders.filter(o =>
-    ['PENDING', 'CONFIRMED', 'PROCESSING', 'SHIPPED'].includes(o.status)
+  const activeOrders = orders.filter((o) =>
+    ["PENDING", "CONFIRMED", "PROCESSING", "SHIPPED"].includes(o.status),
   ).length;
 
   // Get today's orders
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const todayOrders = orders.filter(o => new Date(o.createdAt) >= today).length;
+  const todayOrders = orders.filter(
+    (o) => new Date(o.createdAt) >= today,
+  ).length;
 
   // Get total products count
-  const totalProducts = farmIds.length > 0 ? await database.product.count({
-    where: {
-      farmId: {
-        in: farmIds,
-      },
-    },
-  }) : 0;
+  const totalProducts =
+    farmIds.length > 0
+      ? await database.product.count({
+          where: {
+            farmId: {
+              in: farmIds,
+            },
+          },
+        })
+      : 0;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -113,7 +124,9 @@ export default async function FarmerDashboardPage() {
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Monthly Revenue</p>
+                <p className="text-sm font-medium text-gray-600">
+                  Monthly Revenue
+                </p>
                 <p className="text-2xl font-bold text-gray-900 mt-2">
                   {formatCurrency(monthlyRevenue)}
                 </p>
@@ -129,8 +142,12 @@ export default async function FarmerDashboardPage() {
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Orders</p>
-                <p className="text-2xl font-bold text-gray-900 mt-2">{totalOrders}</p>
+                <p className="text-sm font-medium text-gray-600">
+                  Total Orders
+                </p>
+                <p className="text-2xl font-bold text-gray-900 mt-2">
+                  {totalOrders}
+                </p>
                 <p className="text-xs text-gray-500 mt-1">
                   {activeOrders} active • {todayOrders} today
                 </p>
@@ -146,9 +163,11 @@ export default async function FarmerDashboardPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Products</p>
-                <p className="text-2xl font-bold text-gray-900 mt-2">{totalProducts}</p>
+                <p className="text-2xl font-bold text-gray-900 mt-2">
+                  {totalProducts}
+                </p>
                 <p className="text-xs text-gray-500 mt-1">
-                  Across {farms.length} farm{farms.length !== 1 ? 's' : ''}
+                  Across {farms.length} farm{farms.length !== 1 ? "s" : ""}
                 </p>
               </div>
               <div className="flex-shrink-0 bg-purple-100 rounded-lg p-3">
@@ -162,9 +181,11 @@ export default async function FarmerDashboardPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Total Farms</p>
-                <p className="text-2xl font-bold text-gray-900 mt-2">{farms.length}</p>
+                <p className="text-2xl font-bold text-gray-900 mt-2">
+                  {farms.length}
+                </p>
                 <p className="text-xs text-gray-500 mt-1">
-                  {farms.filter(f => f.status === 'ACTIVE').length} active
+                  {farms.filter((f) => f.status === "ACTIVE").length} active
                 </p>
               </div>
               <div className="flex-shrink-0 bg-amber-100 rounded-lg p-3">
@@ -189,7 +210,9 @@ export default async function FarmerDashboardPage() {
         {/* Recent Orders Section */}
         <div className="bg-white rounded-lg shadow mb-8">
           <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-gray-900">📦 Recent Orders</h2>
+            <h2 className="text-xl font-semibold text-gray-900">
+              📦 Recent Orders
+            </h2>
             {totalOrders > 0 && (
               <Link
                 href="/farmer/orders"
@@ -203,7 +226,9 @@ export default async function FarmerDashboardPage() {
             {orders.length === 0 ? (
               <div className="text-center py-8">
                 <ShoppingBag className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-sm font-medium text-gray-900">No orders yet</p>
+                <p className="text-sm font-medium text-gray-900">
+                  No orders yet
+                </p>
                 <p className="text-sm text-gray-500 mt-1">
                   Orders will appear here once customers make purchases
                 </p>
@@ -220,10 +245,16 @@ export default async function FarmerDashboardPage() {
                         Order from {order.createdAt.toLocaleDateString()}
                       </p>
                       <p className="text-sm text-gray-600">
-                        Status: <span className={`font-medium ${order.status === 'COMPLETED' ? 'text-green-600' :
-                            order.status === 'PENDING' ? 'text-yellow-600' :
-                              'text-blue-600'
-                          }`}>
+                        Status:{" "}
+                        <span
+                          className={`font-medium ${
+                            order.status === "COMPLETED"
+                              ? "text-green-600"
+                              : order.status === "PENDING"
+                                ? "text-yellow-600"
+                                : "text-blue-600"
+                          }`}
+                        >
                           {order.status}
                         </span>
                       </p>
@@ -296,12 +327,13 @@ export default async function FarmerDashboardPage() {
                       </p>
                       <div className="mt-4 flex items-center justify-between">
                         <span
-                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${farm.status === "ACTIVE"
-                            ? "bg-green-100 text-green-800"
-                            : farm.status === "PENDING"
-                              ? "bg-yellow-100 text-yellow-800"
-                              : "bg-gray-100 text-gray-800"
-                            }`}
+                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                            farm.status === "ACTIVE"
+                              ? "bg-green-100 text-green-800"
+                              : farm.status === "PENDING"
+                                ? "bg-yellow-100 text-yellow-800"
+                                : "bg-gray-100 text-gray-800"
+                          }`}
                         >
                           {farm.status.replace(/_/g, " ")}
                         </span>

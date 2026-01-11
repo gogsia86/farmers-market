@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import * as Sentry from '@sentry/nextjs';
-import NextError from 'next/error';
-import { useEffect } from 'react';
+import * as Sentry from "@sentry/nextjs";
+import NextError from "next/error";
+import { useEffect } from "react";
 
 interface GlobalErrorProps {
   error: Error & { digest?: string };
@@ -22,9 +22,9 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
   useEffect(() => {
     // Log error to Sentry
     Sentry.captureException(error, {
-      level: 'fatal',
+      level: "fatal",
       tags: {
-        errorBoundary: 'global',
+        errorBoundary: "global",
         digest: error.digest,
       },
       contexts: {
@@ -41,19 +41,18 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
         <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
           <div className="max-w-md w-full text-center">
             <div className="mb-8">
-              <h1 className="text-6xl font-bold text-gray-900 mb-4">
-                Oops!
-              </h1>
+              <h1 className="text-6xl font-bold text-gray-900 mb-4">Oops!</h1>
               <h2 className="text-2xl font-semibold text-gray-700 mb-2">
                 Something went wrong
               </h2>
               <p className="text-gray-600 mb-6">
-                We're sorry, but something unexpected happened. Our team has been notified and is working on a fix.
+                We're sorry, but something unexpected happened. Our team has
+                been notified and is working on a fix.
               </p>
             </div>
 
             {/* Error Details (Development Only) */}
-            {process.env.NODE_ENV === 'development' && (
+            {process.env.NODE_ENV === "development" && (
               <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-left">
                 <h3 className="text-sm font-semibold text-red-800 mb-2">
                   Error Details (Development Only):
@@ -89,7 +88,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
             <div className="mt-8 text-sm text-gray-500">
               <p>Need help?</p>
               <p className="mt-1">
-                Contact support at{' '}
+                Contact support at{" "}
                 <a
                   href="mailto:support@farmersmarket.com"
                   className="text-green-600 hover:text-green-700 underline"
@@ -102,7 +101,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
         </div>
 
         {/* Fallback to Next.js default error component */}
-        {process.env.NODE_ENV === 'development' && (
+        {process.env.NODE_ENV === "development" && (
           <NextError statusCode={500} />
         )}
       </body>

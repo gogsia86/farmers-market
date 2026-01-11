@@ -29,7 +29,6 @@ import {
   useToast,
 } from "../use-notifications";
 
-
 // ============================================================================
 // Mock Setup
 // ============================================================================
@@ -240,7 +239,7 @@ describe("useNotifications Hook", () => {
 
   it("should persist notifications to localStorage", () => {
     const { result } = renderHook(() =>
-      useNotifications({ persistKey: "test-notifications" })
+      useNotifications({ persistKey: "test-notifications" }),
     );
 
     act(() => {
@@ -279,7 +278,7 @@ describe("useNotifications Hook", () => {
     localStorage.setItem("test-notifications", JSON.stringify(testData));
 
     const { result } = renderHook(() =>
-      useNotifications({ persistKey: "test-notifications" })
+      useNotifications({ persistKey: "test-notifications" }),
     );
 
     expect(result.current.notifications).toHaveLength(1);
@@ -589,7 +588,9 @@ describe("useBanner Hook", () => {
   });
 
   it("should limit banners per position", () => {
-    const { result } = renderHook(() => useBanner({ maxBannersPerPosition: 2 }));
+    const { result } = renderHook(() =>
+      useBanner({ maxBannersPerPosition: 2 }),
+    );
 
     act(() => {
       result.current.showBanner({
@@ -612,7 +613,9 @@ describe("useBanner Hook", () => {
       });
     });
 
-    const topBanners = result.current.banners.filter((b: any) => b.position === "top");
+    const topBanners = result.current.banners.filter(
+      (b: any) => b.position === "top",
+    );
     expect(topBanners).toHaveLength(2);
   });
 });
@@ -839,7 +842,7 @@ describe("useAgriculturalNotifications Hook", () => {
 
     expect(result.current.notifications).toHaveLength(1);
     expect(result.current.notifications[0].agricultural?.eventType).toBe(
-      "season_change"
+      "season_change",
     );
   });
 
@@ -856,7 +859,7 @@ describe("useAgriculturalNotifications Hook", () => {
 
     expect(result.current.notifications).toHaveLength(1);
     expect(result.current.notifications[0].agricultural?.eventType).toBe(
-      "harvesting"
+      "harvesting",
     );
   });
 
@@ -873,7 +876,7 @@ describe("useAgriculturalNotifications Hook", () => {
 
     expect(result.current.notifications).toHaveLength(1);
     expect(result.current.notifications[0].agricultural?.eventType).toBe(
-      "weather_alert"
+      "weather_alert",
     );
   });
 
@@ -894,7 +897,7 @@ describe("useAgriculturalNotifications Hook", () => {
 
     expect(result.current.notifications).toHaveLength(1);
     expect(result.current.notifications[0].agricultural?.eventType).toBe(
-      "market_update"
+      "market_update",
     );
   });
 
@@ -924,18 +927,14 @@ describe("useNotificationPreferences Hook", () => {
   });
 
   it("should initialize with default preferences", () => {
-    const { result } = renderHook(() =>
-      useNotificationPreferences("user-1")
-    );
+    const { result } = renderHook(() => useNotificationPreferences("user-1"));
 
     expect(result.current.preferences).toBeTruthy();
     expect(result.current.preferences.userId).toBe("user-1");
   });
 
   it("should update channel preferences", () => {
-    const { result } = renderHook(() =>
-      useNotificationPreferences("user-1")
-    );
+    const { result } = renderHook(() => useNotificationPreferences("user-1"));
 
     act(() => {
       result.current.updateChannelPreference("email", {
@@ -949,9 +948,7 @@ describe("useNotificationPreferences Hook", () => {
   });
 
   it("should update quiet hours", () => {
-    const { result } = renderHook(() =>
-      useNotificationPreferences("user-1")
-    );
+    const { result } = renderHook(() => useNotificationPreferences("user-1"));
 
     act(() => {
       result.current.updateQuietHours({
@@ -967,9 +964,7 @@ describe("useNotificationPreferences Hook", () => {
   });
 
   it("should persist preferences to localStorage", () => {
-    const { result } = renderHook(() =>
-      useNotificationPreferences("user-1")
-    );
+    const { result } = renderHook(() => useNotificationPreferences("user-1"));
 
     act(() => {
       result.current.updateChannelPreference("push", {
@@ -1003,21 +998,17 @@ describe("useNotificationPreferences Hook", () => {
 
     localStorage.setItem(
       "notification-preferences-user-1",
-      JSON.stringify(testPreferences)
+      JSON.stringify(testPreferences),
     );
 
-    const { result } = renderHook(() =>
-      useNotificationPreferences("user-1")
-    );
+    const { result } = renderHook(() => useNotificationPreferences("user-1"));
 
     expect(result.current.preferences.channels.email?.enabled).toBe(false);
     expect(result.current.preferences.quietHours.start).toBe("23:00");
   });
 
   it("should reset preferences to default", () => {
-    const { result } = renderHook(() =>
-      useNotificationPreferences("user-1")
-    );
+    const { result } = renderHook(() => useNotificationPreferences("user-1"));
 
     act(() => {
       result.current.updateChannelPreference("email", {
@@ -1043,7 +1034,9 @@ describe("useNotificationPreferences Hook", () => {
 
 describe("Hook Composition", () => {
   it("should allow using multiple hooks together", () => {
-    const { result: notificationsResult } = renderHook(() => useNotifications());
+    const { result: notificationsResult } = renderHook(() =>
+      useNotifications(),
+    );
     const { result: toastResult } = renderHook(() => useToast());
     const { result: bannerResult } = renderHook(() => useBanner());
 
@@ -1063,7 +1056,7 @@ describe("Hook Composition", () => {
   it("should share notification state across hooks", () => {
     const { result: centerResult } = renderHook(() => useNotificationCenter());
     const { result: agricResult } = renderHook(() =>
-      useAgriculturalNotifications()
+      useAgriculturalNotifications(),
     );
 
     // Both hooks should work independently

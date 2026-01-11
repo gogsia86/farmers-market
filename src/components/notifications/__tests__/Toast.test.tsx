@@ -53,14 +53,18 @@ describe("Toast Component - Basic Rendering", () => {
     renderToast();
 
     expect(screen.getByText("Test Toast")).toBeInTheDocument();
-    expect(screen.getByText("This is a test toast message")).toBeInTheDocument();
+    expect(
+      screen.getByText("This is a test toast message"),
+    ).toBeInTheDocument();
   });
 
   it("should render with title only", () => {
     renderToast({ message: undefined });
 
     expect(screen.getByText("Test Toast")).toBeInTheDocument();
-    expect(screen.queryByText("This is a test toast message")).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("This is a test toast message"),
+    ).not.toBeInTheDocument();
   });
 
   it("should render with custom className", () => {
@@ -219,13 +223,17 @@ describe("Toast Component - Dismiss Behavior", () => {
   it("should render close button when dismissible", () => {
     renderToast({ dismissible: true });
 
-    expect(screen.getByRole("button", { name: /close|dismiss/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /close|dismiss/i }),
+    ).toBeInTheDocument();
   });
 
   it("should not render close button when not dismissible", () => {
     renderToast({ dismissible: false });
 
-    expect(screen.queryByRole("button", { name: /close|dismiss/i })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /close|dismiss/i }),
+    ).not.toBeInTheDocument();
   });
 
   it("should call onDismiss when close button is clicked", async () => {
@@ -352,7 +360,10 @@ describe("Toast Component - Accessibility", () => {
     renderToast({ title: "Important Message" });
 
     const toast = screen.getByRole("status");
-    expect(toast).toHaveAttribute("aria-label", expect.stringContaining("Important Message"));
+    expect(toast).toHaveAttribute(
+      "aria-label",
+      expect.stringContaining("Important Message"),
+    );
   });
 
   it("should be keyboard accessible", async () => {
@@ -526,7 +537,9 @@ describe("Toast Component - Progress Bar", () => {
       showProgress: true,
     });
 
-    const progressBar = container.querySelector("[role='progressbar']") as HTMLElement;
+    const progressBar = container.querySelector(
+      "[role='progressbar']",
+    ) as HTMLElement;
     expect(progressBar).toBeInTheDocument();
 
     // Progress should decrease over time
@@ -552,7 +565,7 @@ describe("Toast Component - Container Integration", () => {
         <Toast {...defaultProps} id="toast-1" title="Toast 1" />
         <Toast {...defaultProps} id="toast-2" title="Toast 2" />
         <Toast {...defaultProps} id="toast-3" title="Toast 3" />
-      </>
+      </>,
     );
 
     expect(screen.getByText("Toast 1")).toBeInTheDocument();
@@ -565,7 +578,7 @@ describe("Toast Component - Container Integration", () => {
       <>
         <Toast {...defaultProps} id="toast-1" position="top-right" />
         <Toast {...defaultProps} id="toast-2" position="top-right" />
-      </>
+      </>,
     );
 
     const toasts = screen.getAllByRole("status");
@@ -673,7 +686,7 @@ describe("Toast Component - Animations", () => {
 describe("Toast Quick Variant Helpers", () => {
   it("should render InfoToast with correct variant", () => {
     const { container } = render(
-      <Toast {...defaultProps} variant="info" title="Info Toast" />
+      <Toast {...defaultProps} variant="info" title="Info Toast" />,
     );
 
     expect(screen.getByText("Info Toast")).toBeInTheDocument();
@@ -682,7 +695,7 @@ describe("Toast Quick Variant Helpers", () => {
 
   it("should render SuccessToast with correct variant", () => {
     const { container } = render(
-      <Toast {...defaultProps} variant="success" title="Success Toast" />
+      <Toast {...defaultProps} variant="success" title="Success Toast" />,
     );
 
     expect(screen.getByText("Success Toast")).toBeInTheDocument();
@@ -691,7 +704,7 @@ describe("Toast Quick Variant Helpers", () => {
 
   it("should render WarningToast with correct variant", () => {
     const { container } = render(
-      <Toast {...defaultProps} variant="warning" title="Warning Toast" />
+      <Toast {...defaultProps} variant="warning" title="Warning Toast" />,
     );
 
     expect(screen.getByText("Warning Toast")).toBeInTheDocument();
@@ -700,7 +713,7 @@ describe("Toast Quick Variant Helpers", () => {
 
   it("should render ErrorToast with correct variant", () => {
     const { container } = render(
-      <Toast {...defaultProps} variant="error" title="Error Toast" />
+      <Toast {...defaultProps} variant="error" title="Error Toast" />,
     );
 
     expect(screen.getByText("Error Toast")).toBeInTheDocument();

@@ -282,16 +282,19 @@ For multipart/form-data endpoints:
 ### Issue: Swagger UI Not Loading
 
 **Symptoms:**
+
 - Blank page or loading spinner forever
 
 **Solutions:**
 
 1. **Check console for errors:**
+
    ```javascript
    // Open DevTools (F12) → Console tab
    ```
 
 2. **Verify OpenAPI spec is accessible:**
+
    ```bash
    curl http://localhost:3001/api/openapi.json
    ```
@@ -307,14 +310,18 @@ For multipart/form-data endpoints:
 ### Issue: 401 Unauthorized on Protected Endpoints
 
 **Symptoms:**
+
 - Protected endpoints return 401 even with token
 
 **Solutions:**
 
 1. **Verify token format:**
+
    ```javascript
    // Token should be JWT (three parts separated by dots)
-   eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+   eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+     .eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ
+     .SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c;
    ```
 
 2. **Check token expiration:**
@@ -333,6 +340,7 @@ For multipart/form-data endpoints:
 ### Issue: CORS Errors
 
 **Symptoms:**
+
 - `Access-Control-Allow-Origin` errors in console
 
 **Solutions:**
@@ -342,6 +350,7 @@ For multipart/form-data endpoints:
    - Not `127.0.0.1` or other IPs
 
 2. **Verify CORS headers in response:**
+
    ```bash
    curl -I http://localhost:3001/api/openapi.json
    ```
@@ -354,16 +363,19 @@ For multipart/form-data endpoints:
 ### Issue: OpenAPI Spec Not Found
 
 **Symptoms:**
+
 - 404 error when loading `/api/openapi.json`
 
 **Solutions:**
 
 1. **Verify file exists:**
+
    ```bash
    ls docs/api/openapi.yaml
    ```
 
 2. **Check file permissions:**
+
    ```bash
    # Should be readable
    cat docs/api/openapi.yaml
@@ -378,11 +390,13 @@ For multipart/form-data endpoints:
 ### Issue: Schemas Not Displaying
 
 **Symptoms:**
+
 - Response/request schemas show as empty or broken
 
 **Solutions:**
 
 1. **Check OpenAPI spec syntax:**
+
    ```bash
    # Validate YAML syntax
    npx @apidevtools/swagger-cli validate docs/api/openapi.yaml
@@ -465,6 +479,7 @@ docs/
 **Purpose:** Serve OpenAPI spec as JSON
 
 **Features:**
+
 - ✅ Reads `openapi.yaml` from disk
 - ✅ Converts YAML to JSON using `js-yaml`
 - ✅ Dynamically updates server URLs
@@ -472,17 +487,18 @@ docs/
 - ✅ CORS-enabled
 
 **Code:**
+
 ```typescript
 export async function GET(request: NextRequest): Promise<NextResponse> {
   // Read YAML file
   const openapiYaml = readFileSync(openapiPath, "utf8");
-  
+
   // Convert to JSON
   const openapiJson = yaml.load(openapiYaml);
-  
+
   // Return with caching
   return NextResponse.json(openapiJson, {
-    headers: { "Cache-Control": "public, max-age=3600" }
+    headers: { "Cache-Control": "public, max-age=3600" },
   });
 }
 ```
@@ -492,6 +508,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 **Purpose:** Server-rendered page wrapper
 
 **Features:**
+
 - ✅ SEO metadata
 - ✅ Header with navigation
 - ✅ Quick links bar
@@ -499,6 +516,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 - ✅ Responsive layout
 
 **Code:**
+
 ```typescript
 export default function ApiDocsPage() {
   return (
@@ -518,6 +536,7 @@ export default function ApiDocsPage() {
 **Purpose:** Interactive Swagger UI client component
 
 **Features:**
+
 - ✅ Dynamic import (no SSR)
 - ✅ JWT token management
 - ✅ Request interceptor
@@ -525,6 +544,7 @@ export default function ApiDocsPage() {
 - ✅ localStorage persistence
 
 **Code:**
+
 ```typescript
 "use client";
 
@@ -535,14 +555,14 @@ const SwaggerUIComponent = dynamic(
 
 export function SwaggerUI() {
   const [authToken, setAuthToken] = useState("");
-  
+
   const requestInterceptor = (req) => {
     if (authToken) {
       req.headers.Authorization = `Bearer ${authToken}`;
     }
     return req;
   };
-  
+
   return (
     <SwaggerUIComponent
       url="/api/openapi.json"
@@ -580,7 +600,7 @@ return NextResponse.json(openapiJson, {
   headers: {
     "X-Custom-Header": "value",
     // ... other headers
-  }
+  },
 });
 ```
 
@@ -600,6 +620,7 @@ Edit `SwaggerUI.tsx`:
 ```
 
 **Available Options:**
+
 - `docExpansion`: Control default expansion state
 - `defaultModelsExpandDepth`: Model nesting depth
 - `displayRequestDuration`: Show request timing
@@ -617,7 +638,7 @@ Add to `SwaggerUI.tsx`:
   .swagger-ui .topbar {
     background-color: #your-color;
   }
-  
+
   .swagger-ui .btn.execute {
     background-color: #your-color;
   }
@@ -699,20 +720,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/YourSchema'
+              $ref: "#/components/schemas/YourSchema"
       responses:
-        '201':
+        "201":
           description: Created successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/YourResponseSchema'
-        '400':
+                $ref: "#/components/schemas/YourResponseSchema"
+        "400":
           description: Validation error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
 ```
 
 2. **Define schemas** (if new):
@@ -814,10 +835,11 @@ No additional environment variables needed! 🎉
 **Production Recommendations:**
 
 1. **Restrict Access:**
+
    ```typescript
    // Add middleware to /api-docs
    export const middleware = async (request: NextRequest) => {
-     if (process.env.NODE_ENV === 'production') {
+     if (process.env.NODE_ENV === "production") {
        // Add IP whitelist or basic auth
        return requireBasicAuth(request);
      }
@@ -826,9 +848,10 @@ No additional environment variables needed! 🎉
    ```
 
 2. **Disable in Production (Optional):**
+
    ```typescript
    // In api-docs/page.tsx
-   if (process.env.NODE_ENV === 'production') {
+   if (process.env.NODE_ENV === "production") {
      return notFound();
    }
    ```
@@ -868,7 +891,7 @@ Track Swagger UI usage:
 // In SwaggerUI.tsx
 useEffect(() => {
   // Track page view
-  analytics.track('swagger_ui_viewed');
+  analytics.track("swagger_ui_viewed");
 }, []);
 ```
 
@@ -878,7 +901,7 @@ Monitor API response times via Swagger UI:
 
 ```typescript
 const responseInterceptor = (res) => {
-  const duration = res.headers.get('x-response-time');
+  const duration = res.headers.get("x-response-time");
   console.log(`Request took ${duration}ms`);
   return res;
 };
@@ -913,6 +936,7 @@ Want to improve Swagger UI integration?
 ### Version 1.0.0 (January 10, 2025)
 
 **Initial Release:**
+
 - ✅ Interactive Swagger UI at `/api-docs`
 - ✅ OpenAPI 3.0.3 specification
 - ✅ 32+ documented endpoints

@@ -17,6 +17,7 @@
 ## 🔐 Authentication Setup (1 Minute)
 
 ### Option 1: Quick Test Token
+
 ```bash
 # Sign in via API
 curl -X POST http://localhost:3001/api/auth/signin \
@@ -28,9 +29,10 @@ curl -X POST http://localhost:3001/api/auth/signin \
 ```
 
 ### Option 2: Use Session Token
+
 ```javascript
 // In browser console
-document.cookie.split(';').find(c => c.includes('next-auth'))
+document.cookie.split(";").find((c) => c.includes("next-auth"));
 // Copy token value
 ```
 
@@ -39,11 +41,13 @@ document.cookie.split(';').find(c => c.includes('next-auth'))
 ## 📖 Common Tasks
 
 ### Browse All Endpoints
+
 - **Scroll** through the page
 - **Click tags** to expand/collapse categories
 - **Use filter** to search (top of page)
 
 ### Test Public Endpoint
+
 ```
 1. Navigate to GET /api/health
 2. Click "Try it out"
@@ -52,6 +56,7 @@ document.cookie.split(';').find(c => c.includes('next-auth'))
 ```
 
 ### Test Protected Endpoint
+
 ```
 1. Add JWT token (see Authentication above)
 2. Navigate to GET /api/user/profile
@@ -61,6 +66,7 @@ document.cookie.split(';').find(c => c.includes('next-auth'))
 ```
 
 ### Create Resource
+
 ```
 1. Navigate to POST /api/farms
 2. Click "Try it out"
@@ -70,6 +76,7 @@ document.cookie.split(';').find(c => c.includes('next-auth'))
 ```
 
 ### Filter Endpoints
+
 ```
 Enter in filter box:
 - "farm" → shows farm-related endpoints only
@@ -82,6 +89,7 @@ Enter in filter box:
 ## 🎯 Navigation
 
 ### Quick Links (Top Bar)
+
 - **Authentication** → Sign in/session endpoints
 - **Farms** → Farm CRUD operations
 - **Products** → Product catalog
@@ -90,6 +98,7 @@ Enter in filter box:
 - **Schemas** → Type definitions
 
 ### URL Anchors
+
 ```
 #tag/Farms           → Jump to Farms section
 #tag/Products        → Jump to Products
@@ -101,6 +110,7 @@ Enter in filter box:
 ## 🐛 Troubleshooting (30-Second Fixes)
 
 ### Swagger UI Won't Load
+
 ```bash
 # Hard refresh
 Ctrl+Shift+R  (Windows/Linux)
@@ -111,6 +121,7 @@ npm run dev
 ```
 
 ### 401 Unauthorized
+
 ```
 1. Click "Clear" button next to token field
 2. Get fresh token via POST /api/auth/signin
@@ -119,6 +130,7 @@ npm run dev
 ```
 
 ### Can't See Response Body
+
 ```
 1. Check response status (should be 200/201)
 2. Click response section to expand
@@ -127,6 +139,7 @@ npm run dev
 ```
 
 ### Schemas Not Showing
+
 ```bash
 # Validate OpenAPI spec
 npx @apidevtools/swagger-cli validate docs/api/openapi.yaml
@@ -140,7 +153,7 @@ cat docs/api/openapi.yaml | head -n 50
 ## 📊 Endpoint Categories (32+)
 
 | Category       | Endpoints | Auth Required |
-|----------------|-----------|---------------|
+| -------------- | --------- | ------------- |
 | Health         | 2         | No            |
 | Authentication | 2         | No            |
 | Farms          | 5         | Mixed         |
@@ -169,11 +182,13 @@ cat docs/api/openapi.yaml | head -n 50
 ## 📝 Request Examples
 
 ### GET with Query Params
+
 ```http
 GET /api/farms?page=1&pageSize=20&search=organic
 ```
 
 ### POST with Body
+
 ```json
 POST /api/products
 {
@@ -186,6 +201,7 @@ POST /api/products
 ```
 
 ### PUT with Path Param
+
 ```http
 PUT /api/farms/farm_abc123
 {
@@ -194,6 +210,7 @@ PUT /api/farms/farm_abc123
 ```
 
 ### DELETE with Auth
+
 ```http
 DELETE /api/products/prod_xyz789
 Authorization: Bearer eyJhbGc...
@@ -204,18 +221,21 @@ Authorization: Bearer eyJhbGc...
 ## 🎨 UI Features
 
 ### Buttons
+
 - **Try it out** - Enable editing
 - **Execute** - Send request
 - **Cancel** - Disable editing
 - **Clear** - Remove token
 
 ### Sections
+
 - **Parameters** - Query/path/header params
 - **Request body** - JSON payload
 - **Responses** - Status codes & schemas
 - **Curl** - Copy cURL command
 
 ### Response Display
+
 - **Status code** (green = success, red = error)
 - **Headers** (click to expand)
 - **Body** (syntax highlighted JSON)
@@ -226,16 +246,18 @@ Authorization: Bearer eyJhbGc...
 ## 🔧 Configuration
 
 ### Swagger UI Options (SwaggerUI.tsx)
+
 ```typescript
-docExpansion: "list"           // "none" | "list" | "full"
-defaultModelsExpandDepth: 1    // Schema nesting depth
-displayRequestDuration: true   // Show timing
-filter: true                   // Enable search
-tryItOutEnabled: true          // Enable testing
-persistAuthorization: true     // Remember auth
+docExpansion: "list"; // "none" | "list" | "full"
+defaultModelsExpandDepth: 1; // Schema nesting depth
+displayRequestDuration: true; // Show timing
+filter: true; // Enable search
+tryItOutEnabled: true; // Enable testing
+persistAuthorization: true; // Remember auth
 ```
 
 ### Caching (route.ts)
+
 ```typescript
 Cache-Control: "public, max-age=3600"  // 1 hour
 revalidate: 3600                       // ISR revalidation
@@ -245,25 +267,25 @@ revalidate: 3600                       // ISR revalidation
 
 ## 📚 Documentation Links
 
-| Resource                    | Location                           |
-|----------------------------|------------------------------------|
-| Full Swagger UI Guide      | `/docs/api/SWAGGER_UI.md`         |
-| API Overview               | `/docs/api/README.md`              |
-| Error Codes                | `/docs/api/ERROR_CODES.md`         |
-| OpenAPI Spec (YAML)        | `/docs/api/openapi.yaml`           |
-| Implementation Summary     | `/docs/SWAGGER_UI_INTEGRATION_COMPLETE.md` |
+| Resource               | Location                                   |
+| ---------------------- | ------------------------------------------ |
+| Full Swagger UI Guide  | `/docs/api/SWAGGER_UI.md`                  |
+| API Overview           | `/docs/api/README.md`                      |
+| Error Codes            | `/docs/api/ERROR_CODES.md`                 |
+| OpenAPI Spec (YAML)    | `/docs/api/openapi.yaml`                   |
+| Implementation Summary | `/docs/SWAGGER_UI_INTEGRATION_COMPLETE.md` |
 
 ---
 
 ## 🎯 Keyboard Shortcuts
 
-| Action              | Shortcut          |
-|---------------------|-------------------|
-| Search filter       | Click filter box  |
-| Expand/collapse tag | Click tag name    |
-| Expand endpoint     | Click endpoint    |
-| Copy cURL           | Click "Copy"      |
-| Hard refresh page   | Ctrl+Shift+R      |
+| Action              | Shortcut         |
+| ------------------- | ---------------- |
+| Search filter       | Click filter box |
+| Expand/collapse tag | Click tag name   |
+| Expand endpoint     | Click endpoint   |
+| Copy cURL           | Click "Copy"     |
+| Hard refresh page   | Ctrl+Shift+R     |
 
 ---
 
@@ -282,16 +304,19 @@ revalidate: 3600                       // ISR revalidation
 ## 🚀 Production Access
 
 ### Local
+
 ```
 http://localhost:3001/api-docs
 ```
 
 ### Staging
+
 ```
 https://staging.farmersmarket.com/api-docs
 ```
 
 ### Production
+
 ```
 https://farmersmarket.com/api-docs
 ```
@@ -302,22 +327,23 @@ https://farmersmarket.com/api-docs
 
 ## 📊 Status Codes
 
-| Code | Meaning           | Example                  |
-|------|-------------------|--------------------------|
-| 200  | OK                | Successful GET           |
-| 201  | Created           | Successful POST          |
-| 204  | No Content        | Successful DELETE        |
-| 400  | Bad Request       | Validation error         |
-| 401  | Unauthorized      | Missing/invalid token    |
-| 403  | Forbidden         | Insufficient permissions |
-| 404  | Not Found         | Resource doesn't exist   |
-| 500  | Internal Error    | Server error             |
+| Code | Meaning        | Example                  |
+| ---- | -------------- | ------------------------ |
+| 200  | OK             | Successful GET           |
+| 201  | Created        | Successful POST          |
+| 204  | No Content     | Successful DELETE        |
+| 400  | Bad Request    | Validation error         |
+| 401  | Unauthorized   | Missing/invalid token    |
+| 403  | Forbidden      | Insufficient permissions |
+| 404  | Not Found      | Resource doesn't exist   |
+| 500  | Internal Error | Server error             |
 
 ---
 
 ## 🔄 Common Workflows
 
 ### Workflow 1: Explore API
+
 ```
 1. Open /api-docs
 2. Browse endpoint categories
@@ -327,6 +353,7 @@ https://farmersmarket.com/api-docs
 ```
 
 ### Workflow 2: Test Integration
+
 ```
 1. Sign in via POST /api/auth/signin
 2. Copy JWT token
@@ -336,6 +363,7 @@ https://farmersmarket.com/api-docs
 ```
 
 ### Workflow 3: Debug Issue
+
 ```
 1. Reproduce issue via Swagger UI
 2. Check request payload
@@ -346,6 +374,7 @@ https://farmersmarket.com/api-docs
 ```
 
 ### Workflow 4: Generate Client
+
 ```
 1. Download spec: /api/openapi.json
 2. Use OpenAPI Generator:
@@ -361,14 +390,17 @@ https://farmersmarket.com/api-docs
 ## 🎓 Learning Resources
 
 ### Swagger UI
+
 - Official Docs: https://swagger.io/docs/
 - GitHub: https://github.com/swagger-api/swagger-ui
 
 ### OpenAPI
+
 - Specification: https://spec.openapis.org/oas/v3.0.3
 - Guide: https://oai.github.io/Documentation/
 
 ### Next.js
+
 - Docs: https://nextjs.org/docs
 - API Routes: https://nextjs.org/docs/app/building-your-application/routing/route-handlers
 
@@ -377,11 +409,13 @@ https://farmersmarket.com/api-docs
 ## 📞 Support
 
 ### Need Help?
+
 1. Read `/docs/api/SWAGGER_UI.md` (troubleshooting section)
 2. Check GitHub Issues
 3. Contact: api@farmersmarket.com
 
 ### Found a Bug?
+
 1. Check console for errors (F12)
 2. Note browser & version
 3. Document steps to reproduce

@@ -3,9 +3,9 @@
 // 🌾 Domain: Order Analytics & Status Visualization
 // ⚡ Performance: Optimized chart rendering with agricultural consciousness
 
-'use client';
+"use client";
 
-import { useMemo } from 'react';
+import { useMemo } from "react";
 import {
   Bar,
   BarChart,
@@ -18,7 +18,7 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-} from 'recharts';
+} from "recharts";
 
 export interface OrderStatusData {
   status: string;
@@ -28,7 +28,7 @@ export interface OrderStatusData {
 
 interface OrdersChartProps {
   data: OrderStatusData[];
-  variant?: 'bar' | 'pie';
+  variant?: "bar" | "pie";
   height?: number;
   title?: string;
   className?: string;
@@ -38,13 +38,13 @@ interface OrdersChartProps {
  * Default status color mapping
  */
 const STATUS_COLORS: Record<string, string> = {
-  PENDING: '#f59e0b',
-  CONFIRMED: '#3b82f6',
-  PROCESSING: '#8b5cf6',
-  SHIPPED: '#06b6d4',
-  DELIVERED: '#16a34a',
-  CANCELLED: '#ef4444',
-  REFUNDED: '#6b7280',
+  PENDING: "#f59e0b",
+  CONFIRMED: "#3b82f6",
+  PROCESSING: "#8b5cf6",
+  SHIPPED: "#06b6d4",
+  DELIVERED: "#16a34a",
+  CANCELLED: "#ef4444",
+  REFUNDED: "#6b7280",
 };
 
 /**
@@ -58,25 +58,29 @@ const STATUS_COLORS: Record<string, string> = {
  */
 export function OrdersChart({
   data,
-  variant = 'bar',
+  variant = "bar",
   height = 400,
-  title = 'Orders by Status',
-  className = '',
+  title = "Orders by Status",
+  className = "",
 }: OrdersChartProps) {
   // Enrich data with colors
   const enrichedData = useMemo(() => {
-    return data.map(item => ({
+    return data.map((item) => ({
       ...item,
-      color: item.color || STATUS_COLORS[item.status] || '#6b7280',
+      color: item.color || STATUS_COLORS[item.status] || "#6b7280",
     }));
   }, [data]);
 
   // Calculate statistics
   const stats = useMemo(() => {
-    const totalOrders = data.reduce((sum: any, item: any) => sum + item.count, 0);
-    const mostCommonStatus = data.reduce((max: any, item: any) =>
-      item.count > max.count ? item : max
-      , data[0] || { status: 'N/A', count: 0 });
+    const totalOrders = data.reduce(
+      (sum: any, item: any) => sum + item.count,
+      0,
+    );
+    const mostCommonStatus = data.reduce(
+      (max: any, item: any) => (item.count > max.count ? item : max),
+      data[0] || { status: "N/A", count: 0 },
+    );
 
     return {
       totalOrders,
@@ -88,9 +92,9 @@ export function OrdersChart({
   // Format status label
   const formatStatus = (status: string) => {
     return status
-      .split('_')
-      .map(word => word.charAt(0) + word.slice(1).toLowerCase())
-      .join(' ');
+      .split("_")
+      .map((word) => word.charAt(0) + word.slice(1).toLowerCase())
+      .join(" ");
   };
 
   // Custom tooltip
@@ -111,7 +115,8 @@ export function OrdersChart({
           </p>
         </div>
         <p className="text-sm text-gray-600">
-          Orders: <span className="font-semibold text-gray-900">{data.count}</span>
+          Orders:{" "}
+          <span className="font-semibold text-gray-900">{data.count}</span>
         </p>
         <p className="text-xs text-gray-500 mt-1">
           {((data.count / stats.totalOrders) * 100).toFixed(1)}% of total
@@ -141,7 +146,7 @@ export function OrdersChart({
         x={x}
         y={y}
         fill="white"
-        textAnchor={x > cx ? 'start' : 'end'}
+        textAnchor={x > cx ? "start" : "end"}
         dominantBaseline="central"
         className="text-xs font-semibold"
       >
@@ -153,7 +158,7 @@ export function OrdersChart({
   // Render chart based on variant
   const renderChart = () => {
     switch (variant) {
-      case 'pie':
+      case "pie":
         return (
           <PieChart>
             <Pie
@@ -178,7 +183,7 @@ export function OrdersChart({
           </PieChart>
         );
 
-      case 'bar':
+      case "bar":
       default:
         return (
           <BarChart
@@ -193,7 +198,7 @@ export function OrdersChart({
             />
             <YAxis tick={{ fontSize: 12 }} />
             <Tooltip content={<CustomTooltip />} />
-            <Legend formatter={(value) => 'Orders'} />
+            <Legend formatter={(value) => "Orders"} />
             <Bar dataKey="count" radius={[8, 8, 0, 0]}>
               {enrichedData.map((entry: any, index: any) => (
                 <Cell key={`cell-${index}`} fill={entry.color} />
@@ -209,22 +214,21 @@ export function OrdersChart({
       {/* Header */}
       <div className="flex items-start justify-between mb-6">
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-1">
-            {title}
-          </h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-1">{title}</h3>
           <p className="text-sm text-gray-500">
             Track order status distribution 📦
           </p>
         </div>
         <div className="flex gap-2">
-          {['bar', 'pie'].map((v: any) => (
+          {["bar", "pie"].map((v: any) => (
             <button
               key={v}
-              className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${variant === v
-                  ? 'bg-green-600 text-white'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                }`}
-              onClick={() => { }}
+              className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${
+                variant === v
+                  ? "bg-green-600 text-white"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              }`}
+              onClick={() => {}}
               disabled
             >
               {v.charAt(0).toUpperCase() + v.slice(1)}
@@ -236,9 +240,7 @@ export function OrdersChart({
       {/* Statistics Cards */}
       <div className="grid grid-cols-3 gap-4 mb-6">
         <div className="bg-blue-50 rounded-lg p-4">
-          <p className="text-xs font-medium text-blue-600 mb-1">
-            Total Orders
-          </p>
+          <p className="text-xs font-medium text-blue-600 mb-1">Total Orders</p>
           <p className="text-2xl font-bold text-blue-900">
             {stats.totalOrders.toLocaleString()}
           </p>
@@ -316,7 +318,7 @@ export function OrdersCard({
   totalOrders,
   activeOrders,
   completedToday,
-  className = '',
+  className = "",
 }: {
   totalOrders: number;
   activeOrders: number;
@@ -372,11 +374,11 @@ export function OrdersCard({
  * Order Status Badge Component
  */
 export function OrderStatusBadge({ status }: { status: string }) {
-  const color = STATUS_COLORS[status] || '#6b7280';
+  const color = STATUS_COLORS[status] || "#6b7280";
   const formattedStatus = status
-    .split('_')
-    .map(word => word.charAt(0) + word.slice(1).toLowerCase())
-    .join(' ');
+    .split("_")
+    .map((word) => word.charAt(0) + word.slice(1).toLowerCase())
+    .join(" ");
 
   return (
     <span

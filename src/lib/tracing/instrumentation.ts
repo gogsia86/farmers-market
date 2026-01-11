@@ -7,7 +7,7 @@
  * @see https://opentelemetry.io/docs/instrumentation/js/getting-started/nodejs/
  */
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
 import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
 import { resourceFromAttributes } from "@opentelemetry/resources";
@@ -146,7 +146,7 @@ export function initializeTracing(): void {
     logger.info(`🔧 Environment: ${process.env.NODE_ENV || "development"}`);
   } catch (error) {
     logger.error("❌ Failed to initialize tracing", {
-      error: error instanceof Error ? error.message : String(error)
+      error: error instanceof Error ? error.message : String(error),
     });
     throw error;
   }
@@ -169,7 +169,7 @@ export async function shutdownTracing(): Promise<void> {
     logger.info("🌾 Divine Tracing gracefully shut down");
   } catch (error) {
     logger.error("❌ Error shutting down tracing", {
-      error: error instanceof Error ? error.message : String(error)
+      error: error instanceof Error ? error.message : String(error),
     });
     throw error;
   }

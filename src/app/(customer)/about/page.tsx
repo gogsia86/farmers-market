@@ -7,7 +7,8 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "About Us | Farmers Market",
-  description: "Learn about our mission to connect local farmers with customers",
+  description:
+    "Learn about our mission to connect local farmers with customers",
 };
 
 export default function AboutPage() {
@@ -16,20 +17,26 @@ export default function AboutPage() {
       <div className="container mx-auto px-4">
         <div className="mx-auto max-w-3xl">
           <h1 className="mb-6 text-4xl font-bold text-gray-900">About Us</h1>
-          
+
           <div className="prose prose-lg">
             <p className="text-xl text-gray-600 mb-8">
-              Connecting local farmers with customers for fresh, sustainable produce.
+              Connecting local farmers with customers for fresh, sustainable
+              produce.
             </p>
 
-            <h2 className="text-2xl font-semibold text-gray-900 mt-8 mb-4">Our Mission</h2>
+            <h2 className="text-2xl font-semibold text-gray-900 mt-8 mb-4">
+              Our Mission
+            </h2>
             <p className="text-gray-700 mb-6">
-              We believe in supporting local agriculture and providing communities with access to
-              fresh, organic produce directly from farms. Our platform makes it easy for farmers
-              to reach customers and for customers to discover amazing local products.
+              We believe in supporting local agriculture and providing
+              communities with access to fresh, organic produce directly from
+              farms. Our platform makes it easy for farmers to reach customers
+              and for customers to discover amazing local products.
             </p>
 
-            <h2 className="text-2xl font-semibold text-gray-900 mt-8 mb-4">Why Choose Us?</h2>
+            <h2 className="text-2xl font-semibold text-gray-900 mt-8 mb-4">
+              Why Choose Us?
+            </h2>
             <ul className="list-disc list-inside space-y-2 text-gray-700 mb-6">
               <li>Direct from farm to table - no middlemen</li>
               <li>Support local farmers and sustainable agriculture</li>

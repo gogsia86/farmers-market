@@ -21,14 +21,14 @@
  * @reference https://upstash.com/docs/redis/sdks/ratelimit/overview
  */
 
-import { createLogger } from '@/lib/monitoring/logger';
-import type { NextRequest } from 'next/server';
+import { createLogger } from "@/lib/monitoring/logger";
+import type { NextRequest } from "next/server";
 
 // ============================================================================
 // LOGGER
 // ============================================================================
 
-const logger = createLogger('RateLimit');
+const logger = createLogger("RateLimit");
 
 // ============================================================================
 // TYPES & INTERFACES
@@ -81,17 +81,18 @@ let isRedisAvailable = false;
 async function initializeRedisRateLimit() {
   // Check if Redis is configured
   const redisUrl = process.env.UPSTASH_REDIS_REST_URL || process.env.REDIS_URL;
-  const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.REDIS_TOKEN;
+  const redisToken =
+    process.env.UPSTASH_REDIS_REST_TOKEN || process.env.REDIS_TOKEN;
 
   if (!redisUrl || !redisToken) {
-    logger.info('Redis not configured - using in-memory rate limiting');
+    logger.info("Redis not configured - using in-memory rate limiting");
     return false;
   }
 
   try {
     // Dynamically import Upstash packages
-    const { Ratelimit } = await import('@upstash/ratelimit');
-    const { Redis } = await import('@upstash/redis');
+    const { Ratelimit } = await import("@upstash/ratelimit");
+    const { Redis } = await import("@upstash/redis");
 
     // Initialize Redis client
     upstashRedis = new Redis({
@@ -105,18 +106,21 @@ async function initializeRedisRateLimit() {
     // Initialize rate limiter
     upstashRateLimit = new Ratelimit({
       redis: upstashRedis,
-      limiter: Ratelimit.slidingWindow(10, '1 m'), // Default: 10 requests per minute
+      limiter: Ratelimit.slidingWindow(10, "1 m"), // Default: 10 requests per minute
       analytics: true,
-      prefix: 'ratelimit',
+      prefix: "ratelimit",
     });
 
     isRedisAvailable = true;
-    logger.info('Redis-backed rate limiting initialized (Upstash)');
+    logger.info("Redis-backed rate limiting initialized (Upstash)");
     return true;
   } catch (error) {
-    logger.warn('Failed to initialize Redis rate limiting, falling back to in-memory', {
-      error: error instanceof Error ? error.message : 'Unknown error',
-    });
+    logger.warn(
+      "Failed to initialize Redis rate limiting, falling back to in-memory",
+      {
+        error: error instanceof Error ? error.message : "Unknown error",
+      },
+    );
     isRedisAvailable = false;
     return false;
   }
@@ -132,7 +136,7 @@ initializeRedisRateLimit();
 const inMemoryStore: InMemoryStore = {};
 
 // Cleanup old entries every minute (only in non-test environments)
-if (process.env.NODE_ENV !== 'test') {
+if (process.env.NODE_ENV !== "test") {
   setInterval(() => {
     const now = Date.now();
     Object.keys(inMemoryStore).forEach((key: any) => {
@@ -149,7 +153,7 @@ if (process.env.NODE_ENV !== 'test') {
  */
 function checkRateLimitInMemory(
   identifier: string,
-  config: RateLimitConfig
+  config: RateLimitConfig,
 ): RateLimitResult {
   const now = Date.now();
   const key = `${identifier}:${config.windowMs}`;
@@ -196,23 +200,23 @@ function checkRateLimitInMemory(
  */
 async function checkRateLimitRedis(
   identifier: string,
-  config: RateLimitConfig
+  config: RateLimitConfig,
 ): Promise<RateLimitResult> {
   try {
     if (!upstashRateLimit) {
-      throw new Error('Upstash rate limiter not initialized');
+      throw new Error("Upstash rate limiter not initialized");
     }
 
     // Create custom rate limiter for this config
-    const { Ratelimit } = await import('@upstash/ratelimit');
+    const { Ratelimit } = await import("@upstash/ratelimit");
     const customLimiter = new Ratelimit({
       redis: upstashRedis,
       limiter: Ratelimit.slidingWindow(
         config.maxRequests,
-        `${Math.floor(config.windowMs / 1000)} s`
+        `${Math.floor(config.windowMs / 1000)} s`,
       ),
       analytics: true,
-      prefix: 'ratelimit',
+      prefix: "ratelimit",
     });
 
     // Check rate limit
@@ -227,8 +231,8 @@ async function checkRateLimitRedis(
       isRedis: true,
     };
   } catch (error) {
-    logger.error('Redis rate limit check failed, falling back to in-memory', {
-      error: error instanceof Error ? error.message : 'Unknown error',
+    logger.error("Redis rate limit check failed, falling back to in-memory", {
+      error: error instanceof Error ? error.message : "Unknown error",
       identifier,
     });
 
@@ -252,10 +256,10 @@ async function checkRateLimitRedis(
  */
 export async function checkRateLimitAsync(
   identifier: string,
-  config: RateLimitConfig
+  config: RateLimitConfig,
 ): Promise<RateLimitResult> {
   // Skip rate limiting if configured
-  if (config.skip || process.env.DISABLE_RATE_LIMITING === 'true') {
+  if (config.skip || process.env.DISABLE_RATE_LIMITING === "true") {
     return {
       allowed: true,
       remaining: config.maxRequests,
@@ -285,9 +289,9 @@ export async function checkRateLimitAsync(
  */
 export function checkRateLimit(
   identifier: string,
-  config: RateLimitConfig
+  config: RateLimitConfig,
 ): RateLimitResult {
-  if (config.skip || process.env.DISABLE_RATE_LIMITING === 'true') {
+  if (config.skip || process.env.DISABLE_RATE_LIMITING === "true") {
     return {
       allowed: true,
       remaining: config.maxRequests,
@@ -307,9 +311,9 @@ export function checkRateLimit(
  */
 export function checkRateLimitSync(
   identifier: string,
-  config: RateLimitConfig
+  config: RateLimitConfig,
 ): RateLimitResult {
-  if (config.skip || process.env.DISABLE_RATE_LIMITING === 'true') {
+  if (config.skip || process.env.DISABLE_RATE_LIMITING === "true") {
     return {
       allowed: true,
       remaining: config.maxRequests,
@@ -341,26 +345,26 @@ export function checkRateLimitSync(
  */
 export function getClientIp(request: NextRequest): string {
   // Check X-Forwarded-For header
-  const forwardedFor = request.headers.get('x-forwarded-for');
+  const forwardedFor = request.headers.get("x-forwarded-for");
   if (forwardedFor) {
     // Take the first IP if multiple are present
-    return forwardedFor.split(',')[0]?.trim() ?? 'unknown';
+    return forwardedFor.split(",")[0]?.trim() ?? "unknown";
   }
 
   // Check X-Real-IP header
-  const realIp = request.headers.get('x-real-ip');
+  const realIp = request.headers.get("x-real-ip");
   if (realIp) {
-    return realIp.trim() ?? 'unknown';
+    return realIp.trim() ?? "unknown";
   }
 
   // Check Cloudflare header
-  const cfIp = request.headers.get('cf-connecting-ip');
+  const cfIp = request.headers.get("cf-connecting-ip");
   if (cfIp) {
-    return cfIp.trim() ?? 'unknown';
+    return cfIp.trim() ?? "unknown";
   }
 
   // Fallback to unknown if no IP headers found
-  return 'unknown';
+  return "unknown";
 }
 
 /**
@@ -373,7 +377,7 @@ export function getClientIp(request: NextRequest): string {
  */
 export function getRateLimitIdentifier(
   request: NextRequest,
-  userId?: string
+  userId?: string,
 ): string {
   if (userId) {
     return `user:${userId}`;
@@ -469,8 +473,8 @@ export function createRateLimitResponse(result: RateLimitResult): Response {
 
   return new Response(
     JSON.stringify({
-      error: 'Too Many Requests',
-      message: 'Rate limit exceeded. Please try again later.',
+      error: "Too Many Requests",
+      message: "Rate limit exceeded. Please try again later.",
       limit: result.limit,
       remaining: result.remaining,
       resetTime: result.resetTime,
@@ -479,13 +483,13 @@ export function createRateLimitResponse(result: RateLimitResult): Response {
     {
       status: 429,
       headers: {
-        'Content-Type': 'application/json',
-        'X-RateLimit-Limit': result.limit.toString(),
-        'X-RateLimit-Remaining': result.remaining.toString(),
-        'X-RateLimit-Reset': result.resetTime.toString(),
-        'Retry-After': retryAfter.toString(),
+        "Content-Type": "application/json",
+        "X-RateLimit-Limit": result.limit.toString(),
+        "X-RateLimit-Remaining": result.remaining.toString(),
+        "X-RateLimit-Reset": result.resetTime.toString(),
+        "Retry-After": retryAfter.toString(),
       },
-    }
+    },
   );
 }
 
@@ -497,15 +501,15 @@ export function createRateLimitResponse(result: RateLimitResult): Response {
  */
 export function addRateLimitHeaders(
   response: Response,
-  result: RateLimitResult
+  result: RateLimitResult,
 ): void {
-  response.headers.set('X-RateLimit-Limit', result.limit.toString());
-  response.headers.set('X-RateLimit-Remaining', result.remaining.toString());
-  response.headers.set('X-RateLimit-Reset', result.resetTime.toString());
+  response.headers.set("X-RateLimit-Limit", result.limit.toString());
+  response.headers.set("X-RateLimit-Remaining", result.remaining.toString());
+  response.headers.set("X-RateLimit-Reset", result.resetTime.toString());
 
   if (!result.allowed) {
     const retryAfter = Math.ceil(result.resetTime / 1000);
-    response.headers.set('Retry-After', retryAfter.toString());
+    response.headers.set("Retry-After", retryAfter.toString());
   }
 }
 
@@ -537,7 +541,10 @@ export function clearAllRateLimits(): void {
  * Reset rate limit for a specific identifier
  * Useful for testing or manual intervention
  */
-export function resetRateLimit(identifier: string, config: RateLimitConfig): void {
+export function resetRateLimit(
+  identifier: string,
+  config: RateLimitConfig,
+): void {
   // Try all possible window sizes since we might not know the exact one
   Object.keys(inMemoryStore).forEach((key: any) => {
     if (key.startsWith(`${identifier}:`)) {
@@ -552,7 +559,7 @@ export function resetRateLimit(identifier: string, config: RateLimitConfig): voi
  */
 export function getRateLimitStatus(
   identifier: string,
-  config: RateLimitConfig
+  config: RateLimitConfig,
 ): RateLimitResult | null {
   const now = Date.now();
   const key = `${identifier}:${config.windowMs}`;

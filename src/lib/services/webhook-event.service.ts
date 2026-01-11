@@ -8,7 +8,7 @@ import { database } from "@/lib/database";
 import { SpanStatusCode, trace } from "@opentelemetry/api";
 import { Prisma } from "@prisma/client";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 const tracer = trace.getTracer("webhook-event-service");
 
@@ -87,7 +87,7 @@ export class WebhookEventService {
           });
 
           logger.info(
-            `[WebhookEvent] Event ${data.eventId} already recorded. Processed: ${existingEvent.processed}`
+            `[WebhookEvent] Event ${data.eventId} already recorded. Processed: ${existingEvent.processed}`,
           );
 
           span.setStatus({ code: SpanStatusCode.OK });
@@ -110,7 +110,7 @@ export class WebhookEventService {
         });
 
         logger.info(
-          `[WebhookEvent] Recorded new event: ${data.eventId} (${data.provider}/${data.eventType})`
+          `[WebhookEvent] Recorded new event: ${data.eventId} (${data.provider}/${data.eventType})`,
         );
 
         span.setStatus({ code: SpanStatusCode.OK });
@@ -119,7 +119,8 @@ export class WebhookEventService {
           alreadyProcessed: false,
         };
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "Unknown error";
+        const errorMessage =
+          error instanceof Error ? error.message : "Unknown error";
         span.recordException(error as Error);
         span.setStatus({
           code: SpanStatusCode.ERROR,
@@ -127,8 +128,8 @@ export class WebhookEventService {
         });
 
         logger.error(`[WebhookEvent] Failed to record event ${data.eventId}:`, {
-        error: error instanceof Error ? error.message : String(error)
-      });
+          error: error instanceof Error ? error.message : String(error),
+        });
 
         return {
           success: false,
@@ -145,37 +146,43 @@ export class WebhookEventService {
    * Mark event as processed successfully
    */
   async markAsProcessed(eventId: string): Promise<void> {
-    return await tracer.startActiveSpan("markWebhookProcessed", async (span) => {
-      span.setAttribute("webhook.event_id", eventId);
+    return await tracer.startActiveSpan(
+      "markWebhookProcessed",
+      async (span) => {
+        span.setAttribute("webhook.event_id", eventId);
 
-      try {
-        await database.webhookEvent.updateMany({
-          where: {
-            eventId,
-            processed: false, // Only update if not already processed
-          },
-          data: {
-            processed: true,
-            processedAt: new Date(),
-            attempts: { increment: 1 },
-            lastAttemptAt: new Date(),
-            error: null,
-          },
-        });
+        try {
+          await database.webhookEvent.updateMany({
+            where: {
+              eventId,
+              processed: false, // Only update if not already processed
+            },
+            data: {
+              processed: true,
+              processedAt: new Date(),
+              attempts: { increment: 1 },
+              lastAttemptAt: new Date(),
+              error: null,
+            },
+          });
 
-        logger.info(`[WebhookEvent] Marked event ${eventId} as processed`);
-        span.setStatus({ code: SpanStatusCode.OK });
-      } catch (error) {
-        span.recordException(error as Error);
-        span.setStatus({ code: SpanStatusCode.ERROR });
-        logger.error(`[WebhookEvent] Failed to mark event ${eventId} as processed:`, {
-        error: error instanceof Error ? error.message : String(error)
-      });
-        throw error;
-      } finally {
-        span.end();
-      }
-    });
+          logger.info(`[WebhookEvent] Marked event ${eventId} as processed`);
+          span.setStatus({ code: SpanStatusCode.OK });
+        } catch (error) {
+          span.recordException(error as Error);
+          span.setStatus({ code: SpanStatusCode.ERROR });
+          logger.error(
+            `[WebhookEvent] Failed to mark event ${eventId} as processed:`,
+            {
+              error: error instanceof Error ? error.message : String(error),
+            },
+          );
+          throw error;
+        } finally {
+          span.end();
+        }
+      },
+    );
   }
 
   /**
@@ -199,14 +206,19 @@ export class WebhookEventService {
           },
         });
 
-        logger.error(`[WebhookEvent] Event ${eventId} processing failed: ${error}`);
+        logger.error(
+          `[WebhookEvent] Event ${eventId} processing failed: ${error}`,
+        );
         span.setStatus({ code: SpanStatusCode.OK });
       } catch (dbError) {
         span.recordException(dbError as Error);
         span.setStatus({ code: SpanStatusCode.ERROR });
-        logger.error(`[WebhookEvent] Failed to record error for event ${eventId}:`, {
-        error: dbError instanceof Error ? dbError.message : String(dbError)
-      });
+        logger.error(
+          `[WebhookEvent] Failed to record error for event ${eventId}:`,
+          {
+            error: dbError instanceof Error ? dbError.message : String(dbError),
+          },
+        );
         throw dbError;
       } finally {
         span.end();
@@ -299,7 +311,7 @@ export class WebhookEventService {
    */
   async retryEvent(
     eventId: string,
-    handler: (payload: Record<string, any>) => Promise<void>
+    handler: (payload: Record<string, any>) => Promise<void>,
   ): Promise<WebhookProcessingResult> {
     return await tracer.startActiveSpan("retryWebhookEvent", async (span) => {
       span.setAttribute("webhook.event_id", eventId);
@@ -330,7 +342,8 @@ export class WebhookEventService {
           alreadyProcessed: false,
         };
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "Unknown error";
+        const errorMessage =
+          error instanceof Error ? error.message : "Unknown error";
         await this.markAsFailed(eventId, errorMessage);
 
         span.recordException(error as Error);
@@ -372,11 +385,15 @@ export class WebhookEventService {
         const [total, processed, failed, pending, avgAttempts, oldestPending] =
           await Promise.all([
             database.webhookEvent.count({ where }),
-            database.webhookEvent.count({ where: { ...where, processed: true } }),
+            database.webhookEvent.count({
+              where: { ...where, processed: true },
+            }),
             database.webhookEvent.count({
               where: { ...where, processed: false, attempts: { gte: 3 } },
             }),
-            database.webhookEvent.count({ where: { ...where, processed: false } }),
+            database.webhookEvent.count({
+              where: { ...where, processed: false },
+            }),
             database.webhookEvent.aggregate({
               where,
               _avg: { attempts: true },
@@ -420,36 +437,39 @@ export class WebhookEventService {
    * Clean up old processed events
    */
   async cleanupOldEvents(olderThanDays = 90): Promise<number> {
-    return await tracer.startActiveSpan("cleanupOldWebhookEvents", async (span) => {
-      span.setAttribute("webhook.cleanup_days", olderThanDays);
+    return await tracer.startActiveSpan(
+      "cleanupOldWebhookEvents",
+      async (span) => {
+        span.setAttribute("webhook.cleanup_days", olderThanDays);
 
-      try {
-        const cutoffDate = new Date();
-        cutoffDate.setDate(cutoffDate.getDate() - olderThanDays);
+        try {
+          const cutoffDate = new Date();
+          cutoffDate.setDate(cutoffDate.getDate() - olderThanDays);
 
-        const result = await database.webhookEvent.deleteMany({
-          where: {
-            processed: true,
-            processedAt: { lt: cutoffDate },
-          },
-        });
+          const result = await database.webhookEvent.deleteMany({
+            where: {
+              processed: true,
+              processedAt: { lt: cutoffDate },
+            },
+          });
 
-        logger.info(
-          `[WebhookEvent] Cleaned up ${result.count} events older than ${olderThanDays} days`
-        );
+          logger.info(
+            `[WebhookEvent] Cleaned up ${result.count} events older than ${olderThanDays} days`,
+          );
 
-        span.setAttribute("webhook.cleanup_count", result.count);
-        span.setStatus({ code: SpanStatusCode.OK });
+          span.setAttribute("webhook.cleanup_count", result.count);
+          span.setStatus({ code: SpanStatusCode.OK });
 
-        return result.count;
-      } catch (error) {
-        span.recordException(error as Error);
-        span.setStatus({ code: SpanStatusCode.ERROR });
-        throw error;
-      } finally {
-        span.end();
-      }
-    });
+          return result.count;
+        } catch (error) {
+          span.recordException(error as Error);
+          span.setStatus({ code: SpanStatusCode.ERROR });
+          throw error;
+        } finally {
+          span.end();
+        }
+      },
+    );
   }
 
   /**
@@ -478,7 +498,9 @@ export class WebhookEventService {
       },
     });
 
-    logger.info(`[WebhookEvent] Bulk marked ${result.count} events as processed`);
+    logger.info(
+      `[WebhookEvent] Bulk marked ${result.count} events as processed`,
+    );
     return result.count;
   }
 

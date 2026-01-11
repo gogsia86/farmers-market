@@ -11,13 +11,13 @@ import { WebSocket, WebSocketServer } from "ws";
 export interface NotificationPayload {
   id: string;
   type:
-  | "ORDER_UPDATE"
-  | "PRODUCT_AVAILABLE"
-  | "FARM_UPDATE"
-  | "SEASONAL_ALERT"
-  | "HARVEST_READY"
-  | "WEATHER_ALERT"
-  | "PRICE_CHANGE";
+    | "ORDER_UPDATE"
+    | "PRODUCT_AVAILABLE"
+    | "FARM_UPDATE"
+    | "SEASONAL_ALERT"
+    | "HARVEST_READY"
+    | "WEATHER_ALERT"
+    | "PRICE_CHANGE";
   userId: string;
   title: string;
   message: string;
@@ -305,8 +305,8 @@ export class RealtimeNotificationSystem {
   ): Promise<void> {
     const connections = filter
       ? Array.from(this.connections.entries()).filter(([_, conn]) =>
-        filter(conn.metadata),
-      )
+          filter(conn.metadata),
+        )
       : Array.from(this.connections.entries());
 
     const fullNotification: Omit<NotificationPayload, "userId"> = {

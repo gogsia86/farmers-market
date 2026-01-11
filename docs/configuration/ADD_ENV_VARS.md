@@ -20,6 +20,7 @@ npx vercel env add NEXTAUTH_SECRET production
 ```
 
 When prompted, paste this value:
+
 ```
 oBeAjncE3rO5Jp6bEDTS5/0WFj7FhLS78f5/PJXQPD4=
 ```
@@ -37,21 +38,25 @@ npx vercel env add DATABASE_URL production
 **You need to get this from your database provider:**
 
 #### If using Neon.tech:
+
 1. Go to: https://console.neon.tech/
 2. Select your project
 3. Copy the connection string
 4. Format: `postgresql://user:password@host/database?sslmode=require`
 
 #### If using Supabase:
+
 1. Go to: https://app.supabase.com/
 2. Project Settings → Database → Connection String (URI)
 3. Copy the connection string
 
 #### If using another provider:
+
 - Make sure it includes `?sslmode=require` at the end
 - Format: `postgresql://username:password@hostname:5432/database?sslmode=require`
 
 **Example**:
+
 ```
 postgresql://myuser:mypassword@ep-cool-name-123456.us-east-1.aws.neon.tech/farmersmarket?sslmode=require
 ```
@@ -65,11 +70,13 @@ npx vercel env add NEXTAUTH_URL production
 ```
 
 When prompted, enter your Vercel deployment URL:
+
 ```
 https://farmers-market-platform-3g0pqr60f-gogsias-projects.vercel.app
 ```
 
 Or if you have a custom domain:
+
 ```
 https://yourdomain.com
 ```
@@ -85,6 +92,7 @@ npx vercel env add ENABLE_TRACING production
 ```
 
 When prompted, enter:
+
 ```
 false
 ```
@@ -100,6 +108,7 @@ npx vercel env add NODE_ENV production
 ```
 
 When prompted, enter:
+
 ```
 production
 ```
@@ -113,6 +122,7 @@ npx vercel env add NEXT_PUBLIC_APP_URL production
 ```
 
 When prompted, enter your deployment URL:
+
 ```
 https://farmers-market-platform-3g0pqr60f-gogsias-projects.vercel.app
 ```
@@ -128,6 +138,7 @@ npx vercel env ls production
 ```
 
 You should see:
+
 - ✅ DATABASE_URL
 - ✅ NEXTAUTH_SECRET
 - ✅ NEXTAUTH_URL
@@ -147,6 +158,7 @@ git push origin master
 ```
 
 Or trigger a redeploy manually:
+
 ```bash
 npx vercel --prod
 ```
@@ -171,6 +183,7 @@ curl https://farmers-market-platform-3g0pqr60f-gogsias-projects.vercel.app/api/h
 ```
 
 **Expected response**:
+
 ```json
 {
   "status": "healthy",
@@ -193,12 +206,14 @@ curl https://farmers-market-platform-3g0pqr60f-gogsias-projects.vercel.app/api/h
 **Error**: "Can't reach database server"
 
 **Solution**:
+
 1. Check if connection string is correct
 2. Ensure `?sslmode=require` is included
 3. Check IP allowlist in your database provider
 4. For Vercel, usually need to allow `0.0.0.0/0` (all IPs)
 
 **Test locally**:
+
 ```bash
 DATABASE_URL="your-connection-string" npx prisma db pull
 ```
@@ -210,6 +225,7 @@ DATABASE_URL="your-connection-string" npx prisma db pull
 **Error**: "NEXTAUTH_SECRET is required"
 
 **Solution**:
+
 - Make sure you copied the entire base64 string including the `=` at the end
 - Regenerate if needed: `openssl rand -base64 32`
 
@@ -218,11 +234,13 @@ DATABASE_URL="your-connection-string" npx prisma db pull
 ### If deployment still fails:
 
 1. **Check the logs**:
+
    ```bash
    npx vercel logs https://your-deployment-url.vercel.app
    ```
 
 2. **Run diagnostics**:
+
    ```bash
    ./scripts/diagnose-deployment.sh
    ```
@@ -261,16 +279,19 @@ Before proceeding, make sure you have:
 Once your health endpoint returns `"status": "healthy"`:
 
 1. **Test the homepage**:
+
    ```bash
    curl https://your-domain.vercel.app/
    ```
 
 2. **Test authentication**:
+
    ```bash
    curl https://your-domain.vercel.app/api/auth/session
    ```
 
 3. **Test API endpoints**:
+
    ```bash
    curl https://your-domain.vercel.app/api/farms
    ```
@@ -295,11 +316,13 @@ You'll know everything works when:
 ---
 
 **Generated Secret** (save this!):
+
 ```
 oBeAjncE3rO5Jp6bEDTS5/0WFj7FhLS78f5/PJXQPD4=
 ```
 
 **Start with this command**:
+
 ```bash
 npx vercel env add NEXTAUTH_SECRET production
 ```

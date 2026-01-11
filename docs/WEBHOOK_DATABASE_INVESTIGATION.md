@@ -1,4 +1,5 @@
 # 🔍 Webhook Database Investigation Report
+
 **Farmers Market Platform - Webhook Test Failures Analysis**
 
 **Investigation Date**: January 2026
@@ -12,6 +13,7 @@
 **Root Cause**: Webhook integration tests are failing because the test database (PostgreSQL on port 5433) is not running when tests execute.
 
 **Impact**:
+
 - 180 tests failing with `Cannot read properties of undefined (reading 'deleteMany')`
 - Test failure rate: ~8% of total test suite
 - **Production Impact**: ✅ NONE (tests-only issue)
@@ -25,6 +27,7 @@
 ### 1. Error Pattern Analysis
 
 **Error Message**:
+
 ```
 TypeError: Cannot read properties of undefined (reading 'deleteMany')
 
@@ -38,6 +41,7 @@ TypeError: Cannot read properties of undefined (reading 'deleteMany')
 ```
 
 **Affected Tests**:
+
 - `src/__tests__/integration/webhook.integration.test.ts`
 - All Stripe webhook tests
 - All webhook signature verification tests
@@ -72,6 +76,7 @@ model WebhookEvent {
 ✅ **Prisma Client Generation**: Successfully generates `webhookEvent` property
 
 ✅ **Import Statement**: Correct canonical import
+
 ```typescript
 import { database } from "@/lib/database";
 ```
@@ -79,11 +84,13 @@ import { database } from "@/lib/database";
 ### 3. Database Connection Analysis
 
 **Test Environment Configuration**:
+
 - Test database URL: `postgresql://postgres:test_password_123@localhost:5433/farmersmarket_test`
 - Port: 5433 (not the default 5432)
 - Database: `farmersmarket_test`
 
 **Database Status**:
+
 ```bash
 # Check 1: Docker container
 $ docker ps --filter "publish=5433"
@@ -105,6 +112,7 @@ $ docker ps --filter "name=farmers-market-test-db"
 The Prisma Client is initialized but cannot connect to the database because:
 
 1. **Connection Fails Silently**: In test mode, the database singleton doesn't throw on connection failure (by design for development)
+
    ```typescript
    // From src/lib/database/index.ts
    if (process.env.NODE_ENV === "production") {
@@ -147,6 +155,7 @@ npm test
 ```
 
 **Or use the provided script**:
+
 ```bash
 bash scripts/setup-test-database.sh
 npm test
@@ -179,6 +188,7 @@ jest.mock("@/lib/database", () => ({
 ### Solution 3: Skip Integration Tests in CI (TEMPORARY)
 
 Add to `package.json`:
+
 ```json
 {
   "scripts": {
@@ -197,16 +207,19 @@ Add to `package.json`:
 ## 📋 Implementation Plan
 
 ### Phase 1: Immediate (5 minutes)
+
 - [ ] Start test database container
 - [ ] Run migrations on test database
 - [ ] Verify webhook tests pass
 
 ### Phase 2: CI/CD Integration (15 minutes)
+
 - [ ] Add test database setup to CI/CD pipeline
 - [ ] Add pre-test hook to ensure database is running
 - [ ] Add test database teardown to cleanup
 
 ### Phase 3: Documentation (10 minutes)
+
 - [ ] Update README with test database setup instructions
 - [ ] Add troubleshooting guide for database connection issues
 - [ ] Document test database lifecycle
@@ -241,12 +254,14 @@ npm test -- src/__tests__/integration/webhook.integration.test.ts
 ## 🎯 Expected Outcomes
 
 **After Fix**:
+
 - ✅ 180 webhook tests passing
 - ✅ Test suite: 2,157/2,209 passing (97.6%)
 - ✅ Only 52 skipped tests remaining
 - ✅ Full integration test coverage
 
 **Test Execution Time**:
+
 - Current: ~60 seconds
 - Expected: ~60 seconds (no change, database already initialized)
 
@@ -255,7 +270,9 @@ npm test -- src/__tests__/integration/webhook.integration.test.ts
 ## 🔄 Prevention Strategies
 
 ### 1. Pre-Test Hook
+
 Add to `jest.setup.js`:
+
 ```javascript
 beforeAll(async () => {
   // Check if test database is accessible
@@ -286,7 +303,9 @@ beforeAll(async () => {
 ```
 
 ### 2. GitHub Actions Workflow
+
 Add database service:
+
 ```yaml
 services:
   postgres:
@@ -305,7 +324,9 @@ services:
 ```
 
 ### 3. Developer Onboarding Checklist
+
 Add to `CONTRIBUTING.md`:
+
 - [ ] Install Docker
 - [ ] Run `bash scripts/setup-test-database.sh`
 - [ ] Verify tests pass with `npm test`
@@ -334,12 +355,14 @@ Add to `CONTRIBUTING.md`:
 ## ✅ Checklist for Resolution
 
 **Immediate Actions** (Do this now):
+
 - [ ] Start test database: `docker run -d --name farmers-market-test-db -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=test_password_123 -e POSTGRES_DB=farmersmarket_test -p 5433:5432 postgres:16-alpine`
 - [ ] Run migrations: `DATABASE_URL="postgresql://postgres:test_password_123@localhost:5433/farmersmarket_test" npx prisma migrate deploy`
 - [ ] Run webhook tests: `npm test -- webhook.integration.test.ts`
 - [ ] Verify all tests pass
 
 **Future Improvements**:
+
 - [ ] Add database health check to test setup
 - [ ] Add CI/CD database service
 - [ ] Update developer documentation
@@ -350,6 +373,7 @@ Add to `CONTRIBUTING.md`:
 ## 🌟 Status Update
 
 **Current State**:
+
 - 🟢 Root cause identified
 - 🟡 Solution documented
 - 🔴 Not yet implemented
@@ -361,6 +385,6 @@ Run the test database setup command and verify webhook tests pass.
 
 ---
 
-*Investigation conducted by Divine Agricultural AI Agent*
-*Version 3.0 - Kilo-Scale Architecture*
-*Last Updated: January 2026*
+_Investigation conducted by Divine Agricultural AI Agent_
+_Version 3.0 - Kilo-Scale Architecture_
+_Last Updated: January 2026_

@@ -10,29 +10,27 @@
 
 // Type declarations for gtag
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 declare global {
   interface Window {
     gtag: (
-      command: 'config' | 'event' | 'js' | 'set',
+      command: "config" | "event" | "js" | "set",
       targetId: string | Date,
-      config?: Record<string, any>
+      config?: Record<string, any>,
     ) => void;
     dataLayer: any[];
   }
 }
 
-export const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || '';
+export const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "";
 
 /**
  * Check if Google Analytics is enabled and available
  */
 export const isAnalyticsEnabled = (): boolean => {
   return Boolean(
-    GA_TRACKING_ID &&
-    typeof window !== 'undefined' &&
-    window.gtag
+    GA_TRACKING_ID && typeof window !== "undefined" && window.gtag,
   );
 };
 
@@ -44,13 +42,13 @@ export const pageview = (url: string): void => {
   if (!isAnalyticsEnabled()) return;
 
   try {
-    window.gtag('config', GA_TRACKING_ID, {
+    window.gtag("config", GA_TRACKING_ID, {
       page_path: url,
-      agricultural_consciousness: 'active',
-      platform: 'farmers-market',
+      agricultural_consciousness: "active",
+      platform: "farmers-market",
     });
   } catch (error) {
-    logger.error('Analytics pageview error:', {
+    logger.error("Analytics pageview error:", {
       error: error instanceof Error ? error.message : String(error),
     });
   }
@@ -60,15 +58,15 @@ export const pageview = (url: string): void => {
  * Event categories for agricultural platform
  */
 export enum AnalyticsCategory {
-  ENGAGEMENT = 'engagement',
-  ECOMMERCE = 'ecommerce',
-  AGRICULTURAL = 'agricultural',
-  USER = 'user',
-  FARM = 'farm',
-  PRODUCT = 'product',
-  ORDER = 'order',
-  NAVIGATION = 'navigation',
-  ERROR = 'error',
+  ENGAGEMENT = "engagement",
+  ECOMMERCE = "ecommerce",
+  AGRICULTURAL = "agricultural",
+  USER = "user",
+  FARM = "farm",
+  PRODUCT = "product",
+  ORDER = "order",
+  NAVIGATION = "navigation",
+  ERROR = "error",
 }
 
 /**
@@ -76,33 +74,33 @@ export enum AnalyticsCategory {
  */
 export enum AnalyticsAction {
   // Engagement
-  CLICK = 'click',
-  VIEW = 'view',
-  SEARCH = 'search',
-  FILTER = 'filter',
+  CLICK = "click",
+  VIEW = "view",
+  SEARCH = "search",
+  FILTER = "filter",
 
   // E-commerce
-  ADD_TO_CART = 'add_to_cart',
-  REMOVE_FROM_CART = 'remove_from_cart',
-  BEGIN_CHECKOUT = 'begin_checkout',
-  COMPLETE_PURCHASE = 'purchase',
+  ADD_TO_CART = "add_to_cart",
+  REMOVE_FROM_CART = "remove_from_cart",
+  BEGIN_CHECKOUT = "begin_checkout",
+  COMPLETE_PURCHASE = "purchase",
 
   // Agricultural
-  VIEW_FARM = 'view_farm',
-  FOLLOW_FARM = 'follow_farm',
-  VIEW_PRODUCT = 'view_product',
-  SEASONAL_FILTER = 'seasonal_filter',
+  VIEW_FARM = "view_farm",
+  FOLLOW_FARM = "follow_farm",
+  VIEW_PRODUCT = "view_product",
+  SEASONAL_FILTER = "seasonal_filter",
 
   // User
-  SIGNUP = 'sign_up',
-  LOGIN = 'login',
-  LOGOUT = 'logout',
-  PROFILE_UPDATE = 'profile_update',
+  SIGNUP = "sign_up",
+  LOGIN = "login",
+  LOGOUT = "logout",
+  PROFILE_UPDATE = "profile_update",
 
   // Order
-  ORDER_PLACED = 'order_placed',
-  ORDER_STATUS_CHECK = 'order_status_check',
-  DOWNLOAD_INVOICE = 'download_invoice',
+  ORDER_PLACED = "order_placed",
+  ORDER_STATUS_CHECK = "order_status_check",
+  DOWNLOAD_INVOICE = "download_invoice",
 }
 
 /**
@@ -130,15 +128,15 @@ export const event = ({
   if (!isAnalyticsEnabled()) return;
 
   try {
-    window.gtag('event', action, {
+    window.gtag("event", action, {
       event_category: category,
       event_label: label,
       value: value,
-      agricultural_consciousness: 'active',
+      agricultural_consciousness: "active",
       ...additionalParams,
     });
   } catch (error) {
-    logger.error('Analytics event error:', {
+    logger.error("Analytics event error:", {
       error: error instanceof Error ? error.message : String(error),
     });
   }
@@ -164,13 +162,15 @@ export const ecommerce = {
       label: product.name,
       value: product.price * (product.quantity || 1),
       additionalParams: {
-        items: [{
-          item_id: product.id,
-          item_name: product.name,
-          price: product.price,
-          item_category: product.category || 'uncategorized',
-          quantity: product.quantity || 1,
-        }],
+        items: [
+          {
+            item_id: product.id,
+            item_name: product.name,
+            price: product.price,
+            item_category: product.category || "uncategorized",
+            quantity: product.quantity || 1,
+          },
+        ],
       },
     });
   },
@@ -190,12 +190,14 @@ export const ecommerce = {
       label: product.name,
       value: product.price * (product.quantity || 1),
       additionalParams: {
-        items: [{
-          item_id: product.id,
-          item_name: product.name,
-          price: product.price,
-          quantity: product.quantity || 1,
-        }],
+        items: [
+          {
+            item_id: product.id,
+            item_name: product.name,
+            price: product.price,
+            quantity: product.quantity || 1,
+          },
+        ],
       },
     });
   },
@@ -210,17 +212,17 @@ export const ecommerce = {
     event({
       action: AnalyticsAction.BEGIN_CHECKOUT,
       category: AnalyticsCategory.ECOMMERCE,
-      label: 'Checkout Started',
+      label: "Checkout Started",
       value: cart.totalValue,
       additionalParams: {
-        items: cart.items.map(item => ({
+        items: cart.items.map((item) => ({
           item_id: item.id,
           item_name: item.name,
           price: item.price,
           quantity: item.quantity,
         })),
         value: cart.totalValue,
-        currency: 'USD',
+        currency: "USD",
       },
     });
   },
@@ -245,8 +247,8 @@ export const ecommerce = {
         value: order.totalValue,
         tax: order.tax || 0,
         shipping: order.shipping || 0,
-        currency: 'USD',
-        items: order.items.map(item => ({
+        currency: "USD",
+        items: order.items.map((item) => ({
           item_id: item.id,
           item_name: item.name,
           price: item.price,
@@ -271,8 +273,8 @@ export const agricultural = {
       label: farm.name,
       additionalParams: {
         farm_id: farm.id,
-        farm_type: farm.type || 'general',
-        consciousness: 'biodynamic',
+        farm_type: farm.type || "general",
+        consciousness: "biodynamic",
       },
     });
   },
@@ -293,10 +295,10 @@ export const agricultural = {
       label: product.name,
       additionalParams: {
         product_id: product.id,
-        product_category: product.category || 'uncategorized',
+        product_category: product.category || "uncategorized",
         seasonal: product.seasonal || false,
         farm_name: product.farmName,
-        agricultural_awareness: 'active',
+        agricultural_awareness: "active",
       },
     });
   },
@@ -313,7 +315,7 @@ export const agricultural = {
       additionalParams: {
         season,
         result_count: resultCount,
-        biodynamic_consciousness: 'active',
+        biodynamic_consciousness: "active",
       },
     });
   },
@@ -328,7 +330,7 @@ export const agricultural = {
       label: farm.name,
       additionalParams: {
         farm_id: farm.id,
-        engagement_type: 'follow',
+        engagement_type: "follow",
       },
     });
   },
@@ -341,7 +343,7 @@ export const user = {
   /**
    * Track user signup
    */
-  signup: (method: string = 'email') => {
+  signup: (method: string = "email") => {
     event({
       action: AnalyticsAction.SIGNUP,
       category: AnalyticsCategory.USER,
@@ -355,7 +357,7 @@ export const user = {
   /**
    * Track user login
    */
-  login: (method: string = 'email') => {
+  login: (method: string = "email") => {
     event({
       action: AnalyticsAction.LOGIN,
       category: AnalyticsCategory.USER,
@@ -373,7 +375,7 @@ export const user = {
     event({
       action: AnalyticsAction.LOGOUT,
       category: AnalyticsCategory.USER,
-      label: 'User Logout',
+      label: "User Logout",
     });
   },
 };
@@ -419,13 +421,9 @@ export const errorTracking = {
   /**
    * Track error occurrence
    */
-  trackError: (error: {
-    message: string;
-    page?: string;
-    fatal?: boolean;
-  }) => {
+  trackError: (error: { message: string; page?: string; fatal?: boolean }) => {
     event({
-      action: 'error',
+      action: "error",
       category: AnalyticsCategory.ERROR,
       label: error.message,
       additionalParams: {
@@ -445,9 +443,9 @@ export const consent = {
    * Update analytics consent
    */
   update: (granted: boolean) => {
-    if (typeof window !== 'undefined' && window.gtag) {
-      (window.gtag as any)('consent', 'update', {
-        analytics_storage: granted ? 'granted' : 'denied',
+    if (typeof window !== "undefined" && window.gtag) {
+      (window.gtag as any)("consent", "update", {
+        analytics_storage: granted ? "granted" : "denied",
       });
     }
   },

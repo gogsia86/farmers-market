@@ -10,7 +10,13 @@ import { CartSummary } from "@/components/features/cart/cart-summary";
 import { Button } from "@/components/ui/button";
 import { Card, CardBody } from "@/components/ui/card";
 import { useCart } from "@/hooks/useCart";
-import { AlertTriangle, LogIn, ShoppingBag, ShoppingCart, Trash2 } from "lucide-react";
+import {
+  AlertTriangle,
+  LogIn,
+  ShoppingBag,
+  ShoppingCart,
+  Trash2,
+} from "lucide-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -260,8 +266,8 @@ export default function CartPage() {
                 Some items need your attention
               </h3>
               <p className="mt-1 text-sm text-amber-800">
-                Some items in your cart are out of stock or have insufficient quantity.
-                Please review and update your cart before checkout.
+                Some items in your cart are out of stock or have insufficient
+                quantity. Please review and update your cart before checkout.
               </p>
             </div>
           </div>
@@ -286,7 +292,8 @@ export default function CartPage() {
                       {farmGroup.farmName}
                     </Link>
                     <p className="text-sm text-gray-600">
-                      {farmGroup.itemCount} item{farmGroup.itemCount !== 1 ? "s" : ""} · $
+                      {farmGroup.itemCount} item
+                      {farmGroup.itemCount !== 1 ? "s" : ""} · $
                       {farmGroup.subtotal.toFixed(2)}
                     </p>
                   </div>

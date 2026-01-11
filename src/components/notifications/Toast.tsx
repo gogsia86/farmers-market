@@ -45,7 +45,7 @@
 import type {
   NotificationAction,
   NotificationSeverity,
-  ToastNotification
+  ToastNotification,
 } from "@/lib/notifications/types";
 import {
   getCurrentSeason,
@@ -68,7 +68,7 @@ import {
   defaultToastVariants,
   getAccessibleToastVariants,
   getSeasonalToastVariants,
-  getSeverityToastVariants
+  getSeverityToastVariants,
 } from "./animations/toast-animations";
 import { useAnimationContext } from "./context/AnimationContext";
 import { useReducedMotion } from "./hooks/useReducedMotion";
@@ -93,9 +93,11 @@ const toastVariants = cva(
         agricultural: "border-emerald-200 bg-emerald-50 text-emerald-900",
       },
       animation: {
-        slide: "data-[state=open]:slide-in-from-right data-[state=closed]:slide-out-to-right",
+        slide:
+          "data-[state=open]:slide-in-from-right data-[state=closed]:slide-out-to-right",
         fade: "data-[state=open]:fade-in data-[state=closed]:fade-out",
-        bounce: "data-[state=open]:animate-bounce-in data-[state=closed]:fade-out",
+        bounce:
+          "data-[state=open]:animate-bounce-in data-[state=closed]:fade-out",
         grow: "data-[state=open]:zoom-in-95 data-[state=closed]:zoom-out-95",
       },
     },
@@ -103,7 +105,7 @@ const toastVariants = cva(
       severity: "info",
       animation: "slide",
     },
-  }
+  },
 );
 
 const iconVariants = cva("h-5 w-5 flex-shrink-0", {
@@ -126,8 +128,9 @@ const iconVariants = cva("h-5 w-5 flex-shrink-0", {
 // ============================================================================
 
 export interface ToastProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, "title">,
-  VariantProps<typeof toastVariants> {
+  extends
+    Omit<React.HTMLAttributes<HTMLDivElement>, "title">,
+    VariantProps<typeof toastVariants> {
   /** Toast notification data */
   notification: ToastNotification;
 
@@ -149,7 +152,7 @@ export const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
       className,
       ...props
     },
-    ref
+    ref,
   ) => {
     const dismissible = notification.dismissible ?? true;
     const actions = notification.actions ?? [];
@@ -186,7 +189,11 @@ export const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
     if (prefersReducedMotion) {
       // Accessible variants with minimal motion
       motionVariants = getAccessibleToastVariants(position);
-    } else if (isAgricultural && agriculturalData?.season && animationContext?.useSeasonalAnimations) {
+    } else if (
+      isAgricultural &&
+      agriculturalData?.season &&
+      animationContext?.useSeasonalAnimations
+    ) {
       // Seasonal variants for agricultural toasts
       motionVariants = getSeasonalToastVariants(agriculturalData.season);
     } else if (effectiveSeverity) {
@@ -214,7 +221,10 @@ export const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
         role="alert"
         aria-live={severity === "error" ? "assertive" : "polite"}
         aria-atomic="true"
-        className={cn(toastVariants({ severity: effectiveSeverity, animation }), className)}
+        className={cn(
+          toastVariants({ severity: effectiveSeverity, animation }),
+          className,
+        )}
         initial="initial"
         animate="animate"
         exit="exit"
@@ -283,25 +293,25 @@ export const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
                     "inline-flex items-center gap-1.5 rounded px-2.5 py-1 text-xs font-medium transition-colors",
                     "focus:outline-none focus:ring-2 focus:ring-offset-1",
                     action.type === "primary" &&
-                    severity === "info" &&
-                    "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500",
+                      severity === "info" &&
+                      "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500",
                     action.type === "primary" &&
-                    severity === "success" &&
-                    "bg-green-600 text-white hover:bg-green-700 focus:ring-green-500",
+                      severity === "success" &&
+                      "bg-green-600 text-white hover:bg-green-700 focus:ring-green-500",
                     action.type === "primary" &&
-                    severity === "warning" &&
-                    "bg-yellow-600 text-white hover:bg-yellow-700 focus:ring-yellow-500",
+                      severity === "warning" &&
+                      "bg-yellow-600 text-white hover:bg-yellow-700 focus:ring-yellow-500",
                     action.type === "primary" &&
-                    severity === "error" &&
-                    "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500",
+                      severity === "error" &&
+                      "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500",
                     action.type === "primary" &&
-                    severity === "agricultural" &&
-                    "bg-emerald-600 text-white hover:bg-emerald-700 focus:ring-emerald-500",
+                      severity === "agricultural" &&
+                      "bg-emerald-600 text-white hover:bg-emerald-700 focus:ring-emerald-500",
                     action.type === "secondary" &&
-                    "bg-white/80 text-gray-700 hover:bg-white focus:ring-gray-400",
+                      "bg-white/80 text-gray-700 hover:bg-white focus:ring-gray-400",
                     action.type === "tertiary" &&
-                    "text-gray-700 hover:bg-white/50 focus:ring-gray-400",
-                    action.disabled && "cursor-not-allowed opacity-50"
+                      "text-gray-700 hover:bg-white/50 focus:ring-gray-400",
+                    action.disabled && "cursor-not-allowed opacity-50",
                   )}
                 >
                   {action.icon && <span>{action.icon}</span>}
@@ -324,7 +334,7 @@ export const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
               severity === "success" && "focus:ring-green-500",
               severity === "warning" && "focus:ring-yellow-500",
               severity === "error" && "focus:ring-red-500",
-              severity === "agricultural" && "focus:ring-emerald-500"
+              severity === "agricultural" && "focus:ring-emerald-500",
             )}
             aria-label="Dismiss notification"
           >
@@ -333,7 +343,7 @@ export const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
         )}
       </motion.div>
     );
-  }
+  },
 );
 
 Toast.displayName = "Toast";
@@ -387,12 +397,12 @@ function getEventTypeLabel(eventType: string): string {
 export interface ToastContainerProps {
   /** Position of toast container */
   position?:
-  | "top-left"
-  | "top-center"
-  | "top-right"
-  | "bottom-left"
-  | "bottom-center"
-  | "bottom-right";
+    | "top-left"
+    | "top-center"
+    | "top-right"
+    | "bottom-left"
+    | "bottom-center"
+    | "bottom-right";
 
   /** Children (Toast components) */
   children?: React.ReactNode;
@@ -424,7 +434,7 @@ export function ToastContainer({
       className={cn(
         "fixed z-[100] flex flex-col gap-2 p-4",
         positionClasses[position],
-        className
+        className,
       )}
       role="region"
       aria-label="Notifications"

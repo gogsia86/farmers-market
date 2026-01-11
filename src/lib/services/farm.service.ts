@@ -25,15 +25,22 @@
  * @reference .cursorrules - Claude Sonnet 4.5 Service Patterns
  */
 
-import { CacheKeys, CacheTTL, multiLayerCache } from "@/lib/cache/multi-layer.cache";
+import {
+  CacheKeys,
+  CacheTTL,
+  multiLayerCache,
+} from "@/lib/cache/multi-layer.cache";
 import { createLogger } from "@/lib/monitoring/logger";
-import { farmRepository, type QuantumFarm } from "@/lib/repositories/farm.repository";
+import {
+  farmRepository,
+  type QuantumFarm,
+} from "@/lib/repositories/farm.repository";
 import type {
   Farm,
   FarmStatus,
   FarmTeamMember,
   Prisma,
-  User
+  User,
 } from "@prisma/client";
 import { nanoid } from "nanoid";
 
@@ -143,7 +150,7 @@ export class FarmValidationError extends Error {
   constructor(
     message: string,
     public readonly field: string,
-    public readonly value: any
+    public readonly value: any,
   ) {
     super(message);
     this.name = "FarmValidationError";
@@ -221,14 +228,14 @@ export class BiodynamicFarmService {
       const farm = await farmRepository.manifestFarm(createData);
 
       // Cache the new farm
-      await multiLayerCache.set(
-        CacheKeys.farm(farm.id),
-        farm,
-        { ttl: CacheTTL.LONG }
-      );
+      await multiLayerCache.set(CacheKeys.farm(farm.id), farm, {
+        ttl: CacheTTL.LONG,
+      });
 
       // Invalidate owner's farm list cache
-      await multiLayerCache.invalidatePattern(`farms:owner:${farmData.ownerId}*`);
+      await multiLayerCache.invalidatePattern(
+        `farms:owner:${farmData.ownerId}*`,
+      );
       await multiLayerCache.invalidatePattern(`farms:list:*`);
 
       logger.info("Farm created successfully", {
@@ -254,7 +261,7 @@ export class BiodynamicFarmService {
    */
   async getFarmById(
     farmId: string,
-    includeRelations: boolean = false
+    includeRelations: boolean = false,
   ): Promise<QuantumFarm | null> {
     const requestId = nanoid();
     logger.debug("Getting farm by ID", { requestId, farmId, includeRelations });
@@ -280,7 +287,10 @@ export class BiodynamicFarmService {
       // Cache the result
       await multiLayerCache.set(cacheKey, farm, { ttl: CacheTTL.LONG });
 
-      logger.debug("Farm retrieved from database and cached", { requestId, farmId });
+      logger.debug("Farm retrieved from database and cached", {
+        requestId,
+        farmId,
+      });
       return farm as QuantumFarm;
     } catch (error) {
       logger.error("Failed to get farm by ID", {
@@ -321,10 +331,16 @@ export class BiodynamicFarmService {
       // Cache by both slug and ID
       await Promise.all([
         multiLayerCache.set(cacheKey, farm, { ttl: CacheTTL.LONG }),
-        multiLayerCache.set(CacheKeys.farm(farm.id), farm, { ttl: CacheTTL.LONG }),
+        multiLayerCache.set(CacheKeys.farm(farm.id), farm, {
+          ttl: CacheTTL.LONG,
+        }),
       ]);
 
-      logger.debug("Farm retrieved by slug and cached", { requestId, slug, farmId: farm.id });
+      logger.debug("Farm retrieved by slug and cached", {
+        requestId,
+        slug,
+        farmId: farm.id,
+      });
       return farm;
     } catch (error) {
       logger.error("Failed to get farm by slug", {
@@ -390,7 +406,9 @@ export class BiodynamicFarmService {
       if (options?.searchQuery) {
         where.OR = [
           { name: { contains: options.searchQuery, mode: "insensitive" } },
-          { description: { contains: options.searchQuery, mode: "insensitive" } },
+          {
+            description: { contains: options.searchQuery, mode: "insensitive" },
+          },
         ];
       }
 
@@ -440,7 +458,7 @@ export class BiodynamicFarmService {
   async updateFarm(
     farmId: string,
     updates: UpdateFarmRequest,
-    userId: string
+    userId: string,
   ): Promise<QuantumFarm> {
     const requestId = nanoid();
     logger.info("Updating farm", { requestId, farmId, userId });
@@ -534,7 +552,7 @@ export class BiodynamicFarmService {
             verifiedAt: new Date(),
             updatedAt: new Date(),
           },
-          { tx }
+          { tx },
         );
       });
 
@@ -561,7 +579,7 @@ export class BiodynamicFarmService {
   async rejectFarm(
     farmId: string,
     adminId: string,
-    reason: string
+    reason: string,
   ): Promise<QuantumFarm> {
     const requestId = nanoid();
     logger.info("Rejecting farm", { requestId, farmId, adminId, reason });
@@ -615,7 +633,7 @@ export class BiodynamicFarmService {
 
     if (!hasAccess) {
       throw new FarmAuthorizationError(
-        "Unauthorized: You don't have access to this farm"
+        "Unauthorized: You don't have access to this farm",
       );
     }
 
@@ -632,7 +650,7 @@ export class BiodynamicFarmService {
       throw new FarmValidationError(
         "Farm name must be at least 3 characters long",
         "name",
-        farmData.name
+        farmData.name,
       );
     }
 
@@ -640,7 +658,7 @@ export class BiodynamicFarmService {
       throw new FarmValidationError(
         "Farm name must be less than 100 characters",
         "name",
-        farmData.name
+        farmData.name,
       );
     }
 
@@ -648,7 +666,7 @@ export class BiodynamicFarmService {
       throw new FarmValidationError(
         "Farm description must be at least 10 characters long",
         "description",
-        farmData.description
+        farmData.description,
       );
     }
 
@@ -656,15 +674,18 @@ export class BiodynamicFarmService {
       throw new FarmValidationError(
         "Farm address is required",
         "address",
-        farmData.address
+        farmData.address,
       );
     }
 
-    if (typeof farmData.latitude !== "number" || typeof farmData.longitude !== "number") {
+    if (
+      typeof farmData.latitude !== "number" ||
+      typeof farmData.longitude !== "number"
+    ) {
       throw new FarmValidationError(
         "Farm coordinates (latitude and longitude) are required",
         "coordinates",
-        { latitude: farmData.latitude, longitude: farmData.longitude }
+        { latitude: farmData.latitude, longitude: farmData.longitude },
       );
     }
 
@@ -679,7 +700,7 @@ export class BiodynamicFarmService {
    */
   private async generateUniqueSlug(
     name: string,
-    excludeFarmId?: string
+    excludeFarmId?: string,
   ): Promise<string> {
     // Convert to lowercase and replace spaces with hyphens
     const baseSlug = name
@@ -716,7 +737,7 @@ export class BiodynamicFarmService {
   private async invalidateFarmCaches(
     farmId: string,
     ownerId: string,
-    slug: string
+    slug: string,
   ): Promise<void> {
     await Promise.all([
       // Invalidate specific farm caches
@@ -744,7 +765,11 @@ export class BiodynamicFarmService {
    * @param slug - Farm slug
    * @returns Farm with minimal relations for detail page
    */
-  async getFarmDetailData(slug: string): Promise<Awaited<ReturnType<typeof farmRepository.findBySlugWithMinimalData>>> {
+  async getFarmDetailData(
+    slug: string,
+  ): Promise<
+    Awaited<ReturnType<typeof farmRepository.findBySlugWithMinimalData>>
+  > {
     const requestId = nanoid();
     logger.debug("Getting optimized farm detail data", { requestId, slug });
 
@@ -753,8 +778,13 @@ export class BiodynamicFarmService {
       const cached = await multiLayerCache.get(cacheKey);
 
       if (cached) {
-        logger.debug("Farm detail data retrieved from cache", { requestId, slug });
-        return cached as Awaited<ReturnType<typeof farmRepository.findBySlugWithMinimalData>>;
+        logger.debug("Farm detail data retrieved from cache", {
+          requestId,
+          slug,
+        });
+        return cached as Awaited<
+          ReturnType<typeof farmRepository.findBySlugWithMinimalData>
+        >;
       }
 
       // Optimized query with minimal field selection
@@ -771,7 +801,7 @@ export class BiodynamicFarmService {
       logger.info("Farm detail data fetched and cached", {
         requestId,
         slug,
-        farmId: farm.id
+        farmId: farm.id,
       });
 
       return farm;
@@ -793,17 +823,29 @@ export class BiodynamicFarmService {
    * @param limit - Max products to return (default: 12)
    * @returns Array of products with minimal fields
    */
-  async getFarmProducts(farmId: string, limit: number = 12): Promise<Awaited<ReturnType<typeof farmRepository.findProductsByFarmId>>> {
+  async getFarmProducts(
+    farmId: string,
+    limit: number = 12,
+  ): Promise<Awaited<ReturnType<typeof farmRepository.findProductsByFarmId>>> {
     const requestId = nanoid();
-    logger.debug("Getting farm products (optimized)", { requestId, farmId, limit });
+    logger.debug("Getting farm products (optimized)", {
+      requestId,
+      farmId,
+      limit,
+    });
 
     try {
       const cacheKey = `farm:products:${farmId}:${limit}`;
       const cached = await multiLayerCache.get(cacheKey);
 
       if (cached) {
-        logger.debug("Farm products retrieved from cache", { requestId, farmId });
-        return cached as Awaited<ReturnType<typeof farmRepository.findProductsByFarmId>>;
+        logger.debug("Farm products retrieved from cache", {
+          requestId,
+          farmId,
+        });
+        return cached as Awaited<
+          ReturnType<typeof farmRepository.findProductsByFarmId>
+        >;
       }
 
       const products = await farmRepository.findProductsByFarmId(farmId, limit);
@@ -814,7 +856,7 @@ export class BiodynamicFarmService {
       logger.debug("Farm products fetched and cached", {
         requestId,
         farmId,
-        count: products.length
+        count: products.length,
       });
 
       return products;
@@ -835,7 +877,11 @@ export class BiodynamicFarmService {
    * @param farmId - Farm ID
    * @returns Array of certifications
    */
-  async getFarmCertifications(farmId: string): Promise<Awaited<ReturnType<typeof farmRepository.findCertificationsByFarmId>>> {
+  async getFarmCertifications(
+    farmId: string,
+  ): Promise<
+    Awaited<ReturnType<typeof farmRepository.findCertificationsByFarmId>>
+  > {
     const requestId = nanoid();
     logger.debug("Getting farm certifications", { requestId, farmId });
 
@@ -844,19 +890,27 @@ export class BiodynamicFarmService {
       const cached = await multiLayerCache.get(cacheKey);
 
       if (cached) {
-        logger.debug("Farm certifications retrieved from cache", { requestId, farmId });
-        return cached as Awaited<ReturnType<typeof farmRepository.findCertificationsByFarmId>>;
+        logger.debug("Farm certifications retrieved from cache", {
+          requestId,
+          farmId,
+        });
+        return cached as Awaited<
+          ReturnType<typeof farmRepository.findCertificationsByFarmId>
+        >;
       }
 
-      const certifications = await farmRepository.findCertificationsByFarmId(farmId);
+      const certifications =
+        await farmRepository.findCertificationsByFarmId(farmId);
 
       // Cache for long duration (certifications rarely change)
-      await multiLayerCache.set(cacheKey, certifications, { ttl: CacheTTL.LONG });
+      await multiLayerCache.set(cacheKey, certifications, {
+        ttl: CacheTTL.LONG,
+      });
 
       logger.debug("Farm certifications fetched and cached", {
         requestId,
         farmId,
-        count: certifications.length
+        count: certifications.length,
       });
 
       return certifications;
@@ -896,7 +950,10 @@ export class BiodynamicFarmService {
     const limit = options?.limit || 20;
     const skip = (page - 1) * limit;
 
-    logger.debug("Getting farms for listing (optimized)", { requestId, options });
+    logger.debug("Getting farms for listing (optimized)", {
+      requestId,
+      options,
+    });
 
     try {
       const filterKey = JSON.stringify(options || {});
@@ -930,7 +987,9 @@ export class BiodynamicFarmService {
       if (options?.searchQuery) {
         where.OR = [
           { name: { contains: options.searchQuery, mode: "insensitive" } },
-          { description: { contains: options.searchQuery, mode: "insensitive" } },
+          {
+            description: { contains: options.searchQuery, mode: "insensitive" },
+          },
         ];
       }
 

@@ -12,11 +12,11 @@
  *   tsx scripts/validate-ubf-parity.ts --all
  */
 
-import { execSync } from 'child_process';
-import 'dotenv/config';
-import * as fs from 'fs';
-import * as path from 'path';
-import { chromium } from 'playwright';
+import { execSync } from "child_process";
+import "dotenv/config";
+import * as fs from "fs";
+import * as path from "path";
+import { chromium } from "playwright";
 
 // ============================================================================
 // TYPES
@@ -45,12 +45,12 @@ interface ComparisonResult {
   match: boolean;
   differences: Difference[];
   summary: string;
-  recommendation: 'PASS' | 'INVESTIGATE' | 'FAIL';
+  recommendation: "PASS" | "INVESTIGATE" | "FAIL";
 }
 
 interface Difference {
-  type: 'success_rate' | 'duration' | 'test_count' | 'functionality' | 'error';
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  type: "success_rate" | "duration" | "test_count" | "functionality" | "error";
+  severity: "low" | "medium" | "high" | "critical";
   description: string;
   legacy: any;
   ubf: any;
@@ -62,22 +62,22 @@ interface Difference {
 // ============================================================================
 
 const CONFIG = {
-  baseUrl: process.env.BASE_URL || 'http://localhost:3000',
+  baseUrl: process.env.BASE_URL || "http://localhost:3000",
   headless: true,
   timeout: 60000,
-  outputDir: './validation-reports',
-  screenshotsDir: './validation-screenshots',
+  outputDir: "./validation-reports",
+  screenshotsDir: "./validation-screenshots",
 
   colors: {
-    reset: '\x1b[0m',
-    bright: '\x1b[1m',
-    dim: '\x1b[2m',
-    green: '\x1b[32m',
-    red: '\x1b[31m',
-    yellow: '\x1b[33m',
-    blue: '\x1b[34m',
-    cyan: '\x1b[36m',
-    magenta: '\x1b[35m',
+    reset: "\x1b[0m",
+    bright: "\x1b[1m",
+    dim: "\x1b[2m",
+    green: "\x1b[32m",
+    red: "\x1b[31m",
+    yellow: "\x1b[33m",
+    blue: "\x1b[34m",
+    cyan: "\x1b[36m",
+    magenta: "\x1b[35m",
   },
 
   // Tolerance thresholds
@@ -94,25 +94,25 @@ const CONFIG = {
 
 const VALIDATION_MODULES = [
   {
-    id: 'health',
-    name: 'Health Checks',
-    legacyCommand: 'tsx scripts/website-checker-bot.ts',
-    ubfCommand: 'npm run bot:test:health -- --preset=ci',
-    description: 'Basic health and availability checks',
+    id: "health",
+    name: "Health Checks",
+    legacyCommand: "tsx scripts/website-checker-bot.ts",
+    ubfCommand: "npm run bot:test:health -- --preset=ci",
+    description: "Basic health and availability checks",
   },
   {
-    id: 'marketplace',
-    name: 'Marketplace Browse',
-    legacyCommand: 'tsx scripts/mvp-validation-bot.ts', // Partial
-    ubfCommand: 'npm run bot test marketplace -- --preset=ci',
-    description: 'Product browsing and search functionality',
+    id: "marketplace",
+    name: "Marketplace Browse",
+    legacyCommand: "tsx scripts/mvp-validation-bot.ts", // Partial
+    ubfCommand: "npm run bot test marketplace -- --preset=ci",
+    description: "Product browsing and search functionality",
   },
   {
-    id: 'cart',
-    name: 'Cart & Checkout',
-    legacyCommand: 'tsx scripts/mvp-validation-bot.ts', // Partial
-    ubfCommand: 'npm run bot test checkout -- --preset=ci',
-    description: 'Shopping cart and checkout flow',
+    id: "cart",
+    name: "Cart & Checkout",
+    legacyCommand: "tsx scripts/mvp-validation-bot.ts", // Partial
+    ubfCommand: "npm run bot test checkout -- --preset=ci",
+    description: "Shopping cart and checkout flow",
   },
 ];
 
@@ -120,26 +120,26 @@ const VALIDATION_MODULES = [
 // UTILITY FUNCTIONS
 // ============================================================================
 
-function log(message: string, color: keyof typeof CONFIG.colors = 'reset') {
+function log(message: string, color: keyof typeof CONFIG.colors = "reset") {
   const c = CONFIG.colors;
   console.log(`${c[color]}${message}${c.reset}`);
 }
 
 function logSection(title: string) {
   const c = CONFIG.colors;
-  console.log(`\n${'='.repeat(80)}`);
+  console.log(`\n${"=".repeat(80)}`);
   console.log(`${c.bright}${c.cyan}  ${title}${c.reset}`);
-  console.log(`${'='.repeat(80)}\n`);
+  console.log(`${"=".repeat(80)}\n`);
 }
 
 function logSubsection(title: string) {
   const c = CONFIG.colors;
   console.log(`\n${c.bright}${title}${c.reset}`);
-  console.log(`${'-'.repeat(80)}`);
+  console.log(`${"-".repeat(80)}`);
 }
 
 function ensureDirectories() {
-  [CONFIG.outputDir, CONFIG.screenshotsDir].forEach(dir => {
+  [CONFIG.outputDir, CONFIG.screenshotsDir].forEach((dir) => {
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
     }
@@ -149,9 +149,9 @@ function ensureDirectories() {
 function parseArgs(): { module?: string; all: boolean; verbose: boolean } {
   const args = process.argv.slice(2);
   return {
-    module: args.find(a => a.startsWith('--module='))?.split('=')[1],
-    all: args.includes('--all'),
-    verbose: args.includes('--verbose') || args.includes('-v'),
+    module: args.find((a) => a.startsWith("--module="))?.split("=")[1],
+    all: args.includes("--all"),
+    verbose: args.includes("--verbose") || args.includes("-v"),
   };
 }
 
@@ -161,7 +161,7 @@ function parseArgs(): { module?: string; all: boolean; verbose: boolean } {
 
 async function runLegacyHealthChecks(): Promise<TestRunResult> {
   const startTime = Date.now();
-  let output = '';
+  let output = "";
   let success = false;
   let testsRun = 0;
   let testsPassed = 0;
@@ -169,28 +169,27 @@ async function runLegacyHealthChecks(): Promise<TestRunResult> {
   const errors: string[] = [];
 
   try {
-    log('  Running legacy health checks (website-checker-bot)...', 'dim');
+    log("  Running legacy health checks (website-checker-bot)...", "dim");
 
     // Run the legacy script
-    output = execSync('tsx scripts/website-checker-bot.ts', {
-      encoding: 'utf8',
+    output = execSync("tsx scripts/website-checker-bot.ts", {
+      encoding: "utf8",
       timeout: CONFIG.timeout,
       env: { ...process.env, BASE_URL: CONFIG.baseUrl },
     });
 
     // Parse output
-    const lines = output.split('\n');
-    lines.forEach(line => {
-      if (line.includes('✅')) testsPassed++;
-      if (line.includes('❌')) testsFailed++;
-      if (line.includes('Error:') || line.includes('Failed:')) {
+    const lines = output.split("\n");
+    lines.forEach((line) => {
+      if (line.includes("✅")) testsPassed++;
+      if (line.includes("❌")) testsFailed++;
+      if (line.includes("Error:") || line.includes("Failed:")) {
         errors.push(line.trim());
       }
     });
 
     testsRun = testsPassed + testsFailed;
     success = testsFailed === 0 && testsPassed > 0;
-
   } catch (error: any) {
     success = false;
     errors.push(error.message);
@@ -225,17 +224,20 @@ async function runLegacyMarketplace(): Promise<TestRunResult> {
   let testsPassed = 0;
   let testsFailed = 0;
   const errors: string[] = [];
-  let output = '';
+  let output = "";
 
   try {
-    log('  Running legacy marketplace checks...', 'dim');
+    log("  Running legacy marketplace checks...", "dim");
 
     // Test 1: Homepage loads
     testsRun++;
     try {
-      await page.goto(CONFIG.baseUrl, { waitUntil: 'networkidle', timeout: 30000 });
+      await page.goto(CONFIG.baseUrl, {
+        waitUntil: "networkidle",
+        timeout: 30000,
+      });
       testsPassed++;
-      output += '✅ Homepage loads\n';
+      output += "✅ Homepage loads\n";
     } catch (error: any) {
       testsFailed++;
       errors.push(`Homepage failed: ${error.message}`);
@@ -245,9 +247,12 @@ async function runLegacyMarketplace(): Promise<TestRunResult> {
     // Test 2: Products page loads
     testsRun++;
     try {
-      await page.goto(`${CONFIG.baseUrl}/products`, { waitUntil: 'domcontentloaded', timeout: 30000 });
+      await page.goto(`${CONFIG.baseUrl}/products`, {
+        waitUntil: "domcontentloaded",
+        timeout: 30000,
+      });
       testsPassed++;
-      output += '✅ Products page loads\n';
+      output += "✅ Products page loads\n";
     } catch (error: any) {
       testsFailed++;
       errors.push(`Products page failed: ${error.message}`);
@@ -257,15 +262,20 @@ async function runLegacyMarketplace(): Promise<TestRunResult> {
     // Test 3: Search functionality exists
     testsRun++;
     try {
-      await page.goto(`${CONFIG.baseUrl}/products`, { waitUntil: 'domcontentloaded', timeout: 30000 });
-      const searchInput = await page.$('input[type="search"], input[placeholder*="Search"], input[name="search"]');
+      await page.goto(`${CONFIG.baseUrl}/products`, {
+        waitUntil: "domcontentloaded",
+        timeout: 30000,
+      });
+      const searchInput = await page.$(
+        'input[type="search"], input[placeholder*="Search"], input[name="search"]',
+      );
       if (searchInput) {
         testsPassed++;
-        output += '✅ Search functionality exists\n';
+        output += "✅ Search functionality exists\n";
       } else {
         testsFailed++;
-        errors.push('Search input not found');
-        output += '❌ Search functionality exists\n';
+        errors.push("Search input not found");
+        output += "❌ Search functionality exists\n";
       }
     } catch (error: any) {
       testsFailed++;
@@ -274,7 +284,6 @@ async function runLegacyMarketplace(): Promise<TestRunResult> {
     }
 
     success = testsFailed === 0;
-
   } catch (error: any) {
     success = false;
     errors.push(error.message);
@@ -309,17 +318,20 @@ async function runLegacyCart(): Promise<TestRunResult> {
   let testsPassed = 0;
   let testsFailed = 0;
   const errors: string[] = [];
-  let output = '';
+  let output = "";
 
   try {
-    log('  Running legacy cart checks...', 'dim');
+    log("  Running legacy cart checks...", "dim");
 
     // Test 1: Cart page accessible
     testsRun++;
     try {
-      await page.goto(`${CONFIG.baseUrl}/cart`, { waitUntil: 'domcontentloaded', timeout: 30000 });
+      await page.goto(`${CONFIG.baseUrl}/cart`, {
+        waitUntil: "domcontentloaded",
+        timeout: 30000,
+      });
       testsPassed++;
-      output += '✅ Cart page accessible\n';
+      output += "✅ Cart page accessible\n";
     } catch (error: any) {
       testsFailed++;
       errors.push(`Cart page failed: ${error.message}`);
@@ -329,9 +341,12 @@ async function runLegacyCart(): Promise<TestRunResult> {
     // Test 2: Checkout page accessible
     testsRun++;
     try {
-      await page.goto(`${CONFIG.baseUrl}/checkout`, { waitUntil: 'domcontentloaded', timeout: 30000 });
+      await page.goto(`${CONFIG.baseUrl}/checkout`, {
+        waitUntil: "domcontentloaded",
+        timeout: 30000,
+      });
       testsPassed++;
-      output += '✅ Checkout page accessible\n';
+      output += "✅ Checkout page accessible\n";
     } catch (error: any) {
       testsFailed++;
       errors.push(`Checkout page failed: ${error.message}`);
@@ -339,7 +354,6 @@ async function runLegacyCart(): Promise<TestRunResult> {
     }
 
     success = testsFailed === 0;
-
   } catch (error: any) {
     success = false;
     errors.push(error.message);
@@ -368,7 +382,7 @@ async function runLegacyCart(): Promise<TestRunResult> {
 
 async function runUBFModule(moduleId: string): Promise<TestRunResult> {
   const startTime = Date.now();
-  let output = '';
+  let output = "";
   let success = false;
   let testsRun = 0;
   let testsPassed = 0;
@@ -376,19 +390,22 @@ async function runUBFModule(moduleId: string): Promise<TestRunResult> {
   const errors: string[] = [];
 
   try {
-    log(`  Running UBF module: ${moduleId}...`, 'dim');
+    log(`  Running UBF module: ${moduleId}...`, "dim");
 
     // Run the UBF command
-    output = execSync(`npm run bot test ${moduleId} -- --preset=ci --format=json`, {
-      encoding: 'utf8',
-      timeout: CONFIG.timeout,
-      env: { ...process.env, BASE_URL: CONFIG.baseUrl },
-    });
+    output = execSync(
+      `npm run bot test ${moduleId} -- --preset=ci --format=json`,
+      {
+        encoding: "utf8",
+        timeout: CONFIG.timeout,
+        env: { ...process.env, BASE_URL: CONFIG.baseUrl },
+      },
+    );
 
     // Try to parse JSON report
-    const reportPath = path.join('./reports/latest.json');
+    const reportPath = path.join("./reports/latest.json");
     if (fs.existsSync(reportPath)) {
-      const report = JSON.parse(fs.readFileSync(reportPath, 'utf8'));
+      const report = JSON.parse(fs.readFileSync(reportPath, "utf8"));
       testsRun = report.summary.total;
       testsPassed = report.summary.passed;
       testsFailed = report.summary.failed;
@@ -396,24 +413,23 @@ async function runUBFModule(moduleId: string): Promise<TestRunResult> {
 
       // Collect errors
       report.results
-        .filter((r: any) => r.status === 'failed')
+        .filter((r: any) => r.status === "failed")
         .forEach((r: any) => {
           errors.push(`${r.moduleName}: ${r.error}`);
         });
     } else {
       // Parse from console output
-      const lines = output.split('\n');
-      lines.forEach(line => {
-        if (line.includes('✓') || line.includes('Passed:')) testsPassed++;
-        if (line.includes('✗') || line.includes('Failed:')) testsFailed++;
-        if (line.includes('Error:') || line.includes('failed')) {
+      const lines = output.split("\n");
+      lines.forEach((line) => {
+        if (line.includes("✓") || line.includes("Passed:")) testsPassed++;
+        if (line.includes("✗") || line.includes("Failed:")) testsFailed++;
+        if (line.includes("Error:") || line.includes("failed")) {
           errors.push(line.trim());
         }
       });
       testsRun = testsPassed + testsFailed;
       success = testsFailed === 0 && testsPassed > 0;
     }
-
   } catch (error: any) {
     success = false;
     errors.push(error.message);
@@ -441,7 +457,7 @@ async function runUBFModule(moduleId: string): Promise<TestRunResult> {
 function compareResults(
   legacy: TestRunResult,
   ubf: TestRunResult,
-  moduleName: string
+  moduleName: string,
 ): ComparisonResult {
   const differences: Difference[] = [];
   let match = true;
@@ -450,12 +466,12 @@ function compareResults(
   if (legacy.success !== ubf.success) {
     match = false;
     differences.push({
-      type: 'functionality',
-      severity: 'critical',
-      description: 'Overall success status differs',
-      legacy: legacy.success ? 'PASS' : 'FAIL',
-      ubf: ubf.success ? 'PASS' : 'FAIL',
-      impact: 'UBF may have introduced a regression or fixed a bug',
+      type: "functionality",
+      severity: "critical",
+      description: "Overall success status differs",
+      legacy: legacy.success ? "PASS" : "FAIL",
+      ubf: ubf.success ? "PASS" : "FAIL",
+      impact: "UBF may have introduced a regression or fixed a bug",
     });
   }
 
@@ -463,12 +479,12 @@ function compareResults(
   const testCountDiff = Math.abs(legacy.testsRun - ubf.testsRun);
   if (testCountDiff > CONFIG.thresholds.testCountDifference) {
     differences.push({
-      type: 'test_count',
-      severity: 'medium',
-      description: 'Number of tests differs significantly',
+      type: "test_count",
+      severity: "medium",
+      description: "Number of tests differs significantly",
       legacy: legacy.testsRun,
       ubf: ubf.testsRun,
-      impact: `UBF has ${ubf.testsRun > legacy.testsRun ? 'more' : 'fewer'} tests (${testCountDiff} difference)`,
+      impact: `UBF has ${ubf.testsRun > legacy.testsRun ? "more" : "fewer"} tests (${testCountDiff} difference)`,
     });
   }
 
@@ -481,33 +497,35 @@ function compareResults(
     if (rateDiff > CONFIG.thresholds.successRateDifferencePercent) {
       match = false;
       differences.push({
-        type: 'success_rate',
-        severity: ubfRate < legacyRate ? 'high' : 'low',
-        description: 'Success rate differs',
+        type: "success_rate",
+        severity: ubfRate < legacyRate ? "high" : "low",
+        description: "Success rate differs",
         legacy: `${legacyRate.toFixed(1)}%`,
         ubf: `${ubfRate.toFixed(1)}%`,
-        impact: ubfRate < legacyRate
-          ? 'UBF success rate is lower - investigate failures'
-          : 'UBF success rate is higher - possible improvements',
+        impact:
+          ubfRate < legacyRate
+            ? "UBF success rate is lower - investigate failures"
+            : "UBF success rate is higher - possible improvements",
       });
     }
   }
 
   // Compare duration (with tolerance)
   const durationDiffPercent = Math.abs(
-    ((ubf.duration - legacy.duration) / legacy.duration) * 100
+    ((ubf.duration - legacy.duration) / legacy.duration) * 100,
   );
 
   if (durationDiffPercent > CONFIG.thresholds.durationDifferencePercent) {
     differences.push({
-      type: 'duration',
-      severity: 'low',
-      description: 'Execution time differs significantly',
+      type: "duration",
+      severity: "low",
+      description: "Execution time differs significantly",
       legacy: `${(legacy.duration / 1000).toFixed(2)}s`,
       ubf: `${(ubf.duration / 1000).toFixed(2)}s`,
-      impact: ubf.duration > legacy.duration
-        ? `UBF is ${durationDiffPercent.toFixed(0)}% slower`
-        : `UBF is ${durationDiffPercent.toFixed(0)}% faster`,
+      impact:
+        ubf.duration > legacy.duration
+          ? `UBF is ${durationDiffPercent.toFixed(0)}% slower`
+          : `UBF is ${durationDiffPercent.toFixed(0)}% faster`,
     });
   }
 
@@ -517,40 +535,42 @@ function compareResults(
 
   if (legacyHasErrors !== ubfHasErrors) {
     differences.push({
-      type: 'error',
-      severity: ubfHasErrors ? 'high' : 'low',
-      description: 'Error presence differs',
-      legacy: legacyHasErrors ? `${legacy.errors.length} errors` : 'No errors',
-      ubf: ubfHasErrors ? `${ubf.errors.length} errors` : 'No errors',
+      type: "error",
+      severity: ubfHasErrors ? "high" : "low",
+      description: "Error presence differs",
+      legacy: legacyHasErrors ? `${legacy.errors.length} errors` : "No errors",
+      ubf: ubfHasErrors ? `${ubf.errors.length} errors` : "No errors",
       impact: ubfHasErrors
-        ? 'UBF encountered errors that legacy did not'
-        : 'UBF fixed errors that legacy had',
+        ? "UBF encountered errors that legacy did not"
+        : "UBF fixed errors that legacy had",
     });
   }
 
   // Determine recommendation
-  let recommendation: 'PASS' | 'INVESTIGATE' | 'FAIL';
-  const criticalDiffs = differences.filter(d => d.severity === 'critical').length;
-  const highDiffs = differences.filter(d => d.severity === 'high').length;
+  let recommendation: "PASS" | "INVESTIGATE" | "FAIL";
+  const criticalDiffs = differences.filter(
+    (d) => d.severity === "critical",
+  ).length;
+  const highDiffs = differences.filter((d) => d.severity === "high").length;
 
   if (criticalDiffs > 0 || (highDiffs > 1 && !ubf.success)) {
-    recommendation = 'FAIL';
+    recommendation = "FAIL";
   } else if (highDiffs > 0 || differences.length > 2) {
-    recommendation = 'INVESTIGATE';
+    recommendation = "INVESTIGATE";
   } else {
-    recommendation = 'PASS';
+    recommendation = "PASS";
   }
 
   // Generate summary
-  let summary = '';
+  let summary = "";
   if (match && differences.length === 0) {
-    summary = '✅ Perfect match - UBF produces identical results to legacy';
-  } else if (recommendation === 'PASS') {
-    summary = '✅ Acceptable differences - UBF is compatible with legacy';
-  } else if (recommendation === 'INVESTIGATE') {
-    summary = '⚠️  Requires investigation - notable differences found';
+    summary = "✅ Perfect match - UBF produces identical results to legacy";
+  } else if (recommendation === "PASS") {
+    summary = "✅ Acceptable differences - UBF is compatible with legacy";
+  } else if (recommendation === "INVESTIGATE") {
+    summary = "⚠️  Requires investigation - notable differences found";
   } else {
-    summary = '❌ Significant differences - UBF may have regressions';
+    summary = "❌ Significant differences - UBF may have regressions";
   }
 
   return {
@@ -572,8 +592,12 @@ function printValidationResult(result: ValidationResult) {
 
   // Legacy results
   console.log(`\n${c.bright}Legacy Script:${c.reset}`);
-  console.log(`  Success:   ${result.legacy.success ? `${c.green}✅ PASS${c.reset}` : `${c.red}❌ FAIL${c.reset}`}`);
-  console.log(`  Tests:     ${result.legacy.testsPassed}/${result.legacy.testsRun} passed`);
+  console.log(
+    `  Success:   ${result.legacy.success ? `${c.green}✅ PASS${c.reset}` : `${c.red}❌ FAIL${c.reset}`}`,
+  );
+  console.log(
+    `  Tests:     ${result.legacy.testsPassed}/${result.legacy.testsRun} passed`,
+  );
   console.log(`  Duration:  ${(result.legacy.duration / 1000).toFixed(2)}s`);
   if (result.legacy.errors.length > 0) {
     console.log(`  Errors:    ${result.legacy.errors.length}`);
@@ -581,8 +605,12 @@ function printValidationResult(result: ValidationResult) {
 
   // UBF results
   console.log(`\n${c.bright}UBF Module:${c.reset}`);
-  console.log(`  Success:   ${result.ubf.success ? `${c.green}✅ PASS${c.reset}` : `${c.red}❌ FAIL${c.reset}`}`);
-  console.log(`  Tests:     ${result.ubf.testsPassed}/${result.ubf.testsRun} passed`);
+  console.log(
+    `  Success:   ${result.ubf.success ? `${c.green}✅ PASS${c.reset}` : `${c.red}❌ FAIL${c.reset}`}`,
+  );
+  console.log(
+    `  Tests:     ${result.ubf.testsPassed}/${result.ubf.testsRun} passed`,
+  );
   console.log(`  Duration:  ${(result.ubf.duration / 1000).toFixed(2)}s`);
   if (result.ubf.errors.length > 0) {
     console.log(`  Errors:    ${result.ubf.errors.length}`);
@@ -596,11 +624,17 @@ function printValidationResult(result: ValidationResult) {
     console.log(`\n${c.bright}Differences Found:${c.reset}`);
     result.comparison.differences.forEach((diff, idx) => {
       const severityColor =
-        diff.severity === 'critical' ? 'red' :
-          diff.severity === 'high' ? 'red' :
-            diff.severity === 'medium' ? 'yellow' : 'dim';
+        diff.severity === "critical"
+          ? "red"
+          : diff.severity === "high"
+            ? "red"
+            : diff.severity === "medium"
+              ? "yellow"
+              : "dim";
 
-      console.log(`\n  ${idx + 1}. ${c[severityColor]}[${diff.severity.toUpperCase()}]${c.reset} ${diff.description}`);
+      console.log(
+        `\n  ${idx + 1}. ${c[severityColor]}[${diff.severity.toUpperCase()}]${c.reset} ${diff.description}`,
+      );
       console.log(`     Legacy: ${diff.legacy}`);
       console.log(`     UBF:    ${diff.ubf}`);
       console.log(`     Impact: ${diff.impact}`);
@@ -609,23 +643,35 @@ function printValidationResult(result: ValidationResult) {
 
   // Recommendation
   const recColor =
-    result.comparison.recommendation === 'PASS' ? 'green' :
-      result.comparison.recommendation === 'INVESTIGATE' ? 'yellow' : 'red';
+    result.comparison.recommendation === "PASS"
+      ? "green"
+      : result.comparison.recommendation === "INVESTIGATE"
+        ? "yellow"
+        : "red";
 
-  console.log(`\n${c.bright}Recommendation:${c.reset} ${c[recColor]}${result.comparison.recommendation}${c.reset}`);
+  console.log(
+    `\n${c.bright}Recommendation:${c.reset} ${c[recColor]}${result.comparison.recommendation}${c.reset}`,
+  );
 }
 
 function generateReport(results: ValidationResult[]) {
   const timestamp = new Date().toISOString();
-  const reportPath = path.join(CONFIG.outputDir, `validation-${Date.now()}.json`);
+  const reportPath = path.join(
+    CONFIG.outputDir,
+    `validation-${Date.now()}.json`,
+  );
 
   const report = {
     timestamp,
     summary: {
       totalModules: results.length,
-      passed: results.filter(r => r.comparison.recommendation === 'PASS').length,
-      investigate: results.filter(r => r.comparison.recommendation === 'INVESTIGATE').length,
-      failed: results.filter(r => r.comparison.recommendation === 'FAIL').length,
+      passed: results.filter((r) => r.comparison.recommendation === "PASS")
+        .length,
+      investigate: results.filter(
+        (r) => r.comparison.recommendation === "INVESTIGATE",
+      ).length,
+      failed: results.filter((r) => r.comparison.recommendation === "FAIL")
+        .length,
     },
     results,
   };
@@ -658,12 +704,12 @@ function generateMarkdownReport(report: any): string {
     md += `## ${result.module}\n\n`;
 
     md += `### Legacy Script\n`;
-    md += `- Success: ${result.legacy.success ? '✅' : '❌'}\n`;
+    md += `- Success: ${result.legacy.success ? "✅" : "❌"}\n`;
     md += `- Tests: ${result.legacy.testsPassed}/${result.legacy.testsRun}\n`;
     md += `- Duration: ${(result.legacy.duration / 1000).toFixed(2)}s\n\n`;
 
     md += `### UBF Module\n`;
-    md += `- Success: ${result.ubf.success ? '✅' : '❌'}\n`;
+    md += `- Success: ${result.ubf.success ? "✅" : "❌"}\n`;
     md += `- Tests: ${result.ubf.testsPassed}/${result.ubf.testsRun}\n`;
     md += `- Duration: ${(result.ubf.duration / 1000).toFixed(2)}s\n\n`;
 
@@ -690,35 +736,41 @@ function generateMarkdownReport(report: any): string {
 // ============================================================================
 
 async function validateModule(moduleId: string): Promise<ValidationResult> {
-  const module = VALIDATION_MODULES.find(m => m.id === moduleId);
+  const module = VALIDATION_MODULES.find((m) => m.id === moduleId);
   if (!module) {
     throw new Error(`Unknown module: ${moduleId}`);
   }
 
   logSubsection(`🔍 Validating: ${module.name}`);
-  log(`   ${module.description}`, 'dim');
+  log(`   ${module.description}`, "dim");
 
   // Run legacy
   let legacyResult: TestRunResult;
   switch (moduleId) {
-    case 'health':
+    case "health":
       legacyResult = await runLegacyHealthChecks();
       break;
-    case 'marketplace':
+    case "marketplace":
       legacyResult = await runLegacyMarketplace();
       break;
-    case 'cart':
+    case "cart":
       legacyResult = await runLegacyCart();
       break;
     default:
       throw new Error(`No legacy runner for: ${moduleId}`);
   }
 
-  log(`  ✅ Legacy completed: ${legacyResult.testsPassed}/${legacyResult.testsRun} passed`, 'green');
+  log(
+    `  ✅ Legacy completed: ${legacyResult.testsPassed}/${legacyResult.testsRun} passed`,
+    "green",
+  );
 
   // Run UBF
   const ubfResult = await runUBFModule(moduleId);
-  log(`  ✅ UBF completed: ${ubfResult.testsPassed}/${ubfResult.testsRun} passed`, 'green');
+  log(
+    `  ✅ UBF completed: ${ubfResult.testsPassed}/${ubfResult.testsRun} passed`,
+    "green",
+  );
 
   // Compare
   const comparison = compareResults(legacyResult, ubfResult, module.name);
@@ -735,8 +787,8 @@ async function validateModule(moduleId: string): Promise<ValidationResult> {
 async function main() {
   const args = parseArgs();
 
-  logSection('🔍 UBF PARITY VALIDATION');
-  log('Comparing UBF outputs with legacy script results\n', 'dim');
+  logSection("🔍 UBF PARITY VALIDATION");
+  log("Comparing UBF outputs with legacy script results\n", "dim");
 
   ensureDirectories();
 
@@ -747,13 +799,16 @@ async function main() {
   if (args.module) {
     modulesToValidate = [args.module];
   } else if (args.all) {
-    modulesToValidate = VALIDATION_MODULES.map(m => m.id);
+    modulesToValidate = VALIDATION_MODULES.map((m) => m.id);
   } else {
     // Default: validate health only
-    modulesToValidate = ['health'];
+    modulesToValidate = ["health"];
   }
 
-  log(`Validating ${modulesToValidate.length} module(s): ${modulesToValidate.join(', ')}\n`, 'cyan');
+  log(
+    `Validating ${modulesToValidate.length} module(s): ${modulesToValidate.join(", ")}\n`,
+    "cyan",
+  );
 
   // Run validations
   for (const moduleId of modulesToValidate) {
@@ -762,37 +817,55 @@ async function main() {
       results.push(result);
       printValidationResult(result);
     } catch (error: any) {
-      log(`\n❌ Failed to validate ${moduleId}: ${error.message}`, 'red');
+      log(`\n❌ Failed to validate ${moduleId}: ${error.message}`, "red");
     }
   }
 
   // Generate report
-  logSection('📊 VALIDATION SUMMARY');
+  logSection("📊 VALIDATION SUMMARY");
 
-  const passed = results.filter(r => r.comparison.recommendation === 'PASS').length;
-  const investigate = results.filter(r => r.comparison.recommendation === 'INVESTIGATE').length;
-  const failed = results.filter(r => r.comparison.recommendation === 'FAIL').length;
+  const passed = results.filter(
+    (r) => r.comparison.recommendation === "PASS",
+  ).length;
+  const investigate = results.filter(
+    (r) => r.comparison.recommendation === "INVESTIGATE",
+  ).length;
+  const failed = results.filter(
+    (r) => r.comparison.recommendation === "FAIL",
+  ).length;
 
   console.log(`Total modules validated: ${results.length}`);
-  console.log(`  ${CONFIG.colors.green}✅ Pass:${CONFIG.colors.reset}         ${passed}`);
-  console.log(`  ${CONFIG.colors.yellow}⚠️  Investigate:${CONFIG.colors.reset} ${investigate}`);
-  console.log(`  ${CONFIG.colors.red}❌ Fail:${CONFIG.colors.reset}         ${failed}\n`);
+  console.log(
+    `  ${CONFIG.colors.green}✅ Pass:${CONFIG.colors.reset}         ${passed}`,
+  );
+  console.log(
+    `  ${CONFIG.colors.yellow}⚠️  Investigate:${CONFIG.colors.reset} ${investigate}`,
+  );
+  console.log(
+    `  ${CONFIG.colors.red}❌ Fail:${CONFIG.colors.reset}         ${failed}\n`,
+  );
 
   // Save reports
   const reportPaths = generateReport(results);
-  log(`\n📄 Reports saved:`, 'cyan');
-  log(`   JSON:     ${reportPaths.json}`, 'dim');
-  log(`   Markdown: ${reportPaths.markdown}`, 'dim');
+  log(`\n📄 Reports saved:`, "cyan");
+  log(`   JSON:     ${reportPaths.json}`, "dim");
+  log(`   Markdown: ${reportPaths.markdown}`, "dim");
 
   // Exit code
   if (failed > 0) {
-    log(`\n❌ Validation FAILED - ${failed} module(s) have critical issues`, 'red');
+    log(
+      `\n❌ Validation FAILED - ${failed} module(s) have critical issues`,
+      "red",
+    );
     process.exit(1);
   } else if (investigate > 0) {
-    log(`\n⚠️  Validation requires INVESTIGATION - ${investigate} module(s) need review`, 'yellow');
+    log(
+      `\n⚠️  Validation requires INVESTIGATION - ${investigate} module(s) need review`,
+      "yellow",
+    );
     process.exit(0); // Don't fail build, but notify
   } else {
-    log(`\n✅ Validation PASSED - All modules match legacy behavior`, 'green');
+    log(`\n✅ Validation PASSED - All modules match legacy behavior`, "green");
     process.exit(0);
   }
 }
@@ -802,8 +875,8 @@ async function main() {
 // ============================================================================
 
 if (require.main === module) {
-  main().catch(error => {
-    console.error('Fatal error:', error);
+  main().catch((error) => {
+    console.error("Fatal error:", error);
     process.exit(1);
   });
 }

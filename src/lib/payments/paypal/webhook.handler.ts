@@ -20,7 +20,7 @@
 import { database } from "@/lib/database";
 import { paypalService } from "@/lib/payments/paypal/paypal.service";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 import type { ServiceResponse } from "@/lib/types/service.types";
 

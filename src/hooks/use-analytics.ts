@@ -11,7 +11,6 @@ import { createLogger } from "@/lib/utils/logger";
 import { InteractionType, PeriodType, Season } from "@prisma/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-
 // Create logger for analytics hooks
 const analyticsLogger = createLogger("Analytics");
 

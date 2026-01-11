@@ -10,13 +10,23 @@ import { orderService } from "@/lib/services/order.service";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 /**
  * Update order validation schema
  */
 const UpdateOrderSchema = z.object({
-  status: z.enum(["PENDING", "CONFIRMED", "PREPARING", "READY", "FULFILLED", "COMPLETED", "CANCELLED"]).optional(),
+  status: z
+    .enum([
+      "PENDING",
+      "CONFIRMED",
+      "PREPARING",
+      "READY",
+      "FULFILLED",
+      "COMPLETED",
+      "CANCELLED",
+    ])
+    .optional(),
   trackingNumber: z.string().optional(),
   deliveryNotes: z.string().optional(),
 });
@@ -27,7 +37,7 @@ const UpdateOrderSchema = z.object({
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { orderId: string } }
+  { params }: { params: { orderId: string } },
 ) {
   try {
     const session = await auth();
@@ -41,7 +51,7 @@ export async function GET(
             message: "You must be logged in to view order details",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -62,7 +72,7 @@ export async function GET(
             message: "You don't have permission to view this order",
           },
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -77,7 +87,7 @@ export async function GET(
               message: "You don't have permission to view this order",
             },
           },
-          { status: 403 }
+          { status: 403 },
         );
       }
     }
@@ -103,7 +113,7 @@ export async function GET(
             message: error.message,
           },
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -117,7 +127,7 @@ export async function GET(
           timestamp: new Date().toISOString(),
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -128,7 +138,7 @@ export async function GET(
  */
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { orderId: string } }
+  { params }: { params: { orderId: string } },
 ) {
   try {
     const session = await auth();
@@ -142,7 +152,7 @@ export async function PATCH(
             message: "You must be logged in to update orders",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -156,7 +166,7 @@ export async function PATCH(
             message: "Only farmers and admins can update orders",
           },
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -175,7 +185,7 @@ export async function PATCH(
             details: validation.error.format(),
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -184,7 +194,7 @@ export async function PATCH(
     const order = await orderService.updateOrder(
       orderId,
       updates,
-      session.user.id
+      session.user.id,
     );
 
     return NextResponse.json({
@@ -209,7 +219,7 @@ export async function PATCH(
             message: error.message,
           },
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -223,7 +233,7 @@ export async function PATCH(
             field: (error as any).field,
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -237,7 +247,7 @@ export async function PATCH(
           timestamp: new Date().toISOString(),
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -248,7 +258,7 @@ export async function PATCH(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { orderId: string } }
+  { params }: { params: { orderId: string } },
 ) {
   try {
     const session = await auth();
@@ -262,7 +272,7 @@ export async function DELETE(
             message: "You must be logged in to cancel orders",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -292,7 +302,7 @@ export async function DELETE(
             message: error.message,
           },
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -306,7 +316,7 @@ export async function DELETE(
             field: (error as any).field,
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -320,7 +330,7 @@ export async function DELETE(
           timestamp: new Date().toISOString(),
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -7,7 +7,7 @@
 import { database } from "@/lib/database";
 import { SpanStatusCode, trace } from "@opentelemetry/api";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 import type { Prisma } from "@prisma/client";
 
@@ -19,7 +19,7 @@ export class ServiceError extends Error {
     message: string,
     public readonly code: string,
     public readonly statusCode: number = 500,
-    public readonly details?: Record<string, any>
+    public readonly details?: Record<string, any>,
   ) {
     super(message);
     this.name = this.constructor.name;
@@ -34,7 +34,7 @@ export class ValidationError extends ServiceError {
   constructor(
     message: string,
     public readonly field?: string,
-    public readonly value?: any
+    public readonly value?: any,
   ) {
     super(message, "VALIDATION_ERROR", 400, { field, value });
   }
@@ -47,14 +47,9 @@ export class NotFoundError extends ServiceError {
   constructor(
     resource: string,
     identifier: string | number,
-    details?: Record<string, any>
+    details?: Record<string, any>,
   ) {
-    super(
-      `${resource} not found: ${identifier}`,
-      "NOT_FOUND",
-      404,
-      details
-    );
+    super(`${resource} not found: ${identifier}`, "NOT_FOUND", 404, details);
   }
 }
 
@@ -62,7 +57,10 @@ export class NotFoundError extends ServiceError {
  * Authorization error for permission failures
  */
 export class AuthorizationError extends ServiceError {
-  constructor(message: string = "Unauthorized access", details?: Record<string, any>) {
+  constructor(
+    message: string = "Unauthorized access",
+    details?: Record<string, any>,
+  ) {
     super(message, "AUTHORIZATION_ERROR", 403, details);
   }
 }
@@ -84,7 +82,7 @@ export class QuantumCoherenceError extends ServiceError {
     message: string,
     public readonly currentState: any,
     public readonly expectedState: any,
-    public readonly resolutionPath: string[]
+    public readonly resolutionPath: string[],
   ) {
     const formattedMessage = `
 ╔════════════════════════════════════════════════════════════╗
@@ -97,7 +95,7 @@ export class QuantumCoherenceError extends ServiceError {
 ║ 🎯 EXPECTED REALITY: ${JSON.stringify(expectedState, null, 2)}
 ║
 ║ 🛠️  PATH TO ENLIGHTENMENT:
-║    ${resolutionPath.map((step: any, i: any) => `${i + 1}. ${step}`).join('\n║    ')}
+║    ${resolutionPath.map((step: any, i: any) => `${i + 1}. ${step}`).join("\n║    ")}
 ╚════════════════════════════════════════════════════════════╝
     `;
     super(formattedMessage, "QUANTUM_COHERENCE_ERROR", 500, {
@@ -142,7 +140,7 @@ export abstract class BaseService {
   protected async withTracing<T>(
     spanName: string,
     operation: () => Promise<T>,
-    attributes?: Record<string, any>
+    attributes?: Record<string, any>,
   ): Promise<T> {
     const tracer = trace.getTracer(this.serviceName);
 
@@ -174,7 +172,7 @@ export abstract class BaseService {
    */
   protected async withTransaction<T>(
     operation: (tx: Prisma.TransactionClient) => Promise<T>,
-    options?: TransactionOptions
+    options?: TransactionOptions,
   ): Promise<T> {
     const maxRetries = options?.maxRetries ?? 3;
     const timeout = options?.timeout ?? 30000; // 30 seconds default
@@ -204,7 +202,9 @@ export abstract class BaseService {
       }
     }
 
-    throw lastError || new ServiceError("Transaction failed", "TRANSACTION_ERROR");
+    throw (
+      lastError || new ServiceError("Transaction failed", "TRANSACTION_ERROR")
+    );
   }
 
   /**
@@ -212,12 +212,12 @@ export abstract class BaseService {
    */
   protected async withQuantumTransaction<T>(
     operation: (tx: Prisma.TransactionClient) => Promise<T>,
-    options?: TransactionOptions
+    options?: TransactionOptions,
   ): Promise<T> {
     return this.withTracing(
       "quantumTransaction",
       () => this.withTransaction(operation, options),
-      { serviceName: this.serviceName }
+      { serviceName: this.serviceName },
     );
   }
 
@@ -246,26 +246,26 @@ export abstract class BaseService {
         case "P2002": // Unique constraint violation
           return new ConflictError(
             `Resource already exists: ${error.meta?.target?.join(", ") || "unknown field"}`,
-            { prismaError: error }
+            { prismaError: error },
           );
 
         case "P2025": // Record not found
           return new NotFoundError(
             error.meta?.modelName || "Resource",
             error.meta?.cause || "unknown",
-            { prismaError: error }
+            { prismaError: error },
           );
 
         case "P2003": // Foreign key constraint violation
           return new ValidationError(
             `Invalid reference: ${error.meta?.field_name || "unknown field"}`,
-            error.meta?.field_name
+            error.meta?.field_name,
           );
 
         case "P2011": // Null constraint violation
           return new ValidationError(
             `Required field missing: ${error.meta?.target || "unknown field"}`,
-            error.meta?.target
+            error.meta?.target,
           );
 
         default:
@@ -273,7 +273,7 @@ export abstract class BaseService {
             error.message || "Database operation failed",
             "DATABASE_ERROR",
             500,
-            { prismaError: error }
+            { prismaError: error },
           );
       }
     }
@@ -287,24 +287,21 @@ export abstract class BaseService {
       error?.message || "Unknown service error",
       "UNKNOWN_ERROR",
       500,
-      { originalError: error }
+      { originalError: error },
     );
   }
 
   /**
    * Validate required fields
    */
-  protected validateRequired<T>(
-    data: T,
-    requiredFields: (keyof T)[]
-  ): void {
+  protected validateRequired<T>(data: T, requiredFields: (keyof T)[]): void {
     for (const field of requiredFields) {
       const value = data[field];
       if (value === undefined || value === null || value === "") {
         throw new ValidationError(
           `${String(field)} is required`,
           String(field),
-          value
+          value,
         );
       }
     }
@@ -317,13 +314,13 @@ export abstract class BaseService {
     value: string,
     field: string,
     min?: number,
-    max?: number
+    max?: number,
   ): void {
     if (min !== undefined && value.length < min) {
       throw new ValidationError(
         `${field} must be at least ${min} characters`,
         field,
-        value
+        value,
       );
     }
 
@@ -331,7 +328,7 @@ export abstract class BaseService {
       throw new ValidationError(
         `${field} must be at most ${max} characters`,
         field,
-        value
+        value,
       );
     }
   }
@@ -343,13 +340,13 @@ export abstract class BaseService {
     value: number,
     field: string,
     min?: number,
-    max?: number
+    max?: number,
   ): void {
     if (min !== undefined && value < min) {
       throw new ValidationError(
         `${field} must be at least ${min}`,
         field,
-        value
+        value,
       );
     }
 
@@ -357,7 +354,7 @@ export abstract class BaseService {
       throw new ValidationError(
         `${field} must be at most ${max}`,
         field,
-        value
+        value,
       );
     }
   }
@@ -371,7 +368,7 @@ export abstract class BaseService {
       throw new ValidationError(
         `${field} must be a valid email address`,
         field,
-        email
+        email,
       );
     }
   }
@@ -383,27 +380,19 @@ export abstract class BaseService {
     try {
       new URL(url);
     } catch {
-      throw new ValidationError(
-        `${field} must be a valid URL`,
-        field,
-        url
-      );
+      throw new ValidationError(`${field} must be a valid URL`, field, url);
     }
   }
 
   /**
    * Validate enum value
    */
-  protected validateEnum<T>(
-    value: T,
-    field: string,
-    allowedValues: T[]
-  ): void {
+  protected validateEnum<T>(value: T, field: string, allowedValues: T[]): void {
     if (!allowedValues.includes(value)) {
       throw new ValidationError(
         `${field} must be one of: ${allowedValues.join(", ")}`,
         field,
-        value
+        value,
       );
     }
   }
@@ -437,11 +426,7 @@ export abstract class BaseService {
   /**
    * Generate pagination metadata
    */
-  protected generatePaginationMeta(
-    total: number,
-    page: number,
-    limit: number
-  ) {
+  protected generatePaginationMeta(total: number, page: number, limit: number) {
     const totalPages = Math.ceil(total / limit);
     return {
       total,
@@ -456,9 +441,19 @@ export abstract class BaseService {
   /**
    * Log operation (can be extended with proper logger)
    */
-  protected log(level: "info" | "warn" | "error", message: string, meta?: any): void {
+  protected log(
+    level: "info" | "warn" | "error",
+    message: string,
+    meta?: any,
+  ): void {
     const timestamp = new Date().toISOString();
-    const logData = { timestamp, service: this.serviceName, level, message, ...meta };
+    const logData = {
+      timestamp,
+      service: this.serviceName,
+      level,
+      message,
+      ...meta,
+    };
 
     if (level === "error") {
       logger.error(JSON.stringify(logData));
@@ -475,7 +470,7 @@ export abstract class BaseService {
  */
 export async function handleServiceOperation<T>(
   operation: () => Promise<T>,
-  errorContext?: string
+  errorContext?: string,
 ): Promise<T> {
   try {
     return await operation();
@@ -488,7 +483,7 @@ export async function handleServiceOperation<T>(
       `${errorContext ? errorContext + ": " : ""}${error instanceof Error ? error.message : "Unknown error"}`,
       "OPERATION_ERROR",
       500,
-      { originalError: error }
+      { originalError: error },
     );
   }
 }
@@ -521,7 +516,8 @@ export function extractErrorResponse(error: any) {
     success: false,
     error: {
       code: "UNKNOWN_ERROR",
-      message: error instanceof Error ? error.message : "An unknown error occurred",
+      message:
+        error instanceof Error ? error.message : "An unknown error occurred",
       timestamp: new Date().toISOString(),
     },
     statusCode: 500,

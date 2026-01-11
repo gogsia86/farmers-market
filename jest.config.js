@@ -107,9 +107,7 @@ module.exports = {
     "^.+\\.(ts|tsx|js|jsx)$": [
       "babel-jest",
       {
-        presets: [
-          ["next/babel", { "preset-react": { runtime: "automatic" } }]
-        ],
+        presets: [["next/babel", { "preset-react": { runtime: "automatic" } }]],
       },
     ],
   },
@@ -118,8 +116,6 @@ module.exports = {
   transformIgnorePatterns: [
     "node_modules/(?!(test-exclude|babel-plugin-istanbul|@auth|nanoid|uuid|chalk|pino|pino-pretty)/)",
   ],
-
-
 
   // Module file extensions
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json"],

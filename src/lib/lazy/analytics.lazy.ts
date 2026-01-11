@@ -15,7 +15,7 @@
 // TYPE DEFINITIONS
 // ============================================================================
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 export interface AnalyticsEvent {
   name: string;

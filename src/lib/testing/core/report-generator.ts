@@ -10,11 +10,11 @@
  * Supports historical tracking, trend analysis, and notifications.
  */
 
-import { logger } from '@/lib/monitoring/logger';
-import { mkdir, writeFile } from 'fs/promises';
-import { join } from 'path';
-import type { BotResult } from '../types';
-import type { TestRunReport, TestSummary } from './test-runner';
+import { logger } from "@/lib/monitoring/logger";
+import { mkdir, writeFile } from "fs/promises";
+import { join } from "path";
+import type { BotResult } from "../types";
+import type { TestRunReport, TestSummary } from "./test-runner";
 
 export interface ReportOptions {
   outputDir: string;
@@ -25,7 +25,7 @@ export interface ReportOptions {
   historicalComparison?: boolean;
 }
 
-export type ReportFormat = 'json' | 'markdown' | 'html' | 'console';
+export type ReportFormat = "json" | "markdown" | "html" | "console";
 
 export interface GeneratedReport {
   format: ReportFormat;
@@ -53,14 +53,14 @@ export class ReportGenerator {
    * Generate reports in all configured formats
    */
   async generateReports(report: TestRunReport): Promise<GeneratedReport[]> {
-    logger.info('[ReportGenerator] Generating reports', {
-      formats: this.options.formats
+    logger.info("[ReportGenerator] Generating reports", {
+      formats: this.options.formats,
     });
 
     const generated: GeneratedReport[] = [];
 
     // Ensure output directory exists
-    if (this.options.formats.some(f => f !== 'console')) {
+    if (this.options.formats.some((f) => f !== "console")) {
       await this.ensureOutputDirectory();
     }
 
@@ -73,11 +73,14 @@ export class ReportGenerator {
         const result = await this.generateReport(report, format);
         generated.push(result);
       } catch (error) {
-        logger.error(`[ReportGenerator] Failed to generate ${format} report:`, error);
+        logger.error(
+          `[ReportGenerator] Failed to generate ${format} report:`,
+          error,
+        );
         generated.push({
           format,
           success: false,
-          error: error instanceof Error ? error.message : String(error)
+          error: error instanceof Error ? error.message : String(error),
         });
       }
     }
@@ -90,16 +93,16 @@ export class ReportGenerator {
    */
   private async generateReport(
     report: TestRunReport,
-    format: ReportFormat
+    format: ReportFormat,
   ): Promise<GeneratedReport> {
     switch (format) {
-      case 'json':
+      case "json":
         return await this.generateJsonReport(report);
-      case 'markdown':
+      case "markdown":
         return await this.generateMarkdownReport(report);
-      case 'html':
+      case "html":
         return await this.generateHtmlReport(report);
-      case 'console':
+      case "console":
         return this.generateConsoleReport(report);
       default:
         throw new Error(`Unsupported report format: ${format}`);
@@ -109,8 +112,10 @@ export class ReportGenerator {
   /**
    * Generate JSON report
    */
-  private async generateJsonReport(report: TestRunReport): Promise<GeneratedReport> {
-    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+  private async generateJsonReport(
+    report: TestRunReport,
+  ): Promise<GeneratedReport> {
+    const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
     const filename = `test-report-${timestamp}.json`;
     const filepath = join(this.options.outputDir, filename);
 
@@ -118,41 +123,45 @@ export class ReportGenerator {
       ...report,
       metadata: {
         generatedAt: new Date().toISOString(),
-        generator: 'Unified Bot Framework',
-        version: '1.0.0'
+        generator: "Unified Bot Framework",
+        version: "1.0.0",
       },
-      history: this.options.historicalComparison ? this.getRecentHistory(5) : undefined
+      history: this.options.historicalComparison
+        ? this.getRecentHistory(5)
+        : undefined,
     };
 
-    await writeFile(filepath, JSON.stringify(jsonReport, null, 2), 'utf-8');
+    await writeFile(filepath, JSON.stringify(jsonReport, null, 2), "utf-8");
 
     logger.info(`[ReportGenerator] JSON report saved: ${filepath}`);
 
     return {
-      format: 'json',
+      format: "json",
       path: filepath,
-      success: true
+      success: true,
     };
   }
 
   /**
    * Generate Markdown report
    */
-  private async generateMarkdownReport(report: TestRunReport): Promise<GeneratedReport> {
-    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+  private async generateMarkdownReport(
+    report: TestRunReport,
+  ): Promise<GeneratedReport> {
+    const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
     const filename = `test-report-${timestamp}.md`;
     const filepath = join(this.options.outputDir, filename);
 
     const content = this.buildMarkdownContent(report);
 
-    await writeFile(filepath, content, 'utf-8');
+    await writeFile(filepath, content, "utf-8");
 
     logger.info(`[ReportGenerator] Markdown report saved: ${filepath}`);
 
     return {
-      format: 'markdown',
+      format: "markdown",
       path: filepath,
-      success: true
+      success: true,
     };
   }
 
@@ -163,121 +172,143 @@ export class ReportGenerator {
     const lines: string[] = [];
 
     // Header
-    lines.push('# 🌾 Farmers Market Platform - Test Report\n');
+    lines.push("# 🌾 Farmers Market Platform - Test Report\n");
     lines.push(`**Generated:** ${new Date(report.endTime).toLocaleString()}\n`);
     lines.push(`**Duration:** ${this.formatDuration(report.duration)}\n`);
-    lines.push('---\n');
+    lines.push("---\n");
 
     // Summary
-    lines.push('## 📊 Summary\n');
-    lines.push('| Metric | Value |');
-    lines.push('|--------|-------|');
+    lines.push("## 📊 Summary\n");
+    lines.push("| Metric | Value |");
+    lines.push("|--------|-------|");
     lines.push(`| Total Tests | ${report.summary.total} |`);
     lines.push(`| ✅ Passed | ${report.summary.passed} |`);
     lines.push(`| ❌ Failed | ${report.summary.failed} |`);
     lines.push(`| ⏭️ Skipped | ${report.summary.skipped} |`);
     lines.push(`| Success Rate | ${report.summary.successRate.toFixed(2)}% |`);
-    lines.push(`| Avg Duration | ${this.formatDuration(report.summary.avgDuration)} |`);
-    lines.push(`| Total Duration | ${this.formatDuration(report.summary.totalDuration)} |`);
-    lines.push('');
+    lines.push(
+      `| Avg Duration | ${this.formatDuration(report.summary.avgDuration)} |`,
+    );
+    lines.push(
+      `| Total Duration | ${this.formatDuration(report.summary.totalDuration)} |`,
+    );
+    lines.push("");
 
     // Status badge
-    const statusEmoji = report.summary.successRate === 100 ? '✅' :
-      report.summary.successRate >= 80 ? '⚠️' : '❌';
-    lines.push(`**Overall Status:** ${statusEmoji} ${this.getStatusText(report.summary.successRate)}\n`);
+    const statusEmoji =
+      report.summary.successRate === 100
+        ? "✅"
+        : report.summary.successRate >= 80
+          ? "⚠️"
+          : "❌";
+    lines.push(
+      `**Overall Status:** ${statusEmoji} ${this.getStatusText(report.summary.successRate)}\n`,
+    );
 
     // Detailed Results
-    lines.push('## 📝 Detailed Results\n');
+    lines.push("## 📝 Detailed Results\n");
 
     // Group by status
-    const passed = report.results.filter(r => r.status === 'success');
-    const failed = report.results.filter(r => r.status === 'failed');
-    const skipped = report.results.filter(r => r.status === 'skipped');
+    const passed = report.results.filter((r) => r.status === "success");
+    const failed = report.results.filter((r) => r.status === "failed");
+    const skipped = report.results.filter((r) => r.status === "skipped");
 
     // Failed tests (most important)
     if (failed.length > 0) {
-      lines.push('### ❌ Failed Tests\n');
+      lines.push("### ❌ Failed Tests\n");
       failed.forEach((result, index) => {
         lines.push(`#### ${index + 1}. ${result.moduleName}`);
         lines.push(`- **Module ID:** \`${result.moduleId}\``);
         lines.push(`- **Duration:** ${this.formatDuration(result.duration)}`);
-        lines.push(`- **Error:** ${result.error || 'Unknown error'}`);
+        lines.push(`- **Error:** ${result.error || "Unknown error"}`);
         if (result.screenshot) {
           lines.push(`- **Screenshot:** \`${result.screenshot}\``);
         }
         if (result.details) {
           lines.push(`- **Details:**`);
-          lines.push('  ```json');
+          lines.push("  ```json");
           lines.push(`  ${JSON.stringify(result.details, null, 2)}`);
-          lines.push('  ```');
+          lines.push("  ```");
         }
-        lines.push('');
+        lines.push("");
       });
     }
 
     // Passed tests
     if (passed.length > 0) {
-      lines.push('### ✅ Passed Tests\n');
-      lines.push('| # | Module | Duration |');
-      lines.push('|---|--------|----------|');
+      lines.push("### ✅ Passed Tests\n");
+      lines.push("| # | Module | Duration |");
+      lines.push("|---|--------|----------|");
       passed.forEach((result, index) => {
-        lines.push(`| ${index + 1} | ${result.moduleName} | ${this.formatDuration(result.duration)} |`);
+        lines.push(
+          `| ${index + 1} | ${result.moduleName} | ${this.formatDuration(result.duration)} |`,
+        );
       });
-      lines.push('');
+      lines.push("");
     }
 
     // Skipped tests
     if (skipped.length > 0) {
-      lines.push('### ⏭️ Skipped Tests\n');
+      lines.push("### ⏭️ Skipped Tests\n");
       skipped.forEach((result, index) => {
-        lines.push(`${index + 1}. ${result.moduleName} - \`${result.moduleId}\``);
+        lines.push(
+          `${index + 1}. ${result.moduleName} - \`${result.moduleId}\``,
+        );
       });
-      lines.push('');
+      lines.push("");
     }
 
     // Configuration
-    lines.push('## ⚙️ Configuration\n');
-    lines.push('```json');
-    lines.push(JSON.stringify({
-      baseUrl: report.config.baseUrl,
-      headless: report.config.headless,
-      retryAttempts: report.config.retryAttempts,
-      timeout: report.config.timeout,
-      screenshot: report.config.screenshot
-    }, null, 2));
-    lines.push('```\n');
+    lines.push("## ⚙️ Configuration\n");
+    lines.push("```json");
+    lines.push(
+      JSON.stringify(
+        {
+          baseUrl: report.config.baseUrl,
+          headless: report.config.headless,
+          retryAttempts: report.config.retryAttempts,
+          timeout: report.config.timeout,
+          screenshot: report.config.screenshot,
+        },
+        null,
+        2,
+      ),
+    );
+    lines.push("```\n");
 
     // Historical comparison (if available)
     if (this.options.historicalComparison && this.history.length > 1) {
-      lines.push('## 📈 Trend Analysis\n');
+      lines.push("## 📈 Trend Analysis\n");
       lines.push(this.buildTrendAnalysis());
     }
 
     // Footer
-    lines.push('---');
-    lines.push('*Generated by Unified Bot Framework v1.0.0*');
+    lines.push("---");
+    lines.push("*Generated by Unified Bot Framework v1.0.0*");
 
-    return lines.join('\n');
+    return lines.join("\n");
   }
 
   /**
    * Generate HTML report
    */
-  private async generateHtmlReport(report: TestRunReport): Promise<GeneratedReport> {
-    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+  private async generateHtmlReport(
+    report: TestRunReport,
+  ): Promise<GeneratedReport> {
+    const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
     const filename = `test-report-${timestamp}.html`;
     const filepath = join(this.options.outputDir, filename);
 
     const content = this.buildHtmlContent(report);
 
-    await writeFile(filepath, content, 'utf-8');
+    await writeFile(filepath, content, "utf-8");
 
     logger.info(`[ReportGenerator] HTML report saved: ${filepath}`);
 
     return {
-      format: 'html',
+      format: "html",
       path: filepath,
-      success: true
+      success: true,
     };
   }
 
@@ -285,8 +316,12 @@ export class ReportGenerator {
    * Build HTML content
    */
   private buildHtmlContent(report: TestRunReport): string {
-    const statusColor = report.summary.successRate === 100 ? '#10b981' :
-      report.summary.successRate >= 80 ? '#f59e0b' : '#ef4444';
+    const statusColor =
+      report.summary.successRate === 100
+        ? "#10b981"
+        : report.summary.successRate >= 80
+          ? "#f59e0b"
+          : "#ef4444";
 
     return `<!DOCTYPE html>
 <html lang="en">
@@ -442,7 +477,9 @@ export class ReportGenerator {
 
     <div class="results">
       <h2>📝 Test Results</h2>
-      ${report.results.map(result => `
+      ${report.results
+        .map(
+          (result) => `
         <div class="result-item ${result.status}">
           <div class="result-header">
             <div class="result-name">${result.moduleName}</div>
@@ -452,10 +489,12 @@ export class ReportGenerator {
             </div>
           </div>
           <div style="color: #6b7280; font-size: 0.875rem;">${result.moduleId}</div>
-          ${result.error ? `<div class="result-error">${this.escapeHtml(result.error)}</div>` : ''}
-          ${result.screenshot ? `<div style="margin-top: 0.5rem;"><a href="${result.screenshot}" target="_blank">📸 View Screenshot</a></div>` : ''}
+          ${result.error ? `<div class="result-error">${this.escapeHtml(result.error)}</div>` : ""}
+          ${result.screenshot ? `<div style="margin-top: 0.5rem;"><a href="${result.screenshot}" target="_blank">📸 View Screenshot</a></div>` : ""}
         </div>
-      `).join('')}
+      `,
+        )
+        .join("")}
     </div>
 
     <div class="footer">
@@ -471,56 +510,66 @@ export class ReportGenerator {
    * Generate console report (output to terminal)
    */
   private generateConsoleReport(report: TestRunReport): GeneratedReport {
-    console.log('\n' + '='.repeat(80));
-    console.log('🌾 FARMERS MARKET PLATFORM - TEST REPORT');
-    console.log('='.repeat(80) + '\n');
+    console.log("\n" + "=".repeat(80));
+    console.log("🌾 FARMERS MARKET PLATFORM - TEST REPORT");
+    console.log("=".repeat(80) + "\n");
 
     // Summary
-    console.log('📊 SUMMARY:');
+    console.log("📊 SUMMARY:");
     console.log(`  Total:        ${report.summary.total}`);
     console.log(`  ✅ Passed:    ${report.summary.passed}`);
     console.log(`  ❌ Failed:    ${report.summary.failed}`);
     console.log(`  ⏭️  Skipped:   ${report.summary.skipped}`);
     console.log(`  Success Rate: ${report.summary.successRate.toFixed(2)}%`);
-    console.log(`  Avg Duration: ${this.formatDuration(report.summary.avgDuration)}`);
+    console.log(
+      `  Avg Duration: ${this.formatDuration(report.summary.avgDuration)}`,
+    );
     console.log(`  Duration:     ${this.formatDuration(report.duration)}\n`);
 
     // Status
-    const statusEmoji = report.summary.successRate === 100 ? '✅' :
-      report.summary.successRate >= 80 ? '⚠️' : '❌';
-    console.log(`${statusEmoji} Overall Status: ${this.getStatusText(report.summary.successRate)}\n`);
+    const statusEmoji =
+      report.summary.successRate === 100
+        ? "✅"
+        : report.summary.successRate >= 80
+          ? "⚠️"
+          : "❌";
+    console.log(
+      `${statusEmoji} Overall Status: ${this.getStatusText(report.summary.successRate)}\n`,
+    );
 
     // Failed tests (if any)
-    const failed = report.results.filter(r => r.status === 'failed');
+    const failed = report.results.filter((r) => r.status === "failed");
     if (failed.length > 0) {
-      console.log('❌ FAILED TESTS:');
+      console.log("❌ FAILED TESTS:");
       failed.forEach((result, index) => {
         console.log(`\n  ${index + 1}. ${result.moduleName}`);
         console.log(`     Module: ${result.moduleId}`);
         console.log(`     Duration: ${this.formatDuration(result.duration)}`);
-        console.log(`     Error: ${result.error || 'Unknown error'}`);
+        console.log(`     Error: ${result.error || "Unknown error"}`);
         if (result.screenshot) {
           console.log(`     Screenshot: ${result.screenshot}`);
         }
       });
-      console.log('');
+      console.log("");
     }
 
     // Passed tests summary
-    const passed = report.results.filter(r => r.status === 'success');
+    const passed = report.results.filter((r) => r.status === "success");
     if (passed.length > 0) {
       console.log(`✅ PASSED TESTS: ${passed.length}`);
       passed.forEach((result, index) => {
-        console.log(`  ${index + 1}. ${result.moduleName} (${this.formatDuration(result.duration)})`);
+        console.log(
+          `  ${index + 1}. ${result.moduleName} (${this.formatDuration(result.duration)})`,
+        );
       });
-      console.log('');
+      console.log("");
     }
 
-    console.log('='.repeat(80) + '\n');
+    console.log("=".repeat(80) + "\n");
 
     return {
-      format: 'console',
-      success: true
+      format: "console",
+      success: true,
     };
   }
 
@@ -531,7 +580,7 @@ export class ReportGenerator {
     this.history.push({
       timestamp: report.endTime,
       summary: report.summary,
-      results: report.results
+      results: report.results,
     });
 
     // Keep last 30 runs
@@ -555,32 +604,39 @@ export class ReportGenerator {
     const recent = this.getRecentHistory(10);
 
     if (recent.length < 2) {
-      return 'Not enough historical data for trend analysis.\n';
+      return "Not enough historical data for trend analysis.\n";
     }
 
-    lines.push('| Run | Date | Passed | Failed | Success Rate |');
-    lines.push('|-----|------|--------|--------|--------------|');
+    lines.push("| Run | Date | Passed | Failed | Success Rate |");
+    lines.push("|-----|------|--------|--------|--------------|");
 
     recent.forEach((data, index) => {
       const date = new Date(data.timestamp).toLocaleString();
       lines.push(
-        `| ${index + 1} | ${date} | ${data.summary.passed} | ${data.summary.failed} | ${data.summary.successRate.toFixed(1)}% |`
+        `| ${index + 1} | ${date} | ${data.summary.passed} | ${data.summary.failed} | ${data.summary.successRate.toFixed(1)}% |`,
       );
     });
 
-    lines.push('');
+    lines.push("");
 
     // Calculate trends
     const current = recent[recent.length - 1];
     const previous = recent[recent.length - 2];
 
-    const successRateDiff = current.summary.successRate - previous.summary.successRate;
-    const trend = successRateDiff > 0 ? '📈 Improving' :
-      successRateDiff < 0 ? '📉 Declining' : '➡️ Stable';
+    const successRateDiff =
+      current.summary.successRate - previous.summary.successRate;
+    const trend =
+      successRateDiff > 0
+        ? "📈 Improving"
+        : successRateDiff < 0
+          ? "📉 Declining"
+          : "➡️ Stable";
 
-    lines.push(`**Trend:** ${trend} (${successRateDiff > 0 ? '+' : ''}${successRateDiff.toFixed(2)}%)\n`);
+    lines.push(
+      `**Trend:** ${trend} (${successRateDiff > 0 ? "+" : ""}${successRateDiff.toFixed(2)}%)\n`,
+    );
 
-    return lines.join('\n');
+    return lines.join("\n");
   }
 
   /**
@@ -590,7 +646,10 @@ export class ReportGenerator {
     try {
       await mkdir(this.options.outputDir, { recursive: true });
     } catch (error) {
-      logger.error('[ReportGenerator] Failed to create output directory:', error);
+      logger.error(
+        "[ReportGenerator] Failed to create output directory:",
+        error,
+      );
       throw error;
     }
   }
@@ -614,12 +673,12 @@ export class ReportGenerator {
    * Get status text based on success rate
    */
   private getStatusText(successRate: number): string {
-    if (successRate === 100) return 'Perfect! All tests passed';
-    if (successRate >= 90) return 'Excellent';
-    if (successRate >= 80) return 'Good';
-    if (successRate >= 70) return 'Fair';
-    if (successRate >= 50) return 'Needs Attention';
-    return 'Critical - Many Failures';
+    if (successRate === 100) return "Perfect! All tests passed";
+    if (successRate >= 90) return "Excellent";
+    if (successRate >= 80) return "Good";
+    if (successRate >= 70) return "Fair";
+    if (successRate >= 50) return "Needs Attention";
+    return "Critical - Many Failures";
   }
 
   /**
@@ -627,13 +686,13 @@ export class ReportGenerator {
    */
   private escapeHtml(text: string): string {
     const map: Record<string, string> = {
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      '"': '&quot;',
-      "'": '&#039;'
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;",
     };
-    return text.replace(/[&<>"']/g, m => map[m]);
+    return text.replace(/[&<>"']/g, (m) => map[m]);
   }
 
   /**
@@ -641,7 +700,7 @@ export class ReportGenerator {
    */
   clearHistory(): void {
     this.history = [];
-    logger.info('[ReportGenerator] History cleared');
+    logger.info("[ReportGenerator] History cleared");
   }
 
   /**
@@ -664,11 +723,11 @@ export function createReportGenerator(options: ReportOptions): ReportGenerator {
  */
 export async function generateQuickReport(
   report: TestRunReport,
-  outputDir: string
+  outputDir: string,
 ): Promise<GeneratedReport[]> {
   const generator = createReportGenerator({
     outputDir,
-    formats: ['json', 'markdown', 'console']
+    formats: ["json", "markdown", "console"],
   });
 
   return await generator.generateReports(report);

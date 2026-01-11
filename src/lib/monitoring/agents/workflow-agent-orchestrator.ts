@@ -10,7 +10,7 @@
 // @ts-ignore - OpenAI module may not be available in all environments
 import OpenAI from "openai";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 import type {
   WorkflowResult,
@@ -73,7 +73,8 @@ export class WorkflowAgentOrchestrator {
         this.openai = new OpenAI({ apiKey });
         this.initializeAgents();
         logger.info(
-          `✅ Multi-Agent Orchestrator initialized with ${this.agents.size} agents`);
+          `✅ Multi-Agent Orchestrator initialized with ${this.agents.size} agents`,
+        );
       }
     }
   }
@@ -301,8 +302,8 @@ Prioritize system stability and data integrity.`,
       };
     } catch (error) {
       logger.error("❌ Multi-agent analysis error:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
       return this.generateFallbackAnalysis(workflowResult);
     }
   }
@@ -349,8 +350,8 @@ Provide specific, implementable optimizations in JSON format:
       return parsed.optimizations || [];
     } catch (error) {
       logger.error("❌ Performance optimization error:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
       return [];
     }
   }
@@ -400,8 +401,8 @@ Provide security assessment in JSON:
       return JSON.parse(response.content);
     } catch (error) {
       logger.error("❌ Security audit error:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
       return {
         securityScore: 50,
         vulnerabilities: [],
@@ -458,8 +459,8 @@ Provide validation in JSON:
       return JSON.parse(response.content);
     } catch (error) {
       logger.error("❌ Agricultural validation error:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
       return {
         valid: true,
         seasonalAlignment: 100,
@@ -587,8 +588,8 @@ Provide validation in JSON:
       };
     } catch (error) {
       logger.error(`❌ Agent ${agent.name} query error:`, {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
       throw error;
     }
   }
@@ -638,8 +639,8 @@ Format as concise, actionable recommendation.`;
       };
     } catch (error) {
       logger.error("❌ Consensus generation error:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
       return {
         finalRecommendation: analyses[0]?.analysis || "No analysis available",
         votes: {},
@@ -685,7 +686,8 @@ Provide your expert analysis with specific, actionable recommendations.`;
   ): string[] {
     // Simple conflict detection based on low consensus
     const avgConfidence =
-      analyses.reduce((sum: any, a: any) => sum + a.confidence, 0) / analyses.length;
+      analyses.reduce((sum: any, a: any) => sum + a.confidence, 0) /
+      analyses.length;
 
     if (avgConfidence < this.consensusThreshold * 100) {
       return [
@@ -724,10 +726,13 @@ Provide your expert analysis with specific, actionable recommendations.`;
       count: results.length,
       averages: {
         duration:
-          results.reduce((sum: any, r: any) => sum + r.duration, 0) / results.length,
-        pageLoadTime:
-          results.reduce((sum: any, r: any) => sum + (r.metrics.pageLoadTime || 0), 0) /
+          results.reduce((sum: any, r: any) => sum + r.duration, 0) /
           results.length,
+        pageLoadTime:
+          results.reduce(
+            (sum: any, r: any) => sum + (r.metrics.pageLoadTime || 0),
+            0,
+          ) / results.length,
         apiResponseTime:
           results.reduce(
             (sum, r) => sum + (r.metrics.apiResponseTime || 0),

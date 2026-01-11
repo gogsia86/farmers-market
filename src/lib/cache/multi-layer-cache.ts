@@ -3,7 +3,7 @@
  * Hierarchical caching system: Memory → Redis → Database
  */
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 import { redisClient } from "./redis-client";
 import type { CacheEntry, CacheOptions, IMultiLayerCache } from "./types";
 
@@ -209,8 +209,8 @@ class MultiLayerCache implements IMultiLayerCache {
       ttl,
       metadata: options?.seasonalAware
         ? {
-          season: options.agriculturalContext,
-        }
+            season: options.agriculturalContext,
+          }
         : undefined,
     };
 

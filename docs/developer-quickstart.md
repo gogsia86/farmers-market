@@ -11,6 +11,7 @@ Last Updated: November 15, 2025
 ### Prerequisites
 
 Ensure you have these installed:
+
 - **Node.js**: v18.17.0 or higher (v22.x recommended)
 - **npm**: v10.x or higher
 - **PostgreSQL**: v14 or higher
@@ -396,10 +397,7 @@ export async function GET() {
   const session = await auth();
 
   if (!session?.user) {
-    return NextResponse.json(
-      { error: "Unauthorized" },
-      { status: 401 }
-    );
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   return NextResponse.json({ user: session.user });
@@ -567,6 +565,7 @@ DATABASE_URL="postgresql://...?connection_limit=5&pool_timeout=0&connect_timeout
 ### Common Issues & Solutions
 
 #### Issue: "Module not found"
+
 ```bash
 # Clear Next.js cache
 rm -rf .next
@@ -574,11 +573,13 @@ npm run dev
 ```
 
 #### Issue: Prisma client out of sync
+
 ```bash
 npx prisma generate
 ```
 
 #### Issue: Database connection errors
+
 ```bash
 # Check DATABASE_URL in .env
 # Ensure PostgreSQL is running
@@ -587,6 +588,7 @@ npx prisma db pull
 ```
 
 #### Issue: Type errors after schema change
+
 ```bash
 npx prisma generate
 npm run type-check
@@ -597,6 +599,7 @@ npm run type-check
 ## 📚 Key Documentation Files
 
 Must-read documents:
+
 1. **[dependencies.md](./dependencies.md)** - All project dependencies explained
 2. **[feature-directory-migration-plan.md](./feature-directory-migration-plan.md)** - Architecture patterns
 3. **[.cursorrules](../.cursorrules)** - Divine coding standards
@@ -613,13 +616,13 @@ Must-read documents:
 export function FarmCard() {}
 
 // Files - PascalCase for components
-FarmCard.tsx
+FarmCard.tsx;
 
 // Hooks - camelCase with 'use' prefix
 export function useFarm() {}
 
 // Server Actions - camelCase with '.action' suffix
-createFarm.action.ts
+createFarm.action.ts;
 
 // Types - PascalCase
 export interface Farm {}

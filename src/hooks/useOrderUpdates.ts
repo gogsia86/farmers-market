@@ -3,13 +3,13 @@
 // 🌾 Domain: Real-time Order Tracking
 // ⚡ Performance: Optimized WebSocket connection with agricultural consciousness
 
-'use client';
+"use client";
 
-import type { OrderUpdatePayload } from '@/lib/realtime/socket-server';
-import { useEffect, useRef, useState } from 'react';
-import { io, Socket } from 'socket.io-client';
+import type { OrderUpdatePayload } from "@/lib/realtime/socket-server";
+import { useEffect, useRef, useState } from "react";
+import { io, Socket } from "socket.io-client";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 interface UseOrderUpdatesOptions {
   orderId: string;
@@ -63,11 +63,12 @@ export function useOrderUpdates({
   useEffect(() => {
     if (!enabled || !orderId) return;
 
-    const socketUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    const socketUrl =
+      process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
     // Create socket connection
     const socket = io(socketUrl, {
-      transports: ['websocket', 'polling'],
+      transports: ["websocket", "polling"],
       reconnection: true,
       reconnectionAttempts: 5,
       reconnectionDelay: 1000,
@@ -78,28 +79,28 @@ export function useOrderUpdates({
     socketRef.current = socket;
 
     // Connection established
-    socket.on('connect', () => {
-      logger.info('🌾 Socket connected:', { data: socket.id });
+    socket.on("connect", () => {
+      logger.info("🌾 Socket connected:", { data: socket.id });
       setIsConnected(true);
       setError(null);
 
       // Join order room
-      socket.emit('join-order-room', orderId);
+      socket.emit("join-order-room", orderId);
 
       // Join user room if userId provided
       if (userId) {
-        socket.emit('join-user-room', userId);
+        socket.emit("join-user-room", userId);
       }
     });
 
     // Room joined confirmation
-    socket.on('room-joined', (data: { room: string; orderId?: string }) => {
-      logger.info('📦 Joined room:', { data: data.room });
+    socket.on("room-joined", (data: { room: string; orderId?: string }) => {
+      logger.info("📦 Joined room:", { data: data.room });
     });
 
     // Order update received
-    socket.on('order-update', (update: OrderUpdatePayload) => {
-      logger.info('📦 Order update received:', { data: update });
+    socket.on("order-update", (update: OrderUpdatePayload) => {
+      logger.info("📦 Order update received:", { data: update });
 
       setUpdates((prev) => [...prev, update]);
       setLastUpdate(update);
@@ -109,16 +110,16 @@ export function useOrderUpdates({
         try {
           onUpdate(update);
         } catch (err) {
-          logger.error('Error in onUpdate callback:', {
-        error: err instanceof Error ? err.message : String(err)
-      });
+          logger.error("Error in onUpdate callback:", {
+            error: err instanceof Error ? err.message : String(err),
+          });
         }
       }
     });
 
     // Order status change
-    socket.on('order-status-change', (data: OrderUpdatePayload) => {
-      logger.info('📦 Order status changed:', { data: data });
+    socket.on("order-status-change", (data: OrderUpdatePayload) => {
+      logger.info("📦 Order status changed:", { data: data });
 
       const update: OrderUpdatePayload = {
         ...data,
@@ -132,22 +133,22 @@ export function useOrderUpdates({
         try {
           onUpdate(update);
         } catch (err) {
-          logger.error('Error in onUpdate callback:', {
-        error: err instanceof Error ? err.message : String(err)
-      });
+          logger.error("Error in onUpdate callback:", {
+            error: err instanceof Error ? err.message : String(err),
+          });
         }
       }
     });
 
     // Notification received
-    socket.on('notification', (notification: any) => {
-      logger.info('🔔 Notification received:', { data: notification });
+    socket.on("notification", (notification: any) => {
+      logger.info("🔔 Notification received:", { data: notification });
 
       // Convert notification to order update format
-      if (notification.type?.includes('order')) {
+      if (notification.type?.includes("order")) {
         const update: OrderUpdatePayload = {
           orderId: notification.metadata?.orderId || orderId,
-          status: notification.metadata?.status || 'UNKNOWN',
+          status: notification.metadata?.status || "UNKNOWN",
           timestamp: notification.timestamp,
           message: notification.message,
           metadata: notification.metadata,
@@ -159,12 +160,12 @@ export function useOrderUpdates({
     });
 
     // Disconnection
-    socket.on('disconnect', (reason: string) => {
-      logger.info('🌾 Socket disconnected:', { data: reason });
+    socket.on("disconnect", (reason: string) => {
+      logger.info("🌾 Socket disconnected:", { data: reason });
       setIsConnected(false);
 
       // Attempt to reconnect if disconnected unexpectedly
-      if (reason === 'io server disconnect') {
+      if (reason === "io server disconnect") {
         // Server disconnected, manually reconnect
         reconnectTimeoutRef.current = setTimeout(() => {
           socket.connect();
@@ -173,9 +174,9 @@ export function useOrderUpdates({
     });
 
     // Connection error
-    socket.on('connect_error', (err: Error) => {
-      logger.error('⚠️ Socket connection error:', {
-        error: err instanceof Error ? err.message : String(err)
+    socket.on("connect_error", (err: Error) => {
+      logger.error("⚠️ Socket connection error:", {
+        error: err instanceof Error ? err.message : String(err),
       });
       setError(err);
       setIsConnected(false);
@@ -184,17 +185,20 @@ export function useOrderUpdates({
         try {
           onError(err);
         } catch (callbackErr) {
-          logger.error('Error in onError callback:', {
-        error: callbackErr instanceof Error ? callbackErr.message : String(callbackErr)
-      });
+          logger.error("Error in onError callback:", {
+            error:
+              callbackErr instanceof Error
+                ? callbackErr.message
+                : String(callbackErr),
+          });
         }
       }
     });
 
     // Generic error
-    socket.on('error', (err: Error) => {
-      logger.error('⚠️ Socket error:', {
-        error: err instanceof Error ? err.message : String(err)
+    socket.on("error", (err: Error) => {
+      logger.error("⚠️ Socket error:", {
+        error: err instanceof Error ? err.message : String(err),
       });
       setError(err);
 
@@ -202,25 +206,28 @@ export function useOrderUpdates({
         try {
           onError(err);
         } catch (callbackErr) {
-          logger.error('Error in onError callback:', {
-        error: callbackErr instanceof Error ? callbackErr.message : String(callbackErr)
-      });
+          logger.error("Error in onError callback:", {
+            error:
+              callbackErr instanceof Error
+                ? callbackErr.message
+                : String(callbackErr),
+          });
         }
       }
     });
 
     // Cleanup on unmount
     return () => {
-      logger.info('🌾 Cleaning up socket connection');
+      logger.info("🌾 Cleaning up socket connection");
 
       if (reconnectTimeoutRef.current) {
         clearTimeout(reconnectTimeoutRef.current);
       }
 
       if (socket) {
-        socket.emit('leave-room', `order:${orderId}`);
+        socket.emit("leave-room", `order:${orderId}`);
         if (userId) {
-          socket.emit('leave-room', `user:${userId}`);
+          socket.emit("leave-room", `user:${userId}`);
         }
         socket.disconnect();
       }
@@ -230,7 +237,7 @@ export function useOrderUpdates({
   // Manual reconnect function
   const reconnect = () => {
     if (socketRef.current) {
-      logger.info('🌾 Manually reconnecting socket...');
+      logger.info("🌾 Manually reconnecting socket...");
       socketRef.current.connect();
     }
   };
@@ -257,32 +264,33 @@ export function useNotifications(userId: string | undefined) {
   useEffect(() => {
     if (!userId) return;
 
-    const socketUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    const socketUrl =
+      process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
     const socket = io(socketUrl, {
-      transports: ['websocket', 'polling'],
+      transports: ["websocket", "polling"],
       reconnection: true,
     });
 
     socketRef.current = socket;
 
-    socket.on('connect', () => {
+    socket.on("connect", () => {
       setIsConnected(true);
-      socket.emit('join-user-room', userId);
+      socket.emit("join-user-room", userId);
     });
 
-    socket.on('notification', (notification: any) => {
-      logger.info('🔔 Notification received:', { data: notification });
+    socket.on("notification", (notification: any) => {
+      logger.info("🔔 Notification received:", { data: notification });
       setNotifications((prev) => [notification, ...prev]);
       setUnreadCount((prev) => prev + 1);
     });
 
-    socket.on('disconnect', () => {
+    socket.on("disconnect", () => {
       setIsConnected(false);
     });
 
     return () => {
       if (socket) {
-        socket.emit('leave-room', `user:${userId}`);
+        socket.emit("leave-room", `user:${userId}`);
         socket.disconnect();
       }
     };
@@ -291,8 +299,8 @@ export function useNotifications(userId: string | undefined) {
   const markAsRead = (notificationId: string) => {
     setNotifications((prev) =>
       prev.map((n: any) =>
-        n.id === notificationId ? { ...n, read: true } : n
-      )
+        n.id === notificationId ? { ...n, read: true } : n,
+      ),
     );
     setUnreadCount((prev) => Math.max(0, prev - 1));
   };
@@ -321,32 +329,33 @@ export function useFarmUpdates(farmId: string | undefined) {
   useEffect(() => {
     if (!farmId) return;
 
-    const socketUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    const socketUrl =
+      process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
     const socket = io(socketUrl, {
-      transports: ['websocket', 'polling'],
+      transports: ["websocket", "polling"],
     });
 
-    socket.on('connect', () => {
+    socket.on("connect", () => {
       setIsConnected(true);
-      socket.emit('join-farm-room', farmId);
+      socket.emit("join-farm-room", farmId);
     });
 
-    socket.on('farm-update', (update: any) => {
-      logger.info('🌾 Farm update received:', { data: update });
+    socket.on("farm-update", (update: any) => {
+      logger.info("🌾 Farm update received:", { data: update });
       setUpdates((prev) => [update, ...prev]);
     });
 
-    socket.on('product-update', (update: any) => {
-      logger.info('🌾 Product update received:', { data: update });
+    socket.on("product-update", (update: any) => {
+      logger.info("🌾 Product update received:", { data: update });
       setUpdates((prev) => [update, ...prev]);
     });
 
-    socket.on('disconnect', () => {
+    socket.on("disconnect", () => {
       setIsConnected(false);
     });
 
     return () => {
-      socket.emit('leave-room', `farm:${farmId}`);
+      socket.emit("leave-room", `farm:${farmId}`);
       socket.disconnect();
     };
   }, [farmId]);

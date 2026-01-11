@@ -30,39 +30,44 @@ This document outlines the **godlike optimizations** implemented to improve:
 
 ### Key Improvements
 
-| Area | Before | After | Improvement |
-|------|--------|-------|-------------|
-| Build Time | ~120s | ~80s | **33% faster** |
-| Type Checking | Permissive | Strict | **100% coverage** |
-| Prisma Generation | 2x per build | 1x per build | **50% reduction** |
-| Error Detection | Runtime | Compile-time | **Early detection** |
-| Cache Utilization | Basic | Advanced | **Better reuse** |
+| Area              | Before       | After        | Improvement         |
+| ----------------- | ------------ | ------------ | ------------------- |
+| Build Time        | ~120s        | ~80s         | **33% faster**      |
+| Type Checking     | Permissive   | Strict       | **100% coverage**   |
+| Prisma Generation | 2x per build | 1x per build | **50% reduction**   |
+| Error Detection   | Runtime      | Compile-time | **Early detection** |
+| Cache Utilization | Basic        | Advanced     | **Better reuse**    |
 
 ---
 
 ## ⚡ Quick Start
 
 ### Run Type Check
+
 ```bash
 npm run type-check
 ```
 
 ### Validate Prisma Usage
+
 ```bash
 npm run validate:prisma
 ```
 
 ### Auto-Fix Prisma Errors
+
 ```bash
 npm run validate:prisma:fix
 ```
 
 ### Build for Production (with checks)
+
 ```bash
 npm run build:prod
 ```
 
 ### Watch Type Errors in Development
+
 ```bash
 npm run type-check:watch
 ```
@@ -76,6 +81,7 @@ npm run type-check:watch
 **Problem**: Prisma was generating client code twice during each build (in `postinstall` and `build`).
 
 **Solution**:
+
 ```json
 {
   "scripts": {
@@ -85,7 +91,8 @@ npm run type-check:watch
 }
 ```
 
-**Impact**: 
+**Impact**:
+
 - ✅ Saves ~2-3 seconds per build
 - ✅ Reduces unnecessary file I/O
 - ✅ Smaller bundle size with `--no-engine`
@@ -95,6 +102,7 @@ npm run type-check:watch
 **Problem**: Type checking runs on every build, including Vercel deployments where it's redundant.
 
 **Solution**:
+
 ```json
 {
   "scripts": {
@@ -104,6 +112,7 @@ npm run type-check:watch
 ```
 
 **Impact**:
+
 - ✅ Saves ~34 seconds on Vercel builds
 - ✅ Type checks still run locally during development
 - ✅ Catches errors before pushing to production
@@ -111,6 +120,7 @@ npm run type-check:watch
 ### Optimization 3: Turbopack Configuration
 
 **Added to `next.config.mjs`**:
+
 ```javascript
 experimental: {
   turbo: {
@@ -124,6 +134,7 @@ experimental: {
 ```
 
 **Impact**:
+
 - ✅ Faster module resolution
 - ✅ Deterministic builds (better caching)
 - ✅ Reduced console noise
@@ -131,6 +142,7 @@ experimental: {
 ### Optimization 4: Optimized Package Imports
 
 **Added to `next.config.mjs`**:
+
 ```javascript
 experimental: {
   optimizePackageImports: [
@@ -148,6 +160,7 @@ experimental: {
 ```
 
 **Impact**:
+
 - ✅ Smaller bundle sizes
 - ✅ Faster initial page loads
 - ✅ Better tree-shaking
@@ -155,6 +168,7 @@ experimental: {
 ### Optimization 5: Server Components Optimization
 
 **Added to `next.config.mjs`**:
+
 ```javascript
 experimental: {
   serverComponentsExternalPackages: [
@@ -167,6 +181,7 @@ experimental: {
 ```
 
 **Impact**:
+
 - ✅ Reduces client bundle size
 - ✅ Faster server-side rendering
 - ✅ Better separation of concerns
@@ -178,6 +193,7 @@ experimental: {
 ### Enhancement 1: Stricter TypeScript Configuration
 
 **Updated `tsconfig.json`**:
+
 ```json
 {
   "compilerOptions": {
@@ -191,6 +207,7 @@ experimental: {
 ```
 
 **Benefits**:
+
 - ✅ Catches unused variables at compile time
 - ✅ Prevents typos in property access
 - ✅ Ensures clean code
@@ -201,20 +218,21 @@ experimental: {
 **New file: `src/lib/database-safe.ts`**
 
 ```typescript
-import { safeDatabase } from '@/lib/database-safe';
+import { safeDatabase } from "@/lib/database-safe";
 
 // ❌ OLD WAY (Runtime error possible)
 const orders = await database.order.findMany({
-  include: { user: true } // Error: relation 't exist!
+  include: { user: true }, // Error: relation 't exist!
 });
 
 // ✅ NEW WAY (Compile-time error)
 const orders = await safeDatabase.order.findMany({
-  include: { customer: true } // Autocomplete works!
+  include: { customer: true }, // Autocomplete works!
 });
 ```
 
 **Benefits**:
+
 - ✅ Full TypeScript autocomplete for all relations
 - ✅ Compile-time validation of Prisma queries
 - ✅ Prevents wrong relation name errors
@@ -223,11 +241,11 @@ const orders = await safeDatabase.order.findMany({
 ### Enhancement 3: Pre-Built Query Helpers
 
 ```typescript
-import { orderQueries } from '@/lib/database-safe';
+import { orderQueries } from "@/lib/database-safe";
 
 // Get orders with all common relations included
 const orders = await orderQueries.findManyWithDetails({
-  where: { status: 'PENDING' },
+  where: { status: "PENDING" },
   take: 10,
 });
 
@@ -236,6 +254,7 @@ const customerOrders = await orderQueries.findByCustomer(customerId);
 ```
 
 **Benefits**:
+
 - ✅ Consistent data fetching patterns
 - ✅ Reduces code duplication
 - ✅ Type-safe and optimized queries
@@ -250,12 +269,14 @@ const customerOrders = await orderQueries.findByCustomer(customerId);
 **New file: `scripts/validation/validate-prisma-usage.ts`**
 
 This script scans your entire codebase and validates:
+
 - ✅ All Prisma model references are correct
 - ✅ All relation names match the schema
 - ✅ No typos in field names
 - ✅ Suggests fixes for common mistakes
 
 **Usage**:
+
 ```bash
 # Check for errors
 npm run validate:prisma
@@ -265,6 +286,7 @@ npm run validate:prisma:fix
 ```
 
 **Example Output**:
+
 ```
 🔍 PRISMA SCHEMA USAGE VALIDATOR
 
@@ -293,6 +315,7 @@ npm run validate:prisma:fix
 ```
 
 **Benefits**:
+
 - ✅ Smaller bundle size (~5MB reduction)
 - ✅ Faster deploys to Vercel
 - ✅ Uses pre-compiled binary in production
@@ -308,6 +331,7 @@ npm run validate:prisma:fix
 ```
 
 **Benefits**:
+
 - ✅ Faster npm installs
 - ✅ No accidental database seeding in production
 - ✅ Explicit seeding with dedicated command
@@ -410,6 +434,7 @@ The project uses Husky for git hooks. On every commit:
 3. ✅ Validates TypeScript (if configured)
 
 **Configure in `.husky/pre-commit`**:
+
 ```bash
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
@@ -426,6 +451,7 @@ npm run validate:prisma
 ### Issue: "Module not found" errors
 
 **Solution**: Clear Next.js cache
+
 ```bash
 rm -rf .next
 npm run dev
@@ -434,6 +460,7 @@ npm run dev
 ### Issue: Prisma relation errors
 
 **Solution**: Run validator and auto-fix
+
 ```bash
 npm run validate:prisma:fix
 ```
@@ -441,6 +468,7 @@ npm run validate:prisma:fix
 ### Issue: Type errors after pulling changes
 
 **Solution**: Regenerate Prisma client
+
 ```bash
 npm run db:setup
 npm run type-check
@@ -449,6 +477,7 @@ npm run type-check
 ### Issue: Slow builds on Vercel
 
 **Checklist**:
+
 - ✅ Verify `NEXT_TELEMETRY_DISABLED=1` is set
 - ✅ Check `--no-engine` flag is in build command
 - ✅ Ensure dependencies are properly cached
@@ -459,6 +488,7 @@ npm run type-check
 **Cause**: Using wrong relation name (e.g., `user` instead of `customer`)
 
 **Solution**:
+
 1. Check the schema: `prisma/schema.prisma`
 2. Use the safe database wrapper: `import { safeDatabase } from '@/lib/database-safe'`
 3. Let TypeScript autocomplete guide you
@@ -469,32 +499,32 @@ npm run type-check
 
 ### Build Time Comparison
 
-| Stage | Before | After | Improvement |
-|-------|--------|-------|-------------|
-| npm install | 60s | 58s | -2s (3%) |
-| Prisma generate | 4s (2x) | 2s (1x) | -2s (50%) |
-| TypeScript check | 34s | 0s (Vercel only) | -34s (100%) |
-| Next.js build | 46s | 42s | -4s (9%) |
-| **Total** | **~144s** | **~102s** | **-42s (29%)** |
+| Stage            | Before    | After            | Improvement    |
+| ---------------- | --------- | ---------------- | -------------- |
+| npm install      | 60s       | 58s              | -2s (3%)       |
+| Prisma generate  | 4s (2x)   | 2s (1x)          | -2s (50%)      |
+| TypeScript check | 34s       | 0s (Vercel only) | -34s (100%)    |
+| Next.js build    | 46s       | 42s              | -4s (9%)       |
+| **Total**        | **~144s** | **~102s**        | **-42s (29%)** |
 
 ### Bundle Size Improvements
 
-| Metric | Before | After | Improvement |
-|--------|--------|-------|-------------|
-| First Load JS | 285 kB | 245 kB | -40 kB (14%) |
-| Prisma Client | 8.2 MB | 3.1 MB | -5.1 MB (62%) |
-| Total Bundle | 12.5 MB | 9.8 MB | -2.7 MB (22%) |
+| Metric        | Before  | After  | Improvement   |
+| ------------- | ------- | ------ | ------------- |
+| First Load JS | 285 kB  | 245 kB | -40 kB (14%)  |
+| Prisma Client | 8.2 MB  | 3.1 MB | -5.1 MB (62%) |
+| Total Bundle  | 12.5 MB | 9.8 MB | -2.7 MB (22%) |
 
 ### Type Safety Coverage
 
-| Category | Before | After |
-|----------|--------|-------|
-| Strict Mode | ✅ | ✅ |
-| Unused Variables | ❌ | ✅ |
-| Unused Parameters | ❌ | ✅ |
-| Index Signatures | ❌ | ✅ |
-| Prisma Validation | ❌ | ✅ |
-| **Coverage** | **60%** | **95%** |
+| Category          | Before  | After   |
+| ----------------- | ------- | ------- |
+| Strict Mode       | ✅      | ✅      |
+| Unused Variables  | ❌      | ✅      |
+| Unused Parameters | ❌      | ✅      |
+| Index Signatures  | ❌      | ✅      |
+| Prisma Validation | ❌      | ✅      |
+| **Coverage**      | **60%** | **95%** |
 
 ---
 
@@ -504,10 +534,10 @@ npm run type-check
 
 ```typescript
 // ❌ DON'T
-import { database } from '@/lib/database';
+import { database } from "@/lib/database";
 
 // ✅ DO
-import { safeDatabase } from '@/lib/database-safe';
+import { safeDatabase } from "@/lib/database-safe";
 ```
 
 ### 2. Use Pre-Built Query Helpers
@@ -523,7 +553,7 @@ const orders = await database.order.findMany({
 });
 
 // ✅ DO (concise and consistent)
-import { orderQueries } from '@/lib/database-safe';
+import { orderQueries } from "@/lib/database-safe";
 const orders = await orderQueries.findManyWithDetails();
 ```
 
@@ -547,6 +577,7 @@ npm run type-check:watch
 ### 5. Leverage TypeScript Autocomplete
 
 When writing Prisma queries, let TypeScript guide you:
+
 - Start typing `include: {` and wait for autocomplete
 - Use Ctrl+Space to trigger suggestions
 - Hover over relation names to see their types
@@ -646,6 +677,7 @@ npm run build && npm start
 ### VSCode Settings
 
 Add to `.vscode/settings.json`:
+
 ```json
 {
   "typescript.tsdk": "node_modules/typescript/lib",
@@ -660,6 +692,7 @@ Add to `.vscode/settings.json`:
 ### Git Hooks
 
 Customize `.husky/pre-commit`:
+
 ```bash
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"

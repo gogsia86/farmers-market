@@ -12,22 +12,22 @@
  *   tsx scripts/monitor-deployment-trends.ts --alert
  */
 
-import { readFileSync, readdirSync, existsSync, writeFileSync } from 'fs';
-import { join } from 'path';
+import { readFileSync, readdirSync, existsSync, writeFileSync } from "fs";
+import { join } from "path";
 
 // ============================================================================
 // CONFIGURATION
 // ============================================================================
 
 const COLORS = {
-  reset: '\x1b[0m',
-  bright: '\x1b[1m',
-  red: '\x1b[31m',
-  green: '\x1b[32m',
-  yellow: '\x1b[33m',
-  blue: '\x1b[34m',
-  cyan: '\x1b[36m',
-  magenta: '\x1b[35m',
+  reset: "\x1b[0m",
+  bright: "\x1b[1m",
+  red: "\x1b[31m",
+  green: "\x1b[32m",
+  yellow: "\x1b[33m",
+  blue: "\x1b[34m",
+  cyan: "\x1b[36m",
+  magenta: "\x1b[35m",
 };
 
 interface TestReport {
@@ -57,19 +57,19 @@ interface TrendAnalysis {
       current: number;
       previous: number;
       change: number;
-      trend: 'improving' | 'stable' | 'degrading';
+      trend: "improving" | "stable" | "degrading";
     };
     successRate: {
       current: number;
       previous: number;
       change: number;
-      trend: 'improving' | 'stable' | 'degrading';
+      trend: "improving" | "stable" | "degrading";
     };
     reliability: {
       current: number;
       previous: number;
       change: number;
-      trend: 'improving' | 'stable' | 'degrading';
+      trend: "improving" | "stable" | "degrading";
     };
   };
   alerts: string[];
@@ -82,14 +82,14 @@ interface TrendAnalysis {
 // UTILITIES
 // ============================================================================
 
-function log(message: string, color: keyof typeof COLORS = 'reset') {
+function log(message: string, color: keyof typeof COLORS = "reset") {
   console.log(`${COLORS[color]}${message}${COLORS.reset}`);
 }
 
 function logSection(title: string) {
-  console.log('\n' + '═'.repeat(60));
-  log(`  ${title}`, 'cyan');
-  console.log('═'.repeat(60) + '\n');
+  console.log("\n" + "═".repeat(60));
+  log(`  ${title}`, "cyan");
+  console.log("═".repeat(60) + "\n");
 }
 
 function formatPercent(value: number): string {
@@ -100,12 +100,18 @@ function formatMs(ms: number): string {
   return `${Math.round(ms)}ms`;
 }
 
-function getTrendIcon(trend: 'improving' | 'stable' | 'degrading'): string {
-  return trend === 'improving' ? '📈' : trend === 'degrading' ? '📉' : '➡️';
+function getTrendIcon(trend: "improving" | "stable" | "degrading"): string {
+  return trend === "improving" ? "📈" : trend === "degrading" ? "📉" : "➡️";
 }
 
-function getTrendColor(trend: 'improving' | 'stable' | 'degrading'): keyof typeof COLORS {
-  return trend === 'improving' ? 'green' : trend === 'degrading' ? 'red' : 'yellow';
+function getTrendColor(
+  trend: "improving" | "stable" | "degrading",
+): keyof typeof COLORS {
+  return trend === "improving"
+    ? "green"
+    : trend === "degrading"
+      ? "red"
+      : "yellow";
 }
 
 // ============================================================================
@@ -113,14 +119,14 @@ function getTrendColor(trend: 'improving' | 'stable' | 'degrading'): keyof typeo
 // ============================================================================
 
 function loadReports(daysBack: number = 30): TestReport[] {
-  const reportsDir = join(process.cwd(), 'test-reports');
+  const reportsDir = join(process.cwd(), "test-reports");
 
   if (!existsSync(reportsDir)) {
     return [];
   }
 
   const files = readdirSync(reportsDir)
-    .filter(f => f.startsWith('vercel-test-') && f.endsWith('.json'))
+    .filter((f) => f.startsWith("vercel-test-") && f.endsWith(".json"))
     .sort()
     .reverse(); // Most recent first
 
@@ -131,7 +137,7 @@ function loadReports(daysBack: number = 30): TestReport[] {
 
   for (const file of files) {
     try {
-      const content = readFileSync(join(reportsDir, file), 'utf-8');
+      const content = readFileSync(join(reportsDir, file), "utf-8");
       const report = JSON.parse(content) as TestReport;
 
       const reportDate = new Date(report.timestamp);
@@ -152,26 +158,39 @@ function loadReports(daysBack: number = 30): TestReport[] {
 
 function analyzeTrends(reports: TestReport[]): TrendAnalysis {
   if (reports.length === 0) {
-    throw new Error('No reports found to analyze');
+    throw new Error("No reports found to analyze");
   }
 
   // Sort by timestamp (newest first)
-  reports.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+  reports.sort(
+    (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+  );
 
   const latest = reports[0];
   const previous = reports.length > 1 ? reports.slice(1) : [latest];
 
   // Calculate averages
   const latestPerf = latest.performance.avgResponseTime;
-  const previousPerf = previous.reduce((sum, r) => sum + r.performance.avgResponseTime, 0) / previous.length;
+  const previousPerf =
+    previous.reduce((sum, r) => sum + r.performance.avgResponseTime, 0) /
+    previous.length;
 
   const latestSuccess = (latest.summary.passed / latest.summary.total) * 100;
-  const previousSuccess = previous.reduce((sum, r) =>
-    sum + (r.summary.passed / r.summary.total) * 100, 0) / previous.length;
+  const previousSuccess =
+    previous.reduce(
+      (sum, r) => sum + (r.summary.passed / r.summary.total) * 100,
+      0,
+    ) / previous.length;
 
-  const latestReliability = ((latest.summary.total - latest.summary.failed) / latest.summary.total) * 100;
-  const previousReliability = previous.reduce((sum, r) =>
-    sum + ((r.summary.total - r.summary.failed) / r.summary.total) * 100, 0) / previous.length;
+  const latestReliability =
+    ((latest.summary.total - latest.summary.failed) / latest.summary.total) *
+    100;
+  const previousReliability =
+    previous.reduce(
+      (sum, r) =>
+        sum + ((r.summary.total - r.summary.failed) / r.summary.total) * 100,
+      0,
+    ) / previous.length;
 
   // Calculate changes
   const perfChange = ((latestPerf - previousPerf) / previousPerf) * 100;
@@ -179,25 +198,44 @@ function analyzeTrends(reports: TestReport[]): TrendAnalysis {
   const reliabilityChange = latestReliability - previousReliability;
 
   // Determine trends
-  const perfTrend = perfChange < -5 ? 'improving' : perfChange > 5 ? 'degrading' : 'stable';
-  const successTrend = successChange > 5 ? 'improving' : successChange < -5 ? 'degrading' : 'stable';
-  const reliabilityTrend = reliabilityChange > 5 ? 'improving' : reliabilityChange < -5 ? 'degrading' : 'stable';
+  const perfTrend =
+    perfChange < -5 ? "improving" : perfChange > 5 ? "degrading" : "stable";
+  const successTrend =
+    successChange > 5
+      ? "improving"
+      : successChange < -5
+        ? "degrading"
+        : "stable";
+  const reliabilityTrend =
+    reliabilityChange > 5
+      ? "improving"
+      : reliabilityChange < -5
+        ? "degrading"
+        : "stable";
 
   // Generate alerts
   const alerts: string[] = [];
 
   if (perfChange > 20) {
-    alerts.push(`⚠️ Performance degraded by ${perfChange.toFixed(1)}% - immediate investigation needed`);
+    alerts.push(
+      `⚠️ Performance degraded by ${perfChange.toFixed(1)}% - immediate investigation needed`,
+    );
   } else if (perfChange > 10) {
-    alerts.push(`⚠️ Performance degraded by ${perfChange.toFixed(1)}% - monitor closely`);
+    alerts.push(
+      `⚠️ Performance degraded by ${perfChange.toFixed(1)}% - monitor closely`,
+    );
   }
 
   if (latest.summary.failed > 0) {
-    alerts.push(`❌ ${latest.summary.failed} test(s) failing - requires immediate attention`);
+    alerts.push(
+      `❌ ${latest.summary.failed} test(s) failing - requires immediate attention`,
+    );
   }
 
   if (latestPerf > 1000) {
-    alerts.push(`⚠️ Average response time exceeds 1 second (${latestPerf.toFixed(0)}ms)`);
+    alerts.push(
+      `⚠️ Average response time exceeds 1 second (${latestPerf.toFixed(0)}ms)`,
+    );
   }
 
   if (latestSuccess < 80) {
@@ -207,37 +245,50 @@ function analyzeTrends(reports: TestReport[]): TrendAnalysis {
   // Generate recommendations
   const recommendations: string[] = [];
 
-  if (perfTrend === 'degrading') {
-    recommendations.push('Review recent deployments for performance regressions');
-    recommendations.push('Check database query performance and indexes');
-    recommendations.push('Monitor memory usage and resource consumption');
+  if (perfTrend === "degrading") {
+    recommendations.push(
+      "Review recent deployments for performance regressions",
+    );
+    recommendations.push("Check database query performance and indexes");
+    recommendations.push("Monitor memory usage and resource consumption");
   }
 
   if (latest.summary.warnings > 2) {
-    recommendations.push(`Address ${latest.summary.warnings} warnings to improve overall health`);
+    recommendations.push(
+      `Address ${latest.summary.warnings} warnings to improve overall health`,
+    );
   }
 
   if (latestPerf > 800) {
-    recommendations.push('Consider implementing Redis caching for frequently accessed data');
-    recommendations.push('Optimize server-side rendering and data fetching');
+    recommendations.push(
+      "Consider implementing Redis caching for frequently accessed data",
+    );
+    recommendations.push("Optimize server-side rendering and data fetching");
   }
 
   if (reports.length < 5) {
-    recommendations.push('Run tests more frequently to establish better baseline metrics');
+    recommendations.push(
+      "Run tests more frequently to establish better baseline metrics",
+    );
   }
 
   // Calculate health score
   let healthScore = 100;
-  healthScore -= (latest.summary.failed * 10);
-  healthScore -= (latest.summary.warnings * 3);
+  healthScore -= latest.summary.failed * 10;
+  healthScore -= latest.summary.warnings * 3;
   healthScore -= Math.max(0, (latestPerf - 500) / 20); // Penalize slow responses
   healthScore = Math.max(0, Math.min(100, healthScore));
 
   const healthGrade =
-    healthScore >= 90 ? 'A' :
-    healthScore >= 80 ? 'B' :
-    healthScore >= 70 ? 'C' :
-    healthScore >= 60 ? 'D' : 'F';
+    healthScore >= 90
+      ? "A"
+      : healthScore >= 80
+        ? "B"
+        : healthScore >= 70
+          ? "C"
+          : healthScore >= 60
+            ? "D"
+            : "F";
 
   return {
     period: `Last ${reports.length} report(s)`,
@@ -273,35 +324,57 @@ function analyzeTrends(reports: TestReport[]): TrendAnalysis {
 // VISUALIZATION
 // ============================================================================
 
-function generateSparkline(values: number[], max: number = Math.max(...values)): string {
-  const chars = ['▁', '▂', '▃', '▄', '▅', '▆', '▇', '█'];
-  return values.map(v => {
-    const index = Math.floor((v / max) * (chars.length - 1));
-    return chars[Math.max(0, Math.min(chars.length - 1, index))];
-  }).join('');
+function generateSparkline(
+  values: number[],
+  max: number = Math.max(...values),
+): string {
+  const chars = ["▁", "▂", "▃", "▄", "▅", "▆", "▇", "█"];
+  return values
+    .map((v) => {
+      const index = Math.floor((v / max) * (chars.length - 1));
+      return chars[Math.max(0, Math.min(chars.length - 1, index))];
+    })
+    .join("");
 }
 
 function generateTrendChart(reports: TestReport[]): void {
   if (reports.length < 2) {
-    log('  Not enough data for trend chart (need at least 2 reports)', 'yellow');
+    log(
+      "  Not enough data for trend chart (need at least 2 reports)",
+      "yellow",
+    );
     return;
   }
 
-  const sorted = [...reports].sort((a, b) =>
-    new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+  const sorted = [...reports].sort(
+    (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
   );
 
-  const perfValues = sorted.map(r => r.performance.avgResponseTime);
-  const successValues = sorted.map(r => (r.summary.passed / r.summary.total) * 100);
+  const perfValues = sorted.map((r) => r.performance.avgResponseTime);
+  const successValues = sorted.map(
+    (r) => (r.summary.passed / r.summary.total) * 100,
+  );
 
-  log('  Performance Trend (Response Time):', 'bright');
-  log(`  ${generateSparkline(perfValues)} ${formatMs(perfValues[perfValues.length - 1])}`, 'cyan');
-  log(`  Range: ${formatMs(Math.min(...perfValues))} - ${formatMs(Math.max(...perfValues))}`, 'reset');
-  console.log('');
+  log("  Performance Trend (Response Time):", "bright");
+  log(
+    `  ${generateSparkline(perfValues)} ${formatMs(perfValues[perfValues.length - 1])}`,
+    "cyan",
+  );
+  log(
+    `  Range: ${formatMs(Math.min(...perfValues))} - ${formatMs(Math.max(...perfValues))}`,
+    "reset",
+  );
+  console.log("");
 
-  log('  Success Rate Trend:', 'bright');
-  log(`  ${generateSparkline(successValues, 100)} ${formatPercent(successValues[successValues.length - 1])}`, 'green');
-  log(`  Range: ${formatPercent(Math.min(...successValues))} - ${formatPercent(Math.max(...successValues))}`, 'reset');
+  log("  Success Rate Trend:", "bright");
+  log(
+    `  ${generateSparkline(successValues, 100)} ${formatPercent(successValues[successValues.length - 1])}`,
+    "green",
+  );
+  log(
+    `  Range: ${formatPercent(Math.min(...successValues))} - ${formatPercent(Math.max(...successValues))}`,
+    "reset",
+  );
 }
 
 // ============================================================================
@@ -309,105 +382,144 @@ function generateTrendChart(reports: TestReport[]): void {
 // ============================================================================
 
 function printAnalysis(analysis: TrendAnalysis, reports: TestReport[]): void {
-  console.log('\n' + '╔' + '═'.repeat(58) + '╗');
-  log('║' + ' '.repeat(58) + '║', 'cyan');
-  log('║' + '   📊 DEPLOYMENT MONITORING & TREND ANALYSIS 📊   '.padEnd(59) + '║', 'cyan');
-  log('║' + ' '.repeat(58) + '║', 'cyan');
-  console.log('╚' + '═'.repeat(58) + '╝\n');
+  console.log("\n" + "╔" + "═".repeat(58) + "╗");
+  log("║" + " ".repeat(58) + "║", "cyan");
+  log(
+    "║" + "   📊 DEPLOYMENT MONITORING & TREND ANALYSIS 📊   ".padEnd(59) + "║",
+    "cyan",
+  );
+  log("║" + " ".repeat(58) + "║", "cyan");
+  console.log("╚" + "═".repeat(58) + "╝\n");
 
   // Overview
-  logSection('📈 OVERVIEW');
-  log(`Reports Analyzed: ${analysis.reportsAnalyzed}`, 'bright');
-  log(`Period: ${analysis.period}`, 'bright');
-  log(`Health Score: ${analysis.healthScore.toFixed(1)}/100 (Grade ${analysis.healthGrade})`, 'bright');
+  logSection("📈 OVERVIEW");
+  log(`Reports Analyzed: ${analysis.reportsAnalyzed}`, "bright");
+  log(`Period: ${analysis.period}`, "bright");
+  log(
+    `Health Score: ${analysis.healthScore.toFixed(1)}/100 (Grade ${analysis.healthGrade})`,
+    "bright",
+  );
 
   const healthColor =
-    analysis.healthScore >= 90 ? 'green' :
-    analysis.healthScore >= 70 ? 'yellow' : 'red';
-  log(`Health Status: ${analysis.healthScore >= 90 ? '🟢 Excellent' :
-                        analysis.healthScore >= 70 ? '🟡 Good' : '🔴 Needs Attention'}`, healthColor);
+    analysis.healthScore >= 90
+      ? "green"
+      : analysis.healthScore >= 70
+        ? "yellow"
+        : "red";
+  log(
+    `Health Status: ${
+      analysis.healthScore >= 90
+        ? "🟢 Excellent"
+        : analysis.healthScore >= 70
+          ? "🟡 Good"
+          : "🔴 Needs Attention"
+    }`,
+    healthColor,
+  );
 
   // Alerts
   if (analysis.alerts.length > 0) {
-    logSection('🚨 ALERTS');
-    analysis.alerts.forEach(alert => log(`  ${alert}`, 'red'));
+    logSection("🚨 ALERTS");
+    analysis.alerts.forEach((alert) => log(`  ${alert}`, "red"));
   }
 
   // Trends
-  logSection('📊 PERFORMANCE TRENDS');
+  logSection("📊 PERFORMANCE TRENDS");
 
-  log('⚡ Response Time:', 'bright');
+  log("⚡ Response Time:", "bright");
   const perfTrend = analysis.trends.performance;
-  log(`  Current:  ${formatMs(perfTrend.current)}`, 'cyan');
-  log(`  Previous: ${formatMs(perfTrend.previous)}`, 'reset');
-  log(`  Change:   ${perfTrend.change >= 0 ? '+' : ''}${formatPercent(perfTrend.change)} ${getTrendIcon(perfTrend.trend)}`,
-      getTrendColor(perfTrend.trend));
-  console.log('');
+  log(`  Current:  ${formatMs(perfTrend.current)}`, "cyan");
+  log(`  Previous: ${formatMs(perfTrend.previous)}`, "reset");
+  log(
+    `  Change:   ${perfTrend.change >= 0 ? "+" : ""}${formatPercent(perfTrend.change)} ${getTrendIcon(perfTrend.trend)}`,
+    getTrendColor(perfTrend.trend),
+  );
+  console.log("");
 
-  log('✅ Success Rate:', 'bright');
+  log("✅ Success Rate:", "bright");
   const successTrend = analysis.trends.successRate;
-  log(`  Current:  ${formatPercent(successTrend.current)}`, 'cyan');
-  log(`  Previous: ${formatPercent(successTrend.previous)}`, 'reset');
-  log(`  Change:   ${successTrend.change >= 0 ? '+' : ''}${formatPercent(successTrend.change)} ${getTrendIcon(successTrend.trend)}`,
-      getTrendColor(successTrend.trend));
-  console.log('');
+  log(`  Current:  ${formatPercent(successTrend.current)}`, "cyan");
+  log(`  Previous: ${formatPercent(successTrend.previous)}`, "reset");
+  log(
+    `  Change:   ${successTrend.change >= 0 ? "+" : ""}${formatPercent(successTrend.change)} ${getTrendIcon(successTrend.trend)}`,
+    getTrendColor(successTrend.trend),
+  );
+  console.log("");
 
-  log('🎯 Reliability:', 'bright');
+  log("🎯 Reliability:", "bright");
   const reliabilityTrend = analysis.trends.reliability;
-  log(`  Current:  ${formatPercent(reliabilityTrend.current)}`, 'cyan');
-  log(`  Previous: ${formatPercent(reliabilityTrend.previous)}`, 'reset');
-  log(`  Change:   ${reliabilityTrend.change >= 0 ? '+' : ''}${formatPercent(reliabilityTrend.change)} ${getTrendIcon(reliabilityTrend.trend)}`,
-      getTrendColor(reliabilityTrend.trend));
+  log(`  Current:  ${formatPercent(reliabilityTrend.current)}`, "cyan");
+  log(`  Previous: ${formatPercent(reliabilityTrend.previous)}`, "reset");
+  log(
+    `  Change:   ${reliabilityTrend.change >= 0 ? "+" : ""}${formatPercent(reliabilityTrend.change)} ${getTrendIcon(reliabilityTrend.trend)}`,
+    getTrendColor(reliabilityTrend.trend),
+  );
 
   // Trend Charts
-  logSection('📈 TREND CHARTS');
+  logSection("📈 TREND CHARTS");
   generateTrendChart(reports);
 
   // Latest Report Details
   if (reports.length > 0) {
     const latest = reports[0];
-    logSection('📋 LATEST TEST RESULTS');
-    log(`Timestamp: ${new Date(latest.timestamp).toLocaleString()}`, 'reset');
-    log(`Total Tests: ${latest.summary.total}`, 'reset');
-    log(`Passed: ${latest.summary.passed}`, 'green');
-    log(`Failed: ${latest.summary.failed}`, latest.summary.failed > 0 ? 'red' : 'reset');
-    log(`Warnings: ${latest.summary.warnings}`, latest.summary.warnings > 0 ? 'yellow' : 'reset');
-    log(`Avg Response: ${formatMs(latest.performance.avgResponseTime)}`, 'cyan');
+    logSection("📋 LATEST TEST RESULTS");
+    log(`Timestamp: ${new Date(latest.timestamp).toLocaleString()}`, "reset");
+    log(`Total Tests: ${latest.summary.total}`, "reset");
+    log(`Passed: ${latest.summary.passed}`, "green");
+    log(
+      `Failed: ${latest.summary.failed}`,
+      latest.summary.failed > 0 ? "red" : "reset",
+    );
+    log(
+      `Warnings: ${latest.summary.warnings}`,
+      latest.summary.warnings > 0 ? "yellow" : "reset",
+    );
+    log(
+      `Avg Response: ${formatMs(latest.performance.avgResponseTime)}`,
+      "cyan",
+    );
   }
 
   // Recommendations
   if (analysis.recommendations.length > 0) {
-    logSection('💡 RECOMMENDATIONS');
+    logSection("💡 RECOMMENDATIONS");
     analysis.recommendations.forEach((rec, i) => {
-      log(`  ${i + 1}. ${rec}`, 'yellow');
+      log(`  ${i + 1}. ${rec}`, "yellow");
     });
   }
 
   // Summary
-  logSection('📊 SUMMARY');
+  logSection("📊 SUMMARY");
 
   if (analysis.alerts.length === 0 && analysis.healthScore >= 80) {
-    log('✅ Your deployment is healthy and performing well!', 'green');
+    log("✅ Your deployment is healthy and performing well!", "green");
   } else if (analysis.alerts.length > 0) {
-    log('⚠️ Action required: Address the alerts above', 'yellow');
+    log("⚠️ Action required: Address the alerts above", "yellow");
   } else {
-    log('ℹ️ Your deployment is operational but could be improved', 'blue');
+    log("ℹ️ Your deployment is operational but could be improved", "blue");
   }
 
-  console.log('\n' + '═'.repeat(60) + '\n');
+  console.log("\n" + "═".repeat(60) + "\n");
 }
 
 // ============================================================================
 // EXPORT FUNCTIONALITY
 // ============================================================================
 
-function exportTrendReport(analysis: TrendAnalysis, reports: TestReport[]): void {
-  const reportPath = join(process.cwd(), 'test-reports', `trend-analysis-${Date.now()}.json`);
+function exportTrendReport(
+  analysis: TrendAnalysis,
+  reports: TestReport[],
+): void {
+  const reportPath = join(
+    process.cwd(),
+    "test-reports",
+    `trend-analysis-${Date.now()}.json`,
+  );
 
   const exportData = {
     generatedAt: new Date().toISOString(),
     analysis,
-    reportsIncluded: reports.map(r => ({
+    reportsIncluded: reports.map((r) => ({
       timestamp: r.timestamp,
       successRate: (r.summary.passed / r.summary.total) * 100,
       avgResponseTime: r.performance.avgResponseTime,
@@ -417,7 +529,7 @@ function exportTrendReport(analysis: TrendAnalysis, reports: TestReport[]): void
   };
 
   writeFileSync(reportPath, JSON.stringify(exportData, null, 2));
-  log(`\n📄 Trend report exported to: ${reportPath}`, 'green');
+  log(`\n📄 Trend report exported to: ${reportPath}`, "green");
 }
 
 // ============================================================================
@@ -426,22 +538,24 @@ function exportTrendReport(analysis: TrendAnalysis, reports: TestReport[]): void
 
 async function main() {
   const args = process.argv.slice(2);
-  const daysBack = parseInt(args.find(a => a.startsWith('--days='))?.split('=')[1] || '30');
-  const shouldAlert = args.includes('--alert');
-  const shouldExport = args.includes('--export');
+  const daysBack = parseInt(
+    args.find((a) => a.startsWith("--days="))?.split("=")[1] || "30",
+  );
+  const shouldAlert = args.includes("--alert");
+  const shouldExport = args.includes("--export");
 
   try {
-    log('🔍 Loading test reports...', 'cyan');
+    log("🔍 Loading test reports...", "cyan");
     const reports = loadReports(daysBack);
 
     if (reports.length === 0) {
-      log('\n⚠️ No test reports found!', 'yellow');
-      log('\nRun tests first:', 'reset');
-      log('  npm run test:vercel:full', 'cyan');
+      log("\n⚠️ No test reports found!", "yellow");
+      log("\nRun tests first:", "reset");
+      log("  npm run test:vercel:full", "cyan");
       process.exit(1);
     }
 
-    log(`✅ Loaded ${reports.length} report(s)\n`, 'green');
+    log(`✅ Loaded ${reports.length} report(s)\n`, "green");
 
     const analysis = analyzeTrends(reports);
     printAnalysis(analysis, reports);
@@ -451,12 +565,14 @@ async function main() {
     }
 
     // Exit with error code if there are critical alerts
-    if (shouldAlert && (analysis.alerts.length > 0 || analysis.healthScore < 70)) {
+    if (
+      shouldAlert &&
+      (analysis.alerts.length > 0 || analysis.healthScore < 70)
+    ) {
       process.exit(1);
     }
-
   } catch (error: any) {
-    log(`\n❌ Error: ${error.message}`, 'red');
+    log(`\n❌ Error: ${error.message}`, "red");
     console.error(error);
     process.exit(1);
   }

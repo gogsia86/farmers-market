@@ -24,7 +24,7 @@ import { productService } from "@/lib/services/product.service";
 import type { ProductCategory, ProductStatus } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 /**
  * 🌱 CREATE PRODUCT ACTION RESPONSE
@@ -41,7 +41,7 @@ export interface ProductActionResponse {
  * Server action to create a new product with agricultural consciousness
  */
 export async function createProduct(
-  formData: FormData
+  formData: FormData,
 ): Promise<ProductActionResponse> {
   try {
     // Authentication check
@@ -61,7 +61,7 @@ export async function createProduct(
     const price = parseFloat(formData.get("price") as string);
     const unit = formData.get("unit") as string;
     const quantityAvailable = parseFloat(
-      formData.get("quantityAvailable") as string
+      formData.get("quantityAvailable") as string,
     );
     const organic = formData.get("organic") === "true";
     const storageInstructions = formData.get("storageInstructions") as string;
@@ -159,7 +159,7 @@ export async function createProduct(
  */
 export async function updateProduct(
   productId: string,
-  formData: FormData
+  formData: FormData,
 ): Promise<ProductActionResponse> {
   try {
     // Authentication check
@@ -248,7 +248,7 @@ export async function updateProduct(
     const product = await productService.updateProduct(
       productId,
       updateData,
-      session.user.id
+      session.user.id,
     );
 
     // Revalidate relevant paths
@@ -277,7 +277,7 @@ export async function updateProduct(
  */
 export async function updateInventory(
   productId: string,
-  quantityChange: number
+  quantityChange: number,
 ): Promise<ProductActionResponse> {
   try {
     // Authentication check
@@ -301,7 +301,7 @@ export async function updateInventory(
     const product = await productService.updateInventory(
       productId,
       quantityChange,
-      session.user.id
+      session.user.id,
     );
 
     // Revalidate relevant paths
@@ -329,7 +329,7 @@ export async function updateInventory(
  */
 export async function deleteProduct(
   productId: string,
-  farmId: string
+  farmId: string,
 ): Promise<ProductActionResponse> {
   try {
     // Authentication check
@@ -368,7 +368,7 @@ export async function deleteProduct(
  */
 export async function updateProductStatus(
   productId: string,
-  status: ProductStatus
+  status: ProductStatus,
 ): Promise<ProductActionResponse> {
   try {
     // Authentication check
@@ -400,7 +400,7 @@ export async function updateProductStatus(
     const product = await productService.updateProduct(
       productId,
       { status },
-      session.user.id
+      session.user.id,
     );
 
     // Revalidate relevant paths
@@ -428,14 +428,14 @@ export async function updateProductStatus(
  * Server action to track product views
  */
 export async function incrementProductView(
-  productId: string
+  productId: string,
 ): Promise<{ success: boolean }> {
   try {
     // Increment view count directly in database
     await productService.updateProduct(
       productId,
       {} as any, // Empty update to trigger metrics
-      "system" // System user for view tracking
+      "system", // System user for view tracking
     );
 
     // Note: In production, consider using analytics service instead of direct DB writes
@@ -455,7 +455,7 @@ export async function incrementProductView(
  * Server action to track when product is added to cart
  */
 export async function trackProductCartAdd(
-  productId: string
+  productId: string,
 ): Promise<{ success: boolean }> {
   try {
     // In production, this would be handled by analytics service
@@ -475,7 +475,7 @@ export async function trackProductCartAdd(
  * Server action to add/remove product from wishlist
  */
 export async function toggleProductWishlist(
-  productId: string
+  productId: string,
 ): Promise<{ success: boolean; inWishlist: boolean }> {
   try {
     const session = await auth();

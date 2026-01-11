@@ -88,86 +88,86 @@ global.fetch = jest.fn(() =>
 
 // Mock window.matchMedia for accessibility hooks (useReducedMotion)
 // Need to mock on both window and global for different test scenarios
-const matchMediaMock = jest.fn().mockImplementation(query => {
+const matchMediaMock = jest.fn().mockImplementation((query) => {
   const listeners = [];
   return {
     matches: false,
     media: query,
     onchange: null,
-    addListener: jest.fn(cb => {
+    addListener: jest.fn((cb) => {
       if (cb) listeners.push(cb);
     }), // Deprecated - Safari < 14
-    removeListener: jest.fn(cb => {
+    removeListener: jest.fn((cb) => {
       const index = listeners.indexOf(cb);
       if (index > -1) listeners.splice(index, 1);
     }), // Deprecated - Safari < 14
     addEventListener: jest.fn((event, cb) => {
-      if (event === 'change' && cb) listeners.push(cb);
+      if (event === "change" && cb) listeners.push(cb);
     }),
     removeEventListener: jest.fn((event, cb) => {
-      if (event === 'change') {
+      if (event === "change") {
         const index = listeners.indexOf(cb);
         if (index > -1) listeners.splice(index, 1);
       }
     }),
-    dispatchEvent: jest.fn(event => {
-      listeners.forEach(cb => cb(event));
+    dispatchEvent: jest.fn((event) => {
+      listeners.forEach((cb) => cb(event));
       return true;
     }),
   };
 });
 
 // Support both node and jsdom environments
-if (typeof window !== 'undefined') {
-  Object.defineProperty(window, 'matchMedia', {
+if (typeof window !== "undefined") {
+  Object.defineProperty(window, "matchMedia", {
     writable: true,
     value: matchMediaMock,
   });
 }
 
-Object.defineProperty(global, 'matchMedia', {
+Object.defineProperty(global, "matchMedia", {
   writable: true,
   value: matchMediaMock,
 });
 
 // Mock IntersectionObserver for lazy loading components
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   window.IntersectionObserver = class IntersectionObserver {
-    constructor() { }
-    disconnect() { }
-    observe() { }
+    constructor() {}
+    disconnect() {}
+    observe() {}
     takeRecords() {
       return [];
     }
-    unobserve() { }
+    unobserve() {}
   };
 }
 
 global.IntersectionObserver = class IntersectionObserver {
-  constructor() { }
-  disconnect() { }
-  observe() { }
+  constructor() {}
+  disconnect() {}
+  observe() {}
   takeRecords() {
     return [];
   }
-  unobserve() { }
+  unobserve() {}
 };
 
 // Mock ResizeObserver for responsive components
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   window.ResizeObserver = class ResizeObserver {
-    constructor() { }
-    disconnect() { }
-    observe() { }
-    unobserve() { }
+    constructor() {}
+    disconnect() {}
+    observe() {}
+    unobserve() {}
   };
 }
 
 global.ResizeObserver = class ResizeObserver {
-  constructor() { }
-  disconnect() { }
-  observe() { }
-  unobserve() { }
+  constructor() {}
+  disconnect() {}
+  observe() {}
+  unobserve() {}
 };
 
 // Mock localStorage for persistence tests
@@ -194,23 +194,23 @@ const localStorageMock = (() => {
   };
 })();
 
-if (typeof window !== 'undefined') {
-  Object.defineProperty(window, 'localStorage', {
+if (typeof window !== "undefined") {
+  Object.defineProperty(window, "localStorage", {
     value: localStorageMock,
   });
 
-  Object.defineProperty(window, 'sessionStorage', {
+  Object.defineProperty(window, "sessionStorage", {
     value: localStorageMock,
   });
 }
 
 // Also set on global for node environment
-Object.defineProperty(global, 'localStorage', {
+Object.defineProperty(global, "localStorage", {
   value: localStorageMock,
   writable: true,
 });
 
-Object.defineProperty(global, 'sessionStorage', {
+Object.defineProperty(global, "sessionStorage", {
   value: localStorageMock,
   writable: true,
 });
@@ -332,11 +332,11 @@ global.TransformStream = class TransformStream {
 };
 
 global.ReadableStream = class ReadableStream {
-  constructor() { }
+  constructor() {}
 };
 
 global.WritableStream = class WritableStream {
-  constructor() { }
+  constructor() {}
 };
 
 // ============================================
@@ -948,31 +948,31 @@ global.mockRedisCache = mockRedisCache;
 beforeEach(() => {
   // Restore matchMedia mock implementation
   // This is needed because resetMocks: true in jest.config.js clears it
-  if (typeof window !== 'undefined' && jest.isMockFunction(window.matchMedia)) {
+  if (typeof window !== "undefined" && jest.isMockFunction(window.matchMedia)) {
     window.matchMedia.mockImplementation((query) => {
       const listeners = [];
       return {
         matches: false,
         media: query,
         onchange: null,
-        addListener: jest.fn(cb => {
+        addListener: jest.fn((cb) => {
           if (cb) listeners.push(cb);
         }),
-        removeListener: jest.fn(cb => {
+        removeListener: jest.fn((cb) => {
           const index = listeners.indexOf(cb);
           if (index > -1) listeners.splice(index, 1);
         }),
         addEventListener: jest.fn((event, cb) => {
-          if (event === 'change' && cb) listeners.push(cb);
+          if (event === "change" && cb) listeners.push(cb);
         }),
         removeEventListener: jest.fn((event, cb) => {
-          if (event === 'change') {
+          if (event === "change") {
             const index = listeners.indexOf(cb);
             if (index > -1) listeners.splice(index, 1);
           }
         }),
-        dispatchEvent: jest.fn(event => {
-          listeners.forEach(cb => cb(event));
+        dispatchEvent: jest.fn((event) => {
+          listeners.forEach((cb) => cb(event));
           return true;
         }),
       };

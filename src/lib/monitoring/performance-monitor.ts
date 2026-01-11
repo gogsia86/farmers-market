@@ -6,7 +6,7 @@
 
 // Stub implementation for performance monitor
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 export class PerformanceMonitor {
   static start(label: string) {

@@ -33,7 +33,10 @@ export default async function AdminLayout({
           <div className="flex justify-between h-16">
             <div className="flex">
               <div className="flex-shrink-0 flex items-center">
-                <Link href="/admin/webhooks" className="text-xl font-bold text-gray-900">
+                <Link
+                  href="/admin/webhooks"
+                  className="text-xl font-bold text-gray-900"
+                >
                   🔐 Admin Dashboard
                 </Link>
               </div>
@@ -86,9 +89,7 @@ export default async function AdminLayout({
       </nav>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        {children}
-      </main>
+      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">{children}</main>
     </div>
   );
 }

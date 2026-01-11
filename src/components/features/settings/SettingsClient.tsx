@@ -23,7 +23,7 @@ import {
   Shield,
   Sun,
   User,
-  X
+  X,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -93,7 +93,12 @@ interface SettingsClientProps {
   initialData: SettingsData;
 }
 
-type Tab = "profile" | "notifications" | "privacy" | "preferences" | "addresses";
+type Tab =
+  | "profile"
+  | "notifications"
+  | "privacy"
+  | "preferences"
+  | "addresses";
 
 // ============================================================================
 // COMPONENT
@@ -103,7 +108,9 @@ export function SettingsClient({ initialData }: SettingsClientProps) {
   const [activeTab, setActiveTab] = useState<Tab>("profile");
   const [userData, setUserData] = useState(initialData.user);
   const [settings, setSettings] = useState(initialData.settings);
-  const [notifications, setNotifications] = useState(initialData.notificationPreferences);
+  const [notifications, setNotifications] = useState(
+    initialData.notificationPreferences,
+  );
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -218,10 +225,11 @@ export function SettingsClient({ initialData }: SettingsClientProps) {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 whitespace-nowrap border-b-2 px-4 py-3 text-sm font-medium transition-colors ${activeTab === tab.id
-                  ? "border-green-600 text-green-600"
-                  : "border-transparent text-gray-600 hover:border-gray-300 hover:text-gray-900"
-                  }`}
+                className={`flex items-center gap-2 whitespace-nowrap border-b-2 px-4 py-3 text-sm font-medium transition-colors ${
+                  activeTab === tab.id
+                    ? "border-green-600 text-green-600"
+                    : "border-transparent text-gray-600 hover:border-gray-300 hover:text-gray-900"
+                }`}
               >
                 <Icon className="h-4 w-4" />
                 {tab.label}
@@ -251,7 +259,9 @@ export function SettingsClient({ initialData }: SettingsClientProps) {
         {/* PROFILE TAB */}
         {activeTab === "profile" && (
           <div className="p-6">
-            <h2 className="mb-6 text-xl font-semibold text-gray-900">Profile Information</h2>
+            <h2 className="mb-6 text-xl font-semibold text-gray-900">
+              Profile Information
+            </h2>
             <div className="space-y-6">
               <div className="grid gap-6 md:grid-cols-2">
                 <div>
@@ -312,7 +322,9 @@ export function SettingsClient({ initialData }: SettingsClientProps) {
                   id="phone"
                   type="tel"
                   value={userData.phone}
-                  onChange={(e) => setUserData({ ...userData, phone: e.target.value })}
+                  onChange={(e) =>
+                    setUserData({ ...userData, phone: e.target.value })
+                  }
                   className="mt-2"
                   placeholder="+1 (555) 123-4567"
                 />
@@ -348,13 +360,17 @@ export function SettingsClient({ initialData }: SettingsClientProps) {
             <div className="space-y-6">
               {/* Channel Preferences */}
               <div>
-                <h3 className="mb-4 font-medium text-gray-900">Notification Channels</h3>
+                <h3 className="mb-4 font-medium text-gray-900">
+                  Notification Channels
+                </h3>
                 <div className="space-y-3">
                   <label className="flex items-center justify-between rounded-lg border border-gray-200 p-4 hover:bg-gray-50">
                     <div className="flex items-center gap-3">
                       <Mail className="h-5 w-5 text-gray-400" />
                       <div>
-                        <p className="font-medium text-gray-900">Email Notifications</p>
+                        <p className="font-medium text-gray-900">
+                          Email Notifications
+                        </p>
                         <p className="text-sm text-gray-500">
                           Receive notifications via email
                         </p>
@@ -377,7 +393,9 @@ export function SettingsClient({ initialData }: SettingsClientProps) {
                     <div className="flex items-center gap-3">
                       <Phone className="h-5 w-5 text-gray-400" />
                       <div>
-                        <p className="font-medium text-gray-900">SMS Notifications</p>
+                        <p className="font-medium text-gray-900">
+                          SMS Notifications
+                        </p>
                         <p className="text-sm text-gray-500">
                           Receive notifications via text message
                         </p>
@@ -400,7 +418,9 @@ export function SettingsClient({ initialData }: SettingsClientProps) {
                     <div className="flex items-center gap-3">
                       <Bell className="h-5 w-5 text-gray-400" />
                       <div>
-                        <p className="font-medium text-gray-900">Push Notifications</p>
+                        <p className="font-medium text-gray-900">
+                          Push Notifications
+                        </p>
                         <p className="text-sm text-gray-500">
                           Receive push notifications in the app
                         </p>
@@ -423,7 +443,9 @@ export function SettingsClient({ initialData }: SettingsClientProps) {
 
               {/* Notification Frequencies */}
               <div>
-                <h3 className="mb-4 font-medium text-gray-900">Notification Frequency</h3>
+                <h3 className="mb-4 font-medium text-gray-900">
+                  Notification Frequency
+                </h3>
                 <div className="space-y-4">
                   <div>
                     <Label htmlFor="emailFrequency">Email Frequency</Label>
@@ -468,7 +490,9 @@ export function SettingsClient({ initialData }: SettingsClientProps) {
                   </div>
 
                   <div>
-                    <Label htmlFor="pushFrequency">Push Notification Frequency</Label>
+                    <Label htmlFor="pushFrequency">
+                      Push Notification Frequency
+                    </Label>
                     <select
                       id="pushFrequency"
                       value={notifications.pushFrequency}
@@ -492,12 +516,18 @@ export function SettingsClient({ initialData }: SettingsClientProps) {
 
               {/* In-App Notification Settings */}
               <div>
-                <h3 className="mb-4 font-medium text-gray-900">In-App Notifications</h3>
+                <h3 className="mb-4 font-medium text-gray-900">
+                  In-App Notifications
+                </h3>
                 <div className="space-y-2">
                   <label className="flex items-center justify-between rounded-lg border border-gray-200 p-3 hover:bg-gray-50">
                     <div>
-                      <p className="font-medium text-gray-900">In-App Notifications</p>
-                      <p className="text-sm text-gray-500">Show notifications within the app</p>
+                      <p className="font-medium text-gray-900">
+                        In-App Notifications
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        Show notifications within the app
+                      </p>
                     </div>
                     <input
                       type="checkbox"
@@ -515,7 +545,9 @@ export function SettingsClient({ initialData }: SettingsClientProps) {
                   <label className="flex items-center justify-between rounded-lg border border-gray-200 p-3 hover:bg-gray-50">
                     <div>
                       <p className="font-medium text-gray-900">Sound</p>
-                      <p className="text-sm text-gray-500">Play sound for notifications</p>
+                      <p className="text-sm text-gray-500">
+                        Play sound for notifications
+                      </p>
                     </div>
                     <input
                       type="checkbox"
@@ -534,7 +566,9 @@ export function SettingsClient({ initialData }: SettingsClientProps) {
                   <label className="flex items-center justify-between rounded-lg border border-gray-200 p-3 hover:bg-gray-50">
                     <div>
                       <p className="font-medium text-gray-900">Badge Count</p>
-                      <p className="text-sm text-gray-500">Show unread notification count</p>
+                      <p className="text-sm text-gray-500">
+                        Show unread notification count
+                      </p>
                     </div>
                     <input
                       type="checkbox"
@@ -569,7 +603,9 @@ export function SettingsClient({ initialData }: SettingsClientProps) {
         {/* PRIVACY TAB */}
         {activeTab === "privacy" && (
           <div className="p-6">
-            <h2 className="mb-6 text-xl font-semibold text-gray-900">Privacy Settings</h2>
+            <h2 className="mb-6 text-xl font-semibold text-gray-900">
+              Privacy Settings
+            </h2>
             <div className="space-y-6">
               <div>
                 <Label htmlFor="profileVisibility">Profile Visibility</Label>
@@ -577,12 +613,19 @@ export function SettingsClient({ initialData }: SettingsClientProps) {
                   id="profileVisibility"
                   value={settings.profileVisibility}
                   onChange={(e) =>
-                    setSettings({ ...settings, profileVisibility: e.target.value })
+                    setSettings({
+                      ...settings,
+                      profileVisibility: e.target.value,
+                    })
                   }
                   className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-green-500 focus:ring-green-500"
                 >
-                  <option value="public">Public - Anyone can see your profile</option>
-                  <option value="friends">Friends Only - Only people you follow</option>
+                  <option value="public">
+                    Public - Anyone can see your profile
+                  </option>
+                  <option value="friends">
+                    Friends Only - Only people you follow
+                  </option>
                   <option value="private">Private - Only you can see</option>
                 </select>
               </div>
@@ -592,7 +635,9 @@ export function SettingsClient({ initialData }: SettingsClientProps) {
                   <div className="flex items-center gap-3">
                     <Lock className="h-5 w-5 text-gray-400" />
                     <div>
-                      <p className="font-medium text-gray-900">Show Email Address</p>
+                      <p className="font-medium text-gray-900">
+                        Show Email Address
+                      </p>
                       <p className="text-sm text-gray-500">
                         Let others see your email on your profile
                       </p>
@@ -612,7 +657,9 @@ export function SettingsClient({ initialData }: SettingsClientProps) {
                   <div className="flex items-center gap-3">
                     <Lock className="h-5 w-5 text-gray-400" />
                     <div>
-                      <p className="font-medium text-gray-900">Show Phone Number</p>
+                      <p className="font-medium text-gray-900">
+                        Show Phone Number
+                      </p>
                       <p className="text-sm text-gray-500">
                         Let others see your phone on your profile
                       </p>
@@ -632,7 +679,9 @@ export function SettingsClient({ initialData }: SettingsClientProps) {
                   <div className="flex items-center gap-3">
                     <Lock className="h-5 w-5 text-gray-400" />
                     <div>
-                      <p className="font-medium text-gray-900">Allow Messaging</p>
+                      <p className="font-medium text-gray-900">
+                        Allow Messaging
+                      </p>
                       <p className="text-sm text-gray-500">
                         Let farms and other users send you messages
                       </p>
@@ -642,7 +691,10 @@ export function SettingsClient({ initialData }: SettingsClientProps) {
                     type="checkbox"
                     checked={settings.allowMessaging}
                     onChange={(e) =>
-                      setSettings({ ...settings, allowMessaging: e.target.checked })
+                      setSettings({
+                        ...settings,
+                        allowMessaging: e.target.checked,
+                      })
                     }
                     className="h-5 w-5 rounded border-gray-300 text-green-600 focus:ring-green-500"
                   />
@@ -662,7 +714,10 @@ export function SettingsClient({ initialData }: SettingsClientProps) {
                     type="checkbox"
                     checked={settings.dataSharing}
                     onChange={(e) =>
-                      setSettings({ ...settings, dataSharing: e.target.checked })
+                      setSettings({
+                        ...settings,
+                        dataSharing: e.target.checked,
+                      })
                     }
                     className="h-5 w-5 rounded border-gray-300 text-green-600 focus:ring-green-500"
                   />
@@ -704,7 +759,9 @@ export function SettingsClient({ initialData }: SettingsClientProps) {
                 <select
                   id="theme"
                   value={settings.theme}
-                  onChange={(e) => setSettings({ ...settings, theme: e.target.value })}
+                  onChange={(e) =>
+                    setSettings({ ...settings, theme: e.target.value })
+                  }
                   className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-green-500 focus:ring-green-500"
                 >
                   <option value="light">Light</option>
@@ -797,7 +854,9 @@ export function SettingsClient({ initialData }: SettingsClientProps) {
         {activeTab === "addresses" && (
           <div className="p-6">
             <div className="mb-6 flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-gray-900">Saved Addresses</h2>
+              <h2 className="text-xl font-semibold text-gray-900">
+                Saved Addresses
+              </h2>
               <Button className="bg-green-600 hover:bg-green-700">
                 <Home className="mr-2 h-4 w-4" />
                 Add Address
@@ -840,7 +899,9 @@ export function SettingsClient({ initialData }: SettingsClientProps) {
                         <p className="text-sm text-gray-600">
                           {address.city}, {address.state} {address.zipCode}
                         </p>
-                        <p className="text-sm text-gray-600">{address.country}</p>
+                        <p className="text-sm text-gray-600">
+                          {address.country}
+                        </p>
                       </div>
                       <div className="flex gap-2">
                         <Button variant="outline" size="sm">

@@ -146,7 +146,7 @@ await smsService.sendTemplateSMS(
   "+1234567890",
   "ORDER_READY",
   { orderNumber: "ORD-123", farmName: "Green Valley Farm" },
-  "user_123"
+  "user_123",
 );
 ```
 
@@ -181,7 +181,7 @@ import { pushNotificationService } from "@/lib/services/push.service";
 await pushNotificationService.registerDeviceToken(
   "user_123",
   "fcm_device_token_here",
-  "ios"
+  "ios",
 );
 
 // Send push notification
@@ -194,11 +194,10 @@ await pushNotificationService.sendPushNotification({
 });
 
 // Send template push
-await pushNotificationService.sendTemplatePush(
-  "user_123",
-  "ORDER_READY",
-  { orderNumber: "ORD-123", farmName: "Green Valley Farm" }
-);
+await pushNotificationService.sendTemplatePush("user_123", "ORDER_READY", {
+  orderNumber: "ORD-123",
+  farmName: "Green Valley Farm",
+});
 ```
 
 #### Push Templates
@@ -269,7 +268,7 @@ const scheduledJobId = await scheduleSMS(
     phoneNumber: "+1234567890",
     message: "Reminder!",
   },
-  new Date(Date.now() + 3600000) // 1 hour from now
+  new Date(Date.now() + 3600000), // 1 hour from now
 );
 ```
 
@@ -293,7 +292,7 @@ const scheduledJobId = await schedulePush(
     title: "Reminder",
     body: "Don't forget!",
   },
-  new Date(Date.now() + 3600000)
+  new Date(Date.now() + 3600000),
 );
 ```
 
@@ -495,7 +494,7 @@ async function schedulePickupReminder(order: Order) {
       message: `Reminder: Your order #${order.orderNumber} is ready for pickup at ${formatTime(order.pickupTime)}`,
       userId: order.customerId,
     },
-    reminderTime
+    reminderTime,
   );
 }
 ```
@@ -538,7 +537,7 @@ async function checkInventoryAndAlert(productId: string) {
     await notificationService.sendLowStockAlert(
       product.id,
       product.name,
-      product.stockQuantity
+      product.stockQuantity,
     );
   }
 }
@@ -565,7 +564,7 @@ npm run workers:start
 
 ```yaml
 # docker-compose.yml
-version: '3.8'
+version: "3.8"
 
 services:
   redis:
@@ -630,19 +629,19 @@ pm2 logs workers
 module.exports = {
   apps: [
     {
-      name: 'notification-workers',
-      script: './dist/lib/workers/index.js',
+      name: "notification-workers",
+      script: "./dist/lib/workers/index.js",
       instances: 1,
-      exec_mode: 'fork',
+      exec_mode: "fork",
       env: {
-        NODE_ENV: 'production',
+        NODE_ENV: "production",
       },
-      error_file: './logs/workers-error.log',
-      out_file: './logs/workers-out.log',
-      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
+      error_file: "./logs/workers-error.log",
+      out_file: "./logs/workers-out.log",
+      log_date_format: "YYYY-MM-DD HH:mm:ss Z",
       autorestart: true,
       max_restarts: 10,
-      min_uptime: '10s',
+      min_uptime: "10s",
     },
   ],
 };
@@ -667,30 +666,30 @@ spec:
         app: notification-workers
     spec:
       containers:
-      - name: workers
-        image: farmersmarket/workers:latest
-        env:
-        - name: REDIS_HOST
-          value: "redis-service"
-        - name: REDIS_PORT
-          value: "6379"
-        - name: TWILIO_ACCOUNT_SID
-          valueFrom:
-            secretKeyRef:
-              name: twilio-secrets
-              key: account_sid
-        - name: TWILIO_AUTH_TOKEN
-          valueFrom:
-            secretKeyRef:
-              name: twilio-secrets
-              key: auth_token
-        resources:
-          requests:
-            memory: "256Mi"
-            cpu: "250m"
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
+        - name: workers
+          image: farmersmarket/workers:latest
+          env:
+            - name: REDIS_HOST
+              value: "redis-service"
+            - name: REDIS_PORT
+              value: "6379"
+            - name: TWILIO_ACCOUNT_SID
+              valueFrom:
+                secretKeyRef:
+                  name: twilio-secrets
+                  key: account_sid
+            - name: TWILIO_AUTH_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: twilio-secrets
+                  key: auth_token
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
 ```
 
 ---
@@ -707,14 +706,14 @@ npm install @bull-board/express bull-board
 
 ```typescript
 // src/lib/monitoring/bull-board.ts
-import { createBullBoard } from '@bull-board/api';
-import { BullAdapter } from '@bull-board/api/bullAdapter';
-import { ExpressAdapter } from '@bull-board/express';
-import { emailQueue } from '@/lib/queue/email.queue';
-import { smsQueue, pushQueue } from '@/lib/queue/notification.queue';
+import { createBullBoard } from "@bull-board/api";
+import { BullAdapter } from "@bull-board/api/bullAdapter";
+import { ExpressAdapter } from "@bull-board/express";
+import { emailQueue } from "@/lib/queue/email.queue";
+import { smsQueue, pushQueue } from "@/lib/queue/notification.queue";
 
 const serverAdapter = new ExpressAdapter();
-serverAdapter.setBasePath('/admin/queues');
+serverAdapter.setBasePath("/admin/queues");
 
 createBullBoard({
   queues: [
@@ -746,7 +745,7 @@ export async function GET() {
       queues: health,
       timestamp: new Date().toISOString(),
     },
-    { status: health.overall ? 200 : 503 }
+    { status: health.overall ? 200 : 503 },
   );
 }
 ```
@@ -761,10 +760,10 @@ async function collectMetrics() {
   const stats = await getAllQueueStats();
 
   // Send to monitoring service (Prometheus, Datadog, etc.)
-  metrics.gauge('queue.sms.waiting', stats.sms.waiting);
-  metrics.gauge('queue.sms.active', stats.sms.active);
-  metrics.gauge('queue.push.waiting', stats.push.waiting);
-  metrics.gauge('queue.push.active', stats.push.active);
+  metrics.gauge("queue.sms.waiting", stats.sms.waiting);
+  metrics.gauge("queue.sms.active", stats.sms.active);
+  metrics.gauge("queue.push.waiting", stats.push.waiting);
+  metrics.gauge("queue.push.active", stats.push.active);
 }
 
 // Run every minute
@@ -782,12 +781,14 @@ setInterval(collectMetrics, 60000);
 **Solutions**:
 
 1. Check Redis connection:
+
    ```bash
    redis-cli ping
    # Should return: PONG
    ```
 
 2. Verify workers are running:
+
    ```bash
    pm2 status
    # Or check process
@@ -795,6 +796,7 @@ setInterval(collectMetrics, 60000);
    ```
 
 3. Check Redis memory:
+
    ```bash
    redis-cli info memory
    ```
@@ -811,8 +813,9 @@ setInterval(collectMetrics, 60000);
 **Solutions**:
 
 1. Verify Twilio credentials:
+
    ```typescript
-   import { smsService } from '@/lib/services/sms.service';
+   import { smsService } from "@/lib/services/sms.service";
    console.log(smsService.getStatus());
    ```
 
@@ -831,16 +834,18 @@ setInterval(collectMetrics, 60000);
 **Solutions**:
 
 1. Verify device token is registered:
+
    ```typescript
    const tokens = await database.deviceToken.findMany({
-     where: { userId: "user_123", isActive: true }
+     where: { userId: "user_123", isActive: true },
    });
    console.log(tokens);
    ```
 
 2. Check Firebase credentials:
+
    ```typescript
-   import { pushNotificationService } from '@/lib/services/push.service';
+   import { pushNotificationService } from "@/lib/services/push.service";
    console.log(pushNotificationService.getStatus());
    ```
 
@@ -855,22 +860,28 @@ setInterval(collectMetrics, 60000);
 **Solutions**:
 
 1. Check failed jobs:
+
    ```typescript
-   import { getFailedSMSJobs, getFailedPushJobs } from '@/lib/queue/notification.queue';
+   import {
+     getFailedSMSJobs,
+     getFailedPushJobs,
+   } from "@/lib/queue/notification.queue";
 
    const failedSMS = await getFailedSMSJobs(10);
-   failedSMS.forEach(job => {
+   failedSMS.forEach((job) => {
      console.log(job.id, job.failedReason);
    });
    ```
 
 2. Review error logs in database:
+
    ```sql
    SELECT * FROM sms_logs WHERE status = 'FAILED' ORDER BY created_at DESC LIMIT 10;
    SELECT * FROM push_notification_logs WHERE status = 'FAILED' ORDER BY created_at DESC LIMIT 10;
    ```
 
 3. Increase retry attempts if transient failures:
+
    ```typescript
    // In queue configuration
    attempts: 5, // Increase from 3
@@ -891,6 +902,7 @@ setInterval(collectMetrics, 60000);
 **Solutions**:
 
 1. Increase Redis memory:
+
    ```bash
    # In redis.conf
    maxmemory 256mb
@@ -898,16 +910,20 @@ setInterval(collectMetrics, 60000);
    ```
 
 2. Clean old jobs more frequently:
+
    ```typescript
-   import { cleanOldNotificationJobs } from '@/lib/queue/notification.queue';
+   import { cleanOldNotificationJobs } from "@/lib/queue/notification.queue";
 
    // Run daily
-   setInterval(() => {
-     cleanOldNotificationJobs(
-       3 * 24 * 60 * 60 * 1000, // 3 days for completed
-       7 * 24 * 60 * 60 * 1000  // 7 days for failed
-     );
-   }, 24 * 60 * 60 * 1000);
+   setInterval(
+     () => {
+       cleanOldNotificationJobs(
+         3 * 24 * 60 * 60 * 1000, // 3 days for completed
+         7 * 24 * 60 * 60 * 1000, // 7 days for failed
+       );
+     },
+     24 * 60 * 60 * 1000,
+   );
    ```
 
 3. Reduce job retention:
@@ -942,6 +958,7 @@ setInterval(collectMetrics, 60000);
 ### Support
 
 For issues or questions:
+
 1. Check this documentation
 2. Review error logs
 3. Check queue statistics

@@ -12,7 +12,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 // ============================================================================
 // TYPES
@@ -145,7 +145,8 @@ export function AddToCartButton({
       });
       toast({
         title: "Failed to add to cart",
-        description: error instanceof Error ? error.message : "Please try again",
+        description:
+          error instanceof Error ? error.message : "Please try again",
         variant: "destructive",
       });
     } finally {
@@ -234,7 +235,9 @@ export function AddToCartButton({
               <Minus className="h-4 w-4" />
             </Button>
 
-            <span className={`${currentSize.quantityText} font-semibold text-gray-900 text-center`}>
+            <span
+              className={`${currentSize.quantityText} font-semibold text-gray-900 text-center`}
+            >
               {quantity}
             </span>
 
@@ -263,8 +266,9 @@ export function AddToCartButton({
           onClick={handleAddToCart}
           disabled={disabled || isLoading}
           size={size}
-          className={`w-full bg-green-600 hover:bg-green-700 text-white font-semibold shadow-sm transition-all ${currentSize.button} ${isLoading ? "opacity-70 cursor-wait" : ""
-            }`}
+          className={`w-full bg-green-600 hover:bg-green-700 text-white font-semibold shadow-sm transition-all ${currentSize.button} ${
+            isLoading ? "opacity-70 cursor-wait" : ""
+          }`}
         >
           {isLoading ? (
             <>
@@ -289,8 +293,9 @@ export function AddToCartButton({
         onClick={handleAddToCart}
         disabled={disabled || isLoading}
         size={size}
-        className={`w-full bg-green-600 hover:bg-green-700 text-white font-semibold shadow-sm transition-all ${currentSize.button} ${isLoading ? "opacity-70 cursor-wait" : ""
-          }`}
+        className={`w-full bg-green-600 hover:bg-green-700 text-white font-semibold shadow-sm transition-all ${currentSize.button} ${
+          isLoading ? "opacity-70 cursor-wait" : ""
+        }`}
       >
         {isLoading ? (
           <>
@@ -377,7 +382,8 @@ export function CompactAddToCartButton({
     } catch (error) {
       toast({
         title: "Failed to add to cart",
-        description: error instanceof Error ? error.message : "Please try again",
+        description:
+          error instanceof Error ? error.message : "Please try again",
         variant: "destructive",
       });
     } finally {

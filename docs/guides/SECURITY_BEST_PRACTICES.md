@@ -100,19 +100,19 @@ const user = await database.user.findUnique({
   select: {
     id: true,
     name: true,
-    email: true
+    email: true,
     // Don't expose password, tokens, etc.
-  }
+  },
 });
 
 // ❌ BAD: Over-exposure
 const user = await database.user.findUnique({
   where: { id },
-  include: { 
-    sessions: true,  // Exposes session tokens
-    apiKeys: true,   // Exposes API keys
-    password: true   // Exposes password hash
-  }
+  include: {
+    sessions: true, // Exposes session tokens
+    apiKeys: true, // Exposes API keys
+    password: true, // Exposes password hash
+  },
 });
 ```
 
@@ -123,16 +123,16 @@ const user = await database.user.findUnique({
 export async function requireAuth(request: NextRequest) {
   try {
     const session = await getSession(request);
-    
+
     if (!session || !session.user) {
       throw new UnauthorizedError();
     }
-    
+
     return session;
   } catch (error) {
     // Log error but don't expose details
-    logger.error('Authentication failed', { error });
-    throw new UnauthorizedError('Authentication required');
+    logger.error("Authentication failed", { error });
+    throw new UnauthorizedError("Authentication required");
   }
 }
 
@@ -143,7 +143,7 @@ export async function requireAuth(request: NextRequest) {
     return session;
   } catch (error) {
     // Dangerous: allows access on error
-    return { user: { role: 'guest' } };
+    return { user: { role: "guest" } };
   }
 }
 ```
@@ -158,26 +158,26 @@ export const SECURITY_DEFAULTS = {
   PASSWORD_REQUIRE_SPECIAL: true,
   PASSWORD_REQUIRE_NUMBER: true,
   PASSWORD_REQUIRE_UPPERCASE: true,
-  
+
   // Sessions
   SESSION_DURATION: 60 * 60 * 24 * 7, // 7 days
   SESSION_ROTATION_ENABLED: true,
-  
+
   // Rate limiting
   RATE_LIMIT_REQUESTS: 100,
   RATE_LIMIT_WINDOW: 60 * 15, // 15 minutes
-  
+
   // API
-  API_CORS_ORIGINS: process.env.ALLOWED_ORIGINS?.split(',') || [],
+  API_CORS_ORIGINS: process.env.ALLOWED_ORIGINS?.split(",") || [],
   API_MAX_PAYLOAD_SIZE: 1024 * 1024 * 10, // 10MB
-  
+
   // File uploads
   MAX_FILE_SIZE: 1024 * 1024 * 5, // 5MB
-  ALLOWED_FILE_TYPES: ['.jpg', '.jpeg', '.png', '.pdf'],
-  
+  ALLOWED_FILE_TYPES: [".jpg", ".jpeg", ".png", ".pdf"],
+
   // Headers
   HSTS_MAX_AGE: 31536000, // 1 year
-  CSP_ENABLED: true
+  CSP_ENABLED: true,
 } as const;
 ```
 
@@ -193,8 +193,8 @@ export const SECURITY_DEFAULTS = {
 
 ```typescript
 // middleware/auth.middleware.ts
-import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/lib/auth';
+import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
 
 /**
  * Authentication middleware
@@ -202,14 +202,14 @@ import { auth } from '@/lib/auth';
  */
 export async function requireAuth(request: NextRequest) {
   const session = await auth();
-  
+
   if (!session?.user) {
     return NextResponse.json(
-      { error: 'Authentication required' },
-      { status: 401 }
+      { error: "Authentication required" },
+      { status: 401 },
     );
   }
-  
+
   return session;
 }
 
@@ -219,17 +219,17 @@ export async function requireAuth(request: NextRequest) {
  */
 export async function requireRole(
   request: NextRequest,
-  allowedRoles: string[]
+  allowedRoles: string[],
 ) {
   const session = await requireAuth(request);
-  
+
   if (!allowedRoles.includes(session.user.role)) {
     return NextResponse.json(
-      { error: 'Insufficient permissions' },
-      { status: 403 }
+      { error: "Insufficient permissions" },
+      { status: 403 },
     );
   }
-  
+
   return session;
 }
 
@@ -240,12 +240,12 @@ export async function requireRole(
 export async function requireOwnership(
   userId: string,
   resourceId: string,
-  resourceType: 'farm' | 'product' | 'order'
+  resourceType: "farm" | "product" | "order",
 ) {
   const isOwner = await checkOwnership(userId, resourceId, resourceType);
-  
+
   if (!isOwner) {
-    throw new ForbiddenError('You do not own this resource');
+    throw new ForbiddenError("You do not own this resource");
   }
 }
 ```
@@ -254,22 +254,22 @@ export async function requireOwnership(
 
 ```typescript
 // app/api/v1/farms/[id]/route.ts
-import { requireAuth, requireOwnership } from '@/middleware/auth.middleware';
+import { requireAuth, requireOwnership } from "@/middleware/auth.middleware";
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   // 1. Verify authentication
   const session = await requireAuth(request);
-  
+
   // 2. Verify ownership
-  await requireOwnership(session.user.id, params.id, 'farm');
-  
+  await requireOwnership(session.user.id, params.id, "farm");
+
   // 3. Proceed with update
   const data = await request.json();
   const farm = await farmService.updateFarm(params.id, data);
-  
+
   return NextResponse.json({ success: true, data: farm });
 }
 ```
@@ -284,17 +284,17 @@ export async function PATCH(
 
 ```typescript
 // lib/auth/password.ts
-import bcrypt from 'bcryptjs';
-import { z } from 'zod';
+import bcrypt from "bcryptjs";
+import { z } from "zod";
 
 // Password validation schema
 export const PasswordSchema = z
   .string()
-  .min(12, 'Password must be at least 12 characters')
-  .regex(/[A-Z]/, 'Password must contain uppercase letter')
-  .regex(/[a-z]/, 'Password must contain lowercase letter')
-  .regex(/[0-9]/, 'Password must contain number')
-  .regex(/[^A-Za-z0-9]/, 'Password must contain special character');
+  .min(12, "Password must be at least 12 characters")
+  .regex(/[A-Z]/, "Password must contain uppercase letter")
+  .regex(/[a-z]/, "Password must contain lowercase letter")
+  .regex(/[0-9]/, "Password must contain number")
+  .regex(/[^A-Za-z0-9]/, "Password must contain special character");
 
 /**
  * Hash password with bcrypt (cost factor: 12)
@@ -302,7 +302,7 @@ export const PasswordSchema = z
 export async function hashPassword(password: string): Promise<string> {
   // Validate password strength
   PasswordSchema.parse(password);
-  
+
   // Hash with salt rounds = 12 (recommended)
   return await bcrypt.hash(password, 12);
 }
@@ -312,7 +312,7 @@ export async function hashPassword(password: string): Promise<string> {
  */
 export async function verifyPassword(
   password: string,
-  hash: string
+  hash: string,
 ): Promise<boolean> {
   return await bcrypt.compare(password, hash);
 }
@@ -320,22 +320,20 @@ export async function verifyPassword(
 /**
  * Check if password has been compromised (HIBP API)
  */
-export async function checkPasswordBreach(
-  password: string
-): Promise<boolean> {
+export async function checkPasswordBreach(password: string): Promise<boolean> {
   const sha1 = crypto
-    .createHash('sha1')
+    .createHash("sha1")
     .update(password)
-    .digest('hex')
+    .digest("hex")
     .toUpperCase();
-  
+
   const prefix = sha1.slice(0, 5);
   const suffix = sha1.slice(5);
-  
+
   const response = await fetch(
-    `https://api.pwnedpasswords.com/range/${prefix}`
+    `https://api.pwnedpasswords.com/range/${prefix}`,
   );
-  
+
   const hashes = await response.text();
   return hashes.includes(suffix);
 }
@@ -345,10 +343,10 @@ export async function checkPasswordBreach(
 
 ```typescript
 // lib/crypto/encryption.ts
-import crypto from 'crypto';
+import crypto from "crypto";
 
-const ALGORITHM = 'aes-256-gcm';
-const KEY = Buffer.from(process.env.ENCRYPTION_KEY!, 'hex'); // 32 bytes
+const ALGORITHM = "aes-256-gcm";
+const KEY = Buffer.from(process.env.ENCRYPTION_KEY!, "hex"); // 32 bytes
 const IV_LENGTH = 16;
 const AUTH_TAG_LENGTH = 16;
 
@@ -358,31 +356,31 @@ const AUTH_TAG_LENGTH = 16;
 export function encrypt(text: string): string {
   const iv = crypto.randomBytes(IV_LENGTH);
   const cipher = crypto.createCipheriv(ALGORITHM, KEY, iv);
-  
-  let encrypted = cipher.update(text, 'utf8', 'hex');
-  encrypted += cipher.final('hex');
-  
+
+  let encrypted = cipher.update(text, "utf8", "hex");
+  encrypted += cipher.final("hex");
+
   const authTag = cipher.getAuthTag();
-  
+
   // Format: iv:authTag:encrypted
-  return `${iv.toString('hex')}:${authTag.toString('hex')}:${encrypted}`;
+  return `${iv.toString("hex")}:${authTag.toString("hex")}:${encrypted}`;
 }
 
 /**
  * Decrypt sensitive data
  */
 export function decrypt(encryptedData: string): string {
-  const [ivHex, authTagHex, encrypted] = encryptedData.split(':');
-  
-  const iv = Buffer.from(ivHex, 'hex');
-  const authTag = Buffer.from(authTagHex, 'hex');
-  
+  const [ivHex, authTagHex, encrypted] = encryptedData.split(":");
+
+  const iv = Buffer.from(ivHex, "hex");
+  const authTag = Buffer.from(authTagHex, "hex");
+
   const decipher = crypto.createDecipheriv(ALGORITHM, KEY, iv);
   decipher.setAuthTag(authTag);
-  
-  let decrypted = decipher.update(encrypted, 'hex', 'utf8');
-  decrypted += decipher.final('utf8');
-  
+
+  let decrypted = decipher.update(encrypted, "hex", "utf8");
+  decrypted += decipher.final("utf8");
+
   return decrypted;
 }
 
@@ -390,7 +388,7 @@ export function decrypt(encryptedData: string): string {
 const encryptedSSN = encrypt(user.ssn);
 await database.user.update({
   where: { id: user.id },
-  data: { ssn: encryptedSSN }
+  data: { ssn: encryptedSSN },
 });
 ```
 
@@ -406,8 +404,8 @@ await database.user.update({
 // ✅ GOOD: Parameterized queries (Prisma)
 const users = await database.user.findMany({
   where: {
-    email: { contains: userInput } // Automatically escaped
-  }
+    email: { contains: userInput }, // Automatically escaped
+  },
 });
 
 // ✅ GOOD: Raw queries with parameters
@@ -418,7 +416,7 @@ const users = await database.$queryRaw`
 
 // ❌ DANGEROUS: String concatenation
 const users = await database.$queryRawUnsafe(
-  `SELECT * FROM "User" WHERE email = '${userInput}'`
+  `SELECT * FROM "User" WHERE email = '${userInput}'`,
 );
 // Vulnerable to: ' OR '1'='1
 ```
@@ -427,26 +425,26 @@ const users = await database.$queryRawUnsafe(
 
 ```typescript
 // ✅ GOOD: Type validation
-import { z } from 'zod';
+import { z } from "zod";
 
 const QuerySchema = z.object({
   email: z.string().email(),
-  age: z.number().int().positive()
+  age: z.number().int().positive(),
 });
 
 export async function searchUsers(query: unknown) {
   // Validate and sanitize input
   const validated = QuerySchema.parse(query);
-  
+
   return await database.user.findMany({
-    where: validated
+    where: validated,
   });
 }
 
 // ❌ DANGEROUS: Direct object usage
 export async function searchUsers(query: any) {
   return await database.user.findMany({
-    where: query // Could be: { $where: "this.password.length > 0" }
+    where: query, // Could be: { $where: "this.password.length > 0" }
   });
 }
 ```
@@ -455,28 +453,28 @@ export async function searchUsers(query: any) {
 
 ```typescript
 // ✅ GOOD: Avoid shell commands, use native Node.js
-import { promises as fs } from 'fs';
-import path from 'path';
+import { promises as fs } from "fs";
+import path from "path";
 
 export async function readUserFile(filename: string) {
   // Validate filename
   if (!/^[a-zA-Z0-9_-]+\.txt$/.test(filename)) {
-    throw new Error('Invalid filename');
+    throw new Error("Invalid filename");
   }
-  
+
   // Use path.join to prevent directory traversal
   const safePath = path.join(UPLOAD_DIR, filename);
-  
+
   // Verify path is within upload directory
   if (!safePath.startsWith(UPLOAD_DIR)) {
-    throw new Error('Path traversal detected');
+    throw new Error("Path traversal detected");
   }
-  
-  return await fs.readFile(safePath, 'utf-8');
+
+  return await fs.readFile(safePath, "utf-8");
 }
 
 // ❌ DANGEROUS: Shell command with user input
-import { exec } from 'child_process';
+import { exec } from "child_process";
 
 export async function readUserFile(filename: string) {
   return new Promise((resolve, reject) => {
@@ -506,26 +504,26 @@ export async function readUserFile(filename: string) {
  */
 export abstract class SecureService {
   protected abstract readonly resourceName: string;
-  
+
   constructor(
     protected readonly logger: Logger,
-    protected readonly auditLog: AuditLog
+    protected readonly auditLog: AuditLog,
   ) {}
-  
+
   /**
    * Validate input before processing
    */
   protected abstract validateInput(data: unknown): unknown;
-  
+
   /**
    * Check authorization before action
    */
   protected abstract checkAuthorization(
     userId: string,
     action: string,
-    resourceId?: string
+    resourceId?: string,
   ): Promise<boolean>;
-  
+
   /**
    * Execute action with security checks
    */
@@ -533,36 +531,35 @@ export abstract class SecureService {
     userId: string,
     action: string,
     resourceId: string | undefined,
-    operation: () => Promise<T>
+    operation: () => Promise<T>,
   ): Promise<T> {
     // 1. Audit log
     const auditId = await this.auditLog.start({
       userId,
       action,
       resource: this.resourceName,
-      resourceId
+      resourceId,
     });
-    
+
     try {
       // 2. Authorization check
       const authorized = await this.checkAuthorization(
         userId,
         action,
-        resourceId
+        resourceId,
       );
-      
+
       if (!authorized) {
-        throw new ForbiddenError('Unauthorized action');
+        throw new ForbiddenError("Unauthorized action");
       }
-      
+
       // 3. Execute operation
       const result = await operation();
-      
+
       // 4. Log success
       await this.auditLog.success(auditId, { result });
-      
+
       return result;
-      
     } catch (error) {
       // 5. Log failure
       await this.auditLog.failure(auditId, { error });
@@ -573,42 +570,37 @@ export abstract class SecureService {
 
 // Implementation example
 export class FarmService extends SecureService {
-  protected readonly resourceName = 'farm';
-  
+  protected readonly resourceName = "farm";
+
   protected validateInput(data: unknown) {
     return CreateFarmSchema.parse(data);
   }
-  
+
   protected async checkAuthorization(
     userId: string,
     action: string,
-    farmId?: string
+    farmId?: string,
   ): Promise<boolean> {
-    if (action === 'create') {
+    if (action === "create") {
       // Anyone with FARMER role can create
       const user = await database.user.findUnique({ where: { id: userId } });
-      return user?.role === 'FARMER';
+      return user?.role === "FARMER";
     }
-    
-    if (action === 'update' && farmId) {
+
+    if (action === "update" && farmId) {
       // Only farm owner can update
       const farm = await database.farm.findUnique({ where: { id: farmId } });
       return farm?.ownerId === userId;
     }
-    
+
     return false;
   }
-  
+
   async createFarm(userId: string, data: unknown) {
-    return this.secureExecute(
-      userId,
-      'create',
-      undefined,
-      async () => {
-        const validated = this.validateInput(data);
-        return await database.farm.create({ data: validated });
-      }
-    );
+    return this.secureExecute(userId, "create", undefined, async () => {
+      const validated = this.validateInput(data);
+      return await database.farm.create({ data: validated });
+    });
   }
 }
 ```
@@ -623,19 +615,19 @@ export class FarmService extends SecureService {
 
 ```typescript
 // lib/config/security-headers.ts
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 export function applySecurityHeaders(response: NextResponse) {
   // Strict Transport Security (HSTS)
   response.headers.set(
-    'Strict-Transport-Security',
-    'max-age=31536000; includeSubDomains; preload'
+    "Strict-Transport-Security",
+    "max-age=31536000; includeSubDomains; preload",
   );
-  
+
   // Content Security Policy
   response.headers.set(
-    'Content-Security-Policy',
+    "Content-Security-Policy",
     [
       "default-src 'self'",
       "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://vercel.live",
@@ -645,28 +637,28 @@ export function applySecurityHeaders(response: NextResponse) {
       "connect-src 'self' https://api.stripe.com",
       "frame-ancestors 'none'",
       "base-uri 'self'",
-      "form-action 'self'"
-    ].join('; ')
+      "form-action 'self'",
+    ].join("; "),
   );
-  
+
   // X-Frame-Options
-  response.headers.set('X-Frame-Options', 'DENY');
-  
+  response.headers.set("X-Frame-Options", "DENY");
+
   // X-Content-Type-Options
-  response.headers.set('X-Content-Type-Options', 'nosniff');
-  
+  response.headers.set("X-Content-Type-Options", "nosniff");
+
   // X-XSS-Protection
-  response.headers.set('X-XSS-Protection', '1; mode=block');
-  
+  response.headers.set("X-XSS-Protection", "1; mode=block");
+
   // Referrer-Policy
-  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-  
+  response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+
   // Permissions-Policy
   response.headers.set(
-    'Permissions-Policy',
-    'camera=(), microphone=(), geolocation=()'
+    "Permissions-Policy",
+    "camera=(), microphone=(), geolocation=()",
   );
-  
+
   return response;
 }
 
@@ -681,29 +673,29 @@ export function middleware(request: NextRequest) {
 
 ```typescript
 // lib/config/env.ts
-import { z } from 'zod';
+import { z } from "zod";
 
 const EnvSchema = z.object({
   // Database
   DATABASE_URL: z.string().url(),
-  
+
   // Authentication
   NEXTAUTH_SECRET: z.string().min(32),
   NEXTAUTH_URL: z.string().url(),
-  
+
   // Encryption
   ENCRYPTION_KEY: z.string().length(64), // 32 bytes in hex
-  
+
   // API Keys (never commit!)
-  STRIPE_SECRET_KEY: z.string().startsWith('sk_'),
-  SENDGRID_API_KEY: z.string().startsWith('SG.'),
-  
+  STRIPE_SECRET_KEY: z.string().startsWith("sk_"),
+  SENDGRID_API_KEY: z.string().startsWith("SG."),
+
   // Node environment
-  NODE_ENV: z.enum(['development', 'production', 'test']),
-  
+  NODE_ENV: z.enum(["development", "production", "test"]),
+
   // Security
   ALLOWED_ORIGINS: z.string(),
-  RATE_LIMIT_ENABLED: z.string().transform(val => val === 'true')
+  RATE_LIMIT_ENABLED: z.string().transform((val) => val === "true"),
 });
 
 /**
@@ -713,7 +705,7 @@ export function validateEnvironment() {
   try {
     return EnvSchema.parse(process.env);
   } catch (error) {
-    console.error('❌ Invalid environment configuration:');
+    console.error("❌ Invalid environment configuration:");
     console.error(error);
     process.exit(1);
   }
@@ -758,31 +750,31 @@ on:
     branches: [main, develop]
   pull_request:
   schedule:
-    - cron: '0 0 * * 0' # Weekly
+    - cron: "0 0 * * 0" # Weekly
 
 jobs:
   audit:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Run npm audit
         run: npm audit --audit-level=moderate
-      
+
       - name: Run Snyk scan
         uses: snyk/actions/node@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           args: --severity-threshold=high
-      
+
       - name: OWASP Dependency Check
         uses: dependency-check/Dependency-Check_Action@main
         with:
-          project: 'farmers-market-platform'
-          path: '.'
-          format: 'HTML'
-      
+          project: "farmers-market-platform"
+          path: "."
+          format: "HTML"
+
       - name: Upload results
         uses: actions/upload-artifact@v3
         with:
@@ -800,70 +792,70 @@ jobs:
 
 ```typescript
 // lib/auth/index.ts
-import NextAuth, { NextAuthOptions } from 'next-auth';
-import CredentialsProvider from 'next-auth/providers/credentials';
-import { PrismaAdapter } from '@auth/prisma-adapter';
-import { database } from '@/lib/database';
-import { verifyPassword } from '@/lib/auth/password';
-import { rateLimit } from '@/lib/rate-limit';
+import NextAuth, { NextAuthOptions } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+import { PrismaAdapter } from "@auth/prisma-adapter";
+import { database } from "@/lib/database";
+import { verifyPassword } from "@/lib/auth/password";
+import { rateLimit } from "@/lib/rate-limit";
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(database),
   session: {
-    strategy: 'jwt',
+    strategy: "jwt",
     maxAge: 7 * 24 * 60 * 60, // 7 days
-    updateAge: 24 * 60 * 60    // Update every 24 hours
+    updateAge: 24 * 60 * 60, // Update every 24 hours
   },
   pages: {
-    signIn: '/login',
-    error: '/auth/error'
+    signIn: "/login",
+    error: "/auth/error",
   },
   providers: [
     CredentialsProvider({
-      name: 'Credentials',
+      name: "Credentials",
       credentials: {
-        email: { type: 'email' },
-        password: { type: 'password' }
+        email: { type: "email" },
+        password: { type: "password" },
       },
       async authorize(credentials, req) {
         if (!credentials?.email || !credentials?.password) {
-          throw new Error('Invalid credentials');
+          throw new Error("Invalid credentials");
         }
-        
+
         // Rate limiting by IP
-        const ip = req.headers?.['x-forwarded-for'] || 'unknown';
+        const ip = req.headers?.["x-forwarded-for"] || "unknown";
         const rateLimitResult = await rateLimit({
           key: `login:${ip}`,
           limit: 5,
-          window: 15 * 60 * 1000 // 15 minutes
+          window: 15 * 60 * 1000, // 15 minutes
         });
-        
+
         if (!rateLimitResult.success) {
-          throw new Error('Too many login attempts. Try again later.');
+          throw new Error("Too many login attempts. Try again later.");
         }
-        
+
         // Fetch user
         const user = await database.user.findUnique({
           where: { email: credentials.email.toLowerCase() },
-          include: { roles: true }
+          include: { roles: true },
         });
-        
+
         if (!user || !user.password) {
           // Don't reveal if user exists
-          throw new Error('Invalid credentials');
+          throw new Error("Invalid credentials");
         }
-        
+
         // Check if account is locked
         if (user.lockedUntil && user.lockedUntil > new Date()) {
-          throw new Error('Account is temporarily locked');
+          throw new Error("Account is temporarily locked");
         }
-        
+
         // Verify password
         const isValid = await verifyPassword(
           credentials.password,
-          user.password
+          user.password,
         );
-        
+
         if (!isValid) {
           // Increment failed attempts
           await database.user.update({
@@ -872,15 +864,16 @@ export const authOptions: NextAuthOptions = {
               failedLoginAttempts: { increment: 1 },
               lastFailedLogin: new Date(),
               // Lock account after 5 failed attempts
-              lockedUntil: user.failedLoginAttempts >= 4
-                ? new Date(Date.now() + 30 * 60 * 1000) // 30 minutes
-                : undefined
-            }
+              lockedUntil:
+                user.failedLoginAttempts >= 4
+                  ? new Date(Date.now() + 30 * 60 * 1000) // 30 minutes
+                  : undefined,
+            },
           });
-          
-          throw new Error('Invalid credentials');
+
+          throw new Error("Invalid credentials");
         }
-        
+
         // Reset failed attempts on successful login
         await database.user.update({
           where: { id: user.id },
@@ -888,18 +881,18 @@ export const authOptions: NextAuthOptions = {
             failedLoginAttempts: 0,
             lastFailedLogin: null,
             lockedUntil: null,
-            lastLogin: new Date()
-          }
+            lastLogin: new Date(),
+          },
         });
-        
+
         return {
           id: user.id,
           email: user.email,
           name: user.name,
-          role: user.roles[0]?.name ?? 'CUSTOMER'
+          role: user.roles[0]?.name ?? "CUSTOMER",
         };
-      }
-    })
+      },
+    }),
   ],
   callbacks: {
     async jwt({ token, user, account }) {
@@ -907,23 +900,23 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id;
         token.role = user.role;
       }
-      
+
       // Token rotation
       if (account) {
         token.accessToken = account.access_token;
       }
-      
+
       return token;
     },
-    
+
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string;
         session.user.role = token.role as string;
       }
-      
+
       return session;
-    }
+    },
   },
   events: {
     async signIn({ user, account, isNewUser }) {
@@ -931,25 +924,25 @@ export const authOptions: NextAuthOptions = {
       await database.auditLog.create({
         data: {
           userId: user.id,
-          action: 'LOGIN',
-          resource: 'session',
-          status: 'SUCCESS'
-        }
+          action: "LOGIN",
+          resource: "session",
+          status: "SUCCESS",
+        },
       });
     },
-    
+
     async signOut({ token }) {
       // Log logout
       await database.auditLog.create({
         data: {
           userId: token.id as string,
-          action: 'LOGOUT',
-          resource: 'session',
-          status: 'SUCCESS'
-        }
+          action: "LOGOUT",
+          resource: "session",
+          status: "SUCCESS",
+        },
       });
-    }
-  }
+    },
+  },
 };
 
 export const auth = () => NextAuth(authOptions);
@@ -959,8 +952,8 @@ export const auth = () => NextAuth(authOptions);
 
 ```typescript
 // lib/auth/mfa.ts
-import speakeasy from 'speakeasy';
-import QRCode from 'qrcode';
+import speakeasy from "speakeasy";
+import QRCode from "qrcode";
 
 /**
  * Generate MFA secret for user
@@ -968,24 +961,24 @@ import QRCode from 'qrcode';
 export async function generateMFASecret(user: User) {
   const secret = speakeasy.generateSecret({
     name: `Farmers Market (${user.email})`,
-    issuer: 'Farmers Market Platform'
+    issuer: "Farmers Market Platform",
   });
-  
+
   // Generate QR code
   const qrCode = await QRCode.toDataURL(secret.otpauth_url!);
-  
+
   // Store secret (encrypted)
   await database.user.update({
     where: { id: user.id },
     data: {
       mfaSecret: encrypt(secret.base32),
-      mfaEnabled: false // User must verify first
-    }
+      mfaEnabled: false, // User must verify first
+    },
   });
-  
+
   return {
     secret: secret.base32,
-    qrCode
+    qrCode,
   };
 }
 
@@ -994,19 +987,19 @@ export async function generateMFASecret(user: User) {
  */
 export async function verifyMFAToken(
   user: User,
-  token: string
+  token: string,
 ): Promise<boolean> {
   if (!user.mfaSecret) {
     return false;
   }
-  
+
   const decryptedSecret = decrypt(user.mfaSecret);
-  
+
   return speakeasy.totp.verify({
     secret: decryptedSecret,
-    encoding: 'base32',
+    encoding: "base32",
     token,
-    window: 2 // Allow 2 time steps (60s) of variance
+    window: 2, // Allow 2 time steps (60s) of variance
   });
 }
 
@@ -1015,36 +1008,36 @@ export async function verifyMFAToken(
  */
 export async function enableMFA(userId: string, token: string) {
   const user = await database.user.findUnique({ where: { id: userId } });
-  
+
   if (!user || !user.mfaSecret) {
-    throw new Error('MFA not initialized');
+    throw new Error("MFA not initialized");
   }
-  
+
   const isValid = await verifyMFAToken(user, token);
-  
+
   if (!isValid) {
-    throw new Error('Invalid MFA token');
+    throw new Error("Invalid MFA token");
   }
-  
+
   // Enable MFA
   await database.user.update({
     where: { id: userId },
-    data: { mfaEnabled: true }
+    data: { mfaEnabled: true },
   });
-  
+
   // Generate backup codes
   const backupCodes = Array.from({ length: 10 }, () =>
-    crypto.randomBytes(4).toString('hex').toUpperCase()
+    crypto.randomBytes(4).toString("hex").toUpperCase(),
   );
-  
+
   await database.mfaBackupCode.createMany({
-    data: backupCodes.map(code => ({
+    data: backupCodes.map((code) => ({
       userId,
       code: hashPassword(code), // Hash backup codes
-      used: false
-    }))
+      used: false,
+    })),
   });
-  
+
   return backupCodes;
 }
 ```
@@ -1059,7 +1052,7 @@ export async function enableMFA(userId: string, token: string) {
 
 ```typescript
 // lib/integrity/verify.ts
-import crypto from 'crypto';
+import crypto from "crypto";
 
 /**
  * Verify integrity of downloaded files
@@ -1067,14 +1060,11 @@ import crypto from 'crypto';
 export async function verifyFileIntegrity(
   filePath: string,
   expectedHash: string,
-  algorithm: 'sha256' | 'sha512' = 'sha256'
+  algorithm: "sha256" | "sha512" = "sha256",
 ): Promise<boolean> {
   const fileBuffer = await fs.readFile(filePath);
-  const hash = crypto
-    .createHash(algorithm)
-    .update(fileBuffer)
-    .digest('hex');
-  
+  const hash = crypto.createHash(algorithm).update(fileBuffer).digest("hex");
+
   return hash === expectedHash;
 }
 
@@ -1083,27 +1073,27 @@ export async function verifyFileIntegrity(
  */
 export async function verifyPackageIntegrity(
   packageName: string,
-  version: string
+  version: string,
 ): Promise<boolean> {
   const response = await fetch(
-    `https://registry.npmjs.org/${packageName}/${version}`
+    `https://registry.npmjs.org/${packageName}/${version}`,
   );
-  
+
   const data = await response.json();
-  
+
   // Check for known vulnerabilities
   const auditResponse = await fetch(
-    'https://registry.npmjs.org/-/npm/v1/security/audits',
+    "https://registry.npmjs.org/-/npm/v1/security/audits",
     {
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify({
-        [packageName]: version
-      })
-    }
+        [packageName]: version,
+      }),
+    },
   );
-  
+
   const audit = await auditResponse.json();
-  
+
   return audit.metadata.vulnerabilities.total === 0;
 }
 ```
@@ -1113,20 +1103,14 @@ export async function verifyPackageIntegrity(
 ```tsx
 // components/ExternalScript.tsx
 export function ExternalScript({ src, integrity }: Props) {
-  return (
-    <script
-      src={src}
-      integrity={integrity}
-      crossOrigin="anonymous"
-    />
-  );
+  return <script src={src} integrity={integrity} crossOrigin="anonymous" />;
 }
 
 // Usage
 <ExternalScript
   src="https://cdn.example.com/library.js"
   integrity="sha384-oqVuAfXRKap7fdgcCY5uykM6+R9GqQ8K/ux..."
-/>
+/>;
 ```
 
 ---
@@ -1139,15 +1123,15 @@ export function ExternalScript({ src, integrity }: Props) {
 
 ```typescript
 // lib/audit/logger.ts
-import { database } from '@/lib/database';
-import { Sentry } from '@/lib/monitoring';
+import { database } from "@/lib/database";
+import { Sentry } from "@/lib/monitoring";
 
 export interface AuditLogEntry {
   userId: string;
   action: string;
   resource: string;
   resourceId?: string;
-  status: 'SUCCESS' | 'FAILURE';
+  status: "SUCCESS" | "FAILURE";
   metadata?: Record<string, unknown>;
   ip?: string;
   userAgent?: string;
@@ -1163,40 +1147,40 @@ export class AuditLogger {
       data: {
         ...entry,
         timestamp: new Date(),
-        metadata: entry.metadata ? JSON.stringify(entry.metadata) : undefined
-      }
+        metadata: entry.metadata ? JSON.stringify(entry.metadata) : undefined,
+      },
     });
-    
+
     // Log to Sentry for alerting
-    if (entry.status === 'FAILURE') {
+    if (entry.status === "FAILURE") {
       Sentry.captureMessage(`Security event: ${entry.action} failed`, {
-        level: 'warning',
-        extra: entry
+        level: "warning",
+        extra: entry,
       });
     }
-    
+
     // Alert on critical events
     if (this.isCriticalEvent(entry)) {
       await this.sendSecurityAlert(entry);
     }
   }
-  
+
   /**
    * Identify critical security events
    */
   private isCriticalEvent(entry: AuditLogEntry): boolean {
     const criticalActions = [
-      'UNAUTHORIZED_ACCESS_ATTEMPT',
-      'PRIVILEGE_ESCALATION',
-      'DATA_EXPORT',
-      'ADMIN_ACTION',
-      'PASSWORD_RESET',
-      'MFA_DISABLED'
+      "UNAUTHORIZED_ACCESS_ATTEMPT",
+      "PRIVILEGE_ESCALATION",
+      "DATA_EXPORT",
+      "ADMIN_ACTION",
+      "PASSWORD_RESET",
+      "MFA_DISABLED",
     ];
-    
+
     return criticalActions.includes(entry.action);
   }
-  
+
   /**
    * Send real-time security alerts
    */
@@ -1205,7 +1189,7 @@ export class AuditLogger {
     await Promise.all([
       this.sendSlackAlert(entry),
       this.sendEmailAlert(entry),
-      this.sendPagerDutyAlert(entry)
+      this.sendPagerDutyAlert(entry),
     ]);
   }
 }
@@ -1215,20 +1199,20 @@ export const auditLogger = new AuditLogger();
 // Usage examples
 await auditLogger.log({
   userId: user.id,
-  action: 'LOGIN',
-  resource: 'session',
-  status: 'SUCCESS',
+  action: "LOGIN",
+  resource: "session",
+  status: "SUCCESS",
   ip: request.ip,
-  userAgent: request.headers['user-agent']
+  userAgent: request.headers["user-agent"],
 });
 
 await auditLogger.log({
   userId: user.id,
-  action: 'UNAUTHORIZED_ACCESS_ATTEMPT',
-  resource: 'farm',
+  action: "UNAUTHORIZED_ACCESS_ATTEMPT",
+  resource: "farm",
   resourceId: farmId,
-  status: 'FAILURE',
-  metadata: { reason: 'Insufficient permissions' }
+  status: "FAILURE",
+  metadata: { reason: "Insufficient permissions" },
 });
 ```
 
@@ -1242,82 +1226,82 @@ export class SecurityMonitor {
    */
   async detectAnomalies(userId: string): Promise<SecurityAlert[]> {
     const alerts: SecurityAlert[] = [];
-    
+
     // Check for rapid failed login attempts
     const failedLogins = await database.auditLog.count({
       where: {
         userId,
-        action: 'LOGIN',
-        status: 'FAILURE',
-        timestamp: { gte: new Date(Date.now() - 15 * 60 * 1000) }
-      }
+        action: "LOGIN",
+        status: "FAILURE",
+        timestamp: { gte: new Date(Date.now() - 15 * 60 * 1000) },
+      },
     });
-    
+
     if (failedLogins >= 5) {
       alerts.push({
-        type: 'BRUTE_FORCE_ATTEMPT',
-        severity: 'HIGH',
+        type: "BRUTE_FORCE_ATTEMPT",
+        severity: "HIGH",
         userId,
-        message: `${failedLogins} failed login attempts in 15 minutes`
+        message: `${failedLogins} failed login attempts in 15 minutes`,
       });
     }
-    
+
     // Check for unusual access patterns
     const recentActions = await database.auditLog.findMany({
       where: {
         userId,
-        timestamp: { gte: new Date(Date.now() - 60 * 60 * 1000) }
-      }
+        timestamp: { gte: new Date(Date.now() - 60 * 60 * 1000) },
+      },
     });
-    
-    const uniqueIPs = new Set(recentActions.map(a => a.ip)).size;
-    
+
+    const uniqueIPs = new Set(recentActions.map((a) => a.ip)).size;
+
     if (uniqueIPs >= 5) {
       alerts.push({
-        type: 'MULTIPLE_LOCATIONS',
-        severity: 'MEDIUM',
+        type: "MULTIPLE_LOCATIONS",
+        severity: "MEDIUM",
         userId,
-        message: `Access from ${uniqueIPs} different IPs in 1 hour`
+        message: `Access from ${uniqueIPs} different IPs in 1 hour`,
       });
     }
-    
+
     // Check for privilege escalation attempts
     const escalationAttempts = recentActions.filter(
-      a => a.action === 'UNAUTHORIZED_ACCESS_ATTEMPT'
+      (a) => a.action === "UNAUTHORIZED_ACCESS_ATTEMPT",
     );
-    
+
     if (escalationAttempts.length >= 3) {
       alerts.push({
-        type: 'PRIVILEGE_ESCALATION',
-        severity: 'CRITICAL',
+        type: "PRIVILEGE_ESCALATION",
+        severity: "CRITICAL",
         userId,
-        message: 'Multiple unauthorized access attempts detected'
+        message: "Multiple unauthorized access attempts detected",
       });
     }
-    
+
     return alerts;
   }
-  
+
   /**
    * Generate security report
    */
   async generateSecurityReport(
     startDate: Date,
-    endDate: Date
+    endDate: Date,
   ): Promise<SecurityReport> {
     const logs = await database.auditLog.findMany({
       where: {
-        timestamp: { gte: startDate, lte: endDate }
-      }
+        timestamp: { gte: startDate, lte: endDate },
+      },
     });
-    
+
     return {
       totalEvents: logs.length,
-      failedAttempts: logs.filter(l => l.status === 'FAILURE').length,
-      uniqueUsers: new Set(logs.map(l => l.userId)).size,
+      failedAttempts: logs.filter((l) => l.status === "FAILURE").length,
+      uniqueUsers: new Set(logs.map((l) => l.userId)).size,
       topActions: this.getTopActions(logs),
-      securityIncidents: logs.filter(l => this.isCriticalEvent(l)).length,
-      recommendations: await this.generateRecommendations(logs)
+      securityIncidents: logs.filter((l) => this.isCriticalEvent(l)).length,
+      recommendations: await this.generateRecommendations(logs),
     };
   }
 }
@@ -1333,15 +1317,15 @@ export class SecurityMonitor {
 
 ```typescript
 // lib/security/ssrf-protection.ts
-import { URL } from 'url';
+import { URL } from "url";
 
-const ALLOWED_PROTOCOLS = ['http:', 'https:'];
+const ALLOWED_PROTOCOLS = ["http:", "https:"];
 const BLOCKED_HOSTS = [
-  'localhost',
-  '127.0.0.1',
-  '0.0.0.0',
-  '169.254.169.254', // AWS metadata endpoint
-  '::1'
+  "localhost",
+  "127.0.0.1",
+  "0.0.0.0",
+  "169.254.169.254", // AWS metadata endpoint
+  "::1",
 ];
 
 const PRIVATE_IP_RANGES = [
@@ -1349,7 +1333,7 @@ const PRIVATE_IP_RANGES = [
   /^172\.(1[6-9]|2[0-9]|3[0-1])\./,
   /^192\.168\./,
   /^fc00:/,
-  /^fd00:/
+  /^fd00:/,
 ];
 
 /**
@@ -1358,27 +1342,27 @@ const PRIVATE_IP_RANGES = [
 export function validateURL(urlString: string): boolean {
   try {
     const url = new URL(urlString);
-    
+
     // Check protocol
     if (!ALLOWED_PROTOCOLS.includes(url.protocol)) {
       return false;
     }
-    
+
     // Check for blocked hosts
     if (BLOCKED_HOSTS.includes(url.hostname)) {
       return false;
     }
-    
+
     // Check for private IP ranges
-    if (PRIVATE_IP_RANGES.some(range => range.test(url.hostname))) {
+    if (PRIVATE_IP_RANGES.some((range) => range.test(url.hostname))) {
       return false;
     }
-    
+
     // Check for IP address format
     if (/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(url.hostname)) {
       // Verify it's not a private IP
-      const parts = url.hostname.split('.').map(Number);
-      
+      const parts = url.hostname.split(".").map(Number);
+
       if (
         parts[0] === 10 ||
         parts[0] === 127 ||
@@ -1388,7 +1372,7 @@ export function validateURL(urlString: string): boolean {
         return false;
       }
     }
-    
+
     return true;
   } catch {
     return false;
@@ -1400,33 +1384,33 @@ export function validateURL(urlString: string): boolean {
  */
 export async function safeFetch(
   url: string,
-  options?: RequestInit
+  options?: RequestInit,
 ): Promise<Response> {
   // Validate URL
   if (!validateURL(url)) {
-    throw new Error('Invalid or blocked URL');
+    throw new Error("Invalid or blocked URL");
   }
-  
+
   // Add timeout
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 5000);
-  
+
   try {
     const response = await fetch(url, {
       ...options,
       signal: controller.signal,
       // Prevent redirects to internal resources
-      redirect: 'manual'
+      redirect: "manual",
     });
-    
+
     // Check for redirects
     if (response.status >= 300 && response.status < 400) {
-      const location = response.headers.get('location');
+      const location = response.headers.get("location");
       if (location && !validateURL(location)) {
-        throw new Error('Redirect to blocked URL');
+        throw new Error("Redirect to blocked URL");
       }
     }
-    
+
     return response;
   } finally {
     clearTimeout(timeout);
@@ -1442,34 +1426,32 @@ export async function safeFetch(
 
 ```typescript
 // lib/auth/session.ts
-import { SignJWT, jwtVerify } from 'jose';
-import { cookies } from 'next/headers';
+import { SignJWT, jwtVerify } from "jose";
+import { cookies } from "next/headers";
 
-const SESSION_SECRET = new TextEncoder().encode(
-  process.env.NEXTAUTH_SECRET
-);
+const SESSION_SECRET = new TextEncoder().encode(process.env.NEXTAUTH_SECRET);
 
 export async function createSession(user: User): Promise<string> {
   const token = await new SignJWT({
     userId: user.id,
     email: user.email,
-    role: user.role
+    role: user.role,
   })
-    .setProtectedHeader({ alg: 'HS256' })
+    .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime('7d')
+    .setExpirationTime("7d")
     .setJti(crypto.randomUUID()) // Unique token ID
     .sign(SESSION_SECRET);
-  
+
   // Store session in database for revocation
   await database.session.create({
     data: {
       userId: user.id,
       token: hashToken(token),
-      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-    }
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    },
   });
-  
+
   return token;
 }
 
@@ -1477,33 +1459,33 @@ export async function verifySession(token: string): Promise<SessionPayload> {
   try {
     // Verify JWT signature and expiration
     const { payload } = await jwtVerify(token, SESSION_SECRET);
-    
+
     // Check if session is revoked
     const session = await database.session.findUnique({
-      where: { token: hashToken(token) }
+      where: { token: hashToken(token) },
     });
-    
+
     if (!session || session.revokedAt) {
-      throw new Error('Session revoked');
+      throw new Error("Session revoked");
     }
-    
+
     return payload as SessionPayload;
   } catch (error) {
-    throw new UnauthorizedError('Invalid session');
+    throw new UnauthorizedError("Invalid session");
   }
 }
 
 export async function revokeSession(token: string): Promise<void> {
   await database.session.update({
     where: { token: hashToken(token) },
-    data: { revokedAt: new Date() }
+    data: { revokedAt: new Date() },
   });
 }
 
 export async function revokeAllUserSessions(userId: string): Promise<void> {
   await database.session.updateMany({
     where: { userId, revokedAt: null },
-    data: { revokedAt: new Date() }
+    data: { revokedAt: new Date() },
   });
 }
 ```
@@ -1514,27 +1496,27 @@ export async function revokeAllUserSessions(userId: string): Promise<void> {
 // lib/auth/rbac.ts
 export enum Permission {
   // Farm permissions
-  FARM_CREATE = 'farm:create',
-  FARM_READ = 'farm:read',
-  FARM_UPDATE = 'farm:update',
-  FARM_DELETE = 'farm:delete',
-  
+  FARM_CREATE = "farm:create",
+  FARM_READ = "farm:read",
+  FARM_UPDATE = "farm:update",
+  FARM_DELETE = "farm:delete",
+
   // Product permissions
-  PRODUCT_CREATE = 'product:create',
-  PRODUCT_READ = 'product:read',
-  PRODUCT_UPDATE = 'product:update',
-  PRODUCT_DELETE = 'product:delete',
-  
+  PRODUCT_CREATE = "product:create",
+  PRODUCT_READ = "product:read",
+  PRODUCT_UPDATE = "product:update",
+  PRODUCT_DELETE = "product:delete",
+
   // Order permissions
-  ORDER_CREATE = 'order:create',
-  ORDER_READ = 'order:read',
-  ORDER_UPDATE = 'order:update',
-  ORDER_CANCEL = 'order:cancel',
-  
+  ORDER_CREATE = "order:create",
+  ORDER_READ = "order:read",
+  ORDER_UPDATE = "order:update",
+  ORDER_CANCEL = "order:cancel",
+
   // Admin permissions
-  USER_MANAGE = 'user:manage',
-  FARM_APPROVE = 'farm:approve',
-  ANALYTICS_VIEW = 'analytics:view'
+  USER_MANAGE = "user:manage",
+  FARM_APPROVE = "farm:approve",
+  ANALYTICS_VIEW = "analytics:view",
 }
 
 export const ROLE_PERMISSIONS: Record<string, Permission[]> = {
@@ -1542,9 +1524,9 @@ export const ROLE_PERMISSIONS: Record<string, Permission[]> = {
     Permission.PRODUCT_READ,
     Permission.FARM_READ,
     Permission.ORDER_CREATE,
-    Permission.ORDER_READ
+    Permission.ORDER_READ,
   ],
-  
+
   FARMER: [
     Permission.FARM_CREATE,
     Permission.FARM_READ,
@@ -1554,15 +1536,15 @@ export const ROLE_PERMISSIONS: Record<string, Permission[]> = {
     Permission.PRODUCT_UPDATE,
     Permission.PRODUCT_DELETE,
     Permission.ORDER_READ,
-    Permission.ORDER_UPDATE
+    Permission.ORDER_UPDATE,
   ],
-  
-  ADMIN: Object.values(Permission) // All permissions
+
+  ADMIN: Object.values(Permission), // All permissions
 };
 
 export function hasPermission(
   userRole: string,
-  permission: Permission
+  permission: Permission,
 ): boolean {
   const permissions = ROLE_PERMISSIONS[userRole] || [];
   return permissions.includes(permission);
@@ -1570,28 +1552,26 @@ export function hasPermission(
 
 export function requirePermission(
   userRole: string,
-  permission: Permission
+  permission: Permission,
 ): void {
   if (!hasPermission(userRole, permission)) {
-    throw new ForbiddenError(
-      `Missing permission: ${permission}`
-    );
+    throw new ForbiddenError(`Missing permission: ${permission}`);
   }
 }
 
 // Middleware usage
 export async function requirePermissionMiddleware(
   request: NextRequest,
-  permission: Permission
+  permission: Permission,
 ) {
   const session = await auth();
-  
+
   if (!session?.user) {
     throw new UnauthorizedError();
   }
-  
+
   requirePermission(session.user.role, permission);
-  
+
   return session;
 }
 ```
@@ -1604,74 +1584,84 @@ export async function requirePermissionMiddleware(
 
 ```typescript
 // lib/validators/comprehensive.validator.ts
-import { z } from 'zod';
-import { isValidPhoneNumber } from 'libphonenumber-js';
+import { z } from "zod";
+import { isValidPhoneNumber } from "libphonenumber-js";
 
 // Custom validators
-const phoneNumberValidator = z.string().refine(
-  (value) => isValidPhoneNumber(value, 'US'),
-  { message: 'Invalid phone number' }
-);
+const phoneNumberValidator = z
+  .string()
+  .refine((value) => isValidPhoneNumber(value, "US"), {
+    message: "Invalid phone number",
+  });
 
-const slugValidator = z.string()
+const slugValidator = z
+  .string()
   .min(3)
   .max(100)
-  .regex(/^[a-z0-9-]+$/, 'Slug must be lowercase letters, numbers, and hyphens only');
+  .regex(
+    /^[a-z0-9-]+$/,
+    "Slug must be lowercase letters, numbers, and hyphens only",
+  );
 
-const urlValidator = z.string()
+const urlValidator = z
+  .string()
   .url()
   .refine((url) => {
     try {
       const parsed = new URL(url);
-      return ['http:', 'https:'].includes(parsed.protocol);
+      return ["http:", "https:"].includes(parsed.protocol);
     } catch {
       return false;
     }
-  }, 'Invalid URL protocol');
+  }, "Invalid URL protocol");
 
 // Sanitization helpers
 export function sanitizeHTML(html: string): string {
   return DOMPurify.sanitize(html, {
-    ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'a'],
-    ALLOWED_ATTR: ['href', 'target']
+    ALLOWED_TAGS: ["p", "br", "strong", "em", "u", "a"],
+    ALLOWED_ATTR: ["href", "target"],
   });
 }
 
 export function sanitizeFilename(filename: string): string {
   return filename
-    .replace(/[^a-zA-Z0-9.-]/g, '_')
-    .replace(/_{2,}/g, '_')
+    .replace(/[^a-zA-Z0-9.-]/g, "_")
+    .replace(/_{2,}/g, "_")
     .substring(0, 255);
 }
 
 // Comprehensive user input schema
 export const UserInputSchema = z.object({
-  name: z.string()
-    .min(2, 'Name must be at least 2 characters')
-    .max(100, 'Name must not exceed 100 characters')
-    .regex(/^[a-zA-Z\s'-]+$/, 'Name contains invalid characters'),
-  
-  email: z.string()
-    .email('Invalid email address')
+  name: z
+    .string()
+    .min(2, "Name must be at least 2 characters")
+    .max(100, "Name must not exceed 100 characters")
+    .regex(/^[a-zA-Z\s'-]+$/, "Name contains invalid characters"),
+
+  email: z
+    .string()
+    .email("Invalid email address")
     .toLowerCase()
-    .transform(email => email.trim()),
-  
+    .transform((email) => email.trim()),
+
   phone: phoneNumberValidator.optional(),
-  
+
   website: urlValidator.optional(),
-  
-  bio: z.string()
-    .max(500, 'Bio must not exceed 500 characters')
+
+  bio: z
+    .string()
+    .max(500, "Bio must not exceed 500 characters")
     .transform(sanitizeHTML)
     .optional(),
-  
-  avatar: z.string()
+
+  avatar: z
+    .string()
     .url()
     .refine((url) => {
-      const ext = url.split('.').pop()?.toLowerCase();
-      return ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext || '');
-    }, 'Invalid image format')
-    .optional()
+      const ext = url.split(".").pop()?.toLowerCase();
+      return ["jpg", "jpeg", "png", "gif", "webp"].includes(ext || "");
+    }, "Invalid image format")
+    .optional(),
 });
 ```
 
@@ -1684,10 +1674,10 @@ export const UserInputSchema = z.object({
 ```typescript
 // lib/data/classification.ts
 export enum DataClassification {
-  PUBLIC = 'PUBLIC',           // Public information
-  INTERNAL = 'INTERNAL',       // Internal use only
-  CONFIDENTIAL = 'CONFIDENTIAL', // Sensitive business data
-  RESTRICTED = 'RESTRICTED'    // PII, payment data, credentials
+  PUBLIC = "PUBLIC", // Public information
+  INTERNAL = "INTERNAL", // Internal use only
+  CONFIDENTIAL = "CONFIDENTIAL", // Sensitive business data
+  RESTRICTED = "RESTRICTED", // PII, payment data, credentials
 }
 
 export interface ClassifiedField {
@@ -1700,48 +1690,48 @@ export interface ClassifiedField {
 
 export const DATA_CLASSIFICATION: Record<string, ClassifiedField> = {
   // PUBLIC
-  'farm.name': {
-    field: 'farm.name',
+  "farm.name": {
+    field: "farm.name",
     classification: DataClassification.PUBLIC,
     encryption: false,
     masking: false,
-    auditLog: false
+    auditLog: false,
   },
-  
+
   // INTERNAL
-  'farm.analytics': {
-    field: 'farm.analytics',
+  "farm.analytics": {
+    field: "farm.analytics",
     classification: DataClassification.INTERNAL,
     encryption: false,
     masking: false,
-    auditLog: true
+    auditLog: true,
   },
-  
+
   // CONFIDENTIAL
-  'user.email': {
-    field: 'user.email',
+  "user.email": {
+    field: "user.email",
     classification: DataClassification.CONFIDENTIAL,
     encryption: false,
     masking: true, // Show as j***@example.com
-    auditLog: true
+    auditLog: true,
   },
-  
+
   // RESTRICTED
-  'user.password': {
-    field: 'user.password',
+  "user.password": {
+    field: "user.password",
     classification: DataClassification.RESTRICTED,
     encryption: true,
     masking: true,
-    auditLog: true
+    auditLog: true,
   },
-  
-  'payment.cardNumber': {
-    field: 'payment.cardNumber',
+
+  "payment.cardNumber": {
+    field: "payment.cardNumber",
     classification: DataClassification.RESTRICTED,
     encryption: true,
     masking: true, // Show as **** **** **** 1234
-    auditLog: true
-  }
+    auditLog: true,
+  },
 };
 ```
 
@@ -1750,61 +1740,62 @@ export const DATA_CLASSIFICATION: Record<string, ClassifiedField> = {
 ```typescript
 // lib/data/masking.ts
 export function maskEmail(email: string): string {
-  const [local, domain] = email.split('@');
-  
+  const [local, domain] = email.split("@");
+
   if (local.length <= 2) {
     return `${local[0]}***@${domain}`;
   }
-  
-  return `${local[0]}${'*'.repeat(local.length - 2)}${local[local.length - 1]}@${domain}`;
+
+  return `${local[0]}${"*".repeat(local.length - 2)}${local[local.length - 1]}@${domain}`;
 }
 
 export function maskPhone(phone: string): string {
-  const digits = phone.replace(/\D/g, '');
-  
+  const digits = phone.replace(/\D/g, "");
+
   if (digits.length === 10) {
     return `(***) ***-${digits.slice(-4)}`;
   }
-  
+
   return `***.***.***.${digits.slice(-4)}`;
 }
 
 export function maskCreditCard(cardNumber: string): string {
-  const digits = cardNumber.replace(/\s/g, '');
+  const digits = cardNumber.replace(/\s/g, "");
   return `**** **** **** ${digits.slice(-4)}`;
 }
 
 export function maskSSN(ssn: string): string {
-  const digits = ssn.replace(/\D/g, '');
+  const digits = ssn.replace(/\D/g, "");
   return `***-**-${digits.slice(-4)}`;
 }
 
 // Auto-mask based on classification
 export function autoMask<T extends Record<string, any>>(
   data: T,
-  classifications: Record<string, ClassifiedField>
+  classifications: Record<string, ClassifiedField>,
 ): T {
   const masked = { ...data };
-  
+
   for (const [key, value] of Object.entries(data)) {
     const classification = classifications[key];
-    
-    if (classification?.masking && typeof value === 'string') {
-      if (key.includes('email')) {
+
+    if (classification?.masking && typeof value === "string") {
+      if (key.includes("email")) {
         masked[key] = maskEmail(value);
-      } else if (key.includes('phone')) {
+      } else if (key.includes("phone")) {
         masked[key] = maskPhone(value);
-      } else if (key.includes('card')) {
+      } else if (key.includes("card")) {
         masked[key] = maskCreditCard(value);
-      } else if (key.includes('ssn')) {
+      } else if (key.includes("ssn")) {
         masked[key] = maskSSN(value);
       } else {
         // Generic masking
-        masked[key] = value.slice(0, 2) + '*'.repeat(value.length - 4) + value.slice(-2);
+        masked[key] =
+          value.slice(0, 2) + "*".repeat(value.length - 4) + value.slice(-2);
       }
     }
   }
-  
+
   return masked;
 }
 ```
@@ -1817,7 +1808,7 @@ export function autoMask<T extends Record<string, any>>(
 
 ```typescript
 // lib/rate-limit/index.ts
-import { Redis } from '@upstash/redis';
+import { Redis } from "@upstash/redis";
 
 const redis = Redis.fromEnv();
 
@@ -1835,72 +1826,74 @@ export interface RateLimitResult {
 }
 
 export async function rateLimit(
-  config: RateLimitConfig
+  config: RateLimitConfig,
 ): Promise<RateLimitResult> {
   const { key, limit, window } = config;
   const now = Date.now();
   const windowStart = now - window;
-  
+
   // Use Redis sorted set for sliding window
   const pipeline = redis.pipeline();
-  
+
   // Remove old entries
   pipeline.zremrangebyscore(key, 0, windowStart);
-  
+
   // Add current request
   pipeline.zadd(key, { score: now, member: `${now}-${Math.random()}` });
-  
+
   // Count requests in window
   pipeline.zcard(key);
-  
+
   // Set expiration
   pipeline.expire(key, Math.ceil(window / 1000));
-  
+
   const results = await pipeline.exec();
   const count = results[2] as number;
-  
+
   const success = count <= limit;
   const reset = windowStart + window;
-  
+
   return {
     success,
     limit,
     remaining: Math.max(0, limit - count),
-    reset
+    reset,
   };
 }
 
 // Middleware
 export async function rateLimitMiddleware(
   request: NextRequest,
-  config: Omit<RateLimitConfig, 'key'>
+  config: Omit<RateLimitConfig, "key">,
 ) {
-  const ip = request.headers.get('x-forwarded-for') || 'unknown';
+  const ip = request.headers.get("x-forwarded-for") || "unknown";
   const path = request.nextUrl.pathname;
-  
+
   const result = await rateLimit({
     key: `ratelimit:${ip}:${path}`,
-    ...config
+    ...config,
   });
-  
+
   if (!result.success) {
     return new NextResponse(
       JSON.stringify({
-        error: 'Too many requests',
-        retryAfter: Math.ceil((result.reset - Date.now()) / 1000)
+        error: "Too many requests",
+        retryAfter: Math.ceil((result.reset - Date.now()) / 1000),
       }),
       {
         status: 429,
         headers: {
-          'X-RateLimit-Limit': result.limit.toString(),
-          'X-RateLimit-Remaining': result.remaining.toString(),
-          'X-RateLimit-Reset': result.reset.toString(),
-          'Retry-After': Math.ceil((result.reset - Date.now()) / 1000).toString()
-        }
-      }
+          "X-RateLimit-Limit": result.limit.toString(),
+          "X-RateLimit-Remaining": result.remaining.toString(),
+          "X-RateLimit-Reset": result.reset.toString(),
+          "Retry-After": Math.ceil(
+            (result.reset - Date.now()) / 1000,
+          ).toString(),
+        },
+      },
     );
   }
-  
+
   return null; // Allow request
 }
 ```
@@ -1909,19 +1902,19 @@ export async function rateLimitMiddleware(
 
 ```typescript
 // app/api/v1/farms/route.ts
-import { rateLimitMiddleware } from '@/lib/rate-limit';
+import { rateLimitMiddleware } from "@/lib/rate-limit";
 
 export async function GET(request: NextRequest) {
   // Apply rate limit: 100 requests per 15 minutes
   const rateLimitResponse = await rateLimitMiddleware(request, {
     limit: 100,
-    window: 15 * 60 * 1000
+    window: 15 * 60 * 1000,
   });
-  
+
   if (rateLimitResponse) {
     return rateLimitResponse;
   }
-  
+
   // Continue with request
   const farms = await farmService.getAllFarms();
   return NextResponse.json({ success: true, data: farms });
@@ -2050,6 +2043,7 @@ const apiKey = process.env.STRIPE_API_KEY;
 ---
 
 **Version History:**
+
 - 1.0.0 (2025-01-10): Initial comprehensive security best practices
 
 **Status:** ✅ Production Ready

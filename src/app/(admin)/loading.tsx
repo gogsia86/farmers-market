@@ -86,14 +86,20 @@ export default function AdminLoading() {
                   {/* Table Header */}
                   <div className="grid grid-cols-4 gap-4 pb-2 border-b border-border">
                     {[...Array(4)].map((_: any, i: any) => (
-                      <div key={i} className="h-4 bg-muted animate-pulse rounded" />
+                      <div
+                        key={i}
+                        className="h-4 bg-muted animate-pulse rounded"
+                      />
                     ))}
                   </div>
                   {/* Table Rows */}
                   {[...Array(6)].map((_: any, i: any) => (
                     <div key={i} className="grid grid-cols-4 gap-4 py-3">
                       {[...Array(4)].map((_: any, j: any) => (
-                        <div key={j} className="h-4 bg-muted animate-pulse rounded" />
+                        <div
+                          key={j}
+                          className="h-4 bg-muted animate-pulse rounded"
+                        />
                       ))}
                     </div>
                   ))}
@@ -108,7 +114,10 @@ export default function AdminLoading() {
                 <div className="h-6 w-32 bg-muted animate-pulse rounded mb-4" />
                 <div className="space-y-2">
                   {[...Array(5)].map((_: any, i: any) => (
-                    <div key={i} className="h-10 bg-muted animate-pulse rounded" />
+                    <div
+                      key={i}
+                      className="h-10 bg-muted animate-pulse rounded"
+                    />
                   ))}
                 </div>
               </div>

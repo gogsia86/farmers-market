@@ -8,7 +8,8 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Shipping Information | Farmers Market Platform",
-  description: "Learn about our shipping policies, delivery options, and how we ensure fresh produce arrives at your door",
+  description:
+    "Learn about our shipping policies, delivery options, and how we ensure fresh produce arrives at your door",
 };
 
 export default function ShippingPage() {
@@ -95,35 +96,52 @@ export default function ShippingPage() {
               Freshness Guarantee
             </h2>
             <p className="text-gray-700 mb-4">
-              We take pride in delivering the freshest produce possible. All perishable items are:
+              We take pride in delivering the freshest produce possible. All
+              perishable items are:
             </p>
             <div className="grid md:grid-cols-2 gap-4">
               <div className="flex items-start gap-3">
                 <span className="text-green-600 text-xl">✓</span>
                 <div>
-                  <h4 className="font-semibold text-gray-900">Harvested Fresh</h4>
-                  <p className="text-sm text-gray-600">Picked within 24-48 hours of shipping</p>
+                  <h4 className="font-semibold text-gray-900">
+                    Harvested Fresh
+                  </h4>
+                  <p className="text-sm text-gray-600">
+                    Picked within 24-48 hours of shipping
+                  </p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <span className="text-green-600 text-xl">✓</span>
                 <div>
-                  <h4 className="font-semibold text-gray-900">Temperature Controlled</h4>
-                  <p className="text-sm text-gray-600">Insulated packaging with ice packs</p>
+                  <h4 className="font-semibold text-gray-900">
+                    Temperature Controlled
+                  </h4>
+                  <p className="text-sm text-gray-600">
+                    Insulated packaging with ice packs
+                  </p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <span className="text-green-600 text-xl">✓</span>
                 <div>
-                  <h4 className="font-semibold text-gray-900">Quality Checked</h4>
-                  <p className="text-sm text-gray-600">Inspected before packaging</p>
+                  <h4 className="font-semibold text-gray-900">
+                    Quality Checked
+                  </h4>
+                  <p className="text-sm text-gray-600">
+                    Inspected before packaging
+                  </p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <span className="text-green-600 text-xl">✓</span>
                 <div>
-                  <h4 className="font-semibold text-gray-900">Satisfaction Guaranteed</h4>
-                  <p className="text-sm text-gray-600">Full refund if not satisfied</p>
+                  <h4 className="font-semibold text-gray-900">
+                    Satisfaction Guaranteed
+                  </h4>
+                  <p className="text-sm text-gray-600">
+                    Full refund if not satisfied
+                  </p>
                 </div>
               </div>
             </div>
@@ -142,9 +160,10 @@ export default function ShippingPage() {
                   Processing Time
                 </h3>
                 <p className="text-gray-700">
-                  Orders are typically processed within 24-48 hours. During peak seasons (harvest time),
-                  processing may take up to 72 hours. You'll receive a confirmation email when your order
-                  is ready for pickup or has been shipped.
+                  Orders are typically processed within 24-48 hours. During peak
+                  seasons (harvest time), processing may take up to 72 hours.
+                  You'll receive a confirmation email when your order is ready
+                  for pickup or has been shipped.
                 </p>
               </div>
 
@@ -153,12 +172,14 @@ export default function ShippingPage() {
                   Delivery Areas
                 </h3>
                 <p className="text-gray-700 mb-2">
-                  We currently ship to most states in the continental United States. Shipping availability
-                  depends on the distance from the farm and the type of products ordered.
+                  We currently ship to most states in the continental United
+                  States. Shipping availability depends on the distance from the
+                  farm and the type of products ordered.
                 </p>
                 <p className="text-sm text-gray-600 italic">
-                  Note: Some perishable items cannot be shipped to extremely remote areas or during extreme
-                  weather conditions to ensure quality.
+                  Note: Some perishable items cannot be shipped to extremely
+                  remote areas or during extreme weather conditions to ensure
+                  quality.
                 </p>
               </div>
 
@@ -173,7 +194,9 @@ export default function ShippingPage() {
                   <li>Distance from farm to delivery address</li>
                   <li>Weight and size of the order</li>
                   <li>Delivery method selected</li>
-                  <li>Special handling requirements (refrigeration, fragile items)</li>
+                  <li>
+                    Special handling requirements (refrigeration, fragile items)
+                  </li>
                 </ul>
               </div>
 
@@ -182,8 +205,9 @@ export default function ShippingPage() {
                   Package Tracking
                 </h3>
                 <p className="text-gray-700">
-                  For shipped orders, you'll receive a tracking number via email once your order has been
-                  dispatched. You can track your package status in your account dashboard or through the
+                  For shipped orders, you'll receive a tracking number via email
+                  once your order has been dispatched. You can track your
+                  package status in your account dashboard or through the
                   carrier's website.
                 </p>
               </div>
@@ -197,8 +221,8 @@ export default function ShippingPage() {
               Weather & Seasonal Considerations
             </h2>
             <p className="text-gray-700 mb-4">
-              Fresh produce is sensitive to extreme temperatures. During very hot summers or cold winters,
-              we may:
+              Fresh produce is sensitive to extreme temperatures. During very
+              hot summers or cold winters, we may:
             </p>
             <ul className="list-disc list-inside text-gray-700 space-y-2 ml-4">
               <li>Temporarily suspend shipping to certain regions</li>
@@ -207,7 +231,8 @@ export default function ShippingPage() {
               <li>Recommend farm pickup or local delivery as alternatives</li>
             </ul>
             <p className="text-sm text-gray-600 mt-4 italic">
-              We'll always notify you if weather conditions may affect your delivery.
+              We'll always notify you if weather conditions may affect your
+              delivery.
             </p>
           </section>
 
@@ -224,9 +249,10 @@ export default function ShippingPage() {
                   What if I'm not home when my order arrives?
                 </h3>
                 <p className="text-gray-700">
-                  For local deliveries, we'll leave your order in a safe location or coordinate with you
-                  for a redelivery. For shipped orders, the carrier will typically leave a notice and
-                  attempt delivery again or hold it at a local facility for pickup.
+                  For local deliveries, we'll leave your order in a safe
+                  location or coordinate with you for a redelivery. For shipped
+                  orders, the carrier will typically leave a notice and attempt
+                  delivery again or hold it at a local facility for pickup.
                 </p>
               </div>
 
@@ -235,9 +261,10 @@ export default function ShippingPage() {
                   What if my produce arrives damaged or spoiled?
                 </h3>
                 <p className="text-gray-700">
-                  We stand behind our freshness guarantee. Contact us within 24 hours of delivery with
-                  photos of the damaged items, and we'll issue a full refund or send a replacement at no
-                  additional cost.
+                  We stand behind our freshness guarantee. Contact us within 24
+                  hours of delivery with photos of the damaged items, and we'll
+                  issue a full refund or send a replacement at no additional
+                  cost.
                 </p>
               </div>
 
@@ -246,8 +273,15 @@ export default function ShippingPage() {
                   Can I change my delivery address after placing an order?
                 </h3>
                 <p className="text-gray-700">
-                  Yes, but only before the order has been processed or shipped. Contact the farm directly
-                  or email us at <a href="mailto:support@farmersmarket.com" className="text-green-600 hover:text-green-700 font-semibold">support@farmersmarket.com</a> as soon as possible.
+                  Yes, but only before the order has been processed or shipped.
+                  Contact the farm directly or email us at{" "}
+                  <a
+                    href="mailto:support@farmersmarket.com"
+                    className="text-green-600 hover:text-green-700 font-semibold"
+                  >
+                    support@farmersmarket.com
+                  </a>{" "}
+                  as soon as possible.
                 </p>
               </div>
 
@@ -256,8 +290,9 @@ export default function ShippingPage() {
                   Do you ship internationally?
                 </h3>
                 <p className="text-gray-700">
-                  Currently, we only ship within the continental United States due to customs regulations
-                  and the perishable nature of our products. We're working on expanding to Canada in the future.
+                  Currently, we only ship within the continental United States
+                  due to customs regulations and the perishable nature of our
+                  products. We're working on expanding to Canada in the future.
                 </p>
               </div>
 
@@ -266,8 +301,9 @@ export default function ShippingPage() {
                   Can I schedule a specific delivery date?
                 </h3>
                 <p className="text-gray-700">
-                  For farm pickups, yes! You can coordinate directly with the farmer. For shipped orders,
-                  we can provide an estimated delivery window but cannot guarantee specific dates due to
+                  For farm pickups, yes! You can coordinate directly with the
+                  farmer. For shipped orders, we can provide an estimated
+                  delivery window but cannot guarantee specific dates due to
                   carrier schedules.
                 </p>
               </div>
@@ -276,11 +312,10 @@ export default function ShippingPage() {
 
           {/* Contact Section */}
           <section className="bg-gradient-to-r from-green-500 to-green-600 rounded-lg p-6 text-white">
-            <h2 className="text-2xl font-bold mb-3">
-              Have More Questions?
-            </h2>
+            <h2 className="text-2xl font-bold mb-3">Have More Questions?</h2>
             <p className="mb-4 opacity-90">
-              Our support team is here to help with any shipping or delivery questions.
+              Our support team is here to help with any shipping or delivery
+              questions.
             </p>
             <div className="flex flex-wrap gap-4">
               <Link

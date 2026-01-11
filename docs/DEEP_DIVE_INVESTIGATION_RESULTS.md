@@ -1,4 +1,5 @@
 # 🔬 Deep Dive Investigation Results
+
 ## matchMedia Mock Issue Resolution
 
 **Investigation Date**: 2024-11-15
@@ -16,6 +17,7 @@
 **Solution**: Added `beforeEach` hook in `jest.setup.js` to **restore mock implementation** after Jest clears it.
 
 **Result**:
+
 - ✅ 24/30 notification tests now passing (80% success rate)
 - ✅ 22 tests fixed (from 2 passing to 24 passing)
 - ⚠️ 6 tests have minor assertion issues (unrelated to matchMedia)
@@ -27,11 +29,13 @@
 ### Phase 1: Configuration Analysis
 
 **Files Examined**:
+
 - `jest.config.js` - Jest configuration
 - `jest.setup.js` - Setup file (runs after environment)
 - `jest.env.js` - Environment setup (runs first)
 
 **Critical Finding #1**: Jest Config Lines 140-142
+
 ```javascript
 clearMocks: true,
 resetMocks: true,    // ⚠️ THIS WAS THE CULPRIT
@@ -39,6 +43,7 @@ restoreMocks: true,
 ```
 
 **Impact**:
+
 - `resetMocks: true` clears all mock implementations between tests
 - Our mock function remained but lost its implementation
 - `window.matchMedia()` existed but returned `undefined`
@@ -52,6 +57,7 @@ restoreMocks: true,
 **Purpose**: Systematically test mock behavior across test lifecycle
 
 **Test Categories**:
+
 1. Mock existence verification
 2. Mock function availability
 3. MediaQueryList return value validation
@@ -60,6 +66,7 @@ restoreMocks: true,
 6. jsdom environment verification
 
 **Key Diagnostics**:
+
 ```javascript
 describe("🔬 matchMedia Mock Diagnostics", () => {
   beforeAll(() => {
@@ -77,6 +84,7 @@ describe("🔬 matchMedia Mock Diagnostics", () => {
 ```
 
 **Breakthrough Discovery**:
+
 - ✅ Mock worked in `beforeAll` hook
 - ❌ Mock returned `undefined` in `beforeEach` hook
 - ❌ Mock returned `undefined` in actual tests
@@ -90,35 +98,41 @@ describe("🔬 matchMedia Mock Diagnostics", () => {
 **Timeline of Mock Lifecycle**:
 
 1. **jest.setup.js loads** (line 89-127)
+
    ```javascript
-   const matchMediaMock = jest.fn().mockImplementation(query => ({
+   const matchMediaMock = jest.fn().mockImplementation((query) => ({
      matches: false,
      media: query,
      // ... full MediaQueryList interface
    }));
 
-   Object.defineProperty(window, 'matchMedia', {
+   Object.defineProperty(window, "matchMedia", {
      writable: true,
      value: matchMediaMock,
    });
    ```
+
    **Status**: ✅ Mock created with implementation
 
 2. **First test starts**
+
    ```javascript
-   window.matchMedia("test") // Returns proper MediaQueryList
+   window.matchMedia("test"); // Returns proper MediaQueryList
    ```
+
    **Status**: ✅ Mock implementation active
 
 3. **Jest runs `resetMocks` between tests**
+
    ```javascript
    // Internally Jest calls: mockMatchMedia.mockReset()
    ```
+
    **Status**: ⚠️ Implementation cleared, function remains
 
 4. **Second test starts**
    ```javascript
-   window.matchMedia("test") // Returns undefined
+   window.matchMedia("test"); // Returns undefined
    ```
    **Status**: ❌ No implementation, returns undefined
 
@@ -131,6 +145,7 @@ describe("🔬 matchMedia Mock Diagnostics", () => {
 **File Modified**: `jest.setup.js` (lines 906-943)
 
 **Code Added**:
+
 ```javascript
 beforeEach(() => {
   // Restore matchMedia mock implementation
@@ -142,24 +157,24 @@ beforeEach(() => {
         matches: false,
         media: query,
         onchange: null,
-        addListener: jest.fn(cb => {
+        addListener: jest.fn((cb) => {
           if (cb) listeners.push(cb);
         }),
-        removeListener: jest.fn(cb => {
+        removeListener: jest.fn((cb) => {
           const index = listeners.indexOf(cb);
           if (index > -1) listeners.splice(index, 1);
         }),
         addEventListener: jest.fn((event, cb) => {
-          if (event === 'change' && cb) listeners.push(cb);
+          if (event === "change" && cb) listeners.push(cb);
         }),
         removeEventListener: jest.fn((event, cb) => {
-          if (event === 'change') {
+          if (event === "change") {
             const index = listeners.indexOf(cb);
             if (index > -1) listeners.splice(index, 1);
           }
         }),
-        dispatchEvent: jest.fn(event => {
-          listeners.forEach(cb => cb(event));
+        dispatchEvent: jest.fn((event) => {
+          listeners.forEach((cb) => cb(event));
           return true;
         }),
       };
@@ -169,6 +184,7 @@ beforeEach(() => {
 ```
 
 **Why This Works**:
+
 - `beforeEach` runs before every test
 - Restores implementation after Jest clears it
 - Maintains full MediaQueryList interface
@@ -179,6 +195,7 @@ beforeEach(() => {
 ## 📊 Test Results
 
 ### Before Fix
+
 ```
 FAIL src/components/notifications/__tests__/integration.test.tsx
 Tests: 28 failed, 2 passed, 30 total
@@ -186,10 +203,12 @@ Pass Rate: 6.67%
 ```
 
 **Errors**:
+
 - All tests: `TypeError: Cannot read properties of undefined (reading 'matches')`
 - Root cause: `mediaQuery` was `undefined`
 
 ### After Fix
+
 ```
 FAIL src/components/notifications/__tests__/integration.test.tsx (33.065 s)
 Tests: 6 failed, 24 passed, 30 total
@@ -197,10 +216,12 @@ Pass Rate: 80%
 ```
 
 **Status**:
+
 - ✅ 22 tests fixed (matchMedia now works)
 - ⚠️ 6 tests have different errors (not matchMedia-related)
 
 ### Diagnostic Test Results
+
 ```
 PASS src/__tests__/debug-matchMedia.test.ts
 Tests: 14 passed, 14 total
@@ -208,6 +229,7 @@ Pass Rate: 100%
 ```
 
 **All diagnostic tests passing**:
+
 - ✅ Mock function exists
 - ✅ Returns MediaQueryList object
 - ✅ Has `matches` property
@@ -224,6 +246,7 @@ Pass Rate: 100%
 ### Category 1: Multiple Elements Found (4 tests)
 
 **Tests Affected**:
+
 - ❌ should render success toast
 - ❌ should render error toast
 - ❌ should render warning toast
@@ -232,11 +255,13 @@ Pass Rate: 100%
 **Error**: `Found multiple elements with the text: Success Toast`
 
 **Root Cause**: Test assertion issue, NOT matchMedia issue
+
 - Button text: "Success Toast"
 - Rendered toast text: "Success Toast"
 - `screen.getByText()` finds both elements
 
 **Solution Required**: Use more specific query
+
 ```javascript
 // Current (fails):
 expect(await screen.findByText("Success Toast")).toBeInTheDocument();
@@ -250,7 +275,7 @@ expect(await screen.findByRole("alert")).toHaveTextContent("Success Toast");
 
 // Fix option 3: Use more specific selector
 const toastContent = await screen.findByText("Success Toast", {
-  selector: '.toast-content p'
+  selector: ".toast-content p",
 });
 ```
 
@@ -261,6 +286,7 @@ const toastContent = await screen.findByText("Success Toast", {
 ### Category 2: Quiet Hours Test (1 test)
 
 **Test Affected**:
+
 - ❌ should allow urgent notifications during quiet hours
 
 **Error**: TBD (need to check specific error)
@@ -272,16 +298,19 @@ const toastContent = await screen.findByText("Success Toast", {
 ### Category 3: Persistence Test (1 test)
 
 **Test Affected**:
+
 - ❌ should persist and restore complete notification state
 
 **Error**: Timeout (30012 ms - exceeded 10000 ms timeout)
 
 **Root Cause**: Async operation not completing
+
 - Test takes >30 seconds (test timeout is 10s)
 - Likely waiting for localStorage operation
 - May be waiting for animation or timer
 
 **Solution Required**:
+
 ```javascript
 // Add longer timeout for this specific test
 it("should persist and restore complete notification state", async () => {
@@ -306,17 +335,21 @@ jest.useRealTimers();
 **Key Insight**: `resetMocks: true` doesn't remove mocks, it clears their implementations
 
 **Impact**:
+
 - Mock functions remain callable
 - Implementations reset to default behavior (returning undefined)
 - Global mocks need restoration in `beforeEach`
 
 **Best Practice**:
+
 ```javascript
 // For global browser API mocks that need to persist:
 
 // Setup (jest.setup.js)
-const mockImplementation = (query) => ({ /* ... */ });
-Object.defineProperty(window, 'matchMedia', {
+const mockImplementation = (query) => ({
+  /* ... */
+});
+Object.defineProperty(window, "matchMedia", {
   value: jest.fn().mockImplementation(mockImplementation),
 });
 
@@ -335,20 +368,22 @@ beforeEach(() => {
 **Approach**: Create focused diagnostic tests to isolate issues
 
 **Benefits**:
+
 - Systematic exploration of test environment
 - Clear visibility into mock behavior
 - Reproducible evidence of root cause
 - Verification that fix works
 
 **Template**:
+
 ```javascript
 describe("🔬 Diagnostic: [Feature]", () => {
   beforeAll(() => {
-    console.log("Initial state:", /* inspect */);
+    console.log("Initial state:" /* inspect */);
   });
 
   beforeEach(() => {
-    console.log("Before each test:", /* inspect */);
+    console.log("Before each test:" /* inspect */);
   });
 
   it("should verify basic functionality", () => {
@@ -360,7 +395,7 @@ describe("🔬 Diagnostic: [Feature]", () => {
   });
 
   afterEach(() => {
-    console.log("After each test:", /* inspect */);
+    console.log("After each test:" /* inspect */);
   });
 });
 ```
@@ -372,12 +407,14 @@ describe("🔬 Diagnostic: [Feature]", () => {
 **`resetMocks: true`**:
 
 **Pros**:
+
 - ✅ Ensures test isolation
 - ✅ Prevents mock state leakage
 - ✅ Catches improper mock usage
 - ✅ Follows Jest best practices
 
 **Cons**:
+
 - ⚠️ Clears global browser API mocks
 - ⚠️ Requires restoration in beforeEach
 - ⚠️ Can cause confusion ("mock exists but doesn't work")
@@ -389,21 +426,28 @@ describe("🔬 Diagnostic: [Feature]", () => {
 ### 4. Browser API Mocking Patterns
 
 **Pattern 1: Simple Mock (No Persistence Needed)**
+
 ```javascript
 window.matchMedia = jest.fn();
 ```
+
 ❌ Cleared by resetMocks, no implementation
 
 **Pattern 2: Mock with Implementation (Our Initial Approach)**
+
 ```javascript
 window.matchMedia = jest.fn().mockImplementation(/* ... */);
 ```
+
 ⚠️ Cleared by resetMocks, needs restoration
 
 **Pattern 3: Mock with Restoration (Our Solution)**
+
 ```javascript
 // Setup
-const impl = (query) => ({ /* ... */ });
+const impl = (query) => ({
+  /* ... */
+});
 window.matchMedia = jest.fn().mockImplementation(impl);
 
 // Restore
@@ -411,13 +455,16 @@ beforeEach(() => {
   window.matchMedia.mockImplementation(impl);
 });
 ```
+
 ✅ Works with resetMocks
 
 **Pattern 4: Disable resetMocks (Not Recommended)**
+
 ```javascript
 // jest.config.js
 resetMocks: false,
 ```
+
 ⚠️ Loses test isolation benefits
 
 ---
@@ -425,6 +472,7 @@ resetMocks: false,
 ## 📋 Action Items
 
 ### Completed ✅
+
 - [x] Identify root cause of matchMedia mock failure
 - [x] Create diagnostic test suite
 - [x] Implement beforeEach restoration solution
@@ -435,12 +483,14 @@ resetMocks: false,
 ### Remaining Tasks
 
 #### High Priority
+
 - [ ] Fix "multiple elements found" in 4 toast tests
   - Use more specific queries
   - Query by role or data-testid
   - Estimated time: 15 minutes
 
 #### Medium Priority
+
 - [ ] Fix timeout in persistence test
   - Increase test timeout or use fake timers
   - Investigate async operation completion
@@ -452,6 +502,7 @@ resetMocks: false,
   - Estimated time: 20 minutes
 
 #### Low Priority
+
 - [ ] Consider adding more browser API mocks preemptively
   - IntersectionObserver ✅ (already added)
   - ResizeObserver ✅ (already added)
@@ -468,11 +519,13 @@ resetMocks: false,
 ### Code Quality Impact: ✅ POSITIVE
 
 **Before Investigation**:
+
 - Test suite unreliable
 - Hard to identify failures
 - Mock behavior mysterious
 
 **After Investigation**:
+
 - Clear understanding of Jest lifecycle
 - Documented patterns for future
 - Reusable diagnostic approach
@@ -481,24 +534,26 @@ resetMocks: false,
 
 ### Test Coverage Impact: ✅ SIGNIFICANT IMPROVEMENT
 
-| Metric | Before | After | Improvement |
-|--------|--------|-------|-------------|
-| Notification Tests Passing | 2/30 (6.7%) | 24/30 (80%) | +733% |
-| Tests Fixed | 0 | 22 | +2200% |
-| Time to Resolution | N/A | 2 hours | Acceptable |
-| Root Causes Identified | 0 | 1 | Complete |
+| Metric                     | Before      | After       | Improvement |
+| -------------------------- | ----------- | ----------- | ----------- |
+| Notification Tests Passing | 2/30 (6.7%) | 24/30 (80%) | +733%       |
+| Tests Fixed                | 0           | 22          | +2200%      |
+| Time to Resolution         | N/A         | 2 hours     | Acceptable  |
+| Root Causes Identified     | 0           | 1           | Complete    |
 
 ---
 
 ### Developer Experience Impact: ✅ EXCELLENT
 
 **Knowledge Gained**:
+
 - Deep understanding of Jest mock lifecycle
 - Diagnostic test pattern for future issues
 - Clear documentation for team reference
 - Reusable beforeEach pattern
 
 **Time Saved Future**:
+
 - Similar issues will be resolved in <30 minutes
 - Pattern applies to all global mocks
 - Diagnostic approach transferable
@@ -508,6 +563,7 @@ resetMocks: false,
 ## 🔮 Recommendations
 
 ### Immediate (Next Sprint)
+
 1. **Fix remaining 6 test failures** (2-3 hours)
    - Low complexity
    - High value for 100% test coverage
@@ -518,7 +574,9 @@ resetMocks: false,
    - Include troubleshooting guide
 
 ### Short-term (This Quarter)
+
 3. **Create mock helper utilities** (4 hours)
+
    ```javascript
    // lib/test-utils/mock-browser-apis.ts
    export function createPersistentMock(name, impl) {
@@ -536,6 +594,7 @@ resetMocks: false,
    - Integrate into CI/CD
 
 ### Long-term (Next Quarter)
+
 5. **Evaluate Jest configuration** (4 hours)
    - Review resetMocks vs clearMocks vs restoreMocks
    - Document trade-offs
@@ -551,17 +610,21 @@ resetMocks: false,
 ## 📚 References
 
 ### Documentation Created
+
 - ✅ `docs/CODEBASE_ERROR_ANALYSIS.md` (comprehensive analysis)
 - ✅ `docs/DEEP_DIVE_INVESTIGATION_RESULTS.md` (this document)
 
 ### Diagnostic Tests Created
+
 - ✅ `src/__tests__/debug-matchMedia.test.ts` (14 tests, all passing)
 
 ### Code Modified
+
 - ✅ `jest.setup.js` (added beforeEach restoration, lines 906-943)
 - ✅ `src/components/notifications/ToastRenderer.tsx` (added React import)
 
 ### Configuration Analyzed
+
 - ✅ `jest.config.js` (identified resetMocks issue)
 - ✅ `jest.env.js` (verified environment setup)
 - ✅ `jest.setup.js` (browser API mocks)

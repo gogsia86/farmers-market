@@ -148,16 +148,16 @@ bundling: SWC + Turbopack
 
 ### Performance Targets
 
-| Metric | Target | Critical |
-|--------|--------|----------|
-| **First Contentful Paint (FCP)** | < 1.8s | < 1.0s |
-| **Largest Contentful Paint (LCP)** | < 2.5s | < 1.5s |
-| **First Input Delay (FID)** | < 100ms | < 50ms |
-| **Cumulative Layout Shift (CLS)** | < 0.1 | < 0.05 |
-| **Time to Interactive (TTI)** | < 3.5s | < 2s |
-| **Total Blocking Time (TBT)** | < 300ms | < 200ms |
-| **API Response Time (p95)** | < 500ms | < 200ms |
-| **Database Query Time** | < 100ms | < 50ms |
+| Metric                             | Target  | Critical |
+| ---------------------------------- | ------- | -------- |
+| **First Contentful Paint (FCP)**   | < 1.8s  | < 1.0s   |
+| **Largest Contentful Paint (LCP)** | < 2.5s  | < 1.5s   |
+| **First Input Delay (FID)**        | < 100ms | < 50ms   |
+| **Cumulative Layout Shift (CLS)**  | < 0.1   | < 0.05   |
+| **Time to Interactive (TTI)**      | < 3.5s  | < 2s     |
+| **Total Blocking Time (TBT)**      | < 300ms | < 200ms  |
+| **API Response Time (p95)**        | < 500ms | < 200ms  |
+| **Database Query Time**            | < 100ms | < 50ms   |
 
 ---
 
@@ -206,16 +206,16 @@ profiling: React DevTools Profiler + Chrome DevTools
 
 ### Performance Targets
 
-| Metric | Target | Critical Threshold |
-|--------|--------|-------------------|
-| **First Contentful Paint (FCP)** | < 1.5s | < 2.5s |
-| **Largest Contentful Paint (LCP)** | < 2.5s | < 4.0s |
-| **Time to Interactive (TTI)** | < 3.5s | < 5s |
-| **Cumulative Layout Shift (CLS)** | < 0.1 | < 0.25 |
-| **First Input Delay (FID)** | < 100ms | < 300ms |
-| **Time to First Byte (TTFB)** | < 200ms | < 600ms |
-| **API Response Time (p95)** | < 500ms | < 1000ms |
-| **Database Query Time (p95)** | < 100ms | < 300ms |
+| Metric                             | Target  | Critical Threshold |
+| ---------------------------------- | ------- | ------------------ |
+| **First Contentful Paint (FCP)**   | < 1.5s  | < 2.5s             |
+| **Largest Contentful Paint (LCP)** | < 2.5s  | < 4.0s             |
+| **Time to Interactive (TTI)**      | < 3.5s  | < 5s               |
+| **Cumulative Layout Shift (CLS)**  | < 0.1   | < 0.25             |
+| **First Input Delay (FID)**        | < 100ms | < 300ms            |
+| **Time to First Byte (TTFB)**      | < 200ms | < 600ms            |
+| **API Response Time (p95)**        | < 500ms | < 1000ms           |
+| **Database Query Time (p95)**      | < 100ms | < 300ms            |
 
 ---
 
@@ -229,14 +229,14 @@ profiling: React DevTools Profiler + Chrome DevTools
 // ❌ BAD: N+1 query problem
 async function getFarmsWithProducts() {
   const farms = await database.farm.findMany();
-  
+
   // This runs 1 query per farm!
   for (const farm of farms) {
     farm.products = await database.product.findMany({
-      where: { farmId: farm.id }
+      where: { farmId: farm.id },
     });
   }
-  
+
   return farms;
 }
 
@@ -245,11 +245,11 @@ async function getFarmsWithProducts() {
   return await database.farm.findMany({
     include: {
       products: {
-        where: { status: 'ACTIVE' },
-        orderBy: { createdAt: 'desc' },
-        take: 10
-      }
-    }
+        where: { status: "ACTIVE" },
+        orderBy: { createdAt: "desc" },
+        take: 10,
+      },
+    },
   });
 }
 
@@ -257,23 +257,26 @@ async function getFarmsWithProducts() {
 async function getFarmsWithProducts(farmIds: string[]) {
   const [farms, products] = await Promise.all([
     database.farm.findMany({
-      where: { id: { in: farmIds } }
+      where: { id: { in: farmIds } },
     }),
     database.product.findMany({
-      where: { farmId: { in: farmIds } }
-    })
+      where: { farmId: { in: farmIds } },
+    }),
   ]);
-  
+
   // Group products by farm
-  const productsByFarm = products.reduce((acc, product) => {
-    if (!acc[product.farmId]) acc[product.farmId] = [];
-    acc[product.farmId].push(product);
-    return acc;
-  }, {} as Record<string, typeof products>);
-  
-  return farms.map(farm => ({
+  const productsByFarm = products.reduce(
+    (acc, product) => {
+      if (!acc[product.farmId]) acc[product.farmId] = [];
+      acc[product.farmId].push(product);
+      return acc;
+    },
+    {} as Record<string, typeof products>,
+  );
+
+  return farms.map((farm) => ({
     ...farm,
-    products: productsByFarm[farm.id] || []
+    products: productsByFarm[farm.id] || [],
   }));
 }
 ```
@@ -287,8 +290,8 @@ const users = await database.user.findMany({
     orders: true,
     sessions: true,
     apiKeys: true,
-    password: true  // ⚠️ Security risk!
-  }
+    password: true, // ⚠️ Security risk!
+  },
 });
 
 // ✅ GOOD: Select specific fields
@@ -300,10 +303,10 @@ const users = await database.user.findMany({
     avatar: true,
     _count: {
       select: {
-        orders: true
-      }
-    }
-  }
+        orders: true,
+      },
+    },
+  },
 });
 
 // ✅ GOOD: Use projection for large text fields
@@ -314,7 +317,7 @@ const products = await database.product.findMany({
     price: true,
     // Omit large description field for list view
     // description: true
-  }
+  },
 });
 ```
 
@@ -326,7 +329,7 @@ async function getProducts(page: number, pageSize: number) {
   return await database.product.findMany({
     skip: (page - 1) * pageSize,
     take: pageSize,
-    orderBy: { createdAt: 'desc' }
+    orderBy: { createdAt: "desc" },
   });
   // Gets slower as page number increases
 }
@@ -337,16 +340,13 @@ async function getProducts(cursor?: string, pageSize: number = 20) {
     take: pageSize,
     skip: cursor ? 1 : 0,
     cursor: cursor ? { id: cursor } : undefined,
-    orderBy: { createdAt: 'desc' }
+    orderBy: { createdAt: "desc" },
   });
 }
 
 // Usage
 const firstPage = await getProducts(undefined, 20);
-const nextPage = await getProducts(
-  firstPage[firstPage.length - 1].id,
-  20
-);
+const nextPage = await getProducts(firstPage[firstPage.length - 1].id, 20);
 ```
 
 #### Batch Operations
@@ -357,7 +357,7 @@ async function updateManyProducts(updates: ProductUpdate[]) {
   for (const update of updates) {
     await database.product.update({
       where: { id: update.id },
-      data: update.data
+      data: update.data,
     });
   }
 }
@@ -365,20 +365,17 @@ async function updateManyProducts(updates: ProductUpdate[]) {
 // ✅ GOOD: Batch update with transaction
 async function updateManyProducts(updates: ProductUpdate[]) {
   await database.$transaction(
-    updates.map(update =>
+    updates.map((update) =>
       database.product.update({
         where: { id: update.id },
-        data: update.data
-      })
-    )
+        data: update.data,
+      }),
+    ),
   );
 }
 
 // ✅ BETTER: Use updateMany when possible
-async function updateProductPrices(
-  farmId: string,
-  priceMultiplier: number
-) {
+async function updateProductPrices(farmId: string, priceMultiplier: number) {
   await database.$executeRaw`
     UPDATE "Product"
     SET price = price * ${priceMultiplier}
@@ -404,17 +401,17 @@ model Product {
   featured    Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  
+
   farm     Farm     @relation(fields: [farmId], references: [id])
   category Category @relation(fields: [categoryId], references: [id])
-  
+
   // ✅ Composite indexes for common queries
   @@index([farmId, status])           // Farm's active products
   @@index([categoryId, status])       // Category's active products
   @@index([featured, status])         // Featured products
   @@index([status, createdAt])        // Recent active products
   @@index([farmId, createdAt])        // Farm's recent products
-  
+
   // ✅ Full-text search index
   @@index([name, slug])
 }
@@ -425,12 +422,12 @@ model Order {
   status      String
   total       Decimal
   createdAt   DateTime @default(now())
-  
+
   user User @relation(fields: [userId], references: [id])
-  
+
   // ✅ Index for user's orders
   @@index([userId, createdAt])
-  
+
   // ✅ Index for order status filtering
   @@index([status, createdAt])
 }
@@ -440,20 +437,21 @@ model Order {
 
 ```typescript
 // lib/database/index.ts
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 
 const createPrismaClient = () => {
   return new PrismaClient({
-    log: process.env.NODE_ENV === 'development' 
-      ? ['query', 'error', 'warn']
-      : ['error'],
-    
+    log:
+      process.env.NODE_ENV === "development"
+        ? ["query", "error", "warn"]
+        : ["error"],
+
     // ✅ Connection pool configuration
     datasources: {
       db: {
-        url: process.env.DATABASE_URL
-      }
-    }
+        url: process.env.DATABASE_URL,
+      },
+    },
   });
 };
 
@@ -464,23 +462,23 @@ const globalForPrisma = globalThis as unknown as {
 
 export const database = globalForPrisma.prisma ?? createPrismaClient();
 
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !== "production") {
   globalForPrisma.prisma = database;
 }
 
 // ✅ Query monitoring
-database.$on('query', (e) => {
+database.$on("query", (e) => {
   if (e.duration > 1000) {
-    console.warn('⚠️ Slow query detected:', {
+    console.warn("⚠️ Slow query detected:", {
       query: e.query,
       duration: `${e.duration}ms`,
-      params: e.params
+      params: e.params,
     });
   }
 });
 
 // ✅ Graceful shutdown
-process.on('beforeExit', async () => {
+process.on("beforeExit", async () => {
   await database.$disconnect();
 });
 ```
@@ -493,22 +491,22 @@ process.on('beforeExit', async () => {
 
 ```typescript
 // lib/cache/multi-layer.cache.ts
-import { Redis } from '@upstash/redis';
-import { LRUCache } from 'lru-cache';
+import { Redis } from "@upstash/redis";
+import { LRUCache } from "lru-cache";
 
 // L1: In-memory cache (fastest)
 const memoryCache = new LRUCache<string, any>({
   max: 10000,
-  ttl: 1000 * 60 * 5,        // 5 minutes
+  ttl: 1000 * 60 * 5, // 5 minutes
   updateAgeOnGet: true,
   updateAgeOnHas: true,
-  allowStale: false
+  allowStale: false,
 });
 
 // L2: Redis cache (shared across instances)
 const redis = new Redis({
   url: process.env.UPSTASH_REDIS_URL!,
-  token: process.env.UPSTASH_REDIS_TOKEN!
+  token: process.env.UPSTASH_REDIS_TOKEN!,
 });
 
 export class MultiLayerCache {
@@ -521,7 +519,7 @@ export class MultiLayerCache {
     if (memCached !== undefined) {
       return memCached as T;
     }
-    
+
     // L2: Check Redis
     const redisCached = await redis.get(key);
     if (redisCached) {
@@ -529,10 +527,10 @@ export class MultiLayerCache {
       memoryCache.set(key, redisCached);
       return redisCached as T;
     }
-    
+
     return null;
   }
-  
+
   /**
    * Set in both cache layers
    */
@@ -541,45 +539,45 @@ export class MultiLayerCache {
     memoryCache.set(key, value);
     await redis.setex(key, ttl, JSON.stringify(value));
   }
-  
+
   /**
    * Invalidate across all layers
    */
   async invalidate(pattern: string): Promise<void> {
     // L1: Clear memory
-    if (pattern.includes('*')) {
+    if (pattern.includes("*")) {
       memoryCache.clear();
     } else {
       memoryCache.delete(pattern);
     }
-    
+
     // L2: Clear Redis
     const keys = await redis.keys(pattern);
     if (keys.length > 0) {
       await redis.del(...keys);
     }
   }
-  
+
   /**
    * Cache wrapper with automatic fetching
    */
   async wrap<T>(
     key: string,
     fetcher: () => Promise<T>,
-    ttl: number = 3600
+    ttl: number = 3600,
   ): Promise<T> {
     // Try cache first
     const cached = await this.get<T>(key);
     if (cached !== null) {
       return cached;
     }
-    
+
     // Fetch fresh data
     const fresh = await fetcher();
-    
+
     // Cache it
     await this.set(key, fresh, ttl);
-    
+
     return fresh;
   }
 }
@@ -600,23 +598,23 @@ export class ProductService {
       async () => {
         return await database.product.findUnique({
           where: { id },
-          include: { farm: true, category: true }
+          include: { farm: true, category: true },
         });
       },
-      3600 // 1 hour TTL
+      3600, // 1 hour TTL
     );
   }
-  
+
   async updateProduct(id: string, data: UpdateProductData): Promise<Product> {
     const updated = await database.product.update({
       where: { id },
-      data
+      data,
     });
-    
+
     // Invalidate cache
     await cache.invalidate(`product:${id}`);
     await cache.invalidate(`farm:${updated.farmId}:products`);
-    
+
     return updated;
   }
 }
@@ -628,13 +626,13 @@ export class ProductService {
 export class FarmService {
   async createFarm(data: CreateFarmData): Promise<Farm> {
     const farm = await database.farm.create({ data });
-    
+
     // Immediately cache the new farm
     await cache.set(`farm:${farm.id}`, farm, 3600);
-    
+
     // Invalidate list caches
-    await cache.invalidate('farms:list:*');
-    
+    await cache.invalidate("farms:list:*");
+
     return farm;
   }
 }
@@ -645,32 +643,32 @@ export class FarmService {
 ```typescript
 // lib/cache/warming.ts
 export async function warmCache() {
-  console.log('🔥 Warming cache...');
-  
+  console.log("🔥 Warming cache...");
+
   // Pre-cache featured products
   const featured = await database.product.findMany({
-    where: { featured: true, status: 'ACTIVE' },
-    take: 20
+    where: { featured: true, status: "ACTIVE" },
+    take: 20,
   });
-  
-  await cache.set('products:featured', featured, 3600);
-  
+
+  await cache.set("products:featured", featured, 3600);
+
   // Pre-cache popular farms
   const popularFarms = await database.farm.findMany({
-    where: { status: 'ACTIVE' },
-    orderBy: { viewCount: 'desc' },
-    take: 50
+    where: { status: "ACTIVE" },
+    orderBy: { viewCount: "desc" },
+    take: 50,
   });
-  
+
   for (const farm of popularFarms) {
     await cache.set(`farm:${farm.id}`, farm, 3600);
   }
-  
-  console.log('✅ Cache warmed');
+
+  console.log("✅ Cache warmed");
 }
 
 // Run on server startup
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === "production") {
   warmCache().catch(console.error);
 }
 ```
@@ -693,7 +691,7 @@ export default async function FarmPage({ params }: Props) {
   // Multiple calls to getFarm with same ID will only execute once
   const farm = await getFarm(params.id);
   const sameFarm = await getFarm(params.id); // Uses cached result
-  
+
   return <FarmDetails farm={farm} />;
 }
 
@@ -738,15 +736,15 @@ const Chart = dynamic(() => import('recharts').then(mod => mod.BarChart), {
 // ✅ Conditional loading
 export function ProductPage({ product }: Props) {
   const [showReviews, setShowReviews] = useState(false);
-  
+
   return (
     <div>
       <ProductDetails product={product} />
-      
+
       <button onClick={() => setShowReviews(true)}>
         Show Reviews
       </button>
-      
+
       {showReviews && (
         <Suspense fallback={<ReviewsSkeleton />}>
           <ReviewsSection productId={product.id} />
@@ -766,67 +764,67 @@ const nextConfig = {
   webpack: (config, { dev, isServer }) => {
     // ✅ Bundle analyzer (development only)
     if (!dev && !isServer) {
-      const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+      const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
       config.plugins.push(
         new BundleAnalyzerPlugin({
-          analyzerMode: 'static',
-          reportFilename: './bundle-analysis.html',
-          openAnalyzer: false
-        })
+          analyzerMode: "static",
+          reportFilename: "./bundle-analysis.html",
+          openAnalyzer: false,
+        }),
       );
     }
-    
+
     // ✅ Optimize chunks
     config.optimization = {
       ...config.optimization,
-      moduleIds: 'deterministic',
-      runtimeChunk: 'single',
+      moduleIds: "deterministic",
+      runtimeChunk: "single",
       splitChunks: {
-        chunks: 'all',
+        chunks: "all",
         cacheGroups: {
           // Vendor chunk for stable caching
           vendor: {
             test: /[\\/]node_modules[\\/]/,
-            name: 'vendors',
+            name: "vendors",
             priority: 10,
-            reuseExistingChunk: true
+            reuseExistingChunk: true,
           },
           // Common chunk for shared code
           common: {
             minChunks: 2,
             priority: 5,
-            reuseExistingChunk: true
+            reuseExistingChunk: true,
           },
           // Large libraries in separate chunks
           react: {
             test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
-            name: 'react',
-            priority: 20
-          }
-        }
-      }
+            name: "react",
+            priority: 20,
+          },
+        },
+      },
     };
-    
+
     return config;
   },
-  
+
   // ✅ Compiler optimizations
   compiler: {
-    removeConsole: process.env.NODE_ENV === 'production',
+    removeConsole: process.env.NODE_ENV === "production",
   },
-  
+
   // ✅ Production optimizations
   productionBrowserSourceMaps: false,
   poweredByHeader: false,
   compress: true,
-  
+
   // ✅ Image optimization
   images: {
-    formats: ['image/avif', 'image/webp'],
+    formats: ["image/avif", "image/webp"],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],
     imageSizes: [16, 32, 48, 64, 96, 128, 256],
-    minimumCacheTTL: 60 * 60 * 24 * 365 // 1 year
-  }
+    minimumCacheTTL: 60 * 60 * 24 * 365, // 1 year
+  },
 };
 
 export default nextConfig;
@@ -836,18 +834,18 @@ export default nextConfig;
 
 ```typescript
 // ✅ GOOD: Named imports (tree-shakeable)
-import { Button } from '@/components/ui';
-import { formatDate } from '@/lib/utils';
+import { Button } from "@/components/ui";
+import { formatDate } from "@/lib/utils";
 
 // ❌ BAD: Default imports (not tree-shakeable)
-import utils from '@/lib/utils';
-import * as UI from '@/components/ui';
+import utils from "@/lib/utils";
+import * as UI from "@/components/ui";
 
 // ✅ GOOD: Side-effect free imports
-import type { User } from '@prisma/client';
+import type { User } from "@prisma/client";
 
 // ❌ BAD: Side-effect imports
-import '@/styles/global.css'; // CSS is side-effect
+import "@/styles/global.css"; // CSS is side-effect
 ```
 
 ---
@@ -858,8 +856,8 @@ import '@/styles/global.css'; // CSS is side-effect
 
 ```tsx
 // components/OptimizedImage.tsx
-import Image from 'next/image';
-import { useState } from 'react';
+import Image from "next/image";
+import { useState } from "react";
 
 interface OptimizedImageProps {
   src: string;
@@ -876,10 +874,10 @@ export function OptimizedImage({
   width,
   height,
   priority = false,
-  className
+  className,
 }: OptimizedImageProps) {
   const [isLoading, setIsLoading] = useState(true);
-  
+
   return (
     <div className={`relative overflow-hidden ${className}`}>
       <Image
@@ -894,7 +892,7 @@ export function OptimizedImage({
         onLoadingComplete={() => setIsLoading(false)}
         className={`
           duration-300 ease-in-out
-          ${isLoading ? 'scale-110 blur-sm' : 'scale-100 blur-0'}
+          ${isLoading ? "scale-110 blur-sm" : "scale-100 blur-0"}
         `}
         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
       />
@@ -908,7 +906,7 @@ function getBlurDataURL(width: number, height: number): string {
       <rect width="100%" height="100%" fill="#f0f0f0"/>
     </svg>
   `;
-  const base64 = Buffer.from(svg).toString('base64');
+  const base64 = Buffer.from(svg).toString("base64");
   return `data:image/svg+xml;base64,${base64}`;
 }
 ```
@@ -940,19 +938,19 @@ function getBlurDataURL(width: number, height: number): string {
 // next.config.mjs
 export default {
   images: {
-    domains: ['cdn.farmersmarket.com'],
-    loader: 'custom',
-    loaderFile: './lib/image-loader.ts',
-    formats: ['image/avif', 'image/webp'],
+    domains: ["cdn.farmersmarket.com"],
+    loader: "custom",
+    loaderFile: "./lib/image-loader.ts",
+    formats: ["image/avif", "image/webp"],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],
-    imageSizes: [16, 32, 48, 64, 96, 128, 256]
-  }
+    imageSizes: [16, 32, 48, 64, 96, 128, 256],
+  },
 };
 
 // lib/image-loader.ts
 export default function cloudinaryLoader({ src, width, quality }) {
-  const params = ['f_auto', 'c_limit', `w_${width}`, `q_${quality || 'auto'}`];
-  return `https://res.cloudinary.com/farmersmarket/image/upload/${params.join(',')}${src}`;
+  const params = ["f_auto", "c_limit", `w_${width}`, `q_${quality || "auto"}`];
+  return `https://res.cloudinary.com/farmersmarket/image/upload/${params.join(",")}${src}`;
 }
 ```
 
@@ -968,16 +966,16 @@ export async function GET(request: NextRequest) {
   const stream = new ReadableStream({
     async start(controller) {
       const products = await database.product.findMany();
-      
+
       for (const product of products) {
         const chunk = JSON.stringify(product) + '\n';
         controller.enqueue(new TextEncoder().encode(chunk));
       }
-      
+
       controller.close();
     }
   });
-  
+
   return new Response(stream, {
     headers: { 'Content-Type': 'application/x-ndjson' }
   });
@@ -992,9 +990,9 @@ const gzipAsync = promisify(gzip);
 export async function GET() {
   const data = await getL argeDataset();
   const json = JSON.stringify(data);
-  
+
   const compressed = await gzipAsync(json);
-  
+
   return new Response(compressed, {
     headers: {
       'Content-Type': 'application/json',
@@ -1010,7 +1008,7 @@ export async function GET() {
     database.product.findMany(),
     database.order.findMany()
   ]);
-  
+
   return NextResponse.json({ farms, products, orders });
 }
 ```
@@ -1019,29 +1017,29 @@ export async function GET() {
 
 ```typescript
 // lib/dataloaders/product.loader.ts
-import DataLoader from 'dataloader';
+import DataLoader from "dataloader";
 
 export const productLoader = new DataLoader<string, Product>(
   async (ids: readonly string[]) => {
     const products = await database.product.findMany({
-      where: { id: { in: [...ids] } }
+      where: { id: { in: [...ids] } },
     });
-    
+
     // Return in same order as requested
-    const productMap = new Map(products.map(p => [p.id, p]));
-    return ids.map(id => productMap.get(id)!);
+    const productMap = new Map(products.map((p) => [p.id, p]));
+    return ids.map((id) => productMap.get(id)!);
   },
   {
     // Batch multiple requests within 10ms
-    batchScheduleFn: callback => setTimeout(callback, 10)
-  }
+    batchScheduleFn: (callback) => setTimeout(callback, 10),
+  },
 );
 
 // Usage: Prevents N+1 queries
 const products = await Promise.all([
-  productLoader.load('prod_1'),
-  productLoader.load('prod_2'),
-  productLoader.load('prod_3')
+  productLoader.load("prod_1"),
+  productLoader.load("prod_2"),
+  productLoader.load("prod_3"),
 ]);
 // Only 1 database query executed!
 ```
@@ -1054,7 +1052,7 @@ const products = await Promise.all([
 
 ```typescript
 // lib/monitoring/performance.ts
-import * as Sentry from '@sentry/nextjs';
+import * as Sentry from "@sentry/nextjs";
 
 export class PerformanceMonitor {
   /**
@@ -1062,68 +1060,68 @@ export class PerformanceMonitor {
    */
   static async trackAPICall<T>(
     endpoint: string,
-    operation: () => Promise<T>
+    operation: () => Promise<T>,
   ): Promise<T> {
     const transaction = Sentry.startTransaction({
-      op: 'api.request',
-      name: endpoint
+      op: "api.request",
+      name: endpoint,
     });
-    
+
     const start = Date.now();
-    
+
     try {
       const result = await operation();
       const duration = Date.now() - start;
-      
-      transaction.setStatus('ok');
-      transaction.setTag('duration', duration);
-      
+
+      transaction.setStatus("ok");
+      transaction.setTag("duration", duration);
+
       // Log slow requests
       if (duration > 1000) {
         console.warn(`⚠️ Slow API call: ${endpoint} took ${duration}ms`);
-        
+
         Sentry.captureMessage(`Slow API: ${endpoint}`, {
-          level: 'warning',
-          extra: { duration, endpoint }
+          level: "warning",
+          extra: { duration, endpoint },
         });
       }
-      
+
       return result;
     } catch (error) {
-      transaction.setStatus('internal_error');
+      transaction.setStatus("internal_error");
       throw error;
     } finally {
       transaction.finish();
     }
   }
-  
+
   /**
    * Track database query performance
    */
   static async trackQuery<T>(
     query: string,
-    operation: () => Promise<T>
+    operation: () => Promise<T>,
   ): Promise<T> {
     const span = Sentry.getCurrentHub()
       .getScope()
       ?.getTransaction()
       ?.startChild({
-        op: 'db.query',
-        description: query
+        op: "db.query",
+        description: query,
       });
-    
+
     const start = Date.now();
-    
+
     try {
       const result = await operation();
       const duration = Date.now() - start;
-      
-      span?.setData('duration', duration);
-      
+
+      span?.setData("duration", duration);
+
       if (duration > 100) {
         console.warn(`⚠️ Slow query: ${query} took ${duration}ms`);
       }
-      
+
       return result;
     } finally {
       span?.finish();
@@ -1134,11 +1132,11 @@ export class PerformanceMonitor {
 // Usage
 export async function GET(request: NextRequest) {
   return await PerformanceMonitor.trackAPICall(
-    'GET /api/v1/farms',
+    "GET /api/v1/farms",
     async () => {
       const farms = await database.farm.findMany();
       return NextResponse.json({ success: true, data: farms });
-    }
+    },
   );
 }
 ```
@@ -1149,7 +1147,7 @@ export async function GET(request: NextRequest) {
 // lib/monitoring/metrics.ts
 export class MetricsCollector {
   private metrics: Map<string, number[]> = new Map();
-  
+
   /**
    * Record metric value
    */
@@ -1159,25 +1157,25 @@ export class MetricsCollector {
     }
     this.metrics.get(name)!.push(value);
   }
-  
+
   /**
    * Get percentile
    */
   getPercentile(name: string, percentile: number): number {
     const values = this.metrics.get(name) || [];
     if (values.length === 0) return 0;
-    
+
     const sorted = values.sort((a, b) => a - b);
     const index = Math.ceil((percentile / 100) * sorted.length) - 1;
     return sorted[index];
   }
-  
+
   /**
    * Get summary statistics
    */
   getSummary(name: string) {
     const values = this.metrics.get(name) || [];
-    
+
     return {
       count: values.length,
       min: Math.min(...values),
@@ -1185,7 +1183,7 @@ export class MetricsCollector {
       avg: values.reduce((a, b) => a + b, 0) / values.length,
       p50: this.getPercentile(name, 50),
       p95: this.getPercentile(name, 95),
-      p99: this.getPercentile(name, 99)
+      p99: this.getPercentile(name, 99),
     };
   }
 }
@@ -1195,7 +1193,7 @@ export const metrics = new MetricsCollector();
 // Usage
 const start = Date.now();
 await database.product.findMany();
-metrics.record('db.query.product.findMany', Date.now() - start);
+metrics.record("db.query.product.findMany", Date.now() - start);
 ```
 
 ---
@@ -1203,6 +1201,7 @@ metrics.record('db.query.product.findMany', Date.now() - start);
 ## ✅ Performance Checklist
 
 ### Development
+
 - [ ] Database queries use proper indexes
 - [ ] N+1 queries prevented
 - [ ] Only necessary fields selected in queries
@@ -1215,6 +1214,7 @@ metrics.record('db.query.product.findMany', Date.now() - start);
 - [ ] Code splitting implemented
 
 ### Pre-Deployment
+
 - [ ] Lighthouse score > 90
 - [ ] Bundle analyzer report reviewed
 - [ ] Database connection pooling configured
@@ -1227,6 +1227,7 @@ metrics.record('db.query.product.findMany', Date.now() - start);
 - [ ] Load testing completed
 
 ### Production
+
 - [ ] Performance monitoring active
 - [ ] Slow query alerts configured
 - [ ] Cache hit rate monitored
@@ -1279,9 +1280,9 @@ await db.product.findMany({ where: { farmId: '123', status: 'ACTIVE' } });
 @@index([farmId, status])
 
 // ❌ Over-fetching
-const user = await db.user.findUnique({ 
-  where: { id }, 
-  include: { orders: true, sessions: true } 
+const user = await db.user.findUnique({
+  where: { id },
+  include: { orders: true, sessions: true }
 });
 
 // ✅ Fix: Select only needed fields
@@ -1294,7 +1295,7 @@ const user = await db.user.findUnique({
 const products = await db.product.findMany();
 
 // ✅ Fix: Add caching
-const products = await cache.wrap('products:all', 
+const products = await cache.wrap('products:all',
   () => db.product.findMany(),
   3600
 );
@@ -1305,11 +1306,13 @@ const products = await cache.wrap('products:all',
 ## 📞 Support & Resources
 
 ### Internal Resources
+
 - [Performance Monitoring Dashboard](/monitoring/performance)
 - [Query Performance Guide](/docs/database/performance.md)
 - [Caching Strategy](/docs/architecture/CACHE_PATTERNS.md)
 
 ### External Resources
+
 - [Next.js Performance](https://nextjs.org/docs/pages/building-your-application/optimizing)
 - [Prisma Performance](https://www.prisma.io/docs/guides/performance-and-optimization)
 - [Web Vitals](https://web.dev/vitals/)
@@ -1318,6 +1321,7 @@ const products = await cache.wrap('products:all',
 ---
 
 **Version History:**
+
 - 1.0.0 (2025-01-10): Initial comprehensive performance best practices
 
 **Status:** ✅ Production Ready

@@ -13,7 +13,7 @@ import { emailService } from "@/lib/services/email.service";
 import { SpanStatusCode, trace } from "@opentelemetry/api";
 import { EmailStatus } from "@prisma/client";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 import type { Job } from "bull";
 
@@ -146,10 +146,14 @@ async function processEmailJob(job: Job<EmailJobData>) {
         "job.error": error instanceof Error ? error.message : "Unknown error",
       });
 
-      logger.error(`❌ Email failed to ${job.data.emailOptions.to} (Job: ${job.id}, Attempt: ${job.attemptsMade + 1
-        }):`, {
-        error: error instanceof Error ? error.message : String(error)
-      });
+      logger.error(
+        `❌ Email failed to ${job.data.emailOptions.to} (Job: ${job.id}, Attempt: ${
+          job.attemptsMade + 1
+        }):`,
+        {
+          error: error instanceof Error ? error.message : String(error),
+        },
+      );
 
       throw error;
     } finally {

@@ -77,9 +77,10 @@ export default async function SettingsPage() {
   // ==========================================================================
   // FETCH NOTIFICATION PREFERENCES V2
   // ==========================================================================
-  const notificationPreferencesV2 = await database.notificationPreferencesV2.findUnique({
-    where: { userId },
-  });
+  const notificationPreferencesV2 =
+    await database.notificationPreferencesV2.findUnique({
+      where: { userId },
+    });
 
   // ==========================================================================
   // PREPARE SETTINGS DATA
@@ -101,33 +102,33 @@ export default async function SettingsPage() {
     },
     settings: userSettings
       ? {
-        theme: userSettings.theme,
-        language: userSettings.language,
-        timezone: userSettings.timezone,
-        distanceUnit: userSettings.distanceUnit,
-        currency: userSettings.currency,
-        profileVisibility: userSettings.profileVisibility,
-        showEmail: userSettings.showEmail,
-        showPhone: userSettings.showPhone,
-        allowMessaging: userSettings.allowMessaging,
-        dataSharing: userSettings.dataSharing,
-        contactMethod: userSettings.contactMethod,
-        communicationFrequency: userSettings.communicationFrequency,
-      }
+          theme: userSettings.theme,
+          language: userSettings.language,
+          timezone: userSettings.timezone,
+          distanceUnit: userSettings.distanceUnit,
+          currency: userSettings.currency,
+          profileVisibility: userSettings.profileVisibility,
+          showEmail: userSettings.showEmail,
+          showPhone: userSettings.showPhone,
+          allowMessaging: userSettings.allowMessaging,
+          dataSharing: userSettings.dataSharing,
+          contactMethod: userSettings.contactMethod,
+          communicationFrequency: userSettings.communicationFrequency,
+        }
       : {
-        theme: "light",
-        language: "en",
-        timezone: "UTC",
-        distanceUnit: "miles",
-        currency: "USD",
-        profileVisibility: "public",
-        showEmail: false,
-        showPhone: false,
-        allowMessaging: true,
-        dataSharing: false,
-        contactMethod: "email",
-        communicationFrequency: "normal",
-      },
+          theme: "light",
+          language: "en",
+          timezone: "UTC",
+          distanceUnit: "miles",
+          currency: "USD",
+          profileVisibility: "public",
+          showEmail: false,
+          showPhone: false,
+          allowMessaging: true,
+          dataSharing: false,
+          contactMethod: "email",
+          communicationFrequency: "normal",
+        },
     addresses: addresses.map((addr: any) => ({
       id: addr.id,
       type: addr.type,
@@ -144,27 +145,27 @@ export default async function SettingsPage() {
     })),
     notificationPreferences: notificationPreferencesV2
       ? {
-        emailEnabled: notificationPreferencesV2.emailEnabled,
-        emailFrequency: notificationPreferencesV2.emailFrequency,
-        smsEnabled: notificationPreferencesV2.smsEnabled,
-        smsFrequency: notificationPreferencesV2.smsFrequency,
-        pushEnabled: notificationPreferencesV2.pushEnabled,
-        pushFrequency: notificationPreferencesV2.pushFrequency,
-        inAppEnabled: notificationPreferencesV2.inAppEnabled,
-        inAppSound: notificationPreferencesV2.inAppSound,
-        inAppBadge: notificationPreferencesV2.inAppBadge,
-      }
+          emailEnabled: notificationPreferencesV2.emailEnabled,
+          emailFrequency: notificationPreferencesV2.emailFrequency,
+          smsEnabled: notificationPreferencesV2.smsEnabled,
+          smsFrequency: notificationPreferencesV2.smsFrequency,
+          pushEnabled: notificationPreferencesV2.pushEnabled,
+          pushFrequency: notificationPreferencesV2.pushFrequency,
+          inAppEnabled: notificationPreferencesV2.inAppEnabled,
+          inAppSound: notificationPreferencesV2.inAppSound,
+          inAppBadge: notificationPreferencesV2.inAppBadge,
+        }
       : {
-        emailEnabled: true,
-        emailFrequency: "immediate",
-        smsEnabled: false,
-        smsFrequency: "immediate",
-        pushEnabled: true,
-        pushFrequency: "immediate",
-        inAppEnabled: true,
-        inAppSound: true,
-        inAppBadge: true,
-      },
+          emailEnabled: true,
+          emailFrequency: "immediate",
+          smsEnabled: false,
+          smsFrequency: "immediate",
+          pushEnabled: true,
+          pushFrequency: "immediate",
+          inAppEnabled: true,
+          inAppSound: true,
+          inAppBadge: true,
+        },
     dietaryPreferences: user.dietaryPreferences as any,
     privacySettings: user.privacySettings as any,
   };

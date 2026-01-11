@@ -54,7 +54,6 @@ async function main() {
     console.log("   consumer@example.com: Consumer123!");
     console.log("   divna.kapica@email.com: HealthyEating2024!");
     console.log("   gogsia@gmail.com: Admin123!");
-
   } catch (error) {
     console.error("❌ Error:", error.message);
   } finally {

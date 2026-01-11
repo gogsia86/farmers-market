@@ -17,6 +17,7 @@ Deployment strategies, configurations, and monitoring for the Farmers Market Pla
 ## Quick Deploy
 
 Production deployment via Vercel:
+
 ```bash
 npm run build
 vercel --prod

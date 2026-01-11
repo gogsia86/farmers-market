@@ -8,7 +8,7 @@
 
 import * as React from "react";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 interface UseFormPersistOptions {
   key: string;
@@ -19,7 +19,7 @@ interface UseFormPersistOptions {
 
 export function useFormPersist<T extends Record<string, any>>(
   defaultValues: T,
-  options: UseFormPersistOptions
+  options: UseFormPersistOptions,
 ) {
   const {
     key,
@@ -39,8 +39,8 @@ export function useFormPersist<T extends Record<string, any>>(
       }
     } catch (error) {
       logger.error("Failed to load persisted form data:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
     }
     return defaultValues;
   });
@@ -52,22 +52,25 @@ export function useFormPersist<T extends Record<string, any>>(
       if (!storage) return;
 
       // Filter out excluded fields
-      const filteredData = Object.entries(data).reduce((acc, [key, value]) => {
-        if (!exclude.includes(key)) {
-          acc[key] = value;
-        }
-        return acc;
-      }, {} as Record<string, any>);
+      const filteredData = Object.entries(data).reduce(
+        (acc, [key, value]) => {
+          if (!exclude.includes(key)) {
+            acc[key] = value;
+          }
+          return acc;
+        },
+        {} as Record<string, any>,
+      );
 
       try {
         storage.setItem(key, JSON.stringify(filteredData));
       } catch (error) {
         logger.error("Failed to persist form data:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+          error: error instanceof Error ? error.message : String(error),
+        });
       }
     },
-    [key, storage, exclude]
+    [key, storage, exclude],
   );
 
   const updateValues = React.useCallback(
@@ -87,7 +90,7 @@ export function useFormPersist<T extends Record<string, any>>(
         return updated;
       });
     },
-    [persistValues, debounceTime]
+    [persistValues, debounceTime],
   );
 
   const clearPersistedData = React.useCallback(() => {
@@ -97,8 +100,8 @@ export function useFormPersist<T extends Record<string, any>>(
       setValues(defaultValues);
     } catch (error) {
       logger.error("Failed to clear persisted form data:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
     }
   }, [key, storage, defaultValues]);
 
@@ -129,7 +132,7 @@ export function useFormAutoSave<T extends Record<string, any>>(
     onSave?: (data: T) => void | Promise<void>;
     debounceTime?: number;
     enabled?: boolean;
-  }
+  },
 ) {
   const { key, onSave, debounceTime = 1000, enabled = true } = options;
   const [isSaving, setIsSaving] = React.useState(false);
@@ -154,8 +157,8 @@ export function useFormAutoSave<T extends Record<string, any>>(
         setLastSaved(new Date());
       } catch (error) {
         logger.error("Auto-save failed:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+          error: error instanceof Error ? error.message : String(error),
+        });
       } finally {
         setIsSaving(false);
       }
@@ -179,7 +182,7 @@ export function useFormAutoSave<T extends Record<string, any>>(
  */
 export function useFormDraft<T extends Record<string, any>>(
   formKey: string,
-  defaultValues: T
+  defaultValues: T,
 ) {
   const {
     values: draftData,

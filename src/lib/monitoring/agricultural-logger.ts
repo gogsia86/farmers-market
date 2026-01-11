@@ -6,7 +6,7 @@
 
 // Stub implementation for logger
 
-import { logger as baseLogger } from '@/lib/monitoring/logger';
+import { logger as baseLogger } from "@/lib/monitoring/logger";
 
 export const logger = {
   info: (...args: any[]) => baseLogger.info("[INFO]", ...args),

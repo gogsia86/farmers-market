@@ -56,6 +56,7 @@ Code reviews are a critical part of maintaining code quality, sharing knowledge,
 > "Every code review is an opportunity to elevate the codebase and grow as a team."
 
 **We believe:**
+
 - Code reviews are a conversation, not a gate
 - Teaching is more valuable than finding fault
 - Small, frequent PRs are better than large, rare ones
@@ -63,6 +64,7 @@ Code reviews are a critical part of maintaining code quality, sharing knowledge,
 - It's okay to ask questions and admit uncertainty
 
 **We avoid:**
+
 - Nitpicking minor style issues (use automated tools)
 - Blocking PRs for personal preferences
 - Rewriting code in our own style
@@ -117,18 +119,19 @@ Code reviews are a critical part of maintaining code quality, sharing knowledge,
 
 ### Required Reviewers
 
-| PR Type | Required Approvals | Reviewers |
-|---------|-------------------|-----------|
-| Feature | 2 | Any senior+ developers |
-| Bugfix | 1 | Any developer |
-| Hotfix | 1 | Tech lead or senior |
-| Docs | 1 | Any team member |
-| Refactor | 2 | Senior+ developers |
-| Breaking Change | 3 | Tech lead + 2 seniors |
+| PR Type         | Required Approvals | Reviewers              |
+| --------------- | ------------------ | ---------------------- |
+| Feature         | 2                  | Any senior+ developers |
+| Bugfix          | 1                  | Any developer          |
+| Hotfix          | 1                  | Tech lead or senior    |
+| Docs            | 1                  | Any team member        |
+| Refactor        | 2                  | Senior+ developers     |
+| Breaking Change | 3                  | Tech lead + 2 seniors  |
 
 ### Review Stages
 
 #### Stage 1: Automated Checks (1-3 minutes)
+
 - ✅ TypeScript type checking
 - ✅ ESLint rules
 - ✅ Prettier formatting
@@ -139,7 +142,9 @@ Code reviews are a critical part of maintaining code quality, sharing knowledge,
 **If any fail:** Fix before requesting review
 
 #### Stage 2: Self-Review (5-10 minutes)
+
 **Author reviews their own PR:**
+
 - Re-read all changed code
 - Check commit messages
 - Verify PR description is complete
@@ -148,7 +153,9 @@ Code reviews are a critical part of maintaining code quality, sharing knowledge,
 - Ensure tests are included
 
 #### Stage 3: Peer Review (15-30 minutes)
+
 **Reviewers conduct thorough review:**
+
 - Read PR description and context
 - Review code changes
 - Check tests
@@ -157,14 +164,18 @@ Code reviews are a critical part of maintaining code quality, sharing knowledge,
 - Provide feedback
 
 #### Stage 4: Response (varies)
+
 **Author addresses feedback:**
+
 - Respond to all comments
 - Make requested changes
 - Mark resolved conversations
 - Re-request review if needed
 
 #### Stage 5: Approval & Merge
+
 **After approval:**
+
 - Ensure CI is green
 - Squash or rebase as needed
 - Merge to main
@@ -183,12 +194,14 @@ Copy this checklist into your review:
 ## Code Review Checklist
 
 ### Functionality
+
 - [ ] Code does what the PR says it does
 - [ ] Edge cases are handled
 - [ ] Error handling is comprehensive
 - [ ] No obvious bugs or logic errors
 
 ### Architecture & Design
+
 - [ ] Follows project patterns and conventions
 - [ ] Code is in the right place (proper directory)
 - [ ] Appropriate level of abstraction
@@ -196,6 +209,7 @@ Copy this checklist into your review:
 - [ ] Follows SOLID principles
 
 ### Code Quality
+
 - [ ] Code is readable and self-documenting
 - [ ] Functions are small and focused
 - [ ] No code duplication
@@ -203,6 +217,7 @@ Copy this checklist into your review:
 - [ ] Comments explain "why", not "what"
 
 ### TypeScript
+
 - [ ] No `any` types (use `unknown` if needed)
 - [ ] Proper type definitions
 - [ ] Type-only imports used (`import type`)
@@ -210,6 +225,7 @@ Copy this checklist into your review:
 - [ ] Generic types used appropriately
 
 ### React/Next.js
+
 - [ ] Server Components used by default
 - [ ] `"use client"` only when necessary
 - [ ] No prop drilling (use context if needed)
@@ -218,6 +234,7 @@ Copy this checklist into your review:
 - [ ] No useEffect for data fetching
 
 ### Database (Prisma)
+
 - [ ] Uses `@/lib/database` import (not new PrismaClient)
 - [ ] Queries are optimized (no N+1)
 - [ ] Proper error handling
@@ -225,6 +242,7 @@ Copy this checklist into your review:
 - [ ] Migrations included if schema changed
 
 ### Security
+
 - [ ] Input validation (Zod schemas)
 - [ ] Authentication checks present
 - [ ] Authorization verified
@@ -233,6 +251,7 @@ Copy this checklist into your review:
 - [ ] XSS prevention (React handles this)
 
 ### Performance
+
 - [ ] No unnecessary re-renders
 - [ ] Queries are efficient
 - [ ] Large lists are paginated
@@ -241,6 +260,7 @@ Copy this checklist into your review:
 - [ ] Caching implemented where beneficial
 
 ### Testing
+
 - [ ] Unit tests for business logic
 - [ ] Component tests for UI
 - [ ] Integration tests for API routes
@@ -249,6 +269,7 @@ Copy this checklist into your review:
 - [ ] Edge cases tested
 
 ### Documentation
+
 - [ ] PR description is clear and complete
 - [ ] Complex code has JSDoc comments
 - [ ] README updated if needed
@@ -257,6 +278,7 @@ Copy this checklist into your review:
 - [ ] Migration guide included if needed
 
 ### Git Hygiene
+
 - [ ] Commit messages are descriptive
 - [ ] No merge commits (rebase instead)
 - [ ] No debug/console.log statements
@@ -272,6 +294,7 @@ Copy this checklist into your review:
 ### Critical Issues (Must Fix)
 
 **🔴 P0 - Block Merge**
+
 - Security vulnerabilities
 - Data loss risks
 - Performance regressions
@@ -283,6 +306,7 @@ Copy this checklist into your review:
 ### Important Issues (Should Fix)
 
 **🟠 P1 - Should Address**
+
 - Code duplication
 - Poor error handling
 - Missing tests
@@ -294,6 +318,7 @@ Copy this checklist into your review:
 ### Suggestions (Nice to Have)
 
 **🟡 P2 - Consider**
+
 - Performance optimizations
 - Refactoring opportunities
 - Alternative approaches
@@ -303,6 +328,7 @@ Copy this checklist into your review:
 ### Nitpicks (Optional)
 
 **🔵 P3 - Optional**
+
 - Minor style preferences
 - Naming suggestions
 - Code organization
@@ -327,10 +353,11 @@ Suggested solution or alternative.
 ```
 
 **Example:**
+
 ```
 🔴 P0 - Security: Unvalidated user input
 
-This endpoint accepts user input without validation, which could lead to 
+This endpoint accepts user input without validation, which could lead to
 SQL injection or XSS attacks.
 
 Suggestion: Add Zod schema validation before processing input.
@@ -339,18 +366,20 @@ Suggestion: Add Zod schema validation before processing input.
 ### Comment Types
 
 #### 1. Questions
+
 ```
 ❓ Question: Why is this using client component?
 
-I see this is marked "use client" but I don't see any hooks or 
+I see this is marked "use client" but I don't see any hooks or
 interactivity. Could this be a server component?
 ```
 
 #### 2. Suggestions
+
 ```
 💡 Suggestion: Consider using Promise.all for parallel queries
 
-These queries don't depend on each other. Running them in parallel 
+These queries don't depend on each other. Running them in parallel
 with Promise.all would improve performance.
 
 const [farms, products] = await Promise.all([
@@ -360,35 +389,39 @@ const [farms, products] = await Promise.all([
 ```
 
 #### 3. Observations
+
 ```
 👀 Observation: This pattern is used elsewhere
 
-I noticed we're solving this problem differently in the products 
+I noticed we're solving this problem differently in the products
 feature. Should we align these approaches?
 
 See: src/features/products/hooks/useProducts.ts
 ```
 
 #### 4. Learning
+
 ```
 🎓 Learning: TypeScript discriminated unions
 
-Great use of discriminated unions here! This ensures type safety 
-at runtime. For others reading: this is the pattern to use for 
+Great use of discriminated unions here! This ensures type safety
+at runtime. For others reading: this is the pattern to use for
 state machines.
 ```
 
 #### 5. Nitpicks
+
 ```
 🔵 Nitpick: Naming could be more descriptive
 
-Consider `getUserActiveFarms` instead of `getFarms` to clarify 
+Consider `getUserActiveFarms` instead of `getFarms` to clarify
 that this only returns active farms for the current user.
 ```
 
 ### Language Guidelines
 
 #### ✅ Do Use:
+
 - "What do you think about...?"
 - "Have you considered...?"
 - "Could we...?"
@@ -397,6 +430,7 @@ that this only returns active farms for the current user.
 - "Let's discuss..."
 
 #### ❌ Avoid:
+
 - "You should..."
 - "This is wrong"
 - "Why didn't you...?"
@@ -407,19 +441,20 @@ that this only returns active farms for the current user.
 ### Praise Good Code
 
 **Always acknowledge good work:**
+
 ```
-✨ Great work on the error handling here! This covers all the edge 
-cases I can think of, and the error messages are really helpful 
+✨ Great work on the error handling here! This covers all the edge
+cases I can think of, and the error messages are really helpful
 for debugging.
 ```
 
 ```
-🎯 Perfect use of server components. This will be much faster than 
+🎯 Perfect use of server components. This will be much faster than
 the old client-side approach.
 ```
 
 ```
-📚 Excellent documentation! The JSDoc comments make it really clear 
+📚 Excellent documentation! The JSDoc comments make it really clear
 how to use this function.
 ```
 
@@ -438,24 +473,28 @@ how to use this function.
 ### Responding to Comments
 
 #### 1. Acknowledge and Act
+
 ```
 Good catch! I'll add the validation schema.
 ```
 
 #### 2. Explain Your Reasoning
+
 ```
-I chose client component here because we'll be adding real-time 
-updates via WebSocket in the next sprint. Want to avoid the 
+I chose client component here because we'll be adding real-time
+updates via WebSocket in the next sprint. Want to avoid the
 refactor later.
 ```
 
 #### 3. Ask for Clarification
+
 ```
-Can you elaborate on the concern about performance? I'm not seeing 
+Can you elaborate on the concern about performance? I'm not seeing
 where the bottleneck would be.
 ```
 
 #### 4. Propose Alternatives
+
 ```
 That's a valid point. What if we:
 1. Extract this to a hook
@@ -465,8 +504,9 @@ Would that address the concern?
 ```
 
 #### 5. Defer if Appropriate
+
 ```
-Great idea! This is out of scope for this PR, but I'll create an 
+Great idea! This is out of scope for this PR, but I'll create an
 issue to track it.
 
 Issue: #123
@@ -475,18 +515,20 @@ Issue: #123
 ### When to Push Back
 
 **It's okay to disagree when:**
+
 - Feedback is based on personal preference, not standards
 - Alternative approach has clear tradeoffs you've considered
 - Suggestion would increase complexity without benefit
 - Change is out of scope for the PR
 
 **How to push back respectfully:**
+
 ```
 I understand your concern about X. However, I chose Y because:
 1. Reason 1
 2. Reason 2
 
-I'm open to discussing further, but I believe Y is the right 
+I'm open to discussing further, but I believe Y is the right
 approach here because [explain tradeoffs].
 ```
 
@@ -496,26 +538,27 @@ approach here because [explain tradeoffs].
 
 ### For Reviewers
 
-| PR Type | Response Time | Target |
-|---------|--------------|--------|
-| Hotfix | 1 hour | Critical bugs |
-| Small (<100 lines) | 4 hours | Same day |
-| Medium (<500 lines) | 1 day | Next day |
-| Large (>500 lines) | 2 days | Within week |
+| PR Type             | Response Time | Target        |
+| ------------------- | ------------- | ------------- |
+| Hotfix              | 1 hour        | Critical bugs |
+| Small (<100 lines)  | 4 hours       | Same day      |
+| Medium (<500 lines) | 1 day         | Next day      |
+| Large (>500 lines)  | 2 days        | Within week   |
 
 **If you can't review in time:**
+
 - Comment with expected review time
 - Suggest alternative reviewer
 - Remove yourself as reviewer
 
 ### For Authors
 
-| Action | Response Time |
-|--------|--------------|
-| Answer questions | Same day |
-| Address blocking feedback | Same day |
-| Address suggestions | 2 days |
-| Re-request review | After all changes |
+| Action                    | Response Time     |
+| ------------------------- | ----------------- |
+| Answer questions          | Same day          |
+| Address blocking feedback | Same day          |
+| Address suggestions       | 2 days            |
+| Re-request review         | After all changes |
 
 ---
 
@@ -649,11 +692,13 @@ What is being refactored?
 #### Before Creating PR
 
 1. **Self-review thoroughly**
+
    ```bash
    git diff main...your-branch
    ```
 
 2. **Run all checks locally**
+
    ```bash
    npm run type-check
    npm run lint
@@ -710,6 +755,7 @@ What is being refactored?
    - Details (edge cases)
 
 3. **Test locally for complex changes**
+
    ```bash
    git fetch origin
    git checkout origin/branch-name
@@ -726,12 +772,14 @@ What is being refactored?
 #### Review Efficiency
 
 **Quick Review (<100 lines):**
+
 - Focus on logic and correctness
 - Check tests exist
 - Verify no security issues
 - 10-15 minutes
 
 **Standard Review (100-300 lines):**
+
 - Check architecture
 - Review implementation
 - Verify tests are comprehensive
@@ -739,6 +787,7 @@ What is being refactored?
 - 20-30 minutes
 
 **Deep Review (>300 lines):**
+
 - Request PR be split if possible
 - Schedule dedicated review time
 - Test thoroughly
@@ -752,6 +801,7 @@ What is being refactored?
 ### Database Access Pattern
 
 **✅ Correct:**
+
 ```typescript
 // Always use the database singleton
 import { database } from "@/lib/database";
@@ -759,12 +809,13 @@ import { database } from "@/lib/database";
 export async function getFarm(id: string) {
   return await database.farm.findUnique({
     where: { id },
-    include: { owner: true, products: true }
+    include: { owner: true, products: true },
   });
 }
 ```
 
 **❌ Incorrect:**
+
 ```typescript
 // Never create new PrismaClient instances
 import { PrismaClient } from "@prisma/client";
@@ -778,6 +829,7 @@ export async function getFarm(id: string) {
 ### Server vs Client Components
 
 **✅ Correct:**
+
 ```typescript
 // Server component by default
 export default async function FarmPage({ params }: Props) {
@@ -794,6 +846,7 @@ export function InteractiveMap({ location }: Props) {
 ```
 
 **❌ Incorrect:**
+
 ```typescript
 // Unnecessary "use client"
 "use client";
@@ -806,6 +859,7 @@ export default function FarmPage({ params }: Props) {
 ### Error Handling
 
 **✅ Correct:**
+
 ```typescript
 export async function createFarm(data: CreateFarmInput) {
   try {
@@ -814,21 +868,22 @@ export async function createFarm(data: CreateFarmInput) {
     return { success: true, data: farm };
   } catch (error) {
     if (error instanceof ZodError) {
-      return { 
-        success: false, 
-        error: { code: 'VALIDATION_ERROR', details: error.flatten() }
+      return {
+        success: false,
+        error: { code: "VALIDATION_ERROR", details: error.flatten() },
       };
     }
-    logger.error('Farm creation failed', { error });
-    return { 
-      success: false, 
-      error: { code: 'INTERNAL_ERROR', message: 'Failed to create farm' }
+    logger.error("Farm creation failed", { error });
+    return {
+      success: false,
+      error: { code: "INTERNAL_ERROR", message: "Failed to create farm" },
     };
   }
 }
 ```
 
 **❌ Incorrect:**
+
 ```typescript
 export async function createFarm(data: any) {
   // No try-catch
@@ -846,12 +901,13 @@ export async function createFarm(data: any) {
 ### Code Smells to Flag
 
 1. **Large Functions**
+
    ```typescript
    // ❌ Function doing too much (>50 lines)
    function processOrder() {
      // 200 lines of logic
    }
-   
+
    // ✅ Break into smaller functions
    function processOrder() {
      validateOrder();
@@ -863,6 +919,7 @@ export async function createFarm(data: any) {
    ```
 
 2. **Nested Callbacks**
+
    ```typescript
    // ❌ Callback hell
    getData((data) => {
@@ -872,7 +929,7 @@ export async function createFarm(data: any) {
        });
      });
    });
-   
+
    // ✅ Use async/await
    const data = await getData();
    const result = await process(data);
@@ -881,12 +938,13 @@ export async function createFarm(data: any) {
    ```
 
 3. **Magic Numbers**
+
    ```typescript
    // ❌ Magic numbers
    if (items.length > 100) {
      paginate();
    }
-   
+
    // ✅ Named constants
    const MAX_ITEMS_PER_PAGE = 100;
    if (items.length > MAX_ITEMS_PER_PAGE) {
@@ -895,6 +953,7 @@ export async function createFarm(data: any) {
    ```
 
 4. **God Objects**
+
    ```typescript
    // ❌ Class doing everything
    class FarmManager {
@@ -907,7 +966,7 @@ export async function createFarm(data: any) {
      sendNotification() {}
      // 50 more methods...
    }
-   
+
    // ✅ Single Responsibility
    class FarmService {
      create() {}
@@ -921,14 +980,15 @@ export async function createFarm(data: any) {
    ```
 
 5. **Premature Optimization**
+
    ```typescript
    // ❌ Complex caching before measuring
    const cache = new LRU({ max: 1000 });
    const memoized = memoize(expensiveFunction, {
      maxAge: 5000,
-     normalizer: customNormalizer
+     normalizer: customNormalizer,
    });
-   
+
    // ✅ Start simple, optimize if needed
    async function getFarm(id: string) {
      return await database.farm.findUnique({ where: { id } });
@@ -943,6 +1003,7 @@ export async function createFarm(data: any) {
 ### Example 1: Security Issue
 
 **Code:**
+
 ```typescript
 export async function POST(request: Request) {
   const body = await request.json();
@@ -952,6 +1013,7 @@ export async function POST(request: Request) {
 ```
 
 **Review Comment:**
+
 ```
 🔴 P0 - Security: Unvalidated user input
 
@@ -985,21 +1047,23 @@ export async function POST(request: Request) {
 ### Example 2: Performance Issue
 
 **Code:**
+
 ```typescript
 export async function getFarmsWithProducts() {
   const farms = await database.farm.findMany();
-  
+
   for (const farm of farms) {
     farm.products = await database.product.findMany({
-      where: { farmId: farm.id }
+      where: { farmId: farm.id },
     });
   }
-  
+
   return farms;
 }
 ```
 
 **Review Comment:**
+
 ```
 🟠 P1 - Performance: N+1 query pattern
 
@@ -1025,33 +1089,35 @@ This reduces to 1 query with a JOIN, significantly faster.
 ### Example 3: Good Code Praise
 
 **Code:**
+
 ```typescript
 export async function processRefund(orderId: string) {
   return await database.$transaction(async (tx) => {
     const order = await tx.order.update({
       where: { id: orderId },
-      data: { status: 'REFUNDED' }
+      data: { status: "REFUNDED" },
     });
-    
+
     await tx.payment.create({
       data: {
         orderId,
         amount: -order.total,
-        type: 'REFUND'
-      }
+        type: "REFUND",
+      },
     });
-    
+
     await tx.inventory.updateMany({
       where: { orderId },
-      data: { status: 'RETURNED' }
+      data: { status: "RETURNED" },
     });
-    
+
     return order;
   });
 }
 ```
 
 **Review Comment:**
+
 ```
 ✨ Excellent use of transactions!
 
@@ -1060,7 +1126,7 @@ This properly handles the atomicity requirement for refunds:
 2. Records refund payment
 3. Returns inventory
 
-If any step fails, everything rolls back. This prevents partial 
+If any step fails, everything rolls back. This prevents partial
 refunds which would be a nightmare to debug. Great work! 💯
 ```
 
@@ -1069,12 +1135,14 @@ refunds which would be a nightmare to debug. Great work! 💯
 ## 🎓 Learning Resources
 
 ### Internal Resources
+
 - [Developer Onboarding](./DEVELOPER_ONBOARDING.md)
 - [Architecture Overview](../architecture/OVERVIEW.md)
 - [Testing Standards](../testing/STANDARDS.md)
 - [Coding Standards](../../.cursorrules)
 
 ### External Resources
+
 - [Google Code Review Guidelines](https://google.github.io/eng-practices/review/)
 - [Conventional Comments](https://conventionalcomments.org/)
 - [How to Do Code Reviews Like a Human](https://mtlynch.io/human-code-reviews-1/)
@@ -1084,6 +1152,7 @@ refunds which would be a nightmare to debug. Great work! 💯
 ## ✅ Checklist for This Document
 
 Use this document as a reference when:
+
 - [ ] Conducting a code review
 - [ ] Submitting a pull request
 - [ ] Responding to review feedback
@@ -1097,13 +1166,13 @@ Use this document as a reference when:
 
 We track code review effectiveness through:
 
-| Metric | Target | Actual |
-|--------|--------|--------|
-| Review response time | <24h | - |
-| PR cycle time | <3 days | - |
-| Bugs caught in review | >80% | - |
-| PRs merged first time | >60% | - |
-| Review iterations | <3 | - |
+| Metric                | Target  | Actual |
+| --------------------- | ------- | ------ |
+| Review response time  | <24h    | -      |
+| PR cycle time         | <3 days | -      |
+| Bugs caught in review | >80%    | -      |
+| PRs merged first time | >60%    | -      |
+| Review iterations     | <3      | -      |
 
 ---
 

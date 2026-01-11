@@ -19,7 +19,8 @@ interface ErrorProps {
 
 export default function AdminError({ error, reset }: ErrorProps) {
   useEffect(() => {
-    logger.error("Admin route error", { error: error.message,
+    logger.error("Admin route error", {
+      error: error.message,
       digest: error.digest,
       stack: error.stack,
       context: "admin-routes",
@@ -51,7 +52,8 @@ export default function AdminError({ error, reset }: ErrorProps) {
             We encountered an issue with the admin dashboard.
           </p>
           <p className="text-sm text-muted-foreground">
-            This error has been logged and the development team has been notified.
+            This error has been logged and the development team has been
+            notified.
           </p>
         </div>
 
@@ -135,7 +137,8 @@ export default function AdminError({ error, reset }: ErrorProps) {
             {error.digest && (
               <>
                 {" • "}
-                Error ID: <code className="bg-muted px-1 rounded">{error.digest}</code>
+                Error ID:{" "}
+                <code className="bg-muted px-1 rounded">{error.digest}</code>
               </>
             )}
           </p>

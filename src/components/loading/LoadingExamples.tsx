@@ -16,7 +16,7 @@ import {
   ButtonLoadingSpinner,
   CenteredLoadingSpinner,
   InlineLoadingSpinner,
-  LoadingSpinner
+  LoadingSpinner,
 } from "./LoadingSpinner";
 import {
   AgriculturalProgress,
@@ -50,7 +50,9 @@ export function LoadingExamples() {
   return (
     <div className="container mx-auto py-8 space-y-12">
       <header className="text-center space-y-2">
-        <h1 className="text-4xl font-bold">Loading States & Skeleton Screens</h1>
+        <h1 className="text-4xl font-bold">
+          Loading States & Skeleton Screens
+        </h1>
         <p className="text-muted-foreground">
           Comprehensive loading UI components for the Farmers Market Platform
         </p>

@@ -11,7 +11,7 @@ import { database } from "@/lib/database";
 import { SpanStatusCode, trace } from "@opentelemetry/api";
 import { Twilio } from "twilio";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 // ============================================
 // TYPES & INTERFACES
@@ -44,11 +44,15 @@ export const SMS_TEMPLATES: Record<string, (params: any) => string> = {
   ORDER_CONFIRMED: (params: { orderNumber: string; farmName: string }) =>
     `✅ Your order #${params.orderNumber} from ${params.farmName} has been confirmed! We'll notify you when it's ready for pickup.`,
 
-  ORDER_READY: (params: { orderNumber: string; farmName: string; pickupTime?: string }) =>
-    `🎉 Your order #${params.orderNumber} from ${params.farmName} is ready for pickup${params.pickupTime ? ` at ${params.pickupTime}` : ''}!`,
+  ORDER_READY: (params: {
+    orderNumber: string;
+    farmName: string;
+    pickupTime?: string;
+  }) =>
+    `🎉 Your order #${params.orderNumber} from ${params.farmName} is ready for pickup${params.pickupTime ? ` at ${params.pickupTime}` : ""}!`,
 
   ORDER_CANCELLED: (params: { orderNumber: string; reason?: string }) =>
-    `❌ Order #${params.orderNumber} has been cancelled${params.reason ? `: ${params.reason}` : ''}. Contact support if you need help.`,
+    `❌ Order #${params.orderNumber} has been cancelled${params.reason ? `: ${params.reason}` : ""}. Contact support if you need help.`,
 
   VERIFICATION_CODE: (params: { code: string; expiryMinutes: number }) =>
     `Your Farmers Market verification code is: ${params.code}. Valid for ${params.expiryMinutes} minutes. Do not share this code.`,
@@ -56,13 +60,21 @@ export const SMS_TEMPLATES: Record<string, (params: any) => string> = {
   PASSWORD_RESET: (params: { code: string; expiryMinutes: number }) =>
     `Your password reset code is: ${params.code}. Valid for ${params.expiryMinutes} minutes. If you didn't request this, please ignore.`,
 
-  DELIVERY_UPDATE: (params: { orderNumber: string; status: string; estimatedTime?: string }) =>
-    `📦 Delivery update for order #${params.orderNumber}: ${params.status}${params.estimatedTime ? `. ETA: ${params.estimatedTime}` : ''}`,
+  DELIVERY_UPDATE: (params: {
+    orderNumber: string;
+    status: string;
+    estimatedTime?: string;
+  }) =>
+    `📦 Delivery update for order #${params.orderNumber}: ${params.status}${params.estimatedTime ? `. ETA: ${params.estimatedTime}` : ""}`,
 
   LOW_STOCK_ALERT: (params: { productName: string; currentStock: number }) =>
     `⚠️ Low stock alert: ${params.productName} has only ${params.currentStock} units left. Restock soon!`,
 
-  NEW_REVIEW: (params: { customerName: string; rating: number; productName: string }) =>
+  NEW_REVIEW: (params: {
+    customerName: string;
+    rating: number;
+    productName: string;
+  }) =>
     `⭐ New ${params.rating}-star review from ${params.customerName} on ${params.productName}. Check your dashboard!`,
 
   PAYMENT_FAILED: (params: { orderNumber: string }) =>
@@ -106,7 +118,7 @@ export class SMSService {
 
       if (!accountSid || !authToken || !this.phoneNumber) {
         logger.warn(
-          "⚠️ SMS service not configured. Set TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, and TWILIO_PHONE_NUMBER"
+          "⚠️ SMS service not configured. Set TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, and TWILIO_PHONE_NUMBER",
         );
         this.isConfigured = false;
         return;
@@ -122,8 +134,8 @@ export class SMSService {
       logger.info("✅ SMS service initialized successfully");
     } catch (error) {
       logger.error("❌ Failed to initialize SMS service:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
       this.isConfigured = false;
     }
   }
@@ -161,7 +173,7 @@ export class SMSService {
         // Check if service is configured
         if (!this.isConfigured || !this.client || !this.phoneNumber) {
           logger.info(
-            `📱 [SMS NOT CONFIGURED] Would send to ${options.to}: ${options.message}`
+            `📱 [SMS NOT CONFIGURED] Would send to ${options.to}: ${options.message}`,
           );
           span.setStatus({ code: SpanStatusCode.OK });
           span.setAttributes({
@@ -195,7 +207,7 @@ export class SMSService {
         });
 
         logger.info(
-          `✅ SMS sent successfully to ${this.maskPhoneNumber(cleanPhone)}: ${message.sid}`
+          `✅ SMS sent successfully to ${this.maskPhoneNumber(cleanPhone)}: ${message.sid}`,
         );
 
         // Log to database if userId provided
@@ -225,9 +237,11 @@ export class SMSService {
         });
 
         logger.error(
-          `❌ Failed to send SMS to ${this.maskPhoneNumber(options.to)}:`, {
-      error: error instanceof Error ? error.message : String(error),
-    });
+          `❌ Failed to send SMS to ${this.maskPhoneNumber(options.to)}:`,
+          {
+            error: error instanceof Error ? error.message : String(error),
+          },
+        );
 
         // Log failure to database if userId provided
         if (options.userId) {
@@ -265,7 +279,7 @@ export class SMSService {
     to: string,
     templateName: string,
     params: any,
-    userId?: string
+    userId?: string,
   ): Promise<SendSMSResult> {
     const template = SMS_TEMPLATES[templateName];
 
@@ -293,13 +307,13 @@ export class SMSService {
     phoneNumber: string,
     userId: string,
     orderNumber: string,
-    farmName: string
+    farmName: string,
   ): Promise<SendSMSResult> {
     return await this.sendTemplateSMS(
       phoneNumber,
       "ORDER_CONFIRMED",
       { orderNumber, farmName },
-      userId
+      userId,
     );
   }
 
@@ -311,13 +325,13 @@ export class SMSService {
     userId: string,
     orderNumber: string,
     farmName: string,
-    pickupTime?: string
+    pickupTime?: string,
   ): Promise<SendSMSResult> {
     return await this.sendTemplateSMS(
       phoneNumber,
       "ORDER_READY",
       { orderNumber, farmName, pickupTime },
-      userId
+      userId,
     );
   }
 
@@ -328,13 +342,13 @@ export class SMSService {
     phoneNumber: string,
     code: string,
     expiryMinutes: number = 10,
-    userId?: string
+    userId?: string,
   ): Promise<SendSMSResult> {
     return await this.sendTemplateSMS(
       phoneNumber,
       "VERIFICATION_CODE",
       { code, expiryMinutes },
-      userId
+      userId,
     );
   }
 
@@ -345,13 +359,13 @@ export class SMSService {
     phoneNumber: string,
     code: string,
     expiryMinutes: number = 10,
-    userId?: string
+    userId?: string,
   ): Promise<SendSMSResult> {
     return await this.sendTemplateSMS(
       phoneNumber,
       "PASSWORD_RESET",
       { code, expiryMinutes },
-      userId
+      userId,
     );
   }
 
@@ -362,13 +376,13 @@ export class SMSService {
     phoneNumber: string,
     userId: string,
     productName: string,
-    currentStock: number
+    currentStock: number,
   ): Promise<SendSMSResult> {
     return await this.sendTemplateSMS(
       phoneNumber,
       "LOW_STOCK_ALERT",
       { productName, currentStock },
-      userId
+      userId,
     );
   }
 
@@ -378,13 +392,13 @@ export class SMSService {
   async sendPaymentFailedSMS(
     phoneNumber: string,
     userId: string,
-    orderNumber: string
+    orderNumber: string,
   ): Promise<SendSMSResult> {
     return await this.sendTemplateSMS(
       phoneNumber,
       "PAYMENT_FAILED",
       { orderNumber },
-      userId
+      userId,
     );
   }
 
@@ -448,8 +462,8 @@ export class SMSService {
       });
     } catch (error) {
       logger.error("Failed to log SMS to database:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
       // Don't throw - logging failure shouldn't break SMS sending
     }
   }
@@ -477,8 +491,8 @@ export class SMSService {
       const lastSentAt =
         sent.length > 0
           ? new Date(
-            Math.max(...sent.map((log: any) => log.sentAt?.getTime() || 0))
-          )
+              Math.max(...sent.map((log: any) => log.sentAt?.getTime() || 0)),
+            )
           : null;
 
       return {
@@ -489,8 +503,8 @@ export class SMSService {
       };
     } catch (error) {
       logger.error("Failed to get user SMS stats:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
       return {
         total: 0,
         sent: 0,

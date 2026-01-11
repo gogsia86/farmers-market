@@ -16,11 +16,12 @@
  * =========================================
  */
 
-const https = require('https');
-const http = require('http');
+const https = require("https");
+const http = require("http");
 
 // Configuration
-const DEPLOYMENT_URL = process.env.DEPLOYMENT_URL || 'https://farmers-market-platform.vercel.app';
+const DEPLOYMENT_URL =
+  process.env.DEPLOYMENT_URL || "https://farmers-market-platform.vercel.app";
 const TIMEOUT = 30000; // 30 seconds
 const MAX_RETRIES = 3;
 
@@ -32,62 +33,62 @@ const testResults = [];
 
 // Colors for console output
 const colors = {
-  reset: '\x1b[0m',
-  bright: '\x1b[1m',
-  red: '\x1b[31m',
-  green: '\x1b[32m',
-  yellow: '\x1b[33m',
-  blue: '\x1b[34m',
-  magenta: '\x1b[35m',
-  cyan: '\x1b[36m',
+  reset: "\x1b[0m",
+  bright: "\x1b[1m",
+  red: "\x1b[31m",
+  green: "\x1b[32m",
+  yellow: "\x1b[33m",
+  blue: "\x1b[34m",
+  magenta: "\x1b[35m",
+  cyan: "\x1b[36m",
 };
 
 // =========================================
 // Helper Functions
 // =========================================
 
-function log(message, color = 'reset') {
+function log(message, color = "reset") {
   console.log(`${colors[color]}${message}${colors.reset}`);
 }
 
 function logSuccess(message) {
-  log(`✅ ${message}`, 'green');
+  log(`✅ ${message}`, "green");
   passedTests++;
   totalTests++;
-  testResults.push({ status: 'PASS', message });
+  testResults.push({ status: "PASS", message });
 }
 
 function logError(message) {
-  log(`❌ ${message}`, 'red');
+  log(`❌ ${message}`, "red");
   failedTests++;
   totalTests++;
-  testResults.push({ status: 'FAIL', message });
+  testResults.push({ status: "FAIL", message });
 }
 
 function logWarning(message) {
-  log(`⚠️  ${message}`, 'yellow');
+  log(`⚠️  ${message}`, "yellow");
 }
 
 function logInfo(message) {
-  log(`ℹ️  ${message}`, 'blue');
+  log(`ℹ️  ${message}`, "blue");
 }
 
 function logHeader(message) {
-  console.log('');
-  log('========================================', 'magenta');
-  log(message, 'magenta');
-  log('========================================', 'magenta');
-  console.log('');
+  console.log("");
+  log("========================================", "magenta");
+  log(message, "magenta");
+  log("========================================", "magenta");
+  console.log("");
 }
 
 // =========================================
 // HTTP Request Helper
 // =========================================
 
-function makeRequest(url, method = 'GET', retries = 0) {
+function makeRequest(url, method = "GET", retries = 0) {
   return new Promise((resolve, reject) => {
     const urlObj = new URL(url);
-    const protocol = urlObj.protocol === 'https:' ? https : http;
+    const protocol = urlObj.protocol === "https:" ? https : http;
 
     const options = {
       hostname: urlObj.hostname,
@@ -96,44 +97,49 @@ function makeRequest(url, method = 'GET', retries = 0) {
       method: method,
       timeout: TIMEOUT,
       headers: {
-        'User-Agent': 'FarmersMarketPlatform-HealthCheck/1.0',
-        'Accept': '*/*'
-      }
+        "User-Agent": "FarmersMarketPlatform-HealthCheck/1.0",
+        Accept: "*/*",
+      },
     };
 
     const req = protocol.request(options, (res) => {
-      let data = '';
+      let data = "";
 
-      res.on('data', (chunk) => {
+      res.on("data", (chunk) => {
         data += chunk;
       });
 
-      res.on('end', () => {
+      res.on("end", () => {
         resolve({
           statusCode: res.statusCode,
           headers: res.headers,
           body: data,
-          responseTime: Date.now()
+          responseTime: Date.now(),
         });
       });
     });
 
-    req.on('error', (error) => {
+    req.on("error", (error) => {
       if (retries < MAX_RETRIES) {
-        logWarning(`Request failed, retrying... (${retries + 1}/${MAX_RETRIES})`);
-        setTimeout(() => {
-          makeRequest(url, method, retries + 1)
-            .then(resolve)
-            .catch(reject);
-        }, 1000 * (retries + 1));
+        logWarning(
+          `Request failed, retrying... (${retries + 1}/${MAX_RETRIES})`,
+        );
+        setTimeout(
+          () => {
+            makeRequest(url, method, retries + 1)
+              .then(resolve)
+              .catch(reject);
+          },
+          1000 * (retries + 1),
+        );
       } else {
         reject(error);
       }
     });
 
-    req.on('timeout', () => {
+    req.on("timeout", () => {
       req.destroy();
-      reject(new Error('Request timeout'));
+      reject(new Error("Request timeout"));
     });
 
     req.end();
@@ -157,10 +163,14 @@ async function testEndpoint(name, path, expectedStatuses = [200]) {
       logSuccess(`${name} - HTTP ${response.statusCode} (${duration}ms)`);
       return { success: true, statusCode: response.statusCode, duration };
     } else if ([301, 302, 307, 308].includes(response.statusCode)) {
-      logSuccess(`${name} - HTTP ${response.statusCode} (redirect, ${duration}ms)`);
+      logSuccess(
+        `${name} - HTTP ${response.statusCode} (redirect, ${duration}ms)`,
+      );
       return { success: true, statusCode: response.statusCode, duration };
     } else {
-      logError(`${name} - HTTP ${response.statusCode} (expected ${expectedStatuses.join(' or ')})`);
+      logError(
+        `${name} - HTTP ${response.statusCode} (expected ${expectedStatuses.join(" or ")})`,
+      );
       return { success: false, statusCode: response.statusCode, duration };
     }
   } catch (error) {
@@ -176,8 +186,13 @@ async function testPageContent(name, path, expectedContent = []) {
   try {
     const response = await makeRequest(url);
 
-    if (response.statusCode !== 200 && ![301, 302].includes(response.statusCode)) {
-      logWarning(`${name} - HTTP ${response.statusCode} (skipping content check)`);
+    if (
+      response.statusCode !== 200 &&
+      ![301, 302].includes(response.statusCode)
+    ) {
+      logWarning(
+        `${name} - HTTP ${response.statusCode} (skipping content check)`,
+      );
       return { success: true };
     }
 
@@ -205,7 +220,7 @@ async function testPageContent(name, path, expectedContent = []) {
 }
 
 async function testApiHealth() {
-  logInfo('Testing API health endpoint');
+  logInfo("Testing API health endpoint");
 
   try {
     const response = await makeRequest(`${DEPLOYMENT_URL}/api/health`);
@@ -214,10 +229,14 @@ async function testApiHealth() {
       try {
         const data = JSON.parse(response.body);
 
-        if (data.status === 'healthy') {
-          logSuccess(`API Health - Fully healthy (DB: ${data.checks?.database?.status || 'unknown'})`);
-        } else if (data.status === 'degraded') {
-          logWarning(`API Health - Degraded (DB: ${data.checks?.database?.status || 'unknown'})`);
+        if (data.status === "healthy") {
+          logSuccess(
+            `API Health - Fully healthy (DB: ${data.checks?.database?.status || "unknown"})`,
+          );
+        } else if (data.status === "degraded") {
+          logWarning(
+            `API Health - Degraded (DB: ${data.checks?.database?.status || "unknown"})`,
+          );
         } else {
           logError(`API Health - Unhealthy status: ${data.status}`);
         }
@@ -229,12 +248,13 @@ async function testApiHealth() {
         if (data.checks?.database?.latency) {
           logInfo(`  Database Latency: ${data.checks.database.latency}`);
         }
-
       } catch (parseError) {
-        logSuccess('API Health - Responded (JSON parse failed)');
+        logSuccess("API Health - Responded (JSON parse failed)");
       }
     } else if (response.statusCode === 404) {
-      logWarning('API Health endpoint not found (404) - may not be implemented yet');
+      logWarning(
+        "API Health endpoint not found (404) - may not be implemented yet",
+      );
     } else {
       logError(`API Health - HTTP ${response.statusCode}`);
     }
@@ -244,7 +264,7 @@ async function testApiHealth() {
 }
 
 async function testSecurityHeaders() {
-  logInfo('Testing security headers');
+  logInfo("Testing security headers");
 
   try {
     const response = await makeRequest(DEPLOYMENT_URL);
@@ -252,10 +272,10 @@ async function testSecurityHeaders() {
 
     // Check for security headers
     const securityHeaders = {
-      'x-frame-options': 'X-Frame-Options',
-      'x-content-type-options': 'X-Content-Type-Options',
-      'strict-transport-security': 'Strict-Transport-Security',
-      'x-xss-protection': 'X-XSS-Protection'
+      "x-frame-options": "X-Frame-Options",
+      "x-content-type-options": "X-Content-Type-Options",
+      "strict-transport-security": "Strict-Transport-Security",
+      "x-xss-protection": "X-XSS-Protection",
     };
 
     let foundHeaders = 0;
@@ -271,19 +291,18 @@ async function testSecurityHeaders() {
     } else {
       logWarning(`Few security headers found (${foundHeaders}/4)`);
     }
-
   } catch (error) {
     logWarning(`Security headers check - ${error.message}`);
   }
 }
 
 async function testResponseTimes() {
-  logInfo('Testing response times');
+  logInfo("Testing response times");
 
   const endpoints = [
-    { name: 'Homepage', path: '/' },
-    { name: 'Login', path: '/login' },
-    { name: 'Dashboard', path: '/dashboard' }
+    { name: "Homepage", path: "/" },
+    { name: "Login", path: "/login" },
+    { name: "Dashboard", path: "/dashboard" },
   ];
 
   const times = [];
@@ -324,84 +343,96 @@ async function testResponseTimes() {
 async function runAllTests() {
   console.clear();
 
-  log('╔═══════════════════════════════════════════════════════╗', 'magenta');
-  log('║   FARMERS MARKET PLATFORM - DEPLOYMENT VERIFICATION  ║', 'magenta');
-  log('║              Automated Testing Suite                 ║', 'magenta');
-  log('╚═══════════════════════════════════════════════════════╝', 'magenta');
-  console.log('');
+  log("╔═══════════════════════════════════════════════════════╗", "magenta");
+  log("║   FARMERS MARKET PLATFORM - DEPLOYMENT VERIFICATION  ║", "magenta");
+  log("║              Automated Testing Suite                 ║", "magenta");
+  log("╚═══════════════════════════════════════════════════════╝", "magenta");
+  console.log("");
 
   logInfo(`Target: ${DEPLOYMENT_URL}`);
   logInfo(`Started: ${new Date().toISOString()}`);
-  console.log('');
+  console.log("");
 
   // ===== CORE ENDPOINTS =====
-  logHeader('CORE ENDPOINTS');
+  logHeader("CORE ENDPOINTS");
 
-  await testEndpoint('Homepage', '/', [200]);
-  await testEndpoint('About Page', '/about', [200, 404]);
-  await testEndpoint('Login Page', '/login', [200, 404]);
-  await testEndpoint('Dashboard', '/dashboard', [200, 302, 401, 404]);
+  await testEndpoint("Homepage", "/", [200]);
+  await testEndpoint("About Page", "/about", [200, 404]);
+  await testEndpoint("Login Page", "/login", [200, 404]);
+  await testEndpoint("Dashboard", "/dashboard", [200, 302, 401, 404]);
 
   // ===== FARMER ROUTES =====
-  logHeader('FARMER ROUTES');
+  logHeader("FARMER ROUTES");
 
-  await testEndpoint('Farmer Dashboard', '/farmer/dashboard', [200, 302, 401, 404]);
-  await testEndpoint('Farmer Products', '/farmer/products', [200, 302, 401, 404]);
-  await testEndpoint('Farmer Orders', '/farmer/orders', [200, 302, 401, 404]);
+  await testEndpoint(
+    "Farmer Dashboard",
+    "/farmer/dashboard",
+    [200, 302, 401, 404],
+  );
+  await testEndpoint(
+    "Farmer Products",
+    "/farmer/products",
+    [200, 302, 401, 404],
+  );
+  await testEndpoint("Farmer Orders", "/farmer/orders", [200, 302, 401, 404]);
 
   // ===== CUSTOMER ROUTES =====
-  logHeader('CUSTOMER ROUTES');
+  logHeader("CUSTOMER ROUTES");
 
-  await testEndpoint('Farms Listing', '/farms', [200, 404]);
-  await testEndpoint('Products Listing', '/products', [200, 404]);
-  await testEndpoint('Cart', '/cart', [200, 404]);
+  await testEndpoint("Farms Listing", "/farms", [200, 404]);
+  await testEndpoint("Products Listing", "/products", [200, 404]);
+  await testEndpoint("Cart", "/cart", [200, 404]);
 
   // ===== API ROUTES =====
-  logHeader('API ROUTES');
+  logHeader("API ROUTES");
 
   await testApiHealth();
-  await testEndpoint('API Auth', '/api/auth/signin', [200, 307, 404]);
-  await testEndpoint('API Farms', '/api/v1/farms', [200, 401, 404]);
+  await testEndpoint("API Auth", "/api/auth/signin", [200, 307, 404]);
+  await testEndpoint("API Farms", "/api/v1/farms", [200, 401, 404]);
 
   // ===== STATIC ASSETS =====
-  logHeader('STATIC ASSETS');
+  logHeader("STATIC ASSETS");
 
-  await testEndpoint('Favicon', '/favicon.ico', [200, 404]);
-  await testEndpoint('Robots.txt', '/robots.txt', [200, 404]);
+  await testEndpoint("Favicon", "/favicon.ico", [200, 404]);
+  await testEndpoint("Robots.txt", "/robots.txt", [200, 404]);
 
   // ===== CONTENT VALIDATION =====
-  logHeader('CONTENT VALIDATION');
+  logHeader("CONTENT VALIDATION");
 
-  await testPageContent('Homepage Content', '/', ['market', 'farm']);
+  await testPageContent("Homepage Content", "/", ["market", "farm"]);
 
   // ===== SECURITY & PERFORMANCE =====
-  logHeader('SECURITY & PERFORMANCE');
+  logHeader("SECURITY & PERFORMANCE");
 
   await testSecurityHeaders();
   await testResponseTimes();
 
   // ===== GENERATE REPORT =====
-  logHeader('TEST SUMMARY');
+  logHeader("TEST SUMMARY");
 
-  const successRate = totalTests > 0 ? Math.round((passedTests / totalTests) * 100) : 0;
+  const successRate =
+    totalTests > 0 ? Math.round((passedTests / totalTests) * 100) : 0;
 
-  log(`Total Tests:  ${totalTests}`, 'cyan');
-  log(`Passed:       ${passedTests}`, 'green');
-  log(`Failed:       ${failedTests}`, failedTests > 0 ? 'red' : 'reset');
-  log(`Success Rate: ${successRate}%`, successRate >= 80 ? 'green' : 'yellow');
-  console.log('');
+  log(`Total Tests:  ${totalTests}`, "cyan");
+  log(`Passed:       ${passedTests}`, "green");
+  log(`Failed:       ${failedTests}`, failedTests > 0 ? "red" : "reset");
+  log(`Success Rate: ${successRate}%`, successRate >= 80 ? "green" : "yellow");
+  console.log("");
 
   if (failedTests === 0) {
-    log('🎉 ALL TESTS PASSED! Deployment is healthy.', 'green');
-    console.log('');
+    log("🎉 ALL TESTS PASSED! Deployment is healthy.", "green");
+    console.log("");
     return 0;
   } else if (failedTests < 3) {
-    log('⚠️  Some tests failed, but deployment may still be functional.', 'yellow');
-    console.log('');
+    log(
+      "⚠️  Some tests failed, but deployment may still be functional.",
+      "yellow",
+    );
+    console.log("");
     return 0;
   } else {
-    log('❌ Multiple tests failed. Please investigate the deployment.', 'red');
-    console.log('');
+    log("❌ Multiple tests failed. Please investigate the deployment.", "red");
+    console.log("");
     return 1;
   }
 }

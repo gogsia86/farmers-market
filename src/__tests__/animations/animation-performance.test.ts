@@ -19,7 +19,9 @@ const mockPerformanceObserver = {
   takeRecords: jest.fn(() => []),
 };
 
-global.PerformanceObserver = jest.fn().mockImplementation(() => mockPerformanceObserver) as any;
+global.PerformanceObserver = jest
+  .fn()
+  .mockImplementation(() => mockPerformanceObserver) as any;
 
 describe("Animation Performance System", () => {
   beforeEach(() => {
@@ -39,7 +41,8 @@ describe("Animation Performance System", () => {
         lastFrameTime = currentTime;
       }
 
-      const averageFrameTime = frameTimes.reduce((a: any, b: any) => a + b, 0) / frameTimes.length;
+      const averageFrameTime =
+        frameTimes.reduce((a: any, b: any) => a + b, 0) / frameTimes.length;
       const fps = 1000 / averageFrameTime;
 
       expect(fps).toBeGreaterThanOrEqual(55); // Allow 5fps tolerance
@@ -66,7 +69,8 @@ describe("Animation Performance System", () => {
         frameTimes.push(endTime - startTime);
       }
 
-      const averageFrameTime = frameTimes.reduce((a: any, b: any) => a + b, 0) / frameTimes.length;
+      const averageFrameTime =
+        frameTimes.reduce((a: any, b: any) => a + b, 0) / frameTimes.length;
       const fps = 1000 / averageFrameTime;
 
       expect(fps).toBeGreaterThanOrEqual(30); // Should maintain at least 30fps with 10 animations
@@ -82,7 +86,9 @@ describe("Animation Performance System", () => {
         frameTimes.push(targetFrameTime + jank);
       }
 
-      const frameDrops = frameTimes.filter((time: any) => time > targetFrameTime * 1.5).length;
+      const frameDrops = frameTimes.filter(
+        (time: any) => time > targetFrameTime * 1.5,
+      ).length;
       const dropPercentage = (frameDrops / frameTimes.length) * 100;
 
       expect(dropPercentage).toBeLessThan(10); // Less than 10% frame drops
@@ -142,10 +148,10 @@ describe("Animation Performance System", () => {
 
       // Simulate timer creation
       const createAnimation = () => {
-        const timer = setTimeout(() => { }, 1000);
+        const timer = setTimeout(() => {}, 1000);
         timers.add(timer);
 
-        const listener = () => { };
+        const listener = () => {};
         listeners.set(`listener-${timers.size}`, listener);
 
         return () => {
@@ -247,7 +253,7 @@ describe("Animation Performance System", () => {
           return new Promise((resolve) => {
             setTimeout(resolve, anim.duration);
           });
-        })
+        }),
       );
 
       const endTime = performance.now();
@@ -261,7 +267,9 @@ describe("Animation Performance System", () => {
     it("should efficiently use available RAM for animation caching", () => {
       const availableRAM = 64 * 1024 * 1024 * 1024; // 64GB in bytes
       const animationCacheSize = 100 * 1024; // 100KB per cached animation
-      const maxCachedAnimations = Math.floor(availableRAM * 0.01 / animationCacheSize); // Use 1% of RAM
+      const maxCachedAnimations = Math.floor(
+        (availableRAM * 0.01) / animationCacheSize,
+      ); // Use 1% of RAM
 
       const cache = new Map<string, any>();
 
@@ -287,15 +295,22 @@ describe("Animation Performance System", () => {
 
       const threads = Array.from({ length: threadCount }, (_, i) => ({
         id: i,
-        animations: totalAnimations > i * animationsPerThread
-          ? Math.min(animationsPerThread, totalAnimations - i * animationsPerThread)
-          : 0,
+        animations:
+          totalAnimations > i * animationsPerThread
+            ? Math.min(
+                animationsPerThread,
+                totalAnimations - i * animationsPerThread,
+              )
+            : 0,
       }));
 
       const activeThreads = threads.filter((t: any) => t.animations > 0);
       expect(activeThreads.length).toBe(threadCount);
 
-      const totalProcessed = threads.reduce((sum: any, t: any) => sum + t.animations, 0);
+      const totalProcessed = threads.reduce(
+        (sum: any, t: any) => sum + t.animations,
+        0,
+      );
       expect(totalProcessed).toBe(totalAnimations);
     });
   });
@@ -444,7 +459,8 @@ describe("Animation Performance System", () => {
         switchTimes.push(endTime - startTime);
       });
 
-      const averageSwitchTime = switchTimes.reduce((a: any, b: any) => a + b, 0) / switchTimes.length;
+      const averageSwitchTime =
+        switchTimes.reduce((a: any, b: any) => a + b, 0) / switchTimes.length;
 
       expect(averageSwitchTime).toBeLessThan(1); // Should be nearly instant
     });
@@ -535,7 +551,8 @@ describe("Animation Performance System", () => {
         eventTimes.push(endTime - startTime);
       }
 
-      const averageEventTime = eventTimes.reduce((a: any, b: any) => a + b, 0) / eventTimes.length;
+      const averageEventTime =
+        eventTimes.reduce((a: any, b: any) => a + b, 0) / eventTimes.length;
       const targetTime = 1000 / 60; // 16.67ms per frame
 
       expect(averageEventTime).toBeLessThan(targetTime);

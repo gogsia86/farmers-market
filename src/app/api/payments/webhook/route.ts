@@ -7,7 +7,7 @@ import { stripeService } from "@/lib/services/stripe.service";
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 // ============================================================================
 // CONFIGURATION
@@ -31,17 +31,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     if (!signature) {
       logger.error("Missing stripe-signature header");
-      return NextResponse.json(
-        { error: "Missing signature" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Missing signature" }, { status: 400 });
     }
 
     if (!WEBHOOK_SECRET) {
       logger.error("Webhook secret not configured");
       return NextResponse.json(
         { error: "Webhook not configured" },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -51,16 +48,13 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       event = stripeService.constructWebhookEvent(
         body,
         signature,
-        WEBHOOK_SECRET
+        WEBHOOK_SECRET,
       );
     } catch (error) {
       logger.error("Webhook signature verification failed", {
-        error: error instanceof Error ? error.message : String(error)
+        error: error instanceof Error ? error.message : String(error),
       });
-      return NextResponse.json(
-        { error: "Invalid signature" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
     }
 
     logger.info(`Received webhook event: ${event.type} (${event.id})`);
@@ -98,11 +92,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         eventType: event.type,
         ...result,
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     logger.error("Webhook handler error", {
-      error: error instanceof Error ? error.message : String(error)
+      error: error instanceof Error ? error.message : String(error),
     });
 
     return NextResponse.json(
@@ -110,7 +104,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         error: "Webhook handler failed",
         message: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -123,9 +117,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
  * ✅ Handle payment intent succeeded
  * Creates orders and sends confirmation emails
  */
-async function handlePaymentIntentSucceeded(
-  event: Stripe.Event
-): Promise<any> {
+async function handlePaymentIntentSucceeded(event: Stripe.Event): Promise<any> {
   const paymentIntent = event.data.object as Stripe.PaymentIntent;
   const paymentIntentId = paymentIntent.id;
   const metadata = paymentIntent.metadata;
@@ -154,7 +146,7 @@ async function handlePaymentIntentSucceeded(
 
     if (existingOrders.length > 0) {
       logger.info(
-        `Orders already created for payment intent ${paymentIntentId}`
+        `Orders already created for payment intent ${paymentIntentId}`,
       );
       return {
         handled: true,
@@ -172,7 +164,7 @@ async function handlePaymentIntentSucceeded(
     });
 
     logger.info(
-      `Created ${result.orderCount} order(s) for payment ${paymentIntentId}`
+      `Created ${result.orderCount} order(s) for payment ${paymentIntentId}`,
     );
 
     // Send order confirmation emails
@@ -180,12 +172,18 @@ async function handlePaymentIntentSucceeded(
       try {
         // TODO: Send order confirmation email
         // await emailService.sendOrderConfirmationEmail(...)
-        logger.info(`Order confirmation email queued for order ${order.orderNumber}`);
+        logger.info(
+          `Order confirmation email queued for order ${order.orderNumber}`,
+        );
       } catch (emailError) {
         logger.error(
-          `Failed to send confirmation email for order ${order.orderNumber}`, {
-          error: emailError instanceof Error ? emailError.message : String(emailError)
-        }
+          `Failed to send confirmation email for order ${order.orderNumber}`,
+          {
+            error:
+              emailError instanceof Error
+                ? emailError.message
+                : String(emailError),
+          },
         );
         // Don't fail the webhook if email fails
       }
@@ -211,7 +209,7 @@ async function handlePaymentIntentSucceeded(
     };
   } catch (error) {
     logger.error("Error processing payment success", {
-      error: error instanceof Error ? error.message : String(error)
+      error: error instanceof Error ? error.message : String(error),
     });
 
     // Log the error but return success to Stripe to prevent retries
@@ -235,7 +233,7 @@ async function handlePaymentIntentFailed(event: Stripe.Event): Promise<any> {
 
   logger.info(`Processing payment failure: ${paymentIntentId}`);
   logger.info("Failure reason", {
-    reason: paymentIntent.last_payment_error?.message || "Unknown"
+    reason: paymentIntent.last_payment_error?.message || "Unknown",
   });
 
   try {
@@ -274,7 +272,10 @@ async function handlePaymentIntentFailed(event: Stripe.Event): Promise<any> {
         logger.info(`Payment failure notification queued for ${customerEmail}`);
       } catch (emailError) {
         logger.error("Failed to send payment failure email", {
-          error: emailError instanceof Error ? emailError.message : String(emailError)
+          error:
+            emailError instanceof Error
+              ? emailError.message
+              : String(emailError),
         });
       }
     }
@@ -286,7 +287,7 @@ async function handlePaymentIntentFailed(event: Stripe.Event): Promise<any> {
     };
   } catch (error) {
     logger.error("Error processing payment failure", {
-      error: error instanceof Error ? error.message : String(error)
+      error: error instanceof Error ? error.message : String(error),
     });
     return {
       handled: true,
@@ -338,7 +339,7 @@ async function handlePaymentIntentCanceled(event: Stripe.Event): Promise<any> {
     };
   } catch (error) {
     logger.error("Error processing payment cancellation", {
-      error: error instanceof Error ? error.message : String(error)
+      error: error instanceof Error ? error.message : String(error),
     });
     return {
       handled: true,
@@ -394,7 +395,7 @@ async function handleChargeRefunded(event: Stripe.Event): Promise<any> {
     };
   } catch (error) {
     logger.error("Error processing refund", {
-      error: error instanceof Error ? error.message : String(error)
+      error: error instanceof Error ? error.message : String(error),
     });
     return {
       handled: true,
@@ -417,6 +418,6 @@ export async function OPTIONS(request: NextRequest): Promise<NextResponse> {
         "Access-Control-Allow-Methods": "POST, OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type, stripe-signature",
       },
-    }
+    },
   );
 }

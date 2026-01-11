@@ -24,7 +24,7 @@ import type {
 import { useSession } from "next-auth/react";
 import { useCallback, useEffect, useState } from "react";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 // ============================================================================
 // TYPES
@@ -133,7 +133,10 @@ export function useCart(options: UseCartOptions = {}) {
       const guestItems = getGuestCart();
       setState((prev) => ({
         ...prev,
-        count: guestItems.reduce((sum: any, item: any) => sum + item.quantity, 0),
+        count: guestItems.reduce(
+          (sum: any, item: any) => sum + item.quantity,
+          0,
+        ),
         isLoading: false,
         summary: null,
       }));
@@ -200,7 +203,7 @@ export function useCart(options: UseCartOptions = {}) {
         // Guest cart - add to local storage
         const guestItems = getGuestCart();
         const existingIndex = guestItems.findIndex(
-          (item) => item.productId === request.productId
+          (item) => item.productId === request.productId,
         );
 
         if (existingIndex >= 0 && guestItems[existingIndex]) {
@@ -215,7 +218,10 @@ export function useCart(options: UseCartOptions = {}) {
         setGuestCart(guestItems);
         setState((prev) => ({
           ...prev,
-          count: guestItems.reduce((sum: any, item: any) => sum + item.quantity, 0),
+          count: guestItems.reduce(
+            (sum: any, item: any) => sum + item.quantity,
+            0,
+          ),
         }));
 
         toast({
@@ -258,7 +264,7 @@ export function useCart(options: UseCartOptions = {}) {
 
       return response;
     },
-    [userId, loadCart, toast]
+    [userId, loadCart, toast],
   );
 
   const updateCartItem = useCallback(
@@ -269,7 +275,9 @@ export function useCart(options: UseCartOptions = {}) {
       setState((prev) => {
         if (!prev.summary) return prev;
 
-        const oldItem = prev.summary.items.find((item: any) => item.id === itemId);
+        const oldItem = prev.summary.items.find(
+          (item: any) => item.id === itemId,
+        );
         if (!oldItem) return prev;
 
         const quantityDiff = quantity - oldItem.quantity.toNumber();
@@ -302,7 +310,7 @@ export function useCart(options: UseCartOptions = {}) {
 
       return response;
     },
-    [userId, loadCart, toast]
+    [userId, loadCart, toast],
   );
 
   const removeFromCart = useCallback(
@@ -344,7 +352,7 @@ export function useCart(options: UseCartOptions = {}) {
 
       return response;
     },
-    [userId, loadCart, toast]
+    [userId, loadCart, toast],
   );
 
   const clearCart = useCallback(async () => {
@@ -407,43 +415,44 @@ export function useCart(options: UseCartOptions = {}) {
 
       return response;
     },
-    [userId, loadCart, toast]
+    [userId, loadCart, toast],
   );
 
   // ==========================================================================
   // CART VALIDATION & SYNC
   // ==========================================================================
 
-  const validateCart = useCallback(async (): Promise<CartValidationResult | null> => {
-    if (!userId) return null;
+  const validateCart =
+    useCallback(async (): Promise<CartValidationResult | null> => {
+      if (!userId) return null;
 
-    setState((prev) => ({ ...prev, isValidating: true }));
+      setState((prev) => ({ ...prev, isValidating: true }));
 
-    const response = await validateCartAction();
+      const response = await validateCartAction();
 
-    setState((prev) => ({ ...prev, isValidating: false }));
+      setState((prev) => ({ ...prev, isValidating: false }));
 
-    if (response.success && response.data) {
-      if (!response.data.isValid) {
-        toast({
-          title: "Cart validation issues",
-          description: `Found ${response.data.errors.length} issue(s) with your cart`,
-          variant: "destructive",
-        });
+      if (response.success && response.data) {
+        if (!response.data.isValid) {
+          toast({
+            title: "Cart validation issues",
+            description: `Found ${response.data.errors.length} issue(s) with your cart`,
+            variant: "destructive",
+          });
+        }
+
+        if (response.data.warnings.length > 0) {
+          toast({
+            title: "Cart notices",
+            description: `${response.data.warnings.length} item(s) have price or stock changes`,
+          });
+        }
+
+        return response.data;
       }
 
-      if (response.data.warnings.length > 0) {
-        toast({
-          title: "Cart notices",
-          description: `${response.data.warnings.length} item(s) have price or stock changes`,
-        });
-      }
-
-      return response.data;
-    }
-
-    return null;
-  }, [userId, toast]);
+      return null;
+    }, [userId, toast]);
 
   const syncPrices = useCallback(async () => {
     if (!userId) return { success: false };

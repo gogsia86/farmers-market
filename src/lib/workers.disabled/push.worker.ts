@@ -12,7 +12,7 @@ import { PushJobData, pushQueue } from "@/lib/queue/notification.queue";
 import { pushNotificationService } from "@/lib/services/push.service";
 import { SpanStatusCode, trace } from "@opentelemetry/api";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 import type { Job } from "bull";
 
@@ -60,7 +60,7 @@ async function processPushJob(job: Job<PushJobData>) {
 
       // Send push notification via push service
       logger.info(
-        `🔔 Sending push notification to user ${job.data.userId} (Job: ${job.id})`
+        `🔔 Sending push notification to user ${job.data.userId} (Job: ${job.id})`,
       );
 
       await job.progress(30);
@@ -102,7 +102,7 @@ async function processPushJob(job: Job<PushJobData>) {
         });
 
         logger.info(
-          `✅ Push notification sent successfully to user ${job.data.userId} (${duration}ms)`
+          `✅ Push notification sent successfully to user ${job.data.userId} (${duration}ms)`,
         );
 
         return {
@@ -122,7 +122,9 @@ async function processPushJob(job: Job<PushJobData>) {
       // Note: Notification model doesn't have failedAt field
       // Failed notifications are tracked in PushNotificationLog table
       if (job.data.notificationId) {
-        logger.error(`Notification ${job.data.notificationId} push delivery failed: ${errorMessage}`);
+        logger.error(
+          `Notification ${job.data.notificationId} push delivery failed: ${errorMessage}`,
+        );
       }
 
       span.setStatus({
@@ -134,10 +136,14 @@ async function processPushJob(job: Job<PushJobData>) {
         "job.error": errorMessage,
       });
 
-      logger.error(`❌ Push notification failed to user ${job.data.userId} (Job: ${job.id}, Attempt: ${job.attemptsMade + 1
-        }):`, {
-        error: error instanceof Error ? error.message : String(error)
-      });
+      logger.error(
+        `❌ Push notification failed to user ${job.data.userId} (Job: ${job.id}, Attempt: ${
+          job.attemptsMade + 1
+        }):`,
+        {
+          error: error instanceof Error ? error.message : String(error),
+        },
+      );
 
       throw error;
     } finally {
@@ -154,7 +160,9 @@ async function processPushJob(job: Job<PushJobData>) {
  * Start push notification worker
  */
 export function startPushWorker() {
-  logger.info(`🚀 Starting push notification worker with concurrency: ${CONCURRENCY}`);
+  logger.info(
+    `🚀 Starting push notification worker with concurrency: ${CONCURRENCY}`,
+  );
 
   // Process jobs from queue
   pushQueue.process(CONCURRENCY, async (job) => {

@@ -13,14 +13,14 @@
  * @see src/lib/lazy/ml.lazy.ts - Runtime conditional loading
  */
 
-declare module '@tensorflow/tfjs-node-gpu' {
-  import * as tfNode from '@tensorflow/tfjs-node';
+declare module "@tensorflow/tfjs-node-gpu" {
+  import * as tfNode from "@tensorflow/tfjs-node";
   export = tfNode;
 }
 
-declare module '@tensorflow/tfjs-node' {
+declare module "@tensorflow/tfjs-node" {
   // Export everything from tfjs-core
-  export * from '@tensorflow/tfjs-core';
+  export * from "@tensorflow/tfjs-core";
   export { tf };
 
   // Node-specific exports
@@ -42,9 +42,9 @@ declare module '@tensorflow/tfjs-node' {
   }
 }
 
-declare module '@tensorflow/tfjs' {
+declare module "@tensorflow/tfjs" {
   // Export everything from tfjs-core
-  export * from '@tensorflow/tfjs-core';
+  export * from "@tensorflow/tfjs-core";
   export { tf };
 
   // Additional tfjs exports
@@ -79,7 +79,7 @@ declare module '@tensorflow/tfjs' {
   }
 }
 
-declare module '@tensorflow/tfjs-core' {
+declare module "@tensorflow/tfjs-core" {
   // Basic type definitions
   export interface Tensor<R = any> {
     shape: number[];
@@ -120,14 +120,35 @@ declare module '@tensorflow/tfjs-core' {
   // Tensor creation
   export function tensor(values: any, shape?: number[], dtype?: string): Tensor;
   export function tensor1d(values: any, dtype?: string): Tensor1D;
-  export function tensor2d(values: any, shape?: [number, number], dtype?: string): Tensor2D;
-  export function tensor3d(values: any, shape?: [number, number, number], dtype?: string): Tensor3D;
-  export function tensor4d(values: any, shape?: [number, number, number, number], dtype?: string): Tensor4D;
+  export function tensor2d(
+    values: any,
+    shape?: [number, number],
+    dtype?: string,
+  ): Tensor2D;
+  export function tensor3d(
+    values: any,
+    shape?: [number, number, number],
+    dtype?: string,
+  ): Tensor3D;
+  export function tensor4d(
+    values: any,
+    shape?: [number, number, number, number],
+    dtype?: string,
+  ): Tensor4D;
   export function scalar(value: number | Tensor): Scalar;
 
   // Operations
-  export function matMul(a: Tensor, b: Tensor, transposeA?: boolean, transposeB?: boolean): Tensor;
-  export function topk(x: Tensor, k?: number, sorted?: boolean): { values: Tensor; indices: Tensor };
+  export function matMul(
+    a: Tensor,
+    b: Tensor,
+    transposeA?: boolean,
+    transposeB?: boolean,
+  ): Tensor;
+  export function topk(
+    x: Tensor,
+    k?: number,
+    sorted?: boolean,
+  ): { values: Tensor; indices: Tensor };
   export function squeeze(x: Tensor, axis?: number | number[]): Tensor;
 
   // Memory management
@@ -172,10 +193,10 @@ declare module '@tensorflow/tfjs-core' {
 
   // Version info
   export const version: {
-    'tfjs-core': string;
+    "tfjs-core": string;
     tfjs?: string;
-    'tfjs-backend-cpu'?: string;
-    'tfjs-backend-webgl'?: string;
+    "tfjs-backend-cpu"?: string;
+    "tfjs-backend-webgl"?: string;
   };
 
   // Memory info type

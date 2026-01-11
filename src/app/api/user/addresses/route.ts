@@ -17,7 +17,7 @@ import type { AddressType } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 /**
  * 🔍 GET - List User's Addresses
@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
             message: "You must be logged in to view addresses",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -64,7 +64,9 @@ export async function GET(request: NextRequest) {
     const defaultAddress = addresses.find((addr: any) => addr.isDefault);
     const homeAddresses = addresses.filter((addr: any) => addr.type === "HOME");
     const workAddresses = addresses.filter((addr: any) => addr.type === "WORK");
-    const otherAddresses = addresses.filter((addr: any) => addr.type === "OTHER");
+    const otherAddresses = addresses.filter(
+      (addr: any) => addr.type === "OTHER",
+    );
 
     return NextResponse.json({
       success: true,
@@ -92,10 +94,13 @@ export async function GET(request: NextRequest) {
         success: false,
         error: {
           code: "ADDRESS_FETCH_ERROR",
-          message: error instanceof Error ? error.message : "Failed to retrieve addresses",
+          message:
+            error instanceof Error
+              ? error.message
+              : "Failed to retrieve addresses",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -116,7 +121,7 @@ export async function POST(request: NextRequest) {
             message: "You must be logged in to create addresses",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -146,7 +151,7 @@ export async function POST(request: NextRequest) {
             details: validation.error.errors,
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -201,10 +206,11 @@ export async function POST(request: NextRequest) {
         success: false,
         error: {
           code: "ADDRESS_CREATE_ERROR",
-          message: error instanceof Error ? error.message : "Failed to create address",
+          message:
+            error instanceof Error ? error.message : "Failed to create address",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -225,7 +231,7 @@ export async function PATCH(request: NextRequest) {
             message: "You must be logged in to update addresses",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -240,7 +246,10 @@ export async function PATCH(request: NextRequest) {
       street2: z.string().max(255).optional().nullable(),
       city: z.string().min(2).max(100).optional(),
       state: z.string().min(2).max(50).optional(),
-      zipCode: z.string().regex(/^\d{5}(-\d{4})?$/).optional(),
+      zipCode: z
+        .string()
+        .regex(/^\d{5}(-\d{4})?$/)
+        .optional(),
       country: z.string().length(2).optional(),
       isDefault: z.boolean().optional(),
     });
@@ -256,7 +265,7 @@ export async function PATCH(request: NextRequest) {
             details: validation.error.errors,
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -276,7 +285,7 @@ export async function PATCH(request: NextRequest) {
             message: "Address not found",
           },
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -290,7 +299,7 @@ export async function PATCH(request: NextRequest) {
             message: "You can only update your own addresses",
           },
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -337,10 +346,11 @@ export async function PATCH(request: NextRequest) {
         success: false,
         error: {
           code: "ADDRESS_UPDATE_ERROR",
-          message: error instanceof Error ? error.message : "Failed to update address",
+          message:
+            error instanceof Error ? error.message : "Failed to update address",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -361,7 +371,7 @@ export async function DELETE(request: NextRequest) {
             message: "You must be logged in to delete addresses",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -377,7 +387,7 @@ export async function DELETE(request: NextRequest) {
             message: "addressId is required",
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -395,7 +405,7 @@ export async function DELETE(request: NextRequest) {
             message: "Address not found",
           },
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -409,7 +419,7 @@ export async function DELETE(request: NextRequest) {
             message: "You can only delete your own addresses",
           },
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -431,7 +441,7 @@ export async function DELETE(request: NextRequest) {
             message: "Cannot delete address that is used in active orders",
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -479,10 +489,11 @@ export async function DELETE(request: NextRequest) {
         success: false,
         error: {
           code: "ADDRESS_DELETE_ERROR",
-          message: error instanceof Error ? error.message : "Failed to delete address",
+          message:
+            error instanceof Error ? error.message : "Failed to delete address",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

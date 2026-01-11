@@ -665,14 +665,22 @@ export const marketUpdateVariants: Variants = {
     transition: listTransition,
   },
   priceUp: {
-    backgroundColor: ["rgba(34, 197, 94, 0)", "rgba(34, 197, 94, 0.1)", "rgba(34, 197, 94, 0)"],
+    backgroundColor: [
+      "rgba(34, 197, 94, 0)",
+      "rgba(34, 197, 94, 0.1)",
+      "rgba(34, 197, 94, 0)",
+    ],
     transition: {
       duration: 1,
       ease: "easeInOut",
     },
   },
   priceDown: {
-    backgroundColor: ["rgba(239, 68, 68, 0)", "rgba(239, 68, 68, 0.1)", "rgba(239, 68, 68, 0)"],
+    backgroundColor: [
+      "rgba(239, 68, 68, 0)",
+      "rgba(239, 68, 68, 0.1)",
+      "rgba(239, 68, 68, 0)",
+    ],
     transition: {
       duration: 1,
       ease: "easeInOut",
@@ -754,7 +762,7 @@ export function getFilterVariants(transitionType: FilterTransition): Variants {
  */
 export function getAccessibleListVariants(
   prefersReducedMotion: boolean,
-  baseVariants: Variants = listItemVariants
+  baseVariants: Variants = listItemVariants,
 ): Variants {
   if (prefersReducedMotion) {
     return fadeOnlyVariants;
@@ -765,7 +773,10 @@ export function getAccessibleListVariants(
 /**
  * Get stagger delay based on index
  */
-export function getStaggerDelay(index: number, baseDelay: number = 0.05): number {
+export function getStaggerDelay(
+  index: number,
+  baseDelay: number = 0.05,
+): number {
   return Math.min(index * baseDelay, 0.5); // Cap at 500ms
 }
 
@@ -773,7 +784,7 @@ export function getStaggerDelay(index: number, baseDelay: number = 0.05): number
  * Get agricultural notification variants
  */
 export function getAgriculturalVariants(
-  notificationType: "harvest" | "weather" | "market" | "seasonal"
+  notificationType: "harvest" | "weather" | "market" | "seasonal",
 ): Variants {
   switch (notificationType) {
     case "harvest":
@@ -795,7 +806,7 @@ export function getAgriculturalVariants(
 export function createStaggerConfig(
   itemCount: number,
   baseDelay: number = 0.05,
-  maxDelay: number = 0.5
+  maxDelay: number = 0.5,
 ): { staggerChildren: number; delayChildren: number } {
   const staggerDelay = Math.min(baseDelay, maxDelay / itemCount);
   return {

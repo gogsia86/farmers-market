@@ -10,8 +10,8 @@ export {
   loginAsFarmerModule,
   loginInvalidCredentialsModule,
   loginModules,
-  loginSessionPersistenceModule
-} from './login.module';
+  loginSessionPersistenceModule,
+} from "./login.module";
 
 // Re-export default
-export { default as defaultLoginModule } from './login.module';
+export { default as defaultLoginModule } from "./login.module";

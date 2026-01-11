@@ -13,7 +13,7 @@ import type {
 import { cartService } from "@/lib/services/cart.service";
 import { revalidatePath } from "next/cache";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 // ============================================================================
 // TYPES
@@ -38,7 +38,7 @@ export interface ActionResponse<T = any> {
  * Next.js cannot pass Prisma Decimal objects to client components
  */
 function serializeDecimal(value: any): any {
-  if (value && typeof value === 'object' && 'toNumber' in value) {
+  if (value && typeof value === "object" && "toNumber" in value) {
     return value.toNumber();
   }
   return value;
@@ -54,10 +54,18 @@ function serializeCartSummary(summary: CartSummary): CartSummary {
       product: {
         ...item.product,
         price: serializeDecimal(item.product.price),
-        compareAtPrice: item.product.compareAtPrice ? serializeDecimal(item.product.compareAtPrice) : null,
-        quantityAvailable: item.product.quantityAvailable ? serializeDecimal(item.product.quantityAvailable) : null,
-        lowStockThreshold: item.product.lowStockThreshold ? serializeDecimal(item.product.lowStockThreshold) : null,
-        averageRating: item.product.averageRating ? serializeDecimal(item.product.averageRating) : null,
+        compareAtPrice: item.product.compareAtPrice
+          ? serializeDecimal(item.product.compareAtPrice)
+          : null,
+        quantityAvailable: item.product.quantityAvailable
+          ? serializeDecimal(item.product.quantityAvailable)
+          : null,
+        lowStockThreshold: item.product.lowStockThreshold
+          ? serializeDecimal(item.product.lowStockThreshold)
+          : null,
+        averageRating: item.product.averageRating
+          ? serializeDecimal(item.product.averageRating)
+          : null,
       },
     })),
     farmGroups: summary.farmGroups.map((group: any) => ({
@@ -69,10 +77,18 @@ function serializeCartSummary(summary: CartSummary): CartSummary {
         product: {
           ...item.product,
           price: serializeDecimal(item.product.price),
-          compareAtPrice: item.product.compareAtPrice ? serializeDecimal(item.product.compareAtPrice) : null,
-          quantityAvailable: item.product.quantityAvailable ? serializeDecimal(item.product.quantityAvailable) : null,
-          lowStockThreshold: item.product.lowStockThreshold ? serializeDecimal(item.product.lowStockThreshold) : null,
-          averageRating: item.product.averageRating ? serializeDecimal(item.product.averageRating) : null,
+          compareAtPrice: item.product.compareAtPrice
+            ? serializeDecimal(item.product.compareAtPrice)
+            : null,
+          quantityAvailable: item.product.quantityAvailable
+            ? serializeDecimal(item.product.quantityAvailable)
+            : null,
+          lowStockThreshold: item.product.lowStockThreshold
+            ? serializeDecimal(item.product.lowStockThreshold)
+            : null,
+          averageRating: item.product.averageRating
+            ? serializeDecimal(item.product.averageRating)
+            : null,
         },
       })),
     })),
@@ -106,7 +122,7 @@ async function getAuthenticatedUserId(): Promise<string> {
  * userId is derived from server-side session
  */
 export async function addToCartAction(
-  request: Omit<AddToCartRequest, "userId">
+  request: Omit<AddToCartRequest, "userId">,
 ): Promise<ActionResponse> {
   try {
     const userId = await getAuthenticatedUserId();
@@ -135,10 +151,12 @@ export async function addToCartAction(
     return {
       success: false,
       error: {
-        code: error instanceof Error && error.message === "Authentication required"
-          ? "UNAUTHORIZED"
-          : "ADD_TO_CART_FAILED",
-        message: error instanceof Error ? error.message : "Failed to add item to cart",
+        code:
+          error instanceof Error && error.message === "Authentication required"
+            ? "UNAUTHORIZED"
+            : "ADD_TO_CART_FAILED",
+        message:
+          error instanceof Error ? error.message : "Failed to add item to cart",
       },
     };
   }
@@ -149,7 +167,7 @@ export async function addToCartAction(
  * userId is derived from server-side session
  */
 export async function updateCartItemAction(
-  request: UpdateCartItemRequest
+  request: UpdateCartItemRequest,
 ): Promise<ActionResponse> {
   try {
     await getAuthenticatedUserId();
@@ -173,10 +191,12 @@ export async function updateCartItemAction(
     return {
       success: false,
       error: {
-        code: error instanceof Error && error.message === "Authentication required"
-          ? "UNAUTHORIZED"
-          : "UPDATE_CART_FAILED",
-        message: error instanceof Error ? error.message : "Failed to update cart item",
+        code:
+          error instanceof Error && error.message === "Authentication required"
+            ? "UNAUTHORIZED"
+            : "UPDATE_CART_FAILED",
+        message:
+          error instanceof Error ? error.message : "Failed to update cart item",
       },
     };
   }
@@ -186,7 +206,9 @@ export async function updateCartItemAction(
  * 🗑️ Remove item from cart
  * userId is derived from server-side session
  */
-export async function removeFromCartAction(itemId: string): Promise<ActionResponse> {
+export async function removeFromCartAction(
+  itemId: string,
+): Promise<ActionResponse> {
   try {
     await getAuthenticatedUserId();
 
@@ -208,10 +230,14 @@ export async function removeFromCartAction(itemId: string): Promise<ActionRespon
     return {
       success: false,
       error: {
-        code: error instanceof Error && error.message === "Authentication required"
-          ? "UNAUTHORIZED"
-          : "REMOVE_FROM_CART_FAILED",
-        message: error instanceof Error ? error.message : "Failed to remove item from cart",
+        code:
+          error instanceof Error && error.message === "Authentication required"
+            ? "UNAUTHORIZED"
+            : "REMOVE_FROM_CART_FAILED",
+        message:
+          error instanceof Error
+            ? error.message
+            : "Failed to remove item from cart",
       },
     };
   }
@@ -243,10 +269,12 @@ export async function clearCartAction(): Promise<ActionResponse> {
     return {
       success: false,
       error: {
-        code: error instanceof Error && error.message === "Authentication required"
-          ? "UNAUTHORIZED"
-          : "CLEAR_CART_FAILED",
-        message: error instanceof Error ? error.message : "Failed to clear cart",
+        code:
+          error instanceof Error && error.message === "Authentication required"
+            ? "UNAUTHORIZED"
+            : "CLEAR_CART_FAILED",
+        message:
+          error instanceof Error ? error.message : "Failed to clear cart",
       },
     };
   }
@@ -257,7 +285,7 @@ export async function clearCartAction(): Promise<ActionResponse> {
  * userId is derived from server-side session
  */
 export async function clearFarmCartAction(
-  farmId: string
+  farmId: string,
 ): Promise<ActionResponse> {
   try {
     const userId = await getAuthenticatedUserId();
@@ -280,10 +308,12 @@ export async function clearFarmCartAction(
     return {
       success: false,
       error: {
-        code: error instanceof Error && error.message === "Authentication required"
-          ? "UNAUTHORIZED"
-          : "CLEAR_FARM_CART_FAILED",
-        message: error instanceof Error ? error.message : "Failed to clear farm cart",
+        code:
+          error instanceof Error && error.message === "Authentication required"
+            ? "UNAUTHORIZED"
+            : "CLEAR_FARM_CART_FAILED",
+        message:
+          error instanceof Error ? error.message : "Failed to clear farm cart",
       },
     };
   }
@@ -293,7 +323,9 @@ export async function clearFarmCartAction(
  * 📊 Get cart summary
  * userId is derived from server-side session
  */
-export async function getCartSummaryAction(): Promise<ActionResponse<CartSummary>> {
+export async function getCartSummaryAction(): Promise<
+  ActionResponse<CartSummary>
+> {
   try {
     const userId = await getAuthenticatedUserId();
 
@@ -310,10 +342,12 @@ export async function getCartSummaryAction(): Promise<ActionResponse<CartSummary
     return {
       success: false,
       error: {
-        code: error instanceof Error && error.message === "Authentication required"
-          ? "UNAUTHORIZED"
-          : "GET_CART_SUMMARY_FAILED",
-        message: error instanceof Error ? error.message : "Failed to get cart summary",
+        code:
+          error instanceof Error && error.message === "Authentication required"
+            ? "UNAUTHORIZED"
+            : "GET_CART_SUMMARY_FAILED",
+        message:
+          error instanceof Error ? error.message : "Failed to get cart summary",
       },
     };
   }
@@ -340,9 +374,10 @@ export async function getCartCountAction(): Promise<ActionResponse<number>> {
     return {
       success: false,
       error: {
-        code: error instanceof Error && error.message === "Authentication required"
-          ? "UNAUTHORIZED"
-          : "GET_CART_COUNT_FAILED",
+        code:
+          error instanceof Error && error.message === "Authentication required"
+            ? "UNAUTHORIZED"
+            : "GET_CART_COUNT_FAILED",
         message: "Failed to get cart count",
       },
       data: 0, // Return 0 as fallback
@@ -354,7 +389,9 @@ export async function getCartCountAction(): Promise<ActionResponse<number>> {
  * ✅ Validate cart
  * userId is derived from server-side session
  */
-export async function validateCartAction(): Promise<ActionResponse<CartValidationResult>> {
+export async function validateCartAction(): Promise<
+  ActionResponse<CartValidationResult>
+> {
   try {
     const userId = await getAuthenticatedUserId();
 
@@ -371,10 +408,12 @@ export async function validateCartAction(): Promise<ActionResponse<CartValidatio
     return {
       success: false,
       error: {
-        code: error instanceof Error && error.message === "Authentication required"
-          ? "UNAUTHORIZED"
-          : "VALIDATE_CART_FAILED",
-        message: error instanceof Error ? error.message : "Failed to validate cart",
+        code:
+          error instanceof Error && error.message === "Authentication required"
+            ? "UNAUTHORIZED"
+            : "VALIDATE_CART_FAILED",
+        message:
+          error instanceof Error ? error.message : "Failed to validate cart",
       },
     };
   }
@@ -397,9 +436,10 @@ export async function syncCartPricesAction(): Promise<ActionResponse> {
       success: true,
       data: {
         updatedCount,
-        message: updatedCount > 0
-          ? `Updated prices for ${updatedCount} item(s)`
-          : "All prices are up to date",
+        message:
+          updatedCount > 0
+            ? `Updated prices for ${updatedCount} item(s)`
+            : "All prices are up to date",
       },
     };
   } catch (error) {
@@ -409,10 +449,12 @@ export async function syncCartPricesAction(): Promise<ActionResponse> {
     return {
       success: false,
       error: {
-        code: error instanceof Error && error.message === "Authentication required"
-          ? "UNAUTHORIZED"
-          : "SYNC_CART_PRICES_FAILED",
-        message: error instanceof Error ? error.message : "Failed to sync cart prices",
+        code:
+          error instanceof Error && error.message === "Authentication required"
+            ? "UNAUTHORIZED"
+            : "SYNC_CART_PRICES_FAILED",
+        message:
+          error instanceof Error ? error.message : "Failed to sync cart prices",
       },
     };
   }
@@ -423,7 +465,7 @@ export async function syncCartPricesAction(): Promise<ActionResponse> {
  * userId is derived from server-side session
  */
 export async function mergeGuestCartAction(
-  guestCartItems: Array<{ productId: string; quantity: number }>
+  guestCartItems: Array<{ productId: string; quantity: number }>,
 ): Promise<ActionResponse> {
   try {
     const userId = await getAuthenticatedUserId();
@@ -446,10 +488,12 @@ export async function mergeGuestCartAction(
     return {
       success: false,
       error: {
-        code: error instanceof Error && error.message === "Authentication required"
-          ? "UNAUTHORIZED"
-          : "MERGE_GUEST_CART_FAILED",
-        message: error instanceof Error ? error.message : "Failed to merge cart items",
+        code:
+          error instanceof Error && error.message === "Authentication required"
+            ? "UNAUTHORIZED"
+            : "MERGE_GUEST_CART_FAILED",
+        message:
+          error instanceof Error ? error.message : "Failed to merge cart items",
       },
     };
   }
@@ -483,10 +527,14 @@ export async function cleanupExpiredCartsAction(): Promise<ActionResponse> {
     return {
       success: false,
       error: {
-        code: error instanceof Error && error.message === "Authentication required"
-          ? "UNAUTHORIZED"
-          : "CLEANUP_EXPIRED_CARTS_FAILED",
-        message: error instanceof Error ? error.message : "Failed to cleanup expired carts",
+        code:
+          error instanceof Error && error.message === "Authentication required"
+            ? "UNAUTHORIZED"
+            : "CLEANUP_EXPIRED_CARTS_FAILED",
+        message:
+          error instanceof Error
+            ? error.message
+            : "Failed to cleanup expired carts",
       },
     };
   }

@@ -21,7 +21,7 @@
 
 import { AnimationProvider } from "./context/AnimationContext";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 import type {
   AgriculturalEventType,
   AgriculturalMetadata,
@@ -58,7 +58,7 @@ export interface NotificationContextValue {
 
   // Actions
   addNotification: (
-    notification: Omit<BaseNotification, "id" | "createdAt" | "status">
+    notification: Omit<BaseNotification, "id" | "createdAt" | "status">,
   ) => BaseNotification;
   removeNotification: (id: string) => void;
   markAsRead: (id: string) => void;
@@ -80,11 +80,11 @@ export interface NotificationContextValue {
 
   // Agricultural methods
   sendAgriculturalNotification: (
-    config: AgriculturalNotificationConfig
+    config: AgriculturalNotificationConfig,
   ) => BaseNotification;
   sendSeasonalAlert: (config: SeasonalAlertConfig) => BaseNotification;
   sendHarvestNotification: (
-    config: HarvestNotificationConfig
+    config: HarvestNotificationConfig,
   ) => BaseNotification;
   sendWeatherAlert: (config: WeatherAlertConfig) => BaseNotification;
 
@@ -104,12 +104,12 @@ export interface ToastConfig {
   };
   icon?: React.ReactNode;
   position?:
-  | "top-left"
-  | "top-center"
-  | "top-right"
-  | "bottom-left"
-  | "bottom-center"
-  | "bottom-right";
+    | "top-left"
+    | "top-center"
+    | "top-right"
+    | "bottom-left"
+    | "bottom-center"
+    | "bottom-right";
 }
 
 export interface BannerConfig {
@@ -169,7 +169,7 @@ export interface NotificationProviderProps {
 // ============================================================================
 
 const NotificationContext = createContext<NotificationContextValue | undefined>(
-  undefined
+  undefined,
 );
 
 // ============================================================================
@@ -228,16 +228,16 @@ export function NotificationProvider({
 
   // Calculate unread count
   const unreadCount = notifications.filter(
-    (n) => !n.readAt && n.status !== "read"
+    (n) => !n.readAt && n.status !== "read",
   ).length;
 
   // Filter toasts and banners
   const toasts = notifications.filter(
-    (n) => n.type === "toast"
+    (n) => n.type === "toast",
   ) as ToastNotification[];
 
   const banners = notifications.filter(
-    (n) => n.type === "banner"
+    (n) => n.type === "banner",
   ) as BannerNotification[];
 
   // ============================================================================
@@ -246,7 +246,7 @@ export function NotificationProvider({
 
   const addNotification = useCallback(
     (
-      notification: Omit<BaseNotification, "id" | "createdAt" | "status">
+      notification: Omit<BaseNotification, "id" | "createdAt" | "status">,
     ): BaseNotification => {
       const newNotification: BaseNotification = {
         ...notification,
@@ -256,8 +256,13 @@ export function NotificationProvider({
       };
 
       // Check if should send based on preferences
-      if (preferences && !shouldSendNotification(newNotification, preferences)) {
-        logger.info("Notification blocked by preferences", { id: { data: newNotification.id } });
+      if (
+        preferences &&
+        !shouldSendNotification(newNotification, preferences)
+      ) {
+        logger.info("Notification blocked by preferences", {
+          id: { data: newNotification.id },
+        });
         return newNotification;
       }
 
@@ -267,7 +272,9 @@ export function NotificationProvider({
         newNotification.priority !== "urgent" &&
         isQuietHours(preferences.quietHours)
       ) {
-        logger.info("Notification queued (quiet hours)", { id: newNotification.id });
+        logger.info("Notification queued (quiet hours)", {
+          id: newNotification.id,
+        });
         // Queue for later (implement queue logic as needed)
         return newNotification;
       }
@@ -277,10 +284,14 @@ export function NotificationProvider({
 
         // Limit toasts
         if (newNotification.type === "toast") {
-          const toastCount = updated.filter((n: any) => n.type === "toast").length;
+          const toastCount = updated.filter(
+            (n: any) => n.type === "toast",
+          ).length;
           if (toastCount > maxToasts) {
             // Remove oldest toast
-            const toastIndex = updated.findIndex((n: any) => n.type === "toast");
+            const toastIndex = updated.findIndex(
+              (n: any) => n.type === "toast",
+            );
             if (toastIndex !== -1) {
               updated.splice(toastIndex, 1);
             }
@@ -289,10 +300,14 @@ export function NotificationProvider({
 
         // Limit banners
         if (newNotification.type === "banner") {
-          const bannerCount = updated.filter((n: any) => n.type === "banner").length;
+          const bannerCount = updated.filter(
+            (n: any) => n.type === "banner",
+          ).length;
           if (bannerCount > maxBanners) {
             // Remove oldest banner
-            const bannerIndex = updated.findIndex((n: any) => n.type === "banner");
+            const bannerIndex = updated.findIndex(
+              (n: any) => n.type === "banner",
+            );
             if (bannerIndex !== -1) {
               updated.splice(bannerIndex, 1);
             }
@@ -304,7 +319,7 @@ export function NotificationProvider({
 
       return newNotification;
     },
-    [preferences, maxToasts, maxBanners]
+    [preferences, maxToasts, maxBanners],
   );
 
   const removeNotification = useCallback((id: string) => {
@@ -314,16 +329,18 @@ export function NotificationProvider({
   const markAsRead = useCallback((id: string) => {
     setNotifications((prev) =>
       prev.map((n: any) =>
-        n.id === id
-          ? { ...n, readAt: new Date(), status: "read" as const }
-          : n
-      )
+        n.id === id ? { ...n, readAt: new Date(), status: "read" as const } : n,
+      ),
     );
   }, []);
 
   const markAllAsRead = useCallback(() => {
     setNotifications((prev) =>
-      prev.map((n: any) => ({ ...n, readAt: new Date(), status: "read" as const }))
+      prev.map((n: any) => ({
+        ...n,
+        readAt: new Date(),
+        status: "read" as const,
+      })),
     );
   }, []);
 
@@ -366,42 +383,42 @@ export function NotificationProvider({
 
       return notification;
     },
-    [addNotification, removeNotification, defaultDuration]
+    [addNotification, removeNotification, defaultDuration],
   );
 
   const success = useCallback(
     (title: string, message?: string): ToastNotification => {
       return toast({ title, message, variant: "success" });
     },
-    [toast]
+    [toast],
   );
 
   const error = useCallback(
     (title: string, message?: string): ToastNotification => {
       return toast({ title, message, variant: "error", duration: 0 });
     },
-    [toast]
+    [toast],
   );
 
   const warning = useCallback(
     (title: string, message?: string): ToastNotification => {
       return toast({ title, message, variant: "warning" });
     },
-    [toast]
+    [toast],
   );
 
   const info = useCallback(
     (title: string, message?: string): ToastNotification => {
       return toast({ title, message, variant: "info" });
     },
-    [toast]
+    [toast],
   );
 
   const dismissToast = useCallback(
     (id: string) => {
       removeNotification(id);
     },
-    [removeNotification]
+    [removeNotification],
   );
 
   // ============================================================================
@@ -429,14 +446,14 @@ export function NotificationProvider({
 
       return notification;
     },
-    [addNotification]
+    [addNotification],
   );
 
   const hideBanner = useCallback(
     (id: string) => {
       removeNotification(id);
     },
-    [removeNotification]
+    [removeNotification],
   );
 
   const hideAllBanners = useCallback(() => {
@@ -469,7 +486,7 @@ export function NotificationProvider({
         },
       });
     },
-    [addNotification]
+    [addNotification],
   );
 
   const sendSeasonalAlert = useCallback(
@@ -491,7 +508,7 @@ export function NotificationProvider({
         },
       });
     },
-    [addNotification]
+    [addNotification],
   );
 
   const sendHarvestNotification = useCallback(
@@ -515,7 +532,7 @@ export function NotificationProvider({
         },
       });
     },
-    [addNotification]
+    [addNotification],
   );
 
   const sendWeatherAlert = useCallback(
@@ -548,7 +565,7 @@ export function NotificationProvider({
         },
       });
     },
-    [addNotification]
+    [addNotification],
   );
 
   // ============================================================================
@@ -566,7 +583,7 @@ export function NotificationProvider({
         };
       });
     },
-    []
+    [],
   );
 
   // ============================================================================
@@ -637,7 +654,7 @@ export function useNotificationContext(): NotificationContextValue {
 
   if (!context) {
     throw new Error(
-      "useNotificationContext must be used within NotificationProvider"
+      "useNotificationContext must be used within NotificationProvider",
     );
   }
 

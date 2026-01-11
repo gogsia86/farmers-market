@@ -10,7 +10,7 @@ import { orderService } from "@/lib/services/order.service";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 /**
  * Create order validation schema (legacy format - single farm)
@@ -23,7 +23,7 @@ const CreateOrderSchema = z.object({
         productId: z.string().min(1, "Product ID is required"),
         quantity: z.number().min(1, "Quantity must be at least 1"),
         priceUSD: z.number().min(0, "Price must be non-negative"),
-      })
+      }),
     )
     .min(1, "Order must have at least one item"),
   deliveryAddress: z.object({
@@ -68,7 +68,7 @@ const CheckoutOrderSchema = z.object({
         farmId: z.string().cuid(),
         quantity: z.number().positive(),
         priceAtPurchase: z.number().positive(),
-      })
+      }),
     )
     .min(1, "Cart must have at least one item"),
   totals: z.object({
@@ -97,7 +97,7 @@ export async function GET(request: NextRequest) {
             message: "You must be logged in to view orders",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -124,7 +124,7 @@ export async function GET(request: NextRequest) {
               message: "Farmers must specify a farmId",
             },
           },
-          { status: 400 }
+          { status: 400 },
         );
       }
     } else if (session.user.role === "CONSUMER") {
@@ -140,7 +140,7 @@ export async function GET(request: NextRequest) {
     const { orders, total } = await orderService.getOrders(
       filters,
       page,
-      limit
+      limit,
     );
 
     return NextResponse.json({
@@ -173,7 +173,7 @@ export async function GET(request: NextRequest) {
           timestamp: new Date().toISOString(),
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -195,7 +195,7 @@ export async function POST(request: NextRequest) {
             message: "You must be logged in to create an order",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -209,7 +209,7 @@ export async function POST(request: NextRequest) {
             message: "Only consumers can create orders",
           },
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -230,7 +230,7 @@ export async function POST(request: NextRequest) {
               message: "User ID mismatch",
             },
           },
-          { status: 403 }
+          { status: 403 },
         );
       }
 
@@ -246,7 +246,7 @@ export async function POST(request: NextRequest) {
               message: "Failed to create orders",
             },
           },
-          { status: 500 }
+          { status: 500 },
         );
       }
 
@@ -268,7 +268,7 @@ export async function POST(request: NextRequest) {
             message: `${orders.length} order${orders.length > 1 ? "s" : ""} created successfully`,
           },
         },
-        { status: 201 }
+        { status: 201 },
       );
     }
 
@@ -302,7 +302,7 @@ export async function POST(request: NextRequest) {
             message: "Order created successfully",
           },
         },
-        { status: 201 }
+        { status: 201 },
       );
     }
 
@@ -319,7 +319,7 @@ export async function POST(request: NextRequest) {
           },
         },
       },
-      { status: 400 }
+      { status: 400 },
     );
   } catch (error) {
     logger.error("POST /api/orders error:", {
@@ -336,7 +336,7 @@ export async function POST(request: NextRequest) {
             field: (error as any).field,
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -350,7 +350,7 @@ export async function POST(request: NextRequest) {
           timestamp: new Date().toISOString(),
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

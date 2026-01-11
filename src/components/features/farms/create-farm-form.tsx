@@ -41,7 +41,9 @@ export function CreateFarmForm({ userId }: CreateFarmFormProps) {
         setError(result.error || "Failed to create farm");
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An unexpected error occurred");
+      setError(
+        err instanceof Error ? err.message : "An unexpected error occurred",
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -58,7 +60,9 @@ export function CreateFarmForm({ userId }: CreateFarmFormProps) {
 
       {/* Basic Information */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900">Basic Information</h3>
+        <h3 className="text-lg font-semibold text-gray-900">
+          Basic Information
+        </h3>
 
         <div>
           <Label htmlFor="name">
@@ -217,14 +221,17 @@ export function CreateFarmForm({ userId }: CreateFarmFormProps) {
             >
               Google Maps
             </a>
-            . Right-click on your location and select "What's here?" to see coordinates.
+            . Right-click on your location and select "What's here?" to see
+            coordinates.
           </p>
         </div>
       </div>
 
       {/* Contact Information */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900">Contact Information</h3>
+        <h3 className="text-lg font-semibold text-gray-900">
+          Contact Information
+        </h3>
 
         <div>
           <Label htmlFor="phone">Phone Number</Label>
@@ -285,7 +292,8 @@ export function CreateFarmForm({ userId }: CreateFarmFormProps) {
             className="mt-1"
           />
           <p className="text-xs text-muted-foreground mt-1">
-            Optional - List any certifications, awards, or credentials (one per line or comma-separated)
+            Optional - List any certifications, awards, or credentials (one per
+            line or comma-separated)
           </p>
         </div>
       </div>
@@ -332,8 +340,8 @@ export function CreateFarmForm({ userId }: CreateFarmFormProps) {
 
       <div className="text-sm text-muted-foreground">
         <p>
-          By creating a farm profile, you agree to provide accurate information and
-          comply with our platform's terms of service.
+          By creating a farm profile, you agree to provide accurate information
+          and comply with our platform's terms of service.
         </p>
       </div>
     </form>

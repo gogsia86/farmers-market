@@ -280,7 +280,8 @@ export class Logger {
 
     // Header line
     logger.info(
-      `${emoji} ${color}[${timestamp}] [${logEntry.service}] ${logEntry.message}\x1b[0m`);
+      `${emoji} ${color}[${timestamp}] [${logEntry.service}] ${logEntry.message}\x1b[0m`,
+    );
 
     // Context (if present and not empty)
     if (logEntry.context && Object.keys(logEntry.context).length > 0) {

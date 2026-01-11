@@ -20,7 +20,7 @@ import {
   SEMRESATTRS_DEPLOYMENT_ENVIRONMENT,
 } from "@opentelemetry/semantic-conventions";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 // ============================================================================
 // Types & Interfaces
@@ -112,7 +112,7 @@ export function initializeTelemetry(): NodeSDK {
       serviceName: config.serviceName,
       environment: config.environment,
       endpoint: config.otlpEndpoint,
-    }
+    },
   });
 
   try {

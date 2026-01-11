@@ -25,6 +25,7 @@
 ### Access Vercel Dashboard
 
 1. **Open Vercel Dashboard:**
+
    ```
    https://vercel.com/team_xuajqnknleeumixx1zh8wto5x/farmers-market-platform
    ```
@@ -44,13 +45,16 @@
    - Click: **"Save"**
 
 ### Why This Matters:
+
 - ✅ Matches `package.json` requirement (`>=20.x`)
 - ✅ Prevents version conflict warnings
 - ✅ Ensures compatibility with all dependencies
 - ✅ Prisma 7 works best with Node.js 20.x or 22.x
 
 ### ✅ Verification:
+
 After saving, you should see:
+
 ```
 Node.js Version: 20.x
 ```
@@ -62,6 +66,7 @@ Node.js Version: 20.x
 ### Access Environment Variables
 
 1. **Go to Settings → Environment Variables:**
+
    ```
    https://vercel.com/team_xuajqnknleeumixx1zh8wto5x/farmers-market-platform/settings/environment-variables
    ```
@@ -77,21 +82,25 @@ Copy and paste these variables **one at a time** into Vercel:
 ---
 
 #### 1. DATABASE_URL
+
 ```bash
 DATABASE_URL
 ```
 
 **Value Format:**
+
 ```
 postgresql://username:password@host:port/database?schema=public
 ```
 
 **Example:**
+
 ```
 postgresql://postgres:mypassword@db.example.com:5432/farmersmarket?schema=public
 ```
 
 **Where to get this:**
+
 - **Neon:** Dashboard → Connection String
 - **Supabase:** Settings → Database → Connection String
 - **Railway:** Database → Connection String
@@ -101,6 +110,7 @@ postgresql://postgres:mypassword@db.example.com:5432/farmersmarket?schema=public
 **Environments:** ✅ Production, ✅ Preview, ✅ Development
 
 **⚠️ Important:**
+
 - Replace `username`, `password`, `host`, `port`, `database` with your actual values
 - Ensure database is accessible from Vercel IPs
 - Test connection before proceeding
@@ -108,16 +118,19 @@ postgresql://postgres:mypassword@db.example.com:5432/farmersmarket?schema=public
 ---
 
 #### 2. NEXTAUTH_SECRET
+
 ```bash
 NEXTAUTH_SECRET
 ```
 
 **Generated Value (use this):**
+
 ```
 9Z8wul49LBo4LBiuqkFPx6DonBWupzVmiijwqbth51E=
 ```
 
 **Or generate your own:**
+
 ```bash
 openssl rand -base64 32
 ```
@@ -125,6 +138,7 @@ openssl rand -base64 32
 **Environments:** ✅ Production, ✅ Preview, ✅ Development
 
 **⚠️ Important:**
+
 - Must be at least 32 characters
 - Keep this secret! Never commit to Git
 - Different value for each environment (recommended)
@@ -132,26 +146,31 @@ openssl rand -base64 32
 ---
 
 #### 3. NEXTAUTH_URL
+
 ```bash
 NEXTAUTH_URL
 ```
 
 **Value for Production:**
+
 ```
 https://your-production-domain.vercel.app
 ```
 
 **Value for Preview/Development:**
+
 ```
 https://farmers-market-platform-git-[branch].vercel.app
 ```
 
 **Environments:**
+
 - **Production:** `https://your-custom-domain.com` (or Vercel domain)
 - **Preview:** Auto-generated Vercel preview URL
 - **Development:** `http://localhost:3001`
 
 **⚠️ Important:**
+
 - Must match your actual deployment URL
 - No trailing slash
 - Must use HTTPS in production
@@ -159,27 +178,32 @@ https://farmers-market-platform-git-[branch].vercel.app
 ---
 
 #### 4. STRIPE_SECRET_KEY
+
 ```bash
 STRIPE_SECRET_KEY
 ```
 
 **Value Format:**
+
 ```
 sk_live_... (production)
 sk_test_... (preview/development)
 ```
 
 **Where to get this:**
+
 1. Go to: https://dashboard.stripe.com/apikeys
 2. Find: "Secret key" section
 3. Click: "Reveal test key" or "Reveal live key"
 4. Copy the key
 
 **Environments:**
+
 - **Production:** Use `sk_live_...` key
 - **Preview/Development:** Use `sk_test_...` key
 
 **⚠️ Important:**
+
 - Never use live keys in development
 - Keep secret keys secure
 - Rotate keys if compromised
@@ -187,38 +211,45 @@ sk_test_... (preview/development)
 ---
 
 #### 5. STRIPE_PUBLISHABLE_KEY
+
 ```bash
 STRIPE_PUBLISHABLE_KEY
 ```
 
 **Value Format:**
+
 ```
 pk_live_... (production)
 pk_test_... (preview/development)
 ```
 
 **Where to get this:**
+
 1. Go to: https://dashboard.stripe.com/apikeys
 2. Find: "Publishable key" section
 3. Copy the key
 
 **Environments:**
+
 - **Production:** Use `pk_live_...` key
 - **Preview/Development:** Use `pk_test_...` key
 
 ---
 
 #### 6. STRIPE_WEBHOOK_SECRET
+
 ```bash
 STRIPE_WEBHOOK_SECRET
 ```
 
 **Value Format:**
+
 ```
 whsec_...
 ```
 
 **Where to get this:**
+
 1. Go to: https://dashboard.stripe.com/webhooks
 2. Click: "Add endpoint"
 3. Endpoint URL: `https://your-domain.vercel.app/api/webhooks/stripe`
@@ -235,27 +266,32 @@ whsec_...
 **Environments:** ✅ Production, ✅ Preview, ✅ Development
 
 **⚠️ Important:**
+
 - Must match your webhook endpoint
 - Different webhook for each environment
 
 ---
 
 #### 7. NEXT_PUBLIC_APP_URL
+
 ```bash
 NEXT_PUBLIC_APP_URL
 ```
 
 **Value:**
+
 ```
 https://your-production-domain.vercel.app
 ```
 
 **Environments:**
+
 - **Production:** Your production domain
 - **Preview:** Preview domain (optional, can be same as production)
 - **Development:** `http://localhost:3001`
 
 **⚠️ Important:**
+
 - Must be public (prefixed with `NEXT_PUBLIC_`)
 - Used in client-side code
 - No trailing slash
@@ -267,16 +303,19 @@ https://your-production-domain.vercel.app
 ---
 
 #### 8. SENDGRID_API_KEY
+
 ```bash
 SENDGRID_API_KEY
 ```
 
 **Value Format:**
+
 ```
 SG.xxxxxxxxxxxxxxxxxxxxx.yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
 ```
 
 **Where to get this:**
+
 1. Go to: https://app.sendgrid.com/settings/api_keys
 2. Click: "Create API Key"
 3. Name: "Farmers Market Platform - Production"
@@ -287,6 +326,7 @@ SG.xxxxxxxxxxxxxxxxxxxxx.yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
 **Environments:** ✅ Production, ✅ Preview, ✅ Development
 
 **Used for:**
+
 - Order confirmation emails
 - Password reset emails
 - Welcome emails
@@ -295,11 +335,13 @@ SG.xxxxxxxxxxxxxxxxxxxxx.yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
 ---
 
 #### 9. SENDGRID_FROM_EMAIL
+
 ```bash
 SENDGRID_FROM_EMAIL
 ```
 
 **Value:**
+
 ```
 noreply@your-domain.com
 ```
@@ -307,6 +349,7 @@ noreply@your-domain.com
 **Environments:** ✅ Production, ✅ Preview, ✅ Development
 
 **⚠️ Important:**
+
 - Must be verified in SendGrid
 - Should be a no-reply address
 - Use your custom domain for better deliverability
@@ -314,16 +357,19 @@ noreply@your-domain.com
 ---
 
 #### 10. SENTRY_DSN
+
 ```bash
 SENTRY_DSN
 ```
 
 **Value Format:**
+
 ```
 https://xxxxxxxxxxxxxxxxxxxxxxxxxxxx@o1234567.ingest.sentry.io/1234567
 ```
 
 **Where to get this:**
+
 1. Go to: https://sentry.io
 2. Create project (if not exists)
 3. Go to: Settings → Projects → Your Project → Client Keys (DSN)
@@ -332,6 +378,7 @@ https://xxxxxxxxxxxxxxxxxxxxxxxxxxxx@o1234567.ingest.sentry.io/1234567
 **Environments:** ✅ Production, ✅ Preview, ⚠️ Development (optional)
 
 **Used for:**
+
 - Error tracking
 - Performance monitoring
 - Issue alerts
@@ -339,11 +386,13 @@ https://xxxxxxxxxxxxxxxxxxxxxxxxxxxx@o1234567.ingest.sentry.io/1234567
 ---
 
 #### 11. SENTRY_AUTH_TOKEN
+
 ```bash
 SENTRY_AUTH_TOKEN
 ```
 
 **Where to get this:**
+
 1. Go to: https://sentry.io/settings/account/api/auth-tokens/
 2. Click: "Create New Token"
 3. Scopes: `project:releases`, `org:read`
@@ -352,6 +401,7 @@ SENTRY_AUTH_TOKEN
 **Environments:** ✅ Production, ✅ Preview
 
 **Used for:**
+
 - Uploading source maps
 - Release tracking
 
@@ -362,16 +412,19 @@ SENTRY_AUTH_TOKEN
 ---
 
 #### 12. UPSTASH_REDIS_REST_URL
+
 ```bash
 UPSTASH_REDIS_REST_URL
 ```
 
 **Value Format:**
+
 ```
 https://xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx.upstash.io
 ```
 
 **Where to get this:**
+
 1. Go to: https://console.upstash.com/
 2. Create database (if not exists)
 3. Copy: REST URL
@@ -379,6 +432,7 @@ https://xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx.upstash.io
 **Environments:** ✅ Production, ✅ Preview
 
 **Used for:**
+
 - Rate limiting
 - Session storage
 - Caching
@@ -386,16 +440,19 @@ https://xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx.upstash.io
 ---
 
 #### 13. UPSTASH_REDIS_REST_TOKEN
+
 ```bash
 UPSTASH_REDIS_REST_TOKEN
 ```
 
 **Value Format:**
+
 ```
 AXXxXxxXXXXxxxxxxxxxxxxxxxxxxxxxxxxxXXXXXXXXxxxxXXXXXXXX=
 ```
 
 **Where to get this:**
+
 - Same location as UPSTASH_REDIS_REST_URL
 - Copy: REST Token
 
@@ -404,16 +461,19 @@ AXXxXxxXXXXxxxxxxxxxxxxxxxxxxxxxxxxxXXXXXXXXxxxxXXXXXXXX=
 ---
 
 #### 14. OPENAI_API_KEY
+
 ```bash
 OPENAI_API_KEY
 ```
 
 **Value Format:**
+
 ```
 sk-...
 ```
 
 **Where to get this:**
+
 1. Go to: https://platform.openai.com/api-keys
 2. Click: "Create new secret key"
 3. Copy key
@@ -421,22 +481,26 @@ sk-...
 **Environments:** ✅ Production, ✅ Preview, ✅ Development
 
 **Used for:**
+
 - AI-powered features (if applicable)
 - Smart recommendations
 
 ---
 
 #### 15. CLOUDINARY_URL
+
 ```bash
 CLOUDINARY_URL
 ```
 
 **Value Format:**
+
 ```
 cloudinary://API_KEY:API_SECRET@CLOUD_NAME
 ```
 
 **Where to get this:**
+
 1. Go to: https://cloudinary.com/console
 2. Dashboard → API Keys
 3. Copy: Environment variable
@@ -444,6 +508,7 @@ cloudinary://API_KEY:API_SECRET@CLOUD_NAME
 **Environments:** ✅ Production, ✅ Preview, ✅ Development
 
 **Used for:**
+
 - Image uploads
 - Image transformations
 - Media management
@@ -452,23 +517,23 @@ cloudinary://API_KEY:API_SECRET@CLOUD_NAME
 
 ## 📊 Environment Variable Summary Table
 
-| Variable | Required | Production | Preview | Development |
-|----------|----------|------------|---------|-------------|
-| `DATABASE_URL` | 🔴 Yes | ✅ | ✅ | ✅ |
-| `NEXTAUTH_SECRET` | 🔴 Yes | ✅ | ✅ | ✅ |
-| `NEXTAUTH_URL` | 🔴 Yes | ✅ | ✅ | ✅ |
-| `STRIPE_SECRET_KEY` | 🔴 Yes | ✅ | ✅ | ✅ |
-| `STRIPE_PUBLISHABLE_KEY` | 🔴 Yes | ✅ | ✅ | ✅ |
-| `STRIPE_WEBHOOK_SECRET` | 🔴 Yes | ✅ | ✅ | ✅ |
-| `NEXT_PUBLIC_APP_URL` | 🔴 Yes | ✅ | ✅ | ✅ |
-| `SENDGRID_API_KEY` | 🟡 Recommended | ✅ | ✅ | ✅ |
-| `SENDGRID_FROM_EMAIL` | 🟡 Recommended | ✅ | ✅ | ✅ |
-| `SENTRY_DSN` | 🟡 Recommended | ✅ | ✅ | ⚠️ |
-| `SENTRY_AUTH_TOKEN` | 🟡 Recommended | ✅ | ✅ | ❌ |
-| `UPSTASH_REDIS_REST_URL` | 🟢 Optional | ✅ | ✅ | ❌ |
-| `UPSTASH_REDIS_REST_TOKEN` | 🟢 Optional | ✅ | ✅ | ❌ |
-| `OPENAI_API_KEY` | 🟢 Optional | ✅ | ✅ | ✅ |
-| `CLOUDINARY_URL` | 🟢 Optional | ✅ | ✅ | ✅ |
+| Variable                   | Required       | Production | Preview | Development |
+| -------------------------- | -------------- | ---------- | ------- | ----------- |
+| `DATABASE_URL`             | 🔴 Yes         | ✅         | ✅      | ✅          |
+| `NEXTAUTH_SECRET`          | 🔴 Yes         | ✅         | ✅      | ✅          |
+| `NEXTAUTH_URL`             | 🔴 Yes         | ✅         | ✅      | ✅          |
+| `STRIPE_SECRET_KEY`        | 🔴 Yes         | ✅         | ✅      | ✅          |
+| `STRIPE_PUBLISHABLE_KEY`   | 🔴 Yes         | ✅         | ✅      | ✅          |
+| `STRIPE_WEBHOOK_SECRET`    | 🔴 Yes         | ✅         | ✅      | ✅          |
+| `NEXT_PUBLIC_APP_URL`      | 🔴 Yes         | ✅         | ✅      | ✅          |
+| `SENDGRID_API_KEY`         | 🟡 Recommended | ✅         | ✅      | ✅          |
+| `SENDGRID_FROM_EMAIL`      | 🟡 Recommended | ✅         | ✅      | ✅          |
+| `SENTRY_DSN`               | 🟡 Recommended | ✅         | ✅      | ⚠️          |
+| `SENTRY_AUTH_TOKEN`        | 🟡 Recommended | ✅         | ✅      | ❌          |
+| `UPSTASH_REDIS_REST_URL`   | 🟢 Optional    | ✅         | ✅      | ❌          |
+| `UPSTASH_REDIS_REST_TOKEN` | 🟢 Optional    | ✅         | ✅      | ❌          |
+| `OPENAI_API_KEY`           | 🟢 Optional    | ✅         | ✅      | ✅          |
+| `CLOUDINARY_URL`           | 🟢 Optional    | ✅         | ✅      | ✅          |
 
 ---
 
@@ -477,6 +542,7 @@ cloudinary://API_KEY:API_SECRET@CLOUD_NAME
 ### Check Environment Variables in Vercel
 
 1. **Go to Settings → Environment Variables:**
+
    ```
    https://vercel.com/team_xuajqnknleeumixx1zh8wto5x/farmers-market-platform/settings/environment-variables
    ```
@@ -521,6 +587,7 @@ This creates a local `.env.local` file with all your Vercel environment variable
 ### Trigger Deployment
 
 #### Option 1: Git Push (Recommended)
+
 ```bash
 # Make a small change (e.g., update README)
 git commit --allow-empty -m "chore: trigger deployment with new env vars"
@@ -528,6 +595,7 @@ git push origin master
 ```
 
 #### Option 2: Vercel Dashboard
+
 1. Go to: **Deployments** tab
 2. Click: **"Redeploy"** on latest deployment
 3. Check: **"Use existing build cache"** (optional)
@@ -541,6 +609,7 @@ git push origin master
    - Look for: Zero warnings, successful build
 
 2. **Expected Output:**
+
    ```
    ✅ Prisma Client generated
    ✅ Compiled successfully
@@ -557,6 +626,7 @@ git push origin master
 ### Test Deployment
 
 1. **Visit Your Site:**
+
    ```
    https://your-domain.vercel.app
    ```
@@ -584,6 +654,7 @@ git push origin master
 ### Issue: "Missing DATABASE_URL"
 
 **Solution:**
+
 1. Go to Vercel → Settings → Environment Variables
 2. Add `DATABASE_URL` with your database connection string
 3. Ensure it's checked for Production, Preview, and Development
@@ -594,6 +665,7 @@ git push origin master
 ### Issue: "Invalid NEXTAUTH_SECRET"
 
 **Solution:**
+
 1. Generate a new secret: `openssl rand -base64 32`
 2. Update `NEXTAUTH_SECRET` in Vercel
 3. Ensure it's at least 32 characters
@@ -604,6 +676,7 @@ git push origin master
 ### Issue: "Stripe is not configured"
 
 **Solution:**
+
 1. Verify all three Stripe variables are set:
    - `STRIPE_SECRET_KEY`
    - `STRIPE_PUBLISHABLE_KEY`
@@ -616,6 +689,7 @@ git push origin master
 ### Issue: "Build fails with TypeScript errors"
 
 **Solution:**
+
 ```bash
 # Run type check locally
 npm run type-check
@@ -629,6 +703,7 @@ npm run type-check
 ### Issue: "Database connection timeout"
 
 **Solution:**
+
 1. Check database is running and accessible
 2. Verify DATABASE_URL format is correct
 3. Whitelist Vercel IPs in your database firewall
@@ -686,6 +761,7 @@ Before considering setup complete:
 If all items above are checked, your Vercel environment is fully configured and ready for production!
 
 **Next Steps:**
+
 1. ✅ Run comprehensive tests
 2. ✅ Monitor error rates in Sentry
 3. ✅ Set up uptime monitoring
@@ -701,6 +777,7 @@ If all items above are checked, your Vercel environment is fully configured and 
 ---
 
 **Need Help?**
+
 - 📚 [VERCEL_DEPLOYMENT_GUIDE.md](./VERCEL_DEPLOYMENT_GUIDE.md)
 - 📝 [VERCEL_ACTION_ITEMS.md](./VERCEL_ACTION_ITEMS.md)
 - 🔧 [Vercel Support](https://vercel.com/support)

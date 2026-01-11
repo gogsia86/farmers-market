@@ -12,6 +12,7 @@
 **Previous Experience:** [Brief background]
 
 **Validation Goals:**
+
 1. ✅ Verify onboarding guide is complete and accurate
 2. ✅ Identify missing steps or unclear instructions
 3. ✅ Measure time to productivity
@@ -23,6 +24,7 @@
 ## 🎯 Success Criteria
 
 ### By End of Onboarding (Day 7), New Developer Should:
+
 - ✅ Have fully functional local development environment
 - ✅ Understand project architecture and tech stack
 - ✅ Successfully run all tests locally
@@ -40,6 +42,7 @@
 **Reference:** [Developer Onboarding Guide - Day 1](./onboarding/DEVELOPER_ONBOARDING.md#day-1)
 
 #### Environment Setup ✅
+
 - [ ] **1.1 Prerequisites Installed**
   - [ ] Node.js v22+ installed and verified
   - [ ] npm v10+ installed
@@ -48,8 +51,9 @@
   - [ ] VSCode (or preferred IDE) installed with extensions
   - [ ] Docker Desktop installed (optional but recommended)
 
-**Time Taken:** _____ minutes  
+**Time Taken:** **\_** minutes  
 **Issues Encountered:**
+
 ```
 [Describe any issues, errors, or unclear instructions]
 ```
@@ -59,8 +63,9 @@
   - [ ] Can access all files and folders
   - [ ] Git configured with name and email
 
-**Time Taken:** _____ minutes  
+**Time Taken:** **\_** minutes  
 **Issues Encountered:**
+
 ```
 [Describe any issues]
 ```
@@ -70,8 +75,9 @@
   - [ ] No dependency errors or warnings
   - [ ] `node_modules` folder populated
 
-**Time Taken:** _____ minutes  
+**Time Taken:** **\_** minutes  
 **Issues Encountered:**
+
 ```
 [Describe any issues]
 ```
@@ -82,8 +88,9 @@
   - [ ] NextAuth secret generated
   - [ ] All required variables populated
 
-**Time Taken:** _____ minutes  
+**Time Taken:** **\_** minutes  
 **Issues Encountered:**
+
 ```
 [Describe any issues]
 ```
@@ -95,8 +102,9 @@
   - [ ] Can connect to database with Prisma Studio
 
 **Command Used:** `npm run db:push && npm run db:seed`  
-**Time Taken:** _____ minutes  
+**Time Taken:** **\_** minutes  
 **Issues Encountered:**
+
 ```
 [Describe any issues]
 ```
@@ -107,22 +115,26 @@
   - [ ] Homepage loads correctly
   - [ ] No console errors in browser
 
-**Time Taken:** _____ minutes  
+**Time Taken:** **\_** minutes  
 **Issues Encountered:**
+
 ```
 [Describe any issues]
 ```
 
 #### Day 1 Summary
-**Total Time:** _____ hours  
+
+**Total Time:** **\_** hours  
 **Completion Status:** ☐ Complete ☐ Partial ☐ Blocked  
 **Blocker(s):**
+
 ```
 [List any blockers that prevented completion]
 ```
 
 **Overall Day 1 Experience (1-5):** ⭐⭐⭐⭐⭐  
 **Comments:**
+
 ```
 [General feedback about Day 1 onboarding]
 ```
@@ -134,15 +146,17 @@
 **Reference:** [Developer Onboarding Guide - Day 2](./onboarding/DEVELOPER_ONBOARDING.md#day-2)
 
 #### Architecture Review ✅
+
 - [ ] **2.1 Documentation Review**
   - [ ] Read README.md thoroughly
   - [ ] Reviewed [Architecture Overview](./architecture/ARCHITECTURE.md)
   - [ ] Understand monorepo structure
   - [ ] Reviewed tech stack documentation
 
-**Time Taken:** _____ minutes  
+**Time Taken:** **\_** minutes  
 **Clarity Score (1-5):** ⭐⭐⭐⭐⭐  
 **Notes:**
+
 ```
 [Any confusion or questions about architecture]
 ```
@@ -154,8 +168,9 @@
   - [ ] Explored `/prisma` directory (database schema)
   - [ ] Understand import path aliases (`@/...`)
 
-**Time Taken:** _____ minutes  
+**Time Taken:** **\_** minutes  
 **Notes:**
+
 ```
 [Questions or unclear patterns]
 ```
@@ -167,8 +182,9 @@
   - [ ] Order processing
   - [ ] Admin panel
 
-**Time Taken:** _____ minutes  
+**Time Taken:** **\_** minutes  
 **Features Tested Locally:**
+
 ```
 - [ ] User registration
 - [ ] User login
@@ -176,11 +192,13 @@
 ```
 
 **Issues Found:**
+
 ```
 [Any bugs or issues discovered during testing]
 ```
 
 #### Development Tools ✅
+
 - [ ] **2.4 Testing Framework**
   - [ ] Successfully ran unit tests: `npm run test`
   - [ ] Successfully ran E2E tests: `npm run test:e2e`
@@ -188,11 +206,13 @@
   - [ ] Reviewed [Testing Standards](./testing/TESTING_STANDARDS.md)
 
 **Test Results:**
-- Unit Tests: ☐ Pass ☐ Fail (_____ failures)
-- E2E Tests: ☐ Pass ☐ Fail (_____ failures)
 
-**Time Taken:** _____ minutes  
+- Unit Tests: ☐ Pass ☐ Fail (**\_** failures)
+- E2E Tests: ☐ Pass ☐ Fail (**\_** failures)
+
+**Time Taken:** **\_** minutes  
 **Notes:**
+
 ```
 [Any test failures or confusion about testing]
 ```
@@ -207,15 +227,18 @@
 **TypeScript Results:** ☐ No errors ☐ Errors found (describe below)
 
 **Issues:**
+
 ```
 [Any linting or TypeScript errors]
 ```
 
 #### Day 2 Summary
-**Total Time:** _____ hours  
+
+**Total Time:** **\_** hours  
 **Completion Status:** ☐ Complete ☐ Partial ☐ Blocked  
 **Overall Day 2 Experience (1-5):** ⭐⭐⭐⭐⭐  
 **Comments:**
+
 ```
 [General feedback about Day 2 onboarding]
 ```
@@ -227,15 +250,17 @@
 **Reference:** [Developer Onboarding Guide - Day 3](./onboarding/DEVELOPER_ONBOARDING.md#day-3)
 
 #### Code Standards ✅
+
 - [ ] **3.1 Code Review Standards**
   - [ ] Read [Code Review Standards](./code-review/CODE_REVIEW_STANDARDS.md)
   - [ ] Understand PR template and checklist
   - [ ] Reviewed example PRs in repository
   - [ ] Know approval requirements
 
-**Time Taken:** _____ minutes  
+**Time Taken:** **\_** minutes  
 **Clarity Score (1-5):** ⭐⭐⭐⭐⭐  
 **Questions:**
+
 ```
 [Any questions about code review process]
 ```
@@ -246,9 +271,10 @@
   - [ ] Know how to handle common TypeScript scenarios
   - [ ] Understand branded types and discriminated unions
 
-**Time Taken:** _____ minutes  
+**Time Taken:** **\_** minutes  
 **Confidence Level (1-5):** ⭐⭐⭐⭐⭐  
 **Notes:**
+
 ```
 [Any patterns that are unclear or need examples]
 ```
@@ -259,8 +285,9 @@
   - [ ] Know how to write optimized queries
   - [ ] Understand repository pattern usage
 
-**Time Taken:** _____ minutes  
+**Time Taken:** **\_** minutes  
 **Key Takeaways:**
+
 ```
 [Most important learnings from database patterns]
 ```
@@ -271,22 +298,25 @@
   - [ ] Know error handling patterns
   - [ ] Understand API response structure
 
-**Time Taken:** _____ minutes  
+**Time Taken:** **\_** minutes  
 **Notes:**
+
 ```
 [Questions about API design]
 ```
 
 #### Security & Performance ✅
+
 - [ ] **3.5 Security Best Practices**
   - [ ] Read [Security Best Practices](./guides/SECURITY_BEST_PRACTICES.md)
   - [ ] Understand input validation with Zod
   - [ ] Know authentication/authorization patterns
   - [ ] Aware of common security pitfalls
 
-**Time Taken:** _____ minutes  
+**Time Taken:** **\_** minutes  
 **Security Checklist Reviewed:** ☐ Yes ☐ No  
 **Questions:**
+
 ```
 [Security-related questions]
 ```
@@ -297,18 +327,21 @@
   - [ ] Know database optimization patterns
   - [ ] Aware of bundle size considerations
 
-**Time Taken:** _____ minutes  
+**Time Taken:** **\_** minutes  
 **Notes:**
+
 ```
 [Performance patterns that need clarification]
 ```
 
 #### Day 3 Summary
-**Total Time:** _____ hours  
+
+**Total Time:** **\_** hours  
 **Completion Status:** ☐ Complete ☐ Partial ☐ Blocked  
 **Overall Day 3 Experience (1-5):** ⭐⭐⭐⭐⭐  
 **Information Overload?** ☐ Yes ☐ No ☐ Somewhat  
 **Comments:**
+
 ```
 [Feedback about standards and documentation volume]
 ```
@@ -320,6 +353,7 @@
 **Reference:** [Developer Onboarding Guide - Day 4](./onboarding/DEVELOPER_ONBOARDING.md#day-4)
 
 #### Good First Issue ✅
+
 - [ ] **4.1 Issue Selection**
   - [ ] Found "good first issue" on GitHub
   - [ ] Issue is clear and well-defined
@@ -328,8 +362,9 @@
 
 **Issue Selected:** #[Issue Number]  
 **Issue Title:** [Title]  
-**Time to Find Suitable Issue:** _____ minutes  
+**Time to Find Suitable Issue:** **\_** minutes  
 **Notes:**
+
 ```
 [Was it easy to find a good first issue?]
 ```
@@ -341,6 +376,7 @@
 
 **Branch Name:** [Branch name]  
 **Command Used:**
+
 ```bash
 git checkout -b [branch-name]
 ```
@@ -351,8 +387,9 @@ git checkout -b [branch-name]
   - [ ] Added appropriate error handling
   - [ ] Used proper database patterns (if applicable)
 
-**Time Taken:** _____ hours  
+**Time Taken:** **\_** hours  
 **Challenges Faced:**
+
 ```
 [Any difficulties during implementation]
 ```
@@ -363,9 +400,9 @@ git checkout -b [branch-name]
   - [ ] Manual testing completed
   - [ ] Coverage meets requirements
 
-**Tests Added:** _____ test files / _____ test cases  
+**Tests Added:** **\_** test files / **\_** test cases  
 **Test Results:** ☐ All Pass ☐ Some Fail  
-**Coverage:** _____ %
+**Coverage:** **\_** %
 
 - [ ] **4.5 Code Quality**
   - [ ] Linter passes: `npm run lint`
@@ -375,16 +412,19 @@ git checkout -b [branch-name]
 
 **Quality Checks:** ☐ All Pass ☐ Some Fail  
 **Issues:**
+
 ```
 [Any linting or type errors]
 ```
 
 #### Day 4 Summary
-**Total Time:** _____ hours  
+
+**Total Time:** **\_** hours  
 **Completion Status:** ☐ Complete ☐ Partial ☐ Blocked  
 **Overall Day 4 Experience (1-5):** ⭐⭐⭐⭐⭐  
 **Confidence Level After Implementation (1-5):** ⭐⭐⭐⭐⭐  
 **Comments:**
+
 ```
 [Feedback about first contribution experience]
 ```
@@ -396,6 +436,7 @@ git checkout -b [branch-name]
 **Reference:** [Developer Onboarding Guide - Day 5](./onboarding/DEVELOPER_ONBOARDING.md#day-5)
 
 #### Pull Request Creation ✅
+
 - [ ] **5.1 Pre-PR Checklist**
   - [ ] All code committed and pushed
   - [ ] Branch up-to-date with main
@@ -404,7 +445,7 @@ git checkout -b [branch-name]
   - [ ] Self-review completed
 
 **Pre-PR Checks:** ☐ All Pass ☐ Some Fail  
-**Time Taken:** _____ minutes
+**Time Taken:** **\_** minutes
 
 - [ ] **5.2 PR Description**
   - [ ] Used PR template
@@ -415,7 +456,7 @@ git checkout -b [branch-name]
 
 **PR Number:** #[PR Number]  
 **PR URL:** [URL]  
-**Time to Write PR:** _____ minutes  
+**Time to Write PR:** **\_** minutes  
 **Template Clarity:** ⭐⭐⭐⭐⭐
 
 - [ ] **5.3 CI/CD Checks**
@@ -426,19 +467,21 @@ git checkout -b [branch-name]
 
 **CI/CD Results:** ☐ All Pass ☐ Some Fail  
 **Issues:**
+
 ```
 [Any CI/CD failures and how they were resolved]
 ```
 
 #### Code Review Process ✅
+
 - [ ] **5.4 Receiving Feedback**
   - [ ] Received code review from team
   - [ ] Understand all feedback comments
   - [ ] Asked questions on unclear feedback
   - [ ] Review feedback was constructive
 
-**Review Turnaround Time:** _____ hours/days  
-**Number of Review Comments:** _____  
+**Review Turnaround Time:** **\_** hours/days  
+**Number of Review Comments:** **\_**  
 **Feedback Clarity (1-5):** ⭐⭐⭐⭐⭐
 
 - [ ] **5.5 Addressing Feedback**
@@ -447,8 +490,9 @@ git checkout -b [branch-name]
   - [ ] Pushed updates to PR
   - [ ] Re-requested review
 
-**Time to Address Feedback:** _____ hours  
+**Time to Address Feedback:** **\_** hours  
 **Challenges:**
+
 ```
 [Any difficulties addressing feedback]
 ```
@@ -460,14 +504,16 @@ git checkout -b [branch-name]
   - [ ] Branch deleted after merge
 
 **Merge Status:** ☐ Merged ☐ Pending ☐ Changes Requested  
-**Time from PR Creation to Merge:** _____ hours/days
+**Time from PR Creation to Merge:** **\_** hours/days
 
 #### Day 5 Summary
-**Total Time:** _____ hours  
+
+**Total Time:** **\_** hours  
 **Completion Status:** ☐ Complete ☐ Partial ☐ Blocked  
 **Overall Day 5 Experience (1-5):** ⭐⭐⭐⭐⭐  
 **Review Process Satisfaction (1-5):** ⭐⭐⭐⭐⭐  
 **Comments:**
+
 ```
 [Feedback about PR and review process]
 ```
@@ -479,6 +525,7 @@ git checkout -b [branch-name]
 **Reference:** [Developer Onboarding Guide - Day 6-7](./onboarding/DEVELOPER_ONBOARDING.md#day-6-7)
 
 #### Team Collaboration ✅
+
 - [ ] **6.1 Team Meetings**
   - [ ] Attended daily standup
   - [ ] Participated in planning meeting
@@ -486,6 +533,7 @@ git checkout -b [branch-name]
   - [ ] Know when/how to ask for help
 
 **Meetings Attended:**
+
 ```
 - [ ] Daily Standup
 - [ ] Sprint Planning
@@ -502,6 +550,7 @@ git checkout -b [branch-name]
   - [ ] Comfortable asking questions
 
 **Primary Channels Used:**
+
 ```
 - #engineering
 - #engineering-docs
@@ -517,6 +566,7 @@ git checkout -b [branch-name]
 **Tools Configured:** ☐ All ☐ Some ☐ Pending
 
 #### Additional Contributions ✅
+
 - [ ] **6.4 Second Task/Issue**
   - [ ] Started work on second issue
   - [ ] Applying learnings from first PR
@@ -532,16 +582,19 @@ git checkout -b [branch-name]
   - [ ] Know how to contribute to docs
 
 **Documentation Updates:**
+
 ```
 [Any documentation you updated or should have updated]
 ```
 
 #### Day 6-7 Summary
-**Total Time:** _____ hours  
+
+**Total Time:** **\_** hours  
 **Completion Status:** ☐ Complete ☐ Partial ☐ Blocked  
 **Overall Day 6-7 Experience (1-5):** ⭐⭐⭐⭐⭐  
 **Team Integration (1-5):** ⭐⭐⭐⭐⭐  
 **Comments:**
+
 ```
 [Feedback about team integration and collaboration]
 ```
@@ -551,46 +604,51 @@ git checkout -b [branch-name]
 ## 📊 Overall Onboarding Assessment
 
 ### Time Tracking Summary
-| Day | Planned Hours | Actual Hours | Variance |
-|-----|---------------|--------------|----------|
-| Day 1 | 4-6 hours | _____ | _____ |
-| Day 2 | 4-6 hours | _____ | _____ |
-| Day 3 | 4-6 hours | _____ | _____ |
-| Day 4 | 6-8 hours | _____ | _____ |
-| Day 5 | 4-6 hours | _____ | _____ |
-| Day 6-7 | 8-12 hours | _____ | _____ |
-| **Total** | **30-44 hours** | **_____** | **_____** |
+
+| Day       | Planned Hours   | Actual Hours | Variance   |
+| --------- | --------------- | ------------ | ---------- |
+| Day 1     | 4-6 hours       | **\_**       | **\_**     |
+| Day 2     | 4-6 hours       | **\_**       | **\_**     |
+| Day 3     | 4-6 hours       | **\_**       | **\_**     |
+| Day 4     | 6-8 hours       | **\_**       | **\_**     |
+| Day 5     | 4-6 hours       | **\_**       | **\_**     |
+| Day 6-7   | 8-12 hours      | **\_**       | **\_**     |
+| **Total** | **30-44 hours** | ****\_****   | ****\_**** |
 
 ### Success Metrics
 
 #### Completion Rate
-- **Days 1-7 Completed:** _____ / 7 days
-- **Tasks Completed:** _____ / [Total tasks]
-- **PRs Merged:** _____ / 1 (minimum)
+
+- **Days 1-7 Completed:** **\_** / 7 days
+- **Tasks Completed:** **\_** / [Total tasks]
+- **PRs Merged:** **\_** / 1 (minimum)
 
 #### Quality Metrics
+
 - **First PR Quality (1-5):** ⭐⭐⭐⭐⭐
 - **Code Standards Adherence (1-5):** ⭐⭐⭐⭐⭐
 - **Documentation Usage (1-5):** ⭐⭐⭐⭐⭐
 
 #### Confidence Assessment
+
 Rate your confidence level (1-5) in the following areas:
 
-| Area | Confidence |
-|------|-----------|
-| Next.js & React | ⭐⭐⭐⭐⭐ |
-| TypeScript | ⭐⭐⭐⭐⭐ |
-| Prisma & Database | ⭐⭐⭐⭐⭐ |
-| Testing | ⭐⭐⭐⭐⭐ |
+| Area                | Confidence |
+| ------------------- | ---------- |
+| Next.js & React     | ⭐⭐⭐⭐⭐ |
+| TypeScript          | ⭐⭐⭐⭐⭐ |
+| Prisma & Database   | ⭐⭐⭐⭐⭐ |
+| Testing             | ⭐⭐⭐⭐⭐ |
 | Code Review Process | ⭐⭐⭐⭐⭐ |
-| Team Collaboration | ⭐⭐⭐⭐⭐ |
-| Overall Codebase | ⭐⭐⭐⭐⭐ |
+| Team Collaboration  | ⭐⭐⭐⭐⭐ |
+| Overall Codebase    | ⭐⭐⭐⭐⭐ |
 
 ---
 
 ## 💡 Detailed Feedback
 
 ### What Worked Well ✅
+
 ```
 1. [Example: Environment setup was smooth with clear instructions]
 2. [Example: Documentation was comprehensive and easy to navigate]
@@ -598,6 +656,7 @@ Rate your confidence level (1-5) in the following areas:
 ```
 
 ### What Was Challenging 🤔
+
 ```
 1. [Example: Understanding the repository pattern took extra time]
 2. [Example: Some environment variables were unclear]
@@ -605,6 +664,7 @@ Rate your confidence level (1-5) in the following areas:
 ```
 
 ### Missing or Unclear Documentation 📝
+
 ```
 1. [Example: Need more examples of authentication flows]
 2. [Example: Database migration process needs clarification]
@@ -612,6 +672,7 @@ Rate your confidence level (1-5) in the following areas:
 ```
 
 ### Suggestions for Improvement 💡
+
 ```
 1. [Example: Add video walkthrough for environment setup]
 2. [Example: Create glossary of domain-specific terms]
@@ -619,6 +680,7 @@ Rate your confidence level (1-5) in the following areas:
 ```
 
 ### Blockers Encountered 🚫
+
 ```
 1. [Blocker description and how it was resolved]
 2. [Add more blockers]
@@ -631,6 +693,7 @@ Rate your confidence level (1-5) in the following areas:
 Based on this onboarding test, the following improvements should be made:
 
 ### High Priority (Fix Immediately)
+
 - [ ] **[Action Item 1]**
   - **Issue:** [Description]
   - **Solution:** [Proposed fix]
@@ -638,6 +701,7 @@ Based on this onboarding test, the following improvements should be made:
   - **Due Date:** [Date]
 
 ### Medium Priority (Fix This Sprint)
+
 - [ ] **[Action Item 2]**
   - **Issue:** [Description]
   - **Solution:** [Proposed fix]
@@ -645,6 +709,7 @@ Based on this onboarding test, the following improvements should be made:
   - **Due Date:** [Date]
 
 ### Low Priority (Nice to Have)
+
 - [ ] **[Action Item 3]**
   - **Issue:** [Description]
   - **Solution:** [Proposed fix]
@@ -656,14 +721,17 @@ Based on this onboarding test, the following improvements should be made:
 ## 📚 Documentation Updates Needed
 
 ### Onboarding Guide Updates
+
 - [ ] [Section]: [What needs to be updated]
 - [ ] [Section]: [What needs to be updated]
 
 ### Additional Documentation
+
 - [ ] [New document needed]: [Purpose]
 - [ ] [New document needed]: [Purpose]
 
 ### Example Improvements
+
 - [ ] [Area]: [What examples are needed]
 - [ ] [Area]: [What examples are needed]
 
@@ -672,16 +740,19 @@ Based on this onboarding test, the following improvements should be made:
 ## 🎉 Onboarding Completion
 
 ### Final Assessment
+
 **Onboarding Successful?** ☐ Yes ☐ Partial ☐ No
 
 **Overall Experience Rating (1-5):** ⭐⭐⭐⭐⭐
 
 **Would Recommend This Onboarding?** ☐ Yes ☐ No ☐ With Changes
 
-**Time to Productivity:** _____ days
+**Time to Productivity:** **\_** days
 
 ### New Developer Readiness
+
 After completing onboarding, I feel ready to:
+
 - [ ] Take on standard development tasks
 - [ ] Work independently with minimal supervision
 - [ ] Contribute to code reviews
@@ -689,6 +760,7 @@ After completing onboarding, I feel ready to:
 - [ ] Mentor future new developers
 
 ### Next Steps for New Developer
+
 - [ ] Assigned to [Team/Project]
 - [ ] First sprint tasks assigned
 - [ ] Added to relevant team channels
@@ -700,31 +772,37 @@ After completing onboarding, I feel ready to:
 ## 📝 Sign-Off
 
 ### New Developer
+
 **Name:** [Name]  
 **Date Completed:** [Date]  
-**Signature:** ___________________
+**Signature:** ********\_\_\_********
 
 **Final Comments:**
+
 ```
 [Any final thoughts or feedback about the onboarding experience]
 ```
 
 ### Onboarding Buddy/Mentor
+
 **Name:** [Name]  
 **Date Reviewed:** [Date]  
-**Signature:** ___________________
+**Signature:** ********\_\_\_********
 
 **Mentor Comments:**
+
 ```
 [Mentor's assessment of new developer's readiness]
 ```
 
 ### Engineering Manager
+
 **Name:** [Name]  
 **Date Reviewed:** [Date]  
-**Signature:** ___________________
+**Signature:** ********\_\_\_********
 
 **Manager Assessment:**
+
 ```
 [Manager's sign-off and any additional notes]
 ```
@@ -744,17 +822,19 @@ After completing onboarding, I feel ready to:
 ## 📞 Questions or Issues During Test?
 
 **Contact:**
+
 - **Onboarding Buddy:** [Name] - [Slack/Email]
 - **Technical Lead:** [Name] - [Slack/Email]
 - **Engineering Manager:** [Name] - [Slack/Email]
 
 **Channels:**
+
 - Slack: #engineering-onboarding
 - Email: engineering@farmersmarket.com
 
 ---
 
-*This test should be conducted with each new developer to continuously improve our onboarding process. All feedback is valuable and will be used to enhance the experience for future team members.*
+_This test should be conducted with each new developer to continuously improve our onboarding process. All feedback is valuable and will be used to enhance the experience for future team members._
 
 **Last Updated:** January 2025  
 **Version:** 1.0  

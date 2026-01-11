@@ -7,7 +7,7 @@ import { Decimal } from "decimal.js";
 import type { CartItemWithProduct } from "./cart.service";
 import { cartService } from "./cart.service";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 // ============================================================================
 // TYPES & INTERFACES
@@ -111,7 +111,7 @@ export class QuantumCheckoutService {
    * 🎯 Create checkout session from cart
    */
   async createCheckoutSession(
-    request: CheckoutSessionRequest
+    request: CheckoutSessionRequest,
   ): Promise<CheckoutSession> {
     const {
       userId,
@@ -126,7 +126,7 @@ export class QuantumCheckoutService {
     const validation = await cartService.validateCart(userId);
     if (!validation.isValid) {
       throw new Error(
-        `Cart validation failed: ${validation.errors.map((e: any) => e.message).join(", ")}`
+        `Cart validation failed: ${validation.errors.map((e: any) => e.message).join(", ")}`,
       );
     }
 
@@ -161,7 +161,7 @@ export class QuantumCheckoutService {
     // Group items by farm and calculate totals
     const farmOrders = this.calculateFarmOrders(
       cartSummary.farmGroups,
-      fulfillmentMethod
+      fulfillmentMethod,
     );
 
     // Calculate total amounts
@@ -170,7 +170,9 @@ export class QuantumCheckoutService {
     // Create session
     const sessionId = `checkout_${Date.now()}_${userId}`;
     const expiresAt = new Date();
-    expiresAt.setMinutes(expiresAt.getMinutes() + this.SESSION_EXPIRATION_MINUTES);
+    expiresAt.setMinutes(
+      expiresAt.getMinutes() + this.SESSION_EXPIRATION_MINUTES,
+    );
 
     const session: CheckoutSession = {
       id: sessionId,
@@ -217,7 +219,7 @@ export class QuantumCheckoutService {
    */
   async updateCheckoutSession(
     sessionId: string,
-    updates: Partial<CheckoutSessionRequest>
+    updates: Partial<CheckoutSessionRequest>,
   ): Promise<CheckoutSession> {
     const session = await this.getCheckoutSession(sessionId);
 
@@ -259,7 +261,7 @@ export class QuantumCheckoutService {
       const cartSummary = await cartService.getCartSummary(session.userId);
       session.farmOrders = this.calculateFarmOrders(
         cartSummary.farmGroups,
-        session.fulfillmentMethod
+        session.fulfillmentMethod,
       );
       session.totals = this.calculateTotals(session.farmOrders);
     }
@@ -285,7 +287,7 @@ export class QuantumCheckoutService {
    * 📝 Create orders from checkout session
    */
   async createOrdersFromSession(
-    request: CreateOrdersRequest
+    request: CreateOrdersRequest,
   ): Promise<CreateOrdersResult> {
     const { sessionId, paymentIntentId, userId } = request;
 
@@ -320,8 +322,8 @@ export class QuantumCheckoutService {
         orders.push(order);
       } catch (error) {
         logger.error(`Failed to create order for farm ${farmOrder.farmId}:`, {
-      error: error instanceof Error ? error.message : String(error),
-    });
+          error: error instanceof Error ? error.message : String(error),
+        });
         // TODO: Implement rollback mechanism
         throw new Error(`Failed to create order for ${farmOrder.farmName}`);
       }
@@ -382,7 +384,9 @@ export class QuantumCheckoutService {
             quantity: item.quantity,
             unit: item.unit,
             unitPrice: item.priceAtAdd,
-            subtotal: new Decimal(item.quantity.toNumber() * item.priceAtAdd.toNumber()),
+            subtotal: new Decimal(
+              item.quantity.toNumber() * item.priceAtAdd.toNumber(),
+            ),
             productSnapshot: {
               name: item.product.name,
               description: item.product.description,
@@ -418,7 +422,7 @@ export class QuantumCheckoutService {
       items: CartItemWithProduct[];
       subtotal: number;
     }>,
-    fulfillmentMethod: "DELIVERY" | "PICKUP"
+    fulfillmentMethod: "DELIVERY" | "PICKUP",
   ): FarmCheckoutOrder[] {
     return farmGroups.map((group: any) => {
       const subtotal = group.subtotal;
@@ -464,11 +468,23 @@ export class QuantumCheckoutService {
    * 💰 Calculate total amounts across all farm orders
    */
   private calculateTotals(farmOrders: FarmCheckoutOrder[]): CheckoutTotals {
-    const subtotal = farmOrders.reduce((sum: any, order: any) => sum + order.subtotal, 0);
+    const subtotal = farmOrders.reduce(
+      (sum: any, order: any) => sum + order.subtotal,
+      0,
+    );
     const tax = farmOrders.reduce((sum: any, order: any) => sum + order.tax, 0);
-    const deliveryFee = farmOrders.reduce((sum: any, order: any) => sum + order.deliveryFee, 0);
-    const platformFee = farmOrders.reduce((sum: any, order: any) => sum + order.platformFee, 0);
-    const total = farmOrders.reduce((sum: any, order: any) => sum + order.total, 0);
+    const deliveryFee = farmOrders.reduce(
+      (sum: any, order: any) => sum + order.deliveryFee,
+      0,
+    );
+    const platformFee = farmOrders.reduce(
+      (sum: any, order: any) => sum + order.platformFee,
+      0,
+    );
+    const total = farmOrders.reduce(
+      (sum: any, order: any) => sum + order.total,
+      0,
+    );
 
     return {
       subtotal: Math.round(subtotal * 100) / 100,
@@ -488,7 +504,7 @@ export class QuantumCheckoutService {
    * ✅ Validate checkout requirements
    */
   async validateCheckout(
-    request: ValidateCheckoutRequest
+    request: ValidateCheckoutRequest,
   ): Promise<ValidateCheckoutResult> {
     const { userId, deliveryAddressId, fulfillmentMethod } = request;
     const errors: CheckoutValidationError[] = [];
@@ -502,7 +518,7 @@ export class QuantumCheckoutService {
           code: e.type,
           message: e.message,
           field: "cart",
-        }))
+        })),
       );
     }
 

@@ -737,9 +737,9 @@ describe("📎 File Upload Service - Divine Upload Operations", () => {
       );
 
       expect(results.every((r: any) => r.success)).toBe(true);
-      expect(results.every((r: any) => r.url?.includes("/uploads/products/"))).toBe(
-        true,
-      );
+      expect(
+        results.every((r: any) => r.url?.includes("/uploads/products/")),
+      ).toBe(true);
     });
 
     it("should upload farm branding materials", async () => {

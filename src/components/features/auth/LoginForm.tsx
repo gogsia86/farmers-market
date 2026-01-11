@@ -21,7 +21,10 @@ interface LoginFormProps {
   className?: string;
 }
 
-export function LoginForm({ callbackUrl = "/", className = "" }: LoginFormProps) {
+export function LoginForm({
+  callbackUrl = "/",
+  className = "",
+}: LoginFormProps) {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -78,7 +81,9 @@ export function LoginForm({ callbackUrl = "/", className = "" }: LoginFormProps)
             </svg>
           </div>
           <h2 className="text-3xl font-bold text-gray-900">Welcome Back</h2>
-          <p className="text-gray-600 mt-2">Sign in to access your farm dashboard</p>
+          <p className="text-gray-600 mt-2">
+            Sign in to access your farm dashboard
+          </p>
         </div>
 
         {/* Error Message */}
@@ -107,7 +112,10 @@ export function LoginForm({ callbackUrl = "/", className = "" }: LoginFormProps)
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Email Field */}
           <div>
-            <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
+            <label
+              htmlFor="email"
+              className="block text-sm font-semibold text-gray-700 mb-2"
+            >
               Email Address
             </label>
             <input
@@ -125,7 +133,10 @@ export function LoginForm({ callbackUrl = "/", className = "" }: LoginFormProps)
 
           {/* Password Field */}
           <div>
-            <label htmlFor="password" className="block text-sm font-semibold text-gray-700 mb-2">
+            <label
+              htmlFor="password"
+              className="block text-sm font-semibold text-gray-700 mb-2"
+            >
               Password
             </label>
             <input
@@ -195,12 +206,18 @@ export function LoginForm({ callbackUrl = "/", className = "" }: LoginFormProps)
         <div className="mt-6 text-center space-y-2">
           <p className="text-sm text-gray-600">
             Don't have an account?{" "}
-            <a href="/register" className="text-green-600 hover:text-green-700 font-semibold">
+            <a
+              href="/register"
+              className="text-green-600 hover:text-green-700 font-semibold"
+            >
               Register as Farmer
             </a>
           </p>
           <p className="text-sm text-gray-600">
-            <a href="/forgot-password" className="text-green-600 hover:text-green-700">
+            <a
+              href="/forgot-password"
+              className="text-green-600 hover:text-green-700"
+            >
               Forgot your password?
             </a>
           </p>
@@ -209,7 +226,9 @@ export function LoginForm({ callbackUrl = "/", className = "" }: LoginFormProps)
         {/* Test Accounts Info (Development Only) */}
         {process.env.NODE_ENV === "development" && (
           <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <p className="text-xs font-semibold text-blue-900 mb-2">🧪 Test Accounts:</p>
+            <p className="text-xs font-semibold text-blue-900 mb-2">
+              🧪 Test Accounts:
+            </p>
             <div className="text-xs text-blue-800 space-y-1">
               <p>Farmer: farmer1@example.com / password123</p>
               <p>Customer: customer@example.com / password123</p>

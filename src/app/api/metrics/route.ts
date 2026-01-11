@@ -22,17 +22,17 @@
  * @reference .cursorrules - Monitoring & Observability Patterns
  */
 
-import { multiLayerCache } from '@/lib/cache/multi-layer.cache';
-import { database } from '@/lib/database';
-import { createLogger } from '@/lib/monitoring/logger';
-import type { NextRequest } from 'next/server';
-import { NextResponse } from 'next/server';
+import { multiLayerCache } from "@/lib/cache/multi-layer.cache";
+import { database } from "@/lib/database";
+import { createLogger } from "@/lib/monitoring/logger";
+import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 
 // ============================================================================
 // LOGGER
 // ============================================================================
 
-const logger = createLogger('MetricsAPI');
+const logger = createLogger("MetricsAPI");
 
 // ============================================================================
 // TYPES & INTERFACES
@@ -139,7 +139,8 @@ function getCacheMetrics(): CacheMetrics {
       totalRequests: 0,
     },
     overall: {
-      hitRate: Math.round(((stats.totalHits / stats.totalRequests) || 0) * 10000) / 100,
+      hitRate:
+        Math.round((stats.totalHits / stats.totalRequests || 0) * 10000) / 100,
       totalRequests: stats.totalRequests,
       totalHits: stats.totalHits,
       totalMisses: stats.totalMisses,
@@ -164,8 +165,8 @@ async function getDatabaseMetrics(): Promise<DatabaseMetrics> {
       totalConnections: 0, // Would need pg.pool.totalCount
     };
   } catch (error) {
-    logger.error('Failed to get database metrics', {
-      error: error instanceof Error ? error.message : 'Unknown error',
+    logger.error("Failed to get database metrics", {
+      error: error instanceof Error ? error.message : "Unknown error",
     });
 
     return {
@@ -192,7 +193,9 @@ function getApplicationMetrics(): ApplicationMetrics {
     memory: {
       heapUsed: Math.round(memoryUsage.heapUsed / 1024 / 1024), // MB
       heapTotal: Math.round(memoryUsage.heapTotal / 1024 / 1024), // MB
-      heapUsedPercentage: Math.round((memoryUsage.heapUsed / memoryUsage.heapTotal) * 10000) / 100,
+      heapUsedPercentage:
+        Math.round((memoryUsage.heapUsed / memoryUsage.heapTotal) * 10000) /
+        100,
       rss: Math.round(memoryUsage.rss / 1024 / 1024), // MB
       external: Math.round(memoryUsage.external / 1024 / 1024), // MB
     },
@@ -225,38 +228,117 @@ function formatPrometheus(metrics: MetricsResponse): string {
   const lines: string[] = [];
 
   // Helper function to add metric
-  const addMetric = (name: string, value: number | boolean, help: string, type: string = 'gauge') => {
+  const addMetric = (
+    name: string,
+    value: number | boolean,
+    help: string,
+    type: string = "gauge",
+  ) => {
     lines.push(`# HELP ${name} ${help}`);
     lines.push(`# TYPE ${name} ${type}`);
-    lines.push(`${name} ${typeof value === 'boolean' ? (value ? 1 : 0) : value}`);
-    lines.push('');
+    lines.push(
+      `${name} ${typeof value === "boolean" ? (value ? 1 : 0) : value}`,
+    );
+    lines.push("");
   };
 
   // Application metrics
-  addMetric('app_uptime_seconds', metrics.uptime, 'Application uptime in seconds', 'counter');
-  addMetric('app_memory_heap_used_bytes', metrics.application.memory.heapUsed * 1024 * 1024, 'Heap memory used in bytes');
-  addMetric('app_memory_heap_total_bytes', metrics.application.memory.heapTotal * 1024 * 1024, 'Total heap memory in bytes');
-  addMetric('app_memory_heap_used_percentage', metrics.application.memory.heapUsedPercentage, 'Heap memory used percentage');
-  addMetric('app_memory_rss_bytes', metrics.application.memory.rss * 1024 * 1024, 'Resident set size in bytes');
+  addMetric(
+    "app_uptime_seconds",
+    metrics.uptime,
+    "Application uptime in seconds",
+    "counter",
+  );
+  addMetric(
+    "app_memory_heap_used_bytes",
+    metrics.application.memory.heapUsed * 1024 * 1024,
+    "Heap memory used in bytes",
+  );
+  addMetric(
+    "app_memory_heap_total_bytes",
+    metrics.application.memory.heapTotal * 1024 * 1024,
+    "Total heap memory in bytes",
+  );
+  addMetric(
+    "app_memory_heap_used_percentage",
+    metrics.application.memory.heapUsedPercentage,
+    "Heap memory used percentage",
+  );
+  addMetric(
+    "app_memory_rss_bytes",
+    metrics.application.memory.rss * 1024 * 1024,
+    "Resident set size in bytes",
+  );
 
   // Cache metrics
-  addMetric('cache_l1_size', metrics.cache.l1.size, 'L1 cache current size');
-  addMetric('cache_l1_max_size', metrics.cache.l1.maxSize, 'L1 cache maximum size');
-  addMetric('cache_l1_hit_rate', metrics.cache.l1.hitRate / 100, 'L1 cache hit rate (0-1)');
-  addMetric('cache_l2_connected', metrics.cache.l2.connected, 'L2 cache connected status');
-  addMetric('cache_l2_hit_rate', metrics.cache.l2.hitRate / 100, 'L2 cache hit rate (0-1)');
-  addMetric('cache_overall_hit_rate', metrics.cache.overall.hitRate / 100, 'Overall cache hit rate (0-1)');
-  addMetric('cache_total_requests', metrics.cache.overall.totalRequests, 'Total cache requests', 'counter');
-  addMetric('cache_total_hits', metrics.cache.overall.totalHits, 'Total cache hits', 'counter');
-  addMetric('cache_total_misses', metrics.cache.overall.totalMisses, 'Total cache misses', 'counter');
+  addMetric("cache_l1_size", metrics.cache.l1.size, "L1 cache current size");
+  addMetric(
+    "cache_l1_max_size",
+    metrics.cache.l1.maxSize,
+    "L1 cache maximum size",
+  );
+  addMetric(
+    "cache_l1_hit_rate",
+    metrics.cache.l1.hitRate / 100,
+    "L1 cache hit rate (0-1)",
+  );
+  addMetric(
+    "cache_l2_connected",
+    metrics.cache.l2.connected,
+    "L2 cache connected status",
+  );
+  addMetric(
+    "cache_l2_hit_rate",
+    metrics.cache.l2.hitRate / 100,
+    "L2 cache hit rate (0-1)",
+  );
+  addMetric(
+    "cache_overall_hit_rate",
+    metrics.cache.overall.hitRate / 100,
+    "Overall cache hit rate (0-1)",
+  );
+  addMetric(
+    "cache_total_requests",
+    metrics.cache.overall.totalRequests,
+    "Total cache requests",
+    "counter",
+  );
+  addMetric(
+    "cache_total_hits",
+    metrics.cache.overall.totalHits,
+    "Total cache hits",
+    "counter",
+  );
+  addMetric(
+    "cache_total_misses",
+    metrics.cache.overall.totalMisses,
+    "Total cache misses",
+    "counter",
+  );
 
   // Database metrics
-  addMetric('database_connected', metrics.database.connected, 'Database connection status');
-  addMetric('database_active_connections', metrics.database.activeConnections, 'Active database connections');
-  addMetric('database_idle_connections', metrics.database.idleConnections, 'Idle database connections');
-  addMetric('database_total_connections', metrics.database.totalConnections, 'Total database connections');
+  addMetric(
+    "database_connected",
+    metrics.database.connected,
+    "Database connection status",
+  );
+  addMetric(
+    "database_active_connections",
+    metrics.database.activeConnections,
+    "Active database connections",
+  );
+  addMetric(
+    "database_idle_connections",
+    metrics.database.idleConnections,
+    "Idle database connections",
+  );
+  addMetric(
+    "database_total_connections",
+    metrics.database.totalConnections,
+    "Total database connections",
+  );
 
-  return lines.join('\n');
+  return lines.join("\n");
 }
 
 // ============================================================================
@@ -275,7 +357,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
     // Get query parameters
     const { searchParams } = new URL(request.url);
-    const format = searchParams.get('format') || 'json';
+    const format = searchParams.get("format") || "json";
 
     // Collect all metrics
     const [cacheMetrics, databaseMetrics] = await Promise.all([
@@ -290,8 +372,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const metrics: MetricsResponse = {
       timestamp: new Date().toISOString(),
       uptime: Math.floor(process.uptime()),
-      version: process.env.npm_package_version || '1.0.0',
-      environment: process.env.NODE_ENV || 'unknown',
+      version: process.env.npm_package_version || "1.0.0",
+      environment: process.env.NODE_ENV || "unknown",
       cache: cacheMetrics,
       database: databaseMetrics,
       application: applicationMetrics,
@@ -300,7 +382,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     const duration = Math.round(performance.now() - start);
 
-    logger.info('Metrics collected', {
+    logger.info("Metrics collected", {
       format,
       duration,
       cacheHitRate: metrics.cache.overall.hitRate,
@@ -308,12 +390,12 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     });
 
     // Return in requested format
-    if (format === 'prometheus') {
+    if (format === "prometheus") {
       return new NextResponse(formatPrometheus(metrics), {
         status: 200,
         headers: {
-          'Content-Type': 'text/plain; version=0.0.4',
-          'Cache-Control': 'no-store',
+          "Content-Type": "text/plain; version=0.0.4",
+          "Cache-Control": "no-store",
         },
       });
     }
@@ -322,26 +404,27 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json(metrics, {
       status: 200,
       headers: {
-        'Cache-Control': 'no-store',
-        'X-Metrics-Duration': `${duration}ms`,
+        "Cache-Control": "no-store",
+        "X-Metrics-Duration": `${duration}ms`,
       },
     });
   } catch (error) {
-    logger.error('Metrics collection failed', {
-      error: error instanceof Error ? error.message : 'Unknown error',
+    logger.error("Metrics collection failed", {
+      error: error instanceof Error ? error.message : "Unknown error",
     });
 
     return NextResponse.json(
       {
-        error: 'Failed to collect metrics',
-        message: process.env.NODE_ENV === 'development'
-          ? error instanceof Error
-            ? error.message
-            : 'Unknown error'
-          : 'Internal server error',
+        error: "Failed to collect metrics",
+        message:
+          process.env.NODE_ENV === "development"
+            ? error instanceof Error
+              ? error.message
+              : "Unknown error"
+            : "Internal server error",
         timestamp: new Date().toISOString(),
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -353,8 +436,8 @@ export async function OPTIONS(): Promise<NextResponse> {
   return new NextResponse(null, {
     status: 204,
     headers: {
-      'Access-Control-Allow-Methods': 'GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
+      "Access-Control-Allow-Methods": "GET, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type",
     },
   });
 }

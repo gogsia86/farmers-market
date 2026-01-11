@@ -30,6 +30,7 @@ This guide will get you from zero to a running development server in **30 minute
 ### What You'll Accomplish
 
 By the end of this guide:
+
 - ✅ Development environment fully configured
 - ✅ Database running locally
 - ✅ Application running at `http://localhost:3001`
@@ -38,15 +39,15 @@ By the end of this guide:
 
 ### Time Breakdown
 
-| Task | Duration |
-|------|----------|
-| Prerequisites Check | 5 min |
-| Clone & Install | 8 min |
-| Environment Setup | 7 min |
-| Database Setup | 5 min |
-| First Run | 3 min |
-| Verification | 2 min |
-| **Total** | **30 min** |
+| Task                | Duration   |
+| ------------------- | ---------- |
+| Prerequisites Check | 5 min      |
+| Clone & Install     | 8 min      |
+| Environment Setup   | 7 min      |
+| Database Setup      | 5 min      |
+| First Run           | 3 min      |
+| Verification        | 2 min      |
+| **Total**           | **30 min** |
 
 ---
 
@@ -56,20 +57,20 @@ By the end of this guide:
 
 Before starting, ensure you have:
 
-| Software | Version | Check Command | Install Link |
-|----------|---------|---------------|--------------|
-| **Node.js** | 20.x | `node --version` | [nodejs.org](https://nodejs.org) |
-| **npm** | 10.x+ | `npm --version` | Included with Node.js |
-| **Git** | 2.x+ | `git --version` | [git-scm.com](https://git-scm.com) |
-| **PostgreSQL** | 14+ | `psql --version` | [postgresql.org](https://postgresql.org) |
+| Software       | Version | Check Command    | Install Link                             |
+| -------------- | ------- | ---------------- | ---------------------------------------- |
+| **Node.js**    | 20.x    | `node --version` | [nodejs.org](https://nodejs.org)         |
+| **npm**        | 10.x+   | `npm --version`  | Included with Node.js                    |
+| **Git**        | 2.x+    | `git --version`  | [git-scm.com](https://git-scm.com)       |
+| **PostgreSQL** | 14+     | `psql --version` | [postgresql.org](https://postgresql.org) |
 
 ### Optional but Recommended
 
-| Software | Purpose | Link |
-|----------|---------|------|
-| **VSCode** | IDE with excellent TypeScript support | [code.visualstudio.com](https://code.visualstudio.com) |
-| **Docker** | For containerized PostgreSQL | [docker.com](https://docker.com) |
-| **Postman** | API testing | [postman.com](https://postman.com) |
+| Software    | Purpose                               | Link                                                   |
+| ----------- | ------------------------------------- | ------------------------------------------------------ |
+| **VSCode**  | IDE with excellent TypeScript support | [code.visualstudio.com](https://code.visualstudio.com) |
+| **Docker**  | For containerized PostgreSQL          | [docker.com](https://docker.com)                       |
+| **Postman** | API testing                           | [postman.com](https://postman.com)                     |
 
 ### Quick Prerequisites Check
 
@@ -80,6 +81,7 @@ node --version && npm --version && git --version && psql --version
 ```
 
 **Expected Output:**
+
 ```
 v20.x.x (or v22.x.x)
 10.x.x
@@ -105,6 +107,7 @@ git branch
 ```
 
 **Expected Output:**
+
 ```
 * main
 ```
@@ -120,6 +123,7 @@ npm install
 ```
 
 **What's Being Installed:**
+
 - Next.js 16.1.1 (React 19 framework)
 - Prisma 7.2.0 (Database ORM)
 - TypeScript 5.9.3 (Type safety)
@@ -127,6 +131,7 @@ npm install
 - 200+ other dependencies
 
 **Expected Output (at end):**
+
 ```
 added 1887 packages, and audited 1888 packages in Xs
 
@@ -219,6 +224,7 @@ cat .env.local | grep NEXTAUTH_SECRET
 ```
 
 **Expected Output:**
+
 ```
 DATABASE_URL="postgresql://..."
 NEXTAUTH_SECRET="your-secret..."
@@ -276,6 +282,7 @@ npx prisma db seed
 ```
 
 **Expected Output:**
+
 ```
 ✔ Generated Prisma Client (v7.2.0)
 
@@ -326,6 +333,7 @@ npm run dev:webpack
 ```
 
 **Expected Output:**
+
 ```
 ▲ Next.js 16.1.1 (Turbopack)
 - Local:         http://localhost:3001
@@ -344,6 +352,7 @@ http://localhost:3001
 ```
 
 **You should see:**
+
 - ✅ Farmers Market Platform homepage
 - ✅ Navigation header
 - ✅ No console errors (F12 to check)
@@ -385,6 +394,7 @@ npx prisma studio
 Visit: http://localhost:3001/api/health
 
 **Expected Response:**
+
 ```json
 {
   "success": true,
@@ -402,6 +412,7 @@ Visit: http://localhost:3001/api/health
 Visit: http://localhost:3001/api-docs
 
 **You should see:**
+
 - ✅ Swagger UI interface
 - ✅ All API endpoints listed
 - ✅ Ability to test endpoints
@@ -467,6 +478,7 @@ Edit `src/app/page.tsx`:
 Save the file and check your browser at http://localhost:3001
 
 **You should see:**
+
 - ✅ Page automatically refreshes
 - ✅ Your name appears in the heading
 - ✅ No errors
@@ -498,6 +510,7 @@ git branch -D feat/my-first-change
 ```
 
 **Congratulations! 🎉 You've successfully:**
+
 - Created a branch
 - Made a change
 - Verified hot reload
@@ -511,11 +524,13 @@ git branch -D feat/my-first-change
 ### Issue 1: Port Already in Use
 
 **Error:**
+
 ```
 Error: listen EADDRINUSE: address already in use :::3001
 ```
 
 **Solution:**
+
 ```bash
 # Find process using port 3001
 # Windows:
@@ -531,6 +546,7 @@ npm run dev -- -p 3002
 ### Issue 2: Database Connection Failed
 
 **Error:**
+
 ```
 Error: Can't reach database server
 ```
@@ -538,6 +554,7 @@ Error: Can't reach database server
 **Solutions:**
 
 1. **Check PostgreSQL is running:**
+
 ```bash
 # Windows
 services.msc  # Look for PostgreSQL
@@ -550,12 +567,14 @@ sudo systemctl status postgresql
 ```
 
 2. **Verify credentials in .env.local:**
+
 ```bash
 cat .env.local | grep DATABASE_URL
 # Ensure username, password, and database name are correct
 ```
 
 3. **Test connection manually:**
+
 ```bash
 psql -U postgres -d farmers_market_dev
 ```
@@ -563,11 +582,13 @@ psql -U postgres -d farmers_market_dev
 ### Issue 3: Prisma Generate Fails
 
 **Error:**
+
 ```
 Error: @prisma/client did not initialize yet
 ```
 
 **Solution:**
+
 ```bash
 # Regenerate Prisma Client
 npx prisma generate
@@ -580,11 +601,13 @@ npm install
 ### Issue 4: Type Errors
 
 **Error:**
+
 ```
 Type error: Property 'xyz' does not exist
 ```
 
 **Solution:**
+
 ```bash
 # Restart TypeScript server in VSCode
 # Cmd+Shift+P → "TypeScript: Restart TS Server"
@@ -596,11 +619,13 @@ npm run type-check
 ### Issue 5: Module Not Found
 
 **Error:**
+
 ```
 Error: Cannot find module '@/lib/...'
 ```
 
 **Solution:**
+
 ```bash
 # Restart dev server
 # Press Ctrl+C to stop
@@ -614,11 +639,13 @@ npm run dev
 ### Issue 6: EACCES Permission Error
 
 **Error:**
+
 ```
 Error: EACCES: permission denied
 ```
 
 **Solution:**
+
 ```bash
 # Fix npm permissions (don't use sudo)
 # Option 1: Use nvm (recommended)
@@ -642,11 +669,13 @@ export PATH=~/.npm-global/bin:$PATH
 The project includes a `.vscode/extensions.json` file with recommended extensions.
 
 **When you open the project, VSCode will prompt:**
+
 > "This workspace has extension recommendations"
 
 Click **"Install All"**
 
 **Key Extensions:**
+
 - ESLint - Code linting
 - Prettier - Code formatting
 - Prisma - Schema highlighting
@@ -654,6 +683,7 @@ Click **"Install All"**
 - Tailwind CSS IntelliSense - CSS autocomplete
 
 **Manual Installation:**
+
 ```bash
 # View recommended extensions
 cat .vscode/extensions.json
@@ -687,14 +717,14 @@ Create `.vscode/settings.json` (if not exists):
 
 Learn these essential shortcuts:
 
-| Action | Windows/Linux | macOS |
-|--------|---------------|-------|
-| Command Palette | `Ctrl+Shift+P` | `Cmd+Shift+P` |
-| Quick Open | `Ctrl+P` | `Cmd+P` |
-| Go to Definition | `F12` | `F12` |
-| Find References | `Shift+F12` | `Shift+F12` |
-| Rename Symbol | `F2` | `F2` |
-| Format Document | `Shift+Alt+F` | `Shift+Option+F` |
+| Action           | Windows/Linux  | macOS            |
+| ---------------- | -------------- | ---------------- |
+| Command Palette  | `Ctrl+Shift+P` | `Cmd+Shift+P`    |
+| Quick Open       | `Ctrl+P`       | `Cmd+P`          |
+| Go to Definition | `F12`          | `F12`            |
+| Find References  | `Shift+F12`    | `Shift+F12`      |
+| Rename Symbol    | `F2`           | `F2`             |
+| Format Document  | `Shift+Alt+F`  | `Shift+Option+F` |
 
 ### Other IDEs
 
@@ -735,6 +765,7 @@ Plug 'prisma/vim-prisma'
    - [ ] [Coding Standards](../../.cursorrules)
 
 2. **Explore the Codebase**
+
    ```bash
    # Browse project structure
    tree -L 2 src/
@@ -773,22 +804,22 @@ Plug 'prisma/vim-prisma'
 
 #### Internal Documentation
 
-| Document | Purpose |
-|----------|---------|
-| [API Docs](http://localhost:3001/api-docs) | Interactive API testing |
-| [Prisma Schema](../../prisma/schema.prisma) | Database structure |
+| Document                                     | Purpose                   |
+| -------------------------------------------- | ------------------------- |
+| [API Docs](http://localhost:3001/api-docs)   | Interactive API testing   |
+| [Prisma Schema](../../prisma/schema.prisma)  | Database structure        |
 | [Scripts Reference](../SCRIPTS_REFERENCE.md) | All npm scripts explained |
-| [Testing Guide](../testing/README.md) | How to write tests |
+| [Testing Guide](../testing/README.md)        | How to write tests        |
 
 #### External Resources
 
-| Resource | Link |
-|----------|------|
-| Next.js 15 Docs | https://nextjs.org/docs |
-| React 19 Docs | https://react.dev |
-| Prisma Docs | https://www.prisma.io/docs |
+| Resource            | Link                                |
+| ------------------- | ----------------------------------- |
+| Next.js 15 Docs     | https://nextjs.org/docs             |
+| React 19 Docs       | https://react.dev                   |
+| Prisma Docs         | https://www.prisma.io/docs          |
 | TypeScript Handbook | https://www.typescriptlang.org/docs |
-| Tailwind CSS | https://tailwindcss.com/docs |
+| Tailwind CSS        | https://tailwindcss.com/docs        |
 
 ---
 
@@ -837,11 +868,13 @@ You've successfully completed onboarding when:
 ### Good Questions to Ask
 
 ✅ **Good:**
+
 - "I'm trying to implement X. I found pattern Y in file Z. Is this the right approach?"
 - "I got error E when doing F. I tried G and H. What should I try next?"
 - "Where should I add authentication to this endpoint?"
 
 ❌ **Avoid:**
+
 - "How do I install Node.js?" (Google first)
 - "My code doesn't work." (Too vague)
 - "Why is TypeScript complaining?" (Share the actual error)
@@ -850,20 +883,21 @@ You've successfully completed onboarding when:
 
 ## 📞 Support Contacts
 
-| Need | Contact | Availability |
-|------|---------|--------------|
-| General Questions | Your Mentor | Daily |
-| Technical Issues | Tech Lead | During work hours |
-| Access/Permissions | DevOps Team | Ticket system |
-| Product Questions | Product Owner | Weekly sync |
+| Need               | Contact       | Availability      |
+| ------------------ | ------------- | ----------------- |
+| General Questions  | Your Mentor   | Daily             |
+| Technical Issues   | Tech Lead     | During work hours |
+| Access/Permissions | DevOps Team   | Ticket system     |
+| Product Questions  | Product Owner | Weekly sync       |
 
 ---
 
 ## 🎉 Congratulations!
 
-You've completed the 30-minute developer onboarding! 
+You've completed the 30-minute developer onboarding!
 
 **You are now ready to:**
+
 - 🚀 Start contributing to the codebase
 - 🧪 Test and debug the application
 - 📝 Write production-ready code
@@ -871,6 +905,7 @@ You've completed the 30-minute developer onboarding!
 - 🌟 Build amazing features
 
 **Remember:**
+
 - 🌾 Code with agricultural consciousness
 - ⚡ Architect with divine precision
 - 🚀 Deliver with quantum efficiency

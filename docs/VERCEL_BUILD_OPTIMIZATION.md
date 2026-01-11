@@ -1,4 +1,5 @@
 # 🚀 Vercel Build Optimization Guide
+
 **Farmers Market Platform - Production Build Fixes**
 
 **Version:** 2.0  
@@ -24,14 +25,16 @@ This document addresses **all Vercel build warnings** identified in the producti
 ### **1. Node.js Version Auto-Upgrade Warning** ✅
 
 **Warning:**
+
 ```
-Warning: Detected "engines": { "node": ">=20.x" } in your `package.json` 
+Warning: Detected "engines": { "node": ">=20.x" } in your `package.json`
 that will automatically upgrade when a new major Node.js Version is released.
 ```
 
 **Impact:** High - Could cause breaking changes on major Node.js releases
 
 **Fix Applied:**
+
 ```json
 // package.json - BEFORE
 "engines": {
@@ -45,6 +48,7 @@ that will automatically upgrade when a new major Node.js Version is released.
 ```
 
 **Verification:**
+
 ```bash
 node -v  # Should show v20.x.x
 ```
@@ -54,19 +58,22 @@ node -v  # Should show v20.x.x
 ### **2. Invalid next.config.mjs Options** ✅
 
 **Warning:**
+
 ```
-⚠ Invalid next.config.mjs options detected: 
+⚠ Invalid next.config.mjs options detected:
 ⚠     Unrecognized key(s) in object: 'turbo' at "experimental"
 ```
 
 **Impact:** Medium - Config ignored, potential build issues
 
 **Root Cause:**
+
 - `experimental.turbo` was a temporary option in Next.js 14
 - Removed in Next.js 15 stable
 - Turbopack is now enabled with `--turbo` CLI flag
 
 **Fix Applied:**
+
 ```javascript
 // next.config.mjs - REMOVED
 experimental: {
@@ -80,6 +87,7 @@ experimental: {
 ```
 
 **Benefits:**
+
 - No more config warnings
 - Cleaner configuration
 - Future-proof for Next.js updates
@@ -89,6 +97,7 @@ experimental: {
 ### **3. Sentry Deprecation Warnings** ✅
 
 **Warnings:**
+
 ```
 [@sentry/nextjs] DEPRECATION WARNING: disableLogger is deprecated
 [@sentry/nextjs] DEPRECATION WARNING: reactComponentAnnotation is deprecated
@@ -97,6 +106,7 @@ experimental: {
 **Impact:** Medium - Will break in future Sentry versions
 
 **Fix Applied:**
+
 ```javascript
 // next.config.mjs - BEFORE
 export default withSentryConfig(nextConfig, {
@@ -109,7 +119,7 @@ export default withSentryConfig(nextConfig, {
 // next.config.mjs - AFTER
 export default withSentryConfig(nextConfig, {
   // ... other config ...
-  
+
   webpack: {
     // ✅ NEW: Tree-shake debug logging
     treeshake: {
@@ -124,6 +134,7 @@ export default withSentryConfig(nextConfig, {
 ```
 
 **Benefits:**
+
 - Uses latest Sentry SDK API
 - Better tree-shaking (smaller bundles)
 - Future-proof configuration
@@ -133,8 +144,9 @@ export default withSentryConfig(nextConfig, {
 ### **4. Source Map Reference Warnings** ⚠️
 
 **Warnings:**
+
 ```
-- warning: could not determine a source map reference 
+- warning: could not determine a source map reference
   (Could not auto-detect referenced sourcemap for ~/page_client-reference-manifest.js)
 ```
 
@@ -144,18 +156,21 @@ export default withSentryConfig(nextConfig, {
 
 **Explanation:**
 These warnings occur because Next.js 15 with Turbopack generates:
+
 1. **Client reference manifests** (`.js` files without `.map`)
 2. **Actual page chunks** (`.js` files WITH `.map`)
 
 The manifests don't need source maps - they're just metadata for React Server Components.
 
 **What Sentry Actually Uploads:**
+
 - ✅ `.next/static/chunks/*.js.map` (App code)
 - ✅ `.next/server/**/*.js.map` (Server components)
 - ✅ `.next/static/css/*.css.map` (Styles)
 - ❌ `*_client-reference-manifest.js` (Not needed - no code)
 
 **Verification That It's Working:**
+
 1. Check Sentry dashboard → Releases → Artifacts
 2. Look for `.js.map` files for your routes
 3. Test an error - you should see real file names and line numbers
@@ -167,15 +182,17 @@ The manifests don't need source maps - they're just metadata for React Server Co
 ### **5. npm Config Warnings** ✅
 
 **Warnings:**
+
 ```
 npm warn Unknown env config "arch". This will stop working in the next major version of npm.
-npm warn Unknown env config "platform". 
+npm warn Unknown env config "platform".
 npm warn config optional Use `--omit=optional` to exclude optional dependencies
 ```
 
 **Impact:** Low - npm CLI warnings, doesn't affect builds
 
 **Root Cause:**
+
 - Likely from `.npmrc` config or CI environment variables
 - Common in Vercel builds with older npm configs
 
@@ -204,6 +221,7 @@ registry=https://registry.npmjs.org/
 ## 📊 **Expected Build Output After Fixes**
 
 ### **Before Optimization:**
+
 ```
 ⚠️ 5+ config warnings
 ⚠️ 250+ source map warnings
@@ -212,6 +230,7 @@ registry=https://registry.npmjs.org/
 ```
 
 ### **After Optimization:**
+
 ```
 ✅ 0 config warnings
 ⚠️ 250+ source map warnings (EXPECTED - see above)
@@ -224,6 +243,7 @@ registry=https://registry.npmjs.org/
 ## 🧪 **Testing & Verification**
 
 ### **1. Local Build Test**
+
 ```bash
 # Clean build
 rm -rf .next node_modules
@@ -238,6 +258,7 @@ npm run build
 ```
 
 ### **2. Vercel Deployment Test**
+
 ```bash
 # Push changes
 git add package.json next.config.mjs
@@ -251,6 +272,7 @@ git push origin master
 ```
 
 ### **3. Sentry Verification**
+
 ```bash
 # After deployment:
 # 1. Go to: https://sentry.io/organizations/medicis-gang/releases/
@@ -264,20 +286,21 @@ git push origin master
 
 ## 📈 **Performance Impact**
 
-| Metric                  | Before      | After       | Improvement |
-|------------------------|-------------|-------------|-------------|
-| Config Warnings        | 5           | 0           | -100%       |
-| Build Time             | 2:00 min    | 1:30 min    | -25%        |
-| Cache Size             | 337 MB      | ~220 MB     | -35%        |
-| Bundle Size            | Unchanged   | Unchanged   | N/A         |
-| Sentry Uploads         | ✅ Working   | ✅ Working   | Maintained  |
-| Source Map Warnings    | 250+        | 250+        | Expected    |
+| Metric              | Before     | After      | Improvement |
+| ------------------- | ---------- | ---------- | ----------- |
+| Config Warnings     | 5          | 0          | -100%       |
+| Build Time          | 2:00 min   | 1:30 min   | -25%        |
+| Cache Size          | 337 MB     | ~220 MB    | -35%        |
+| Bundle Size         | Unchanged  | Unchanged  | N/A         |
+| Sentry Uploads      | ✅ Working | ✅ Working | Maintained  |
+| Source Map Warnings | 250+       | 250+       | Expected    |
 
 ---
 
 ## 🔧 **Configuration Files Changed**
 
 ### **1. package.json**
+
 ```diff
 "engines": {
 -  "node": ">=20.x",
@@ -287,6 +310,7 @@ git push origin master
 ```
 
 ### **2. next.config.mjs**
+
 ```diff
 experimental: {
   // ... other options ...
@@ -309,17 +333,22 @@ experimental: {
 ## 🚨 **Common Issues & Solutions**
 
 ### **Issue: "Build still shows Sentry warnings"**
+
 **Solution:** Clear Vercel cache:
+
 ```bash
 # In Vercel dashboard:
 # Settings → General → Clear Build Cache
 ```
 
 ### **Issue: "Source map warnings increased"**
+
 **Solution:** This is normal after adding new routes. Each route generates a manifest file.
 
 ### **Issue: "Sentry not uploading source maps"**
+
 **Solution:** Check environment variables:
+
 ```bash
 # Required in Vercel:
 SENTRY_AUTH_TOKEN=sntrys_***
@@ -328,7 +357,9 @@ SENTRY_PROJECT=farmers-market-prod
 ```
 
 ### **Issue: "Build fails with Node.js version error"**
+
 **Solution:** Update Vercel Node.js version:
+
 ```bash
 # In Vercel dashboard:
 # Settings → General → Node.js Version → 20.x
@@ -366,16 +397,19 @@ Before deploying these fixes:
 ## 🎉 **Summary**
 
 ### **What Was Fixed:**
+
 ✅ Node.js auto-upgrade warning  
 ✅ Invalid next.config.mjs options  
 ✅ Sentry deprecation warnings  
-✅ Build configuration modernized  
+✅ Build configuration modernized
 
 ### **What's Expected:**
+
 ⚠️ Source map warnings (250+) - **This is normal behavior**  
-⚠️ npm config warnings - **Low priority, Vercel handles this**  
+⚠️ npm config warnings - **Low priority, Vercel handles this**
 
 ### **Results:**
+
 - **25% faster builds** (2:00 → 1:30 minutes)
 - **35% smaller cache** (337 → 220 MB)
 - **Zero config warnings** (5 → 0)
@@ -387,6 +421,7 @@ Before deploying these fixes:
 ## 📞 **Support**
 
 If you encounter issues:
+
 1. Check [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)
 2. Review Vercel build logs
 3. Verify environment variables

@@ -17,7 +17,7 @@ import { emailService } from "@/lib/services/email.service";
 import { randomBytes } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 export async function POST(request: NextRequest) {
   try {
@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
     if (!email || typeof email !== "string") {
       return NextResponse.json(
         { error: "Valid email address is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
     if (!emailRegex.test(email)) {
       return NextResponse.json(
         { error: "Invalid email format" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -56,7 +56,8 @@ export async function POST(request: NextRequest) {
       logger.info(`Password reset requested for non-existent email: ${email}`);
       return NextResponse.json({
         success: true,
-        message: "If an account exists with this email, you will receive password reset instructions.",
+        message:
+          "If an account exists with this email, you will receive password reset instructions.",
       });
     }
 
@@ -93,7 +94,8 @@ export async function POST(request: NextRequest) {
       logger.info(`Password reset email sent to: ${user.email}`);
     } catch (emailError) {
       logger.error("Failed to send password reset email", {
-        error: emailError instanceof Error ? emailError.message : String(emailError)
+        error:
+          emailError instanceof Error ? emailError.message : String(emailError),
       });
       // Still return success to user (they don't need to know email failed)
       // But log the error for admin monitoring
@@ -101,44 +103,33 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: "If an account exists with this email, you will receive password reset instructions.",
+      message:
+        "If an account exists with this email, you will receive password reset instructions.",
     });
   } catch (error) {
     logger.error("Forgot password error", {
-      error: error instanceof Error ? error.message : String(error)
+      error: error instanceof Error ? error.message : String(error),
     });
     return NextResponse.json(
       { error: "An unexpected error occurred. Please try again later." },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 // Only allow POST requests
 export async function GET() {
-  return NextResponse.json(
-    { error: "Method not allowed" },
-    { status: 405 }
-  );
+  return NextResponse.json({ error: "Method not allowed" }, { status: 405 });
 }
 
 export async function PUT() {
-  return NextResponse.json(
-    { error: "Method not allowed" },
-    { status: 405 }
-  );
+  return NextResponse.json({ error: "Method not allowed" }, { status: 405 });
 }
 
 export async function DELETE() {
-  return NextResponse.json(
-    { error: "Method not allowed" },
-    { status: 405 }
-  );
+  return NextResponse.json({ error: "Method not allowed" }, { status: 405 });
 }
 
 export async function PATCH() {
-  return NextResponse.json(
-    { error: "Method not allowed" },
-    { status: 405 }
-  );
+  return NextResponse.json({ error: "Method not allowed" }, { status: 405 });
 }

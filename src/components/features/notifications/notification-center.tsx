@@ -26,11 +26,17 @@ import {
   staggerTransition,
 } from "@/components/notifications/animations/list-animations";
 import { useReducedMotion } from "@/components/notifications/hooks/useReducedMotion";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 // ============================================================================
 // Types
@@ -109,7 +115,10 @@ export function NotificationCenter({
   const prefersReducedMotion = useReducedMotion();
 
   // Fetch notifications
-  const fetchNotifications = async (options?: { unreadOnly?: boolean; page?: number }) => {
+  const fetchNotifications = async (options?: {
+    unreadOnly?: boolean;
+    page?: number;
+  }) => {
     try {
       const params = new URLSearchParams({
         page: String(options?.page || page),
@@ -161,28 +170,32 @@ export function NotificationCenter({
         body: JSON.stringify({ isRead: true }),
       });
 
-      const data: ApiResponse<{ id: string; isRead: boolean }> = await response.json();
+      const data: ApiResponse<{ id: string; isRead: boolean }> =
+        await response.json();
 
       if (data.success) {
         // Delay state update to allow animation to complete
-        setTimeout(() => {
-          setNotifications((prev) =>
-            prev.map((notif: any) =>
-              notif.id === notificationId
-                ? { ...notif, isRead: true, readAt: new Date().toISOString() }
-                : notif
-            )
-          );
-          setUnreadCount((prev) => Math.max(0, prev - 1));
-          setMarkingAsRead(null);
-        }, prefersReducedMotion ? 0 : 300);
+        setTimeout(
+          () => {
+            setNotifications((prev) =>
+              prev.map((notif: any) =>
+                notif.id === notificationId
+                  ? { ...notif, isRead: true, readAt: new Date().toISOString() }
+                  : notif,
+              ),
+            );
+            setUnreadCount((prev) => Math.max(0, prev - 1));
+            setMarkingAsRead(null);
+          },
+          prefersReducedMotion ? 0 : 300,
+        );
       } else {
         setMarkingAsRead(null);
       }
     } catch (err) {
       logger.error("Failed to mark notification as read:", {
-      error: err instanceof Error ? err.message : String(err),
-    });
+        error: err instanceof Error ? err.message : String(err),
+      });
       setMarkingAsRead(null);
     }
   };
@@ -190,7 +203,9 @@ export function NotificationCenter({
   // Mark all as read
   const markAllAsRead = async () => {
     try {
-      const unreadIds = notifications.filter((n: any) => !n.isRead).map((n: any) => n.id);
+      const unreadIds = notifications
+        .filter((n: any) => !n.isRead)
+        .map((n: any) => n.id);
 
       if (unreadIds.length === 0) return;
 
@@ -201,8 +216,8 @@ export function NotificationCenter({
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ isRead: true }),
-          })
-        )
+          }),
+        ),
       );
 
       setNotifications((prev) =>
@@ -210,13 +225,13 @@ export function NotificationCenter({
           ...notif,
           isRead: true,
           readAt: notif.readAt || new Date().toISOString(),
-        }))
+        })),
       );
       setUnreadCount(0);
     } catch (err) {
       logger.error("Failed to mark all as read:", {
-      error: err instanceof Error ? err.message : String(err),
-    });
+        error: err instanceof Error ? err.message : String(err),
+      });
     }
   };
 
@@ -236,8 +251,8 @@ export function NotificationCenter({
       }
     } catch (err) {
       logger.error("Failed to clear notifications:", {
-      error: err instanceof Error ? err.message : String(err),
-    });
+        error: err instanceof Error ? err.message : String(err),
+      });
     }
   };
 
@@ -281,7 +296,7 @@ export function NotificationCenter({
 
   // Filter notifications
   const filteredNotifications = notifications.filter((notif: any) =>
-    filter === "all" ? true : !notif.isRead
+    filter === "all" ? true : !notif.isRead,
   );
 
   // Animation variants
@@ -395,10 +410,11 @@ export function NotificationCenter({
               setFilter("all");
               setPage(1);
             }}
-            className={`px-4 py-2 text-sm font-medium transition ${filter === "all"
-              ? "border-b-2 border-blue-600 text-blue-600"
-              : "text-gray-600 hover:text-gray-900"
-              }`}
+            className={`px-4 py-2 text-sm font-medium transition ${
+              filter === "all"
+                ? "border-b-2 border-blue-600 text-blue-600"
+                : "text-gray-600 hover:text-gray-900"
+            }`}
           >
             All ({notifications.length})
           </button>
@@ -407,10 +423,11 @@ export function NotificationCenter({
               setFilter("unread");
               setPage(1);
             }}
-            className={`px-4 py-2 text-sm font-medium transition ${filter === "unread"
-              ? "border-b-2 border-blue-600 text-blue-600"
-              : "text-gray-600 hover:text-gray-900"
-              }`}
+            className={`px-4 py-2 text-sm font-medium transition ${
+              filter === "unread"
+                ? "border-b-2 border-blue-600 text-blue-600"
+                : "text-gray-600 hover:text-gray-900"
+            }`}
           >
             Unread ({unreadCount})
           </button>
@@ -455,19 +472,27 @@ export function NotificationCenter({
                       ...staggerTransition,
                       delay: prefersReducedMotion ? 0 : index * 0.05,
                     }}
-                    onClick={() => !notification.isRead && !isBeingMarked && markAsRead(notification.id)}
-                    className={`p-4 rounded-lg border-l-4 transition cursor-pointer ${notification.isRead
-                      ? "bg-gray-50 border-gray-300"
-                      : `bg-${color}-50 border-${color}-500 hover:bg-${color}-100`
-                      } ${isBeingMarked ? "opacity-50" : ""}`}
+                    onClick={() =>
+                      !notification.isRead &&
+                      !isBeingMarked &&
+                      markAsRead(notification.id)
+                    }
+                    className={`p-4 rounded-lg border-l-4 transition cursor-pointer ${
+                      notification.isRead
+                        ? "bg-gray-50 border-gray-300"
+                        : `bg-${color}-50 border-${color}-500 hover:bg-${color}-100`
+                    } ${isBeingMarked ? "opacity-50" : ""}`}
                   >
                     <div className="flex items-start gap-3">
                       <span className="text-2xl flex-shrink-0">{icon}</span>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-2">
                           <p
-                            className={`font-semibold ${notification.isRead ? "text-gray-700" : "text-gray-900"
-                              }`}
+                            className={`font-semibold ${
+                              notification.isRead
+                                ? "text-gray-700"
+                                : "text-gray-900"
+                            }`}
                           >
                             {notification.title}
                           </p>
@@ -481,8 +506,11 @@ export function NotificationCenter({
                           )}
                         </div>
                         <p
-                          className={`text-sm mt-1 ${notification.isRead ? "text-gray-600" : "text-gray-700"
-                            }`}
+                          className={`text-sm mt-1 ${
+                            notification.isRead
+                              ? "text-gray-600"
+                              : "text-gray-700"
+                          }`}
                         >
                           {notification.body}
                         </p>

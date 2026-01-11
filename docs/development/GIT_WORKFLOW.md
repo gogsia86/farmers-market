@@ -29,6 +29,7 @@ We use a **modified Git Flow** optimized for continuous deployment with clear se
 ### Permanent Branches
 
 #### `main` (Production)
+
 - **Purpose:** Production-ready code
 - **Protection:** Fully protected, requires PR + reviews
 - **Deployment:** Auto-deploys to production
@@ -36,12 +37,14 @@ We use a **modified Git Flow** optimized for continuous deployment with clear se
 - **Direct Commits:** ❌ Never
 
 **Rules:**
+
 - All tests must pass
 - 2+ approvals required
 - No merge commits (squash or rebase)
 - Must be deployable at all times
 
 #### `develop` (Integration)
+
 - **Purpose:** Integration branch for features
 - **Protection:** Protected, requires PR + 1 review
 - **Deployment:** Auto-deploys to staging
@@ -49,6 +52,7 @@ We use a **modified Git Flow** optimized for continuous deployment with clear se
 - **Direct Commits:** ❌ Never (except hotfix merges)
 
 **Rules:**
+
 - All tests must pass
 - 1+ approval required
 - Regular sync with `main`
@@ -58,9 +62,11 @@ We use a **modified Git Flow** optimized for continuous deployment with clear se
 ### Temporary Branches
 
 #### Feature Branches: `feature/*`
+
 **Purpose:** New features and enhancements
 
 **Naming Convention:**
+
 ```
 feature/<ticket-number>-<short-description>
 feature/issue-123-farmer-certification
@@ -69,12 +75,14 @@ feature/real-time-notifications
 ```
 
 **Lifecycle:**
+
 1. Branch from `develop`
 2. Implement feature + tests
 3. PR to `develop`
 4. Delete after merge
 
 **Example:**
+
 ```bash
 git checkout develop
 git pull origin develop
@@ -93,9 +101,11 @@ git push origin feature/issue-123-farmer-certification
 ---
 
 #### Bug Fix Branches: `fix/*`
+
 **Purpose:** Bug fixes
 
 **Naming Convention:**
+
 ```
 fix/<ticket-number>-<short-description>
 fix/issue-456-payment-webhook
@@ -104,12 +114,14 @@ fix/image-upload-timeout
 ```
 
 **Lifecycle:**
+
 1. Branch from `develop` (or `main` for hotfixes)
 2. Fix bug + add regression test
 3. PR to source branch
 4. Delete after merge
 
 **Example:**
+
 ```bash
 git checkout develop
 git pull origin develop
@@ -125,9 +137,11 @@ git push origin fix/issue-456-payment-webhook
 ---
 
 #### Hotfix Branches: `hotfix/*`
+
 **Purpose:** Critical production fixes that can't wait
 
 **Naming Convention:**
+
 ```
 hotfix/<version>-<critical-issue>
 hotfix/1.2.1-payment-failure
@@ -135,6 +149,7 @@ hotfix/1.2.2-security-patch
 ```
 
 **Lifecycle:**
+
 1. Branch from `main`
 2. Fix critical issue
 3. PR to `main` AND `develop`
@@ -142,6 +157,7 @@ hotfix/1.2.2-security-patch
 5. Delete after merge
 
 **Example:**
+
 ```bash
 git checkout main
 git pull origin main
@@ -164,9 +180,11 @@ git push origin develop
 ---
 
 #### Release Branches: `release/*`
+
 **Purpose:** Prepare for production release
 
 **Naming Convention:**
+
 ```
 release/<version>
 release/1.2.0
@@ -174,6 +192,7 @@ release/2.0.0-beta
 ```
 
 **Lifecycle:**
+
 1. Branch from `develop`
 2. Final testing, bug fixes only
 3. Update version numbers
@@ -182,6 +201,7 @@ release/2.0.0-beta
 6. Delete after merge
 
 **Example:**
+
 ```bash
 git checkout develop
 git pull origin develop
@@ -207,9 +227,11 @@ git push origin v1.2.0
 ---
 
 #### Documentation Branches: `docs/*`
+
 **Purpose:** Documentation updates only
 
 **Naming Convention:**
+
 ```
 docs/<area>-<description>
 docs/api-endpoints
@@ -218,6 +240,7 @@ docs/onboarding-update
 ```
 
 **Lifecycle:**
+
 1. Branch from `develop`
 2. Update documentation
 3. PR to `develop`
@@ -226,9 +249,11 @@ docs/onboarding-update
 ---
 
 #### Refactor Branches: `refactor/*`
+
 **Purpose:** Code refactoring without behavior changes
 
 **Naming Convention:**
+
 ```
 refactor/<component>-<description>
 refactor/order-service-architecture
@@ -238,9 +263,11 @@ refactor/simplify-auth-flow
 ---
 
 #### Test Branches: `test/*`
+
 **Purpose:** Test additions or improvements
 
 **Naming Convention:**
+
 ```
 test/<area>-<test-type>
 test/orders-e2e
@@ -250,9 +277,11 @@ test/payment-integration
 ---
 
 #### Chore Branches: `chore/*`
+
 **Purpose:** Maintenance tasks, dependency updates
 
 **Naming Convention:**
+
 ```
 chore/<task-description>
 chore/update-dependencies
@@ -277,19 +306,19 @@ We follow [Conventional Commits](https://www.conventionalcommits.org/):
 
 ### Commit Types
 
-| Type | Description | Example |
-|------|-------------|---------|
-| `feat` | New feature | `feat(farms): add organic certification` |
-| `fix` | Bug fix | `fix(orders): prevent duplicate submissions` |
-| `docs` | Documentation | `docs(api): update endpoint examples` |
-| `style` | Formatting | `style(components): run prettier` |
-| `refactor` | Code restructuring | `refactor(auth): simplify token validation` |
-| `perf` | Performance | `perf(search): optimize farm queries` |
-| `test` | Tests | `test(orders): add cancellation tests` |
-| `chore` | Maintenance | `chore(deps): update Next.js to 15.1` |
-| `ci` | CI/CD | `ci(github): add security scan workflow` |
-| `build` | Build system | `build(webpack): optimize bundle size` |
-| `revert` | Revert commit | `revert: feat(farms): add certification` |
+| Type       | Description        | Example                                      |
+| ---------- | ------------------ | -------------------------------------------- |
+| `feat`     | New feature        | `feat(farms): add organic certification`     |
+| `fix`      | Bug fix            | `fix(orders): prevent duplicate submissions` |
+| `docs`     | Documentation      | `docs(api): update endpoint examples`        |
+| `style`    | Formatting         | `style(components): run prettier`            |
+| `refactor` | Code restructuring | `refactor(auth): simplify token validation`  |
+| `perf`     | Performance        | `perf(search): optimize farm queries`        |
+| `test`     | Tests              | `test(orders): add cancellation tests`       |
+| `chore`    | Maintenance        | `chore(deps): update Next.js to 15.1`        |
+| `ci`       | CI/CD              | `ci(github): add security scan workflow`     |
+| `build`    | Build system       | `build(webpack): optimize bundle size`       |
+| `revert`   | Revert commit      | `revert: feat(farms): add certification`     |
 
 ### Scope Examples
 
@@ -364,6 +393,7 @@ asdfasdf
 ### Commit Best Practices
 
 **DO:**
+
 - ✅ Write in present tense ("add feature" not "added feature")
 - ✅ Use imperative mood ("move cursor to" not "moves cursor to")
 - ✅ Capitalize first letter of subject
@@ -371,10 +401,11 @@ asdfasdf
 - ✅ Keep subject under 72 characters
 - ✅ Separate subject from body with blank line
 - ✅ Wrap body at 72 characters
-- ✅ Explain *what* and *why*, not *how*
+- ✅ Explain _what_ and _why_, not _how_
 - ✅ Reference issues/PRs in footer
 
 **DON'T:**
+
 - ❌ Use vague messages ("fix bug", "update code")
 - ❌ Combine unrelated changes in one commit
 - ❌ Commit broken/incomplete code
@@ -590,6 +621,7 @@ git revert -m 1 <merge-commit-hash>
 ### Before Requesting Review
 
 **Checklist:**
+
 - [ ] All tests pass locally
 - [ ] No TypeScript errors
 - [ ] No linting errors
@@ -603,6 +635,7 @@ git revert -m 1 <merge-commit-hash>
 ### Requesting Review
 
 1. **Push to GitHub**
+
    ```bash
    git push origin feature/your-branch-name
    ```
@@ -623,6 +656,7 @@ git revert -m 1 <merge-commit-hash>
 ### Reviewer Guidelines
 
 **What to Look For:**
+
 - Code correctness and logic
 - Edge cases and error handling
 - Test coverage
@@ -632,6 +666,7 @@ git revert -m 1 <merge-commit-hash>
 - Documentation completeness
 
 **How to Review:**
+
 - Be respectful and constructive
 - Explain the "why" behind suggestions
 - Approve if minor issues (nits)
@@ -671,6 +706,7 @@ git push origin --delete v1.2.0  # remote
 ### Release Process
 
 1. **Create Release Branch**
+
    ```bash
    git checkout develop
    git pull origin develop
@@ -678,6 +714,7 @@ git push origin --delete v1.2.0  # remote
    ```
 
 2. **Update Version**
+
    ```bash
    npm version 1.2.0
    ```
@@ -695,6 +732,7 @@ git push origin --delete v1.2.0  # remote
    - Security scan
 
 5. **Merge to Main**
+
    ```bash
    # Create PR: release/1.2.0 → main
    # After approval and merge:
@@ -703,12 +741,14 @@ git push origin --delete v1.2.0  # remote
    ```
 
 6. **Tag Release**
+
    ```bash
    git tag -a v1.2.0 -m "Release 1.2.0"
    git push origin v1.2.0
    ```
 
 7. **Merge Back to Develop**
+
    ```bash
    git checkout develop
    git merge main
@@ -975,11 +1015,13 @@ Thumbs.db
 ## 📖 Additional Resources
 
 ### Internal Documentation
+
 - [Contributing Guide](../../CONTRIBUTING.md)
 - [Code Review Standards](../code-review/CODE_REVIEW_STANDARDS.md)
 - [Testing Standards](../testing/TESTING_STANDARDS.md)
 
 ### External Resources
+
 - [Pro Git Book](https://git-scm.com/book/en/v2)
 - [Conventional Commits](https://www.conventionalcommits.org/)
 - [Git Flow](https://nvie.com/posts/a-successful-git-branching-model/)
@@ -990,11 +1032,13 @@ Thumbs.db
 ## 🤝 Getting Help
 
 **Questions about Git workflow?**
+
 - Slack: #engineering
 - Documentation: This guide
 - Git issues: Ask senior developers
 
 **Git problems?**
+
 - Check Git documentation: `git help <command>`
 - Search GitHub discussions
 - Ask in #engineering-help
@@ -1005,6 +1049,6 @@ Thumbs.db
 
 ---
 
-*Last Updated: January 2025*  
-*Version: 1.0*  
-*Owner: Technical Lead*
+_Last Updated: January 2025_  
+_Version: 1.0_  
+_Owner: Technical Lead_

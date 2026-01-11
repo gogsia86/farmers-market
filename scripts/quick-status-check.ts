@@ -43,14 +43,14 @@ const icon = {
 function printHeader(title: string) {
   console.log("\n" + "=".repeat(80));
   console.log(
-    `${colors.bright}${colors.cyan}${icon.rocket} ${title}${colors.reset}`
+    `${colors.bright}${colors.cyan}${icon.rocket} ${title}${colors.reset}`,
   );
   console.log("=".repeat(80) + "\n");
 }
 
 function printSection(title: string) {
   console.log(
-    `\n${colors.bright}${colors.blue}${icon.check} ${title}${colors.reset}\n`
+    `\n${colors.bright}${colors.blue}${icon.check} ${title}${colors.reset}\n`,
   );
 }
 

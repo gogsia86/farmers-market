@@ -1,4 +1,5 @@
 # 🚀 GitHub Actions Setup Guide
+
 ## Automated Vercel Deployments via CI/CD
 
 **Last Updated**: January 6, 2026
@@ -102,17 +103,20 @@ cat .vercel/project.json
 Add these three secrets one by one:
 
 **Secret 1: VERCEL_TOKEN**
+
 - Name: `VERCEL_TOKEN`
 - Value: `[paste token from Step 1.1]`
 - Click **Add secret**
 
 **Secret 2: VERCEL_ORG_ID**
+
 - Name: `VERCEL_ORG_ID`
 - Value: `[paste org ID from Step 1.2]`
 - Example: `gogsias-projects` or `team_xxxxxxxxxxxxx`
 - Click **Add secret**
 
 **Secret 3: VERCEL_PROJECT_ID**
+
 - Name: `VERCEL_PROJECT_ID`
 - Value: `[paste project ID from Step 1.3]`
 - Example: `prj_xxxxxxxxxxxxx`
@@ -242,10 +246,12 @@ git push origin test-preview
 ### Production Workflow (`vercel-production.yml`)
 
 **Triggers:**
+
 - Push to `master` or `main` branch
 - Manual trigger from GitHub UI (Actions → Deploy to Vercel Production → Run workflow)
 
 **Steps:**
+
 1. Quality checks (lint, type-check)
 2. Build test
 3. Deploy to Vercel production
@@ -259,10 +265,12 @@ git push origin test-preview
 ### Preview Workflow (`vercel-preview.yml`)
 
 **Triggers:**
+
 - Pull request opened, updated, or reopened
 - Manual trigger from GitHub UI
 
 **Steps:**
+
 1. Quality checks
 2. Build test
 3. Deploy to Vercel preview
@@ -291,6 +299,7 @@ gh run watch
 ```
 
 **Or via GitHub UI:**
+
 1. Go to **Actions** tab
 2. Click on any workflow run
 3. Expand jobs to see detailed logs
@@ -315,6 +324,7 @@ npx vercel logs [deployment-url]
 **Cause**: `VERCEL_PROJECT_ID` or `VERCEL_ORG_ID` is incorrect
 
 **Solution**:
+
 ```bash
 # Re-link project
 npx vercel link
@@ -328,6 +338,7 @@ cat .vercel/project.json
 **Cause**: `VERCEL_TOKEN` is expired or incorrect
 
 **Solution**:
+
 1. Create a new token at https://vercel.com/account/tokens
 2. Update `VERCEL_TOKEN` secret in GitHub
 3. Re-run the workflow
@@ -337,6 +348,7 @@ cat .vercel/project.json
 **Cause**: TypeScript errors, missing dependencies, or environment variables
 
 **Solution**:
+
 ```bash
 # Test build locally
 npm run build
@@ -353,6 +365,7 @@ npx tsc --noEmit
 **Cause**: Deployment successful but endpoints not responding
 
 **Solution**:
+
 1. Check Vercel runtime logs: `npx vercel logs [url]`
 2. Verify environment variables in Vercel dashboard
 3. Check database connectivity
@@ -374,7 +387,7 @@ Edit `.github/workflows/vercel-production.yml`:
 
 # Update needs in deploy-production
 deploy-production:
-  needs: [build-test]  # Remove quality-checks
+  needs: [build-test] # Remove quality-checks
 ```
 
 ### Add Slack Notifications
@@ -435,12 +448,14 @@ Add this step after successful deployment:
 ### Protect Secrets
 
 ✅ **DO:**
+
 - Use GitHub Secrets for all sensitive data
 - Rotate Vercel tokens every 90 days
 - Use least-privilege tokens (project-specific if possible)
 - Review secret access regularly
 
 ❌ **DON'T:**
+
 - Commit secrets to git
 - Share tokens in chat or email
 - Use personal tokens for team projects
@@ -481,7 +496,7 @@ The workflows already cache npm dependencies:
 - uses: actions/setup-node@v4
   with:
     node-version: "20.x"
-    cache: "npm"  # ← Caches node_modules
+    cache: "npm" # ← Caches node_modules
 ```
 
 ### Parallel Jobs
@@ -503,7 +518,7 @@ jobs:
         run: npx tsc --noEmit
 
   deploy:
-    needs: [lint, typecheck]  # Wait for both
+    needs: [lint, typecheck] # Wait for both
 ```
 
 ### Conditional Deployments
@@ -515,9 +530,9 @@ on:
   push:
     branches: [master]
     paths-ignore:
-      - '**.md'
-      - 'docs/**'
-      - '.github/**'
+      - "**.md"
+      - "docs/**"
+      - ".github/**"
 ```
 
 ---
@@ -527,6 +542,7 @@ on:
 ### Workflow Not Triggering
 
 **Check:**
+
 1. Workflow file syntax is valid (YAML)
 2. Secrets are correctly set
 3. GitHub Actions is enabled (Settings → Actions → General)
@@ -535,6 +551,7 @@ on:
 ### Deployment Succeeds But Site Broken
 
 **Check:**
+
 1. Vercel environment variables (Dashboard → Settings → Environment Variables)
 2. Database connectivity from Vercel
 3. Runtime logs: `npx vercel logs [url]`
@@ -543,6 +560,7 @@ on:
 ### Slow Deployments
 
 **Optimize:**
+
 1. Enable dependency caching (already enabled)
 2. Reduce build output size
 3. Use incremental builds
@@ -553,16 +571,19 @@ on:
 ## 📚 Additional Resources
 
 ### Documentation
+
 - [GitHub Actions Docs](https://docs.github.com/en/actions)
 - [Vercel CLI Docs](https://vercel.com/docs/cli)
 - [Vercel GitHub Integration](https://vercel.com/docs/git/vercel-for-github)
 
 ### Internal Documentation
+
 - [Deployment Troubleshooting](./DEPLOYMENT_TROUBLESHOOTING.md)
 - [Vercel Build Fixes](./VERCEL_BUILD_FIXES.md)
 - [Environment Variables Setup](./ADD_ENV_VARS.md)
 
 ### Support
+
 - **GitHub Actions**: https://github.com/features/actions
 - **Vercel Support**: support@vercel.com
 - **Vercel Status**: https://www.vercel-status.com
@@ -574,6 +595,7 @@ on:
 Use this checklist to verify everything is working:
 
 ### Initial Setup
+
 - [ ] Created Vercel authentication token
 - [ ] Found Vercel Organization ID
 - [ ] Found Vercel Project ID
@@ -582,6 +604,7 @@ Use this checklist to verify everything is working:
 - [ ] Pushed to master branch
 
 ### First Deployment
+
 - [ ] Workflow triggered automatically
 - [ ] Quality checks passed
 - [ ] Build test passed
@@ -591,6 +614,7 @@ Use this checklist to verify everything is working:
 - [ ] Commit comment posted with URL
 
 ### Verification
+
 - [ ] Production URL is accessible: https://farmers-market-platform.vercel.app
 - [ ] Health endpoint returns 200: `/api/health`
 - [ ] Homepage loads without errors: `/`
@@ -599,6 +623,7 @@ Use this checklist to verify everything is working:
 - [ ] GitHub Actions badge is green
 
 ### Optional Testing
+
 - [ ] Created test branch
 - [ ] Created pull request
 - [ ] Preview deployment triggered
@@ -620,6 +645,7 @@ Once all checks pass, you have:
 ✅ Build artifacts and reports
 
 **Next Steps:**
+
 1. Share workflow documentation with team
 2. Set up Slack/email notifications (optional)
 3. Configure environment protection rules
@@ -631,6 +657,7 @@ Once all checks pass, you have:
 ## 🔄 Maintenance
 
 ### Monthly Tasks
+
 - [ ] Review GitHub Actions usage (Settings → Billing)
 - [ ] Check Vercel build minutes used
 - [ ] Audit secret access logs
@@ -638,6 +665,7 @@ Once all checks pass, you have:
 - [ ] Update dependencies
 
 ### Quarterly Tasks
+
 - [ ] Rotate Vercel tokens
 - [ ] Review and optimize workflow performance
 - [ ] Update Node.js version if needed

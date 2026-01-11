@@ -3,7 +3,8 @@ import { SwaggerUI } from "@/components/api-docs/SwaggerUI";
 
 export const metadata: Metadata = {
   title: "API Documentation | Farmers Market Platform",
-  description: "Interactive REST API documentation for the Farmers Market Platform",
+  description:
+    "Interactive REST API documentation for the Farmers Market Platform",
   robots: {
     index: false,
     follow: false,
@@ -62,13 +63,19 @@ export default function ApiDocsPage() {
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center gap-6 text-sm">
             <span className="font-semibold text-blue-900">Quick Links:</span>
-            <a href="#tag/Authentication" className="text-blue-700 hover:text-blue-800">
+            <a
+              href="#tag/Authentication"
+              className="text-blue-700 hover:text-blue-800"
+            >
               Authentication
             </a>
             <a href="#tag/Farms" className="text-blue-700 hover:text-blue-800">
               Farms
             </a>
-            <a href="#tag/Products" className="text-blue-700 hover:text-blue-800">
+            <a
+              href="#tag/Products"
+              className="text-blue-700 hover:text-blue-800"
+            >
               Products
             </a>
             <a href="#tag/Orders" className="text-blue-700 hover:text-blue-800">
@@ -77,7 +84,10 @@ export default function ApiDocsPage() {
             <a href="#tag/Cart" className="text-blue-700 hover:text-blue-800">
               Cart
             </a>
-            <a href="#components/schemas" className="text-blue-700 hover:text-blue-800">
+            <a
+              href="#components/schemas"
+              className="text-blue-700 hover:text-blue-800"
+            >
               Schemas
             </a>
           </div>
@@ -95,10 +105,7 @@ export default function ApiDocsPage() {
           <div className="flex items-center justify-between text-sm text-gray-600">
             <div className="flex items-center gap-4">
               <span>© 2025 Farmers Market Platform</span>
-              <a
-                href="/docs"
-                className="text-blue-600 hover:text-blue-700"
-              >
+              <a href="/docs" className="text-blue-600 hover:text-blue-700">
                 Documentation
               </a>
               <a

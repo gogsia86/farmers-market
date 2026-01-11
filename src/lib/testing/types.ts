@@ -5,56 +5,69 @@
  * Consolidated type system for all testing and monitoring bots
  */
 
-import type { Browser, BrowserContext, Page } from 'playwright';
+import type { Browser, BrowserContext, Page } from "playwright";
 
 // ============================================================================
 // CORE TYPES
 // ============================================================================
 
-export type TestStatus = 'PASSED' | 'FAILED' | 'WARNING' | 'SKIPPED';
-export type TestPriority = 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW' | 'OPTIONAL' | 'NICE_TO_HAVE';
+export type TestStatus = "PASSED" | "FAILED" | "WARNING" | "SKIPPED";
+export type TestPriority =
+  | "CRITICAL"
+  | "HIGH"
+  | "MEDIUM"
+  | "LOW"
+  | "OPTIONAL"
+  | "NICE_TO_HAVE";
 export type TestCategory =
-  | 'AUTH'
-  | 'MARKETPLACE'
-  | 'CART'
-  | 'CHECKOUT'
-  | 'FARMER'
-  | 'ADMIN'
-  | 'HEALTH'
-  | 'SECURITY'
-  | 'PERFORMANCE'
-  | 'ACCESSIBILITY'
-  | 'MOBILE'
-  | 'IMPORTANT'
-  | 'general';
+  | "AUTH"
+  | "MARKETPLACE"
+  | "CART"
+  | "CHECKOUT"
+  | "FARMER"
+  | "ADMIN"
+  | "HEALTH"
+  | "SECURITY"
+  | "PERFORMANCE"
+  | "ACCESSIBILITY"
+  | "MOBILE"
+  | "IMPORTANT"
+  | "general";
 
-export type ExecutionMode = 'single' | 'suite' | 'continuous' | 'scheduled' | 'sequential' | 'parallel' | 'limited-parallel';
-export type ReportFormat = 'json' | 'html' | 'markdown' | 'console';
+export type ExecutionMode =
+  | "single"
+  | "suite"
+  | "continuous"
+  | "scheduled"
+  | "sequential"
+  | "parallel"
+  | "limited-parallel";
+export type ReportFormat = "json" | "html" | "markdown" | "console";
 export type EventType =
-  | 'module:registered'
-  | 'module:started'
-  | 'module:completed'
-  | 'module:failed'
-  | 'module:retry'
-  | 'suite:registered'
-  | 'suite:started'
-  | 'suite:completed'
-  | 'suite:failed'
-  | 'suite:setup:complete'
-  | 'suite:teardown:complete'
-  | 'test:started'
-  | 'test:passed'
-  | 'test:failed'
-  | 'test:skipped'
-  | 'report:generated'
-  | 'monitoring:started'
-  | 'monitoring:stopped'
-  | 'monitoring:cycle:completed'
-  | 'monitoring:cycle:failed'
-  | 'monitoring:failures:detected'
-  | 'engine:cleanup:complete'
-  | 'error'
-  | '*';
+  | "module:registered"
+  | "module:started"
+  | "module:completed"
+  | "module:failed"
+  | "module:retry"
+  | "suite:registered"
+  | "suite:started"
+  | "suite:completed"
+  | "suite:failed"
+  | "suite:setup:complete"
+  | "suite:teardown:complete"
+  | "test:started"
+  | "test:passed"
+  | "test:failed"
+  | "test:skipped"
+  | "report:generated"
+  | "monitoring:started"
+  | "monitoring:stopped"
+  | "monitoring:cycle:completed"
+  | "monitoring:cycle:failed"
+  | "monitoring:failures:detected"
+  | "engine:cleanup:complete"
+  | "error"
+  | "*";
 
 // ============================================================================
 // CONFIGURATION
@@ -131,7 +144,7 @@ export interface BotConfig {
 
   // Logging
   logging: {
-    level: 'debug' | 'info' | 'warn' | 'error';
+    level: "debug" | "info" | "warn" | "error";
     console: boolean;
     file: boolean;
     filePath?: string;
@@ -194,7 +207,7 @@ export interface BotModule {
 export interface BotResult {
   moduleId: string;
   moduleName: string;
-  status: 'success' | 'failed' | 'warning' | 'skipped';
+  status: "success" | "failed" | "warning" | "skipped";
   timestamp: string;
   duration: number;
   error?: string;
@@ -450,18 +463,24 @@ export interface BotReport {
     successRate: number;
 
     // By category
-    byCategory: Record<TestCategory, {
-      total: number;
-      passed: number;
-      failed: number;
-    }>;
+    byCategory: Record<
+      TestCategory,
+      {
+        total: number;
+        passed: number;
+        failed: number;
+      }
+    >;
 
     // By priority
-    byPriority: Record<TestPriority, {
-      total: number;
-      passed: number;
-      failed: number;
-    }>;
+    byPriority: Record<
+      TestPriority,
+      {
+        total: number;
+        passed: number;
+        failed: number;
+      }
+    >;
   };
 
   // Critical issues
@@ -471,7 +490,7 @@ export interface BotReport {
 
   // System health
   systemHealth?: {
-    status: 'healthy' | 'degraded' | 'down';
+    status: "healthy" | "degraded" | "down";
     uptime: number;
     lastIncident?: Date;
   };
@@ -492,7 +511,7 @@ export interface MonitoringCheck {
   id: string;
   name: string;
   endpoint: string;
-  method: 'GET' | 'POST' | 'PUT' | 'DELETE';
+  method: "GET" | "POST" | "PUT" | "DELETE";
   expectedStatus: number;
   timeout: number;
   interval: number;
@@ -501,7 +520,7 @@ export interface MonitoringCheck {
 export interface MonitoringResult {
   checkId: string;
   timestamp: Date;
-  status: 'UP' | 'DOWN' | 'DEGRADED';
+  status: "UP" | "DOWN" | "DEGRADED";
   responseTime: number;
   statusCode?: number;
   error?: string;
@@ -509,7 +528,7 @@ export interface MonitoringResult {
 
 export interface HealthCheckReport {
   timestamp: Date;
-  overall: 'healthy' | 'degraded' | 'down';
+  overall: "healthy" | "degraded" | "down";
   checks: MonitoringResult[];
   metrics: {
     avgResponseTime: number;
@@ -677,16 +696,16 @@ export interface AssertionResult {
 // ============================================================================
 
 export type BotEventType =
-  | 'bot:started'
-  | 'bot:stopped'
-  | 'suite:started'
-  | 'suite:completed'
-  | 'test:started'
-  | 'test:completed'
-  | 'test:failed'
-  | 'test:skipped'
-  | 'report:generated'
-  | 'error:critical';
+  | "bot:started"
+  | "bot:stopped"
+  | "suite:started"
+  | "suite:completed"
+  | "test:started"
+  | "test:completed"
+  | "test:failed"
+  | "test:skipped"
+  | "report:generated"
+  | "error:critical";
 
 export interface BotEvent {
   type: EventType;
@@ -714,14 +733,14 @@ export interface NotificationConfig {
 }
 
 export interface NotificationChannel {
-  type: 'email' | 'slack' | 'webhook' | 'console';
+  type: "email" | "slack" | "webhook" | "console";
   config: Record<string, any>;
 }
 
 export interface NotificationPayload {
   title: string;
   message: string;
-  severity: 'info' | 'warning' | 'error' | 'critical';
+  severity: "info" | "warning" | "error" | "critical";
   report?: BotReport;
   timestamp: Date;
 }
@@ -730,8 +749,4 @@ export interface NotificationPayload {
 // EXPORTS
 // ============================================================================
 
-export type {
-  Browser,
-  BrowserContext,
-  Page
-} from 'playwright';
+export type { Browser, BrowserContext, Page } from "playwright";

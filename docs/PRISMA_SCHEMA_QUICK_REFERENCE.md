@@ -9,26 +9,28 @@
 ## 📦 Order Model
 
 ### ✅ Correct Field Names
+
 ```typescript
-order.id                    // string (cuid)
-order.orderNumber           // string (unique)
-order.customerId            // string
-order.farmId                // string
-order.status                // OrderStatus enum
-order.paymentStatus         // PaymentStatus enum
-order.subtotal              // Decimal ✓ NOT totalPrice!
-order.deliveryFee           // Decimal
-order.platformFee           // Decimal
-order.tax                   // Decimal
-order.discount              // Decimal
-order.total                 // Decimal ✓ NOT totalPrice!
-order.farmerAmount          // Decimal
-order.fulfillmentMethod     // FulfillmentMethod enum
-order.createdAt             // DateTime
-order.updatedAt             // DateTime
+order.id; // string (cuid)
+order.orderNumber; // string (unique)
+order.customerId; // string
+order.farmId; // string
+order.status; // OrderStatus enum
+order.paymentStatus; // PaymentStatus enum
+order.subtotal; // Decimal ✓ NOT totalPrice!
+order.deliveryFee; // Decimal
+order.platformFee; // Decimal
+order.tax; // Decimal
+order.discount; // Decimal
+order.total; // Decimal ✓ NOT totalPrice!
+order.farmerAmount; // Decimal
+order.fulfillmentMethod; // FulfillmentMethod enum
+order.createdAt; // DateTime
+order.updatedAt; // DateTime
 ```
 
 ### ✅ Correct Relations
+
 ```typescript
 // In queries/includes:
 include: {
@@ -43,11 +45,12 @@ include: {
 ```
 
 ### ❌ Common Mistakes
+
 ```typescript
-order.totalPrice     // ✗ WRONG - use order.total
-order.orderItems     // ✗ WRONG - use order.items
-order.payment        // ✗ WRONG - use order.Payment (capital P)
-order.user           // ✗ WRONG - use order.customer
+order.totalPrice; // ✗ WRONG - use order.total
+order.orderItems; // ✗ WRONG - use order.items
+order.payment; // ✗ WRONG - use order.Payment (capital P)
+order.user; // ✗ WRONG - use order.customer
 ```
 
 ---
@@ -55,32 +58,35 @@ order.user           // ✗ WRONG - use order.customer
 ## 💳 Payment Model
 
 ### ✅ Correct Field Names
+
 ```typescript
-payment.id                      // string (cuid)
-payment.orderId                 // string (unique)
-payment.amount                  // Decimal
-payment.currency                // string
-payment.status                  // PaymentStatus enum
-payment.paymentMethod           // string
-payment.stripePaymentIntentId   // string | null
-payment.paidAt                  // DateTime | null
-payment.failureReason           // string | null
-payment.receiptUrl              // string | null
-payment.createdAt               // DateTime
-payment.updatedAt               // DateTime
+payment.id; // string (cuid)
+payment.orderId; // string (unique)
+payment.amount; // Decimal
+payment.currency; // string
+payment.status; // PaymentStatus enum
+payment.paymentMethod; // string
+payment.stripePaymentIntentId; // string | null
+payment.paidAt; // DateTime | null
+payment.failureReason; // string | null
+payment.receiptUrl; // string | null
+payment.createdAt; // DateTime
+payment.updatedAt; // DateTime
 ```
 
 ### ⚠️ Fields That DON'T Exist
+
 ```typescript
-payment.refundAmount    // ✗ Use Refund model instead
-payment.refundedAt      // ✗ Use Refund model instead
-payment.metadata        // ✗ Not in Payment model
+payment.refundAmount; // ✗ Use Refund model instead
+payment.refundedAt; // ✗ Use Refund model instead
+payment.metadata; // ✗ Not in Payment model
 ```
 
 ### ✅ Correct Relations
+
 ```typescript
 include: {
-  order: true    // ✓ Order relation
+  order: true; // ✓ Order relation
 }
 ```
 
@@ -89,19 +95,21 @@ include: {
 ## 🔄 Refund Model (Separate from Payment!)
 
 ### ✅ Correct Field Names
+
 ```typescript
-refund.id              // string (cuid)
-refund.orderId         // string
-refund.amount          // Decimal
-refund.reason          // string
-refund.notes           // string | null
-refund.stripeRefundId  // string | null
-refund.status          // string
-refund.processedAt     // DateTime | null
-refund.createdAt       // DateTime
+refund.id; // string (cuid)
+refund.orderId; // string
+refund.amount; // Decimal
+refund.reason; // string
+refund.notes; // string | null
+refund.stripeRefundId; // string | null
+refund.status; // string
+refund.processedAt; // DateTime | null
+refund.createdAt; // DateTime
 ```
 
 ### ✅ Usage Pattern
+
 ```typescript
 // Create refund record
 await database.refund.create({
@@ -111,14 +119,14 @@ await database.refund.create({
     reason: "Customer request",
     stripeRefundId: stripeRefund.id,
     status: "COMPLETED",
-    processedAt: new Date()
-  }
+    processedAt: new Date(),
+  },
 });
 
 // Calculate total refunded
 const totalRefunded = await database.refund.aggregate({
   where: { orderId: order.id },
-  _sum: { amount: true }
+  _sum: { amount: true },
 });
 
 // Update payment status based on refunds
@@ -126,8 +134,8 @@ const isFullRefund = totalRefunded._sum.amount >= order.total;
 await database.payment.update({
   where: { orderId: order.id },
   data: {
-    status: isFullRefund ? "REFUNDED" : "PARTIALLY_REFUNDED"
-  }
+    status: isFullRefund ? "REFUNDED" : "PARTIALLY_REFUNDED",
+  },
 });
 ```
 
@@ -136,26 +144,29 @@ await database.payment.update({
 ## 📝 OrderItem Model
 
 ### ✅ Correct Field Names
+
 ```typescript
-orderItem.id              // string (cuid)
-orderItem.orderId         // string
-orderItem.productId       // string
-orderItem.productName     // string
-orderItem.quantity        // Decimal ✓ NOT number!
-orderItem.unit            // string
-orderItem.unitPrice       // Decimal ✓ NOT price!
-orderItem.subtotal        // Decimal
-orderItem.productSnapshot // Json | null
+orderItem.id; // string (cuid)
+orderItem.orderId; // string
+orderItem.productId; // string
+orderItem.productName; // string
+orderItem.quantity; // Decimal ✓ NOT number!
+orderItem.unit; // string
+orderItem.unitPrice; // Decimal ✓ NOT price!
+orderItem.subtotal; // Decimal
+orderItem.productSnapshot; // Json | null
 ```
 
 ### ❌ Common Mistakes
+
 ```typescript
-orderItem.price    // ✗ WRONG - use orderItem.unitPrice
-orderItem.qty      // ✗ WRONG - use orderItem.quantity
-orderItem.total    // ✗ WRONG - use orderItem.subtotal
+orderItem.price; // ✗ WRONG - use orderItem.unitPrice
+orderItem.qty; // ✗ WRONG - use orderItem.quantity
+orderItem.total; // ✗ WRONG - use orderItem.subtotal
 ```
 
 ### ✅ Correct Relations
+
 ```typescript
 include: {
   order: true,     // ✓ Order relation
@@ -168,31 +179,34 @@ include: {
 ## ⭐ Review Model
 
 ### ✅ Correct Field Names
+
 ```typescript
-review.id                 // string (cuid)
-review.farmId             // string
-review.productId          // string | null
-review.customerId         // string ✓ NOT userId!
-review.orderId            // string | null
-review.rating             // number (1-5)
-review.reviewText         // string | null
-review.status             // ReviewStatus enum
-review.flaggedReason      // string | null ✓ NOT moderationReason!
-review.flaggedAt          // DateTime | null
-review.moderatedBy        // string | null
-review.moderatedAt        // DateTime | null
-review.createdAt          // DateTime
-review.updatedAt          // DateTime
+review.id; // string (cuid)
+review.farmId; // string
+review.productId; // string | null
+review.customerId; // string ✓ NOT userId!
+review.orderId; // string | null
+review.rating; // number (1-5)
+review.reviewText; // string | null
+review.status; // ReviewStatus enum
+review.flaggedReason; // string | null ✓ NOT moderationReason!
+review.flaggedAt; // DateTime | null
+review.moderatedBy; // string | null
+review.moderatedAt; // DateTime | null
+review.createdAt; // DateTime
+review.updatedAt; // DateTime
 ```
 
 ### ❌ Fields That DON'T Exist
+
 ```typescript
-review.userId             // ✗ WRONG - use review.customerId
-review.moderationReason   // ✗ WRONG - use review.flaggedReason
-review.rejectedReason     // ✗ WRONG - use review.flaggedReason
+review.userId; // ✗ WRONG - use review.customerId
+review.moderationReason; // ✗ WRONG - use review.flaggedReason
+review.rejectedReason; // ✗ WRONG - use review.flaggedReason
 ```
 
 ### ✅ Correct Relations
+
 ```typescript
 include: {
   customer: true,  // ✓ User relation (NOT user!)
@@ -207,40 +221,44 @@ include: {
 ## 👮 AdminAction Model
 
 ### ✅ Correct Field Names
+
 ```typescript
-adminAction.id          // string (cuid)
-adminAction.type        // AdminActionType enum ✓ NOT actionType!
-adminAction.adminId     // string
-adminAction.targetId    // string | null
-adminAction.targetType  // string | null
-adminAction.description // string ✓ REQUIRED!
-adminAction.metadata    // Json | null ✓ NOT details!
-adminAction.ipAddress   // string | null
-adminAction.userAgent   // string | null
-adminAction.createdAt   // DateTime
+adminAction.id; // string (cuid)
+adminAction.type; // AdminActionType enum ✓ NOT actionType!
+adminAction.adminId; // string
+adminAction.targetId; // string | null
+adminAction.targetType; // string | null
+adminAction.description; // string ✓ REQUIRED!
+adminAction.metadata; // Json | null ✓ NOT details!
+adminAction.ipAddress; // string | null
+adminAction.userAgent; // string | null
+adminAction.createdAt; // DateTime
 ```
 
 ### ❌ Common Mistakes
+
 ```typescript
-adminAction.actionType  // ✗ WRONG - use adminAction.type
-adminAction.details     // ✗ WRONG - use adminAction.metadata
-adminAction.reason      // ✗ WRONG - use adminAction.description
+adminAction.actionType; // ✗ WRONG - use adminAction.type
+adminAction.details; // ✗ WRONG - use adminAction.metadata
+adminAction.reason; // ✗ WRONG - use adminAction.description
 ```
 
 ### ✅ Usage Pattern
+
 ```typescript
 await database.adminAction.create({
   data: {
     adminId: session.user.id,
-    type: "USER_SUSPENDED",        // ✓ Use 'type' not 'actionType'
+    type: "USER_SUSPENDED", // ✓ Use 'type' not 'actionType'
     targetType: "USER",
     targetId: userId,
     description: "User violated terms", // ✓ REQUIRED field
-    metadata: {                     // ✓ Use 'metadata' not 'details'
+    metadata: {
+      // ✓ Use 'metadata' not 'details'
       reason: "Spam content",
-      duration: "30 days"
-    }
-  }
+      duration: "30 days",
+    },
+  },
 });
 ```
 
@@ -249,6 +267,7 @@ await database.adminAction.create({
 ## 📊 Enums Reference
 
 ### OrderStatus
+
 ```typescript
 enum OrderStatus {
   PENDING    // ✓ Initial state
@@ -262,6 +281,7 @@ enum OrderStatus {
 ```
 
 ### PaymentStatus
+
 ```typescript
 enum PaymentStatus {
   PENDING              // ✓ Awaiting payment
@@ -274,6 +294,7 @@ enum PaymentStatus {
 ```
 
 ### ReviewStatus
+
 ```typescript
 enum ReviewStatus {
   PENDING   // ✓ Awaiting moderation
@@ -284,6 +305,7 @@ enum ReviewStatus {
 ```
 
 ### AdminActionType
+
 ```typescript
 enum AdminActionType {
   USER_APPROVED
@@ -305,6 +327,7 @@ enum AdminActionType {
 ```
 
 ### UserStatus
+
 ```typescript
 enum UserStatus {
   ACTIVE     // ✓ Active user
@@ -334,22 +357,22 @@ include: { payment: true }  // ✗ TypeScript error!
 
 ```typescript
 // Order relations (note the names):
-order.customer       // ✓ User (not 'user')
-order.items          // ✓ OrderItem[] (not 'orderItems')
-order.Payment        // ✓ Payment (capital P, not 'payment')
-order.farm           // ✓ Farm
-order.deliveryAddress // ✓ UserAddress
+order.customer; // ✓ User (not 'user')
+order.items; // ✓ OrderItem[] (not 'orderItems')
+order.Payment; // ✓ Payment (capital P, not 'payment')
+order.farm; // ✓ Farm
+order.deliveryAddress; // ✓ UserAddress
 
 // Review relations:
-review.customer      // ✓ User (not 'user')
-review.farm          // ✓ Farm
-review.product       // ✓ Product
-review.order         // ✓ Order
+review.customer; // ✓ User (not 'user')
+review.farm; // ✓ Farm
+review.product; // ✓ Product
+review.order; // ✓ Order
 
 // Product relations:
-product.farm         // ✓ Farm
-product.orderItems   // ✓ OrderItem[] (here it IS orderItems!)
-product.reviews      // ✓ Review[]
+product.farm; // ✓ Farm
+product.orderItems; // ✓ OrderItem[] (here it IS orderItems!)
+product.reviews; // ✓ Review[]
 ```
 
 ---
@@ -357,6 +380,7 @@ product.reviews      // ✓ Review[]
 ## 💡 Common Patterns
 
 ### Pattern 1: Fetch Order with Relations
+
 ```typescript
 const order = await database.order.findUnique({
   where: { id: orderId },
@@ -365,29 +389,30 @@ const order = await database.order.findUnique({
       select: {
         id: true,
         email: true,
-        name: true
-      }
+        name: true,
+      },
     },
     farm: true,
     items: {
       include: {
-        product: true
-      }
+        product: true,
+      },
     },
-    Payment: true,          // Capital P!
+    Payment: true, // Capital P!
     deliveryAddress: true,
-    refunds: true
-  }
+    refunds: true,
+  },
 });
 
 // Access fields:
-order.total             // ✓ NOT totalPrice
-order.items             // ✓ NOT orderItems
-order.Payment           // ✓ Capital P
-order.customer.email    // ✓ NOT order.user
+order.total; // ✓ NOT totalPrice
+order.items; // ✓ NOT orderItems
+order.Payment; // ✓ Capital P
+order.customer.email; // ✓ NOT order.user
 ```
 
 ### Pattern 2: Handle Decimal Types
+
 ```typescript
 // Convert Decimal to number for calculations
 const totalAmount = order.total.toNumber();
@@ -395,67 +420,70 @@ const subtotalAmount = parseFloat(order.subtotal.toString());
 
 // For comparisons
 const refundedAmount = totalRefunded._sum.amount
-  ? (typeof totalRefunded._sum.amount === 'number'
-      ? totalRefunded._sum.amount
-      : totalRefunded._sum.amount.toNumber())
+  ? typeof totalRefunded._sum.amount === "number"
+    ? totalRefunded._sum.amount
+    : totalRefunded._sum.amount.toNumber()
   : 0;
 ```
 
 ### Pattern 3: Create with Relations
+
 ```typescript
 await database.order.create({
   data: {
     orderNumber: generateOrderNumber(),
-    customerId: userId,        // ✓ NOT userId
+    customerId: userId, // ✓ NOT userId
     farmId: farmId,
     status: "PENDING",
     paymentStatus: "PENDING",
-    subtotal: 100.00,
-    total: 105.00,            // ✓ NOT totalPrice
-    farmerAmount: 95.00,
-    platformFee: 5.00,
+    subtotal: 100.0,
+    total: 105.0, // ✓ NOT totalPrice
+    farmerAmount: 95.0,
+    platformFee: 5.0,
     fulfillmentMethod: "DELIVERY",
-    items: {                  // ✓ NOT orderItems
+    items: {
+      // ✓ NOT orderItems
       create: [
         {
           productId: product.id,
           productName: product.name,
           quantity: 2,
           unit: "kg",
-          unitPrice: 50.00,    // ✓ NOT price
-          subtotal: 100.00
-        }
-      ]
-    }
-  }
+          unitPrice: 50.0, // ✓ NOT price
+          subtotal: 100.0,
+        },
+      ],
+    },
+  },
 });
 ```
 
 ### Pattern 4: Separate Customer Fetch for Performance
+
 ```typescript
 // Instead of nested include (can be slow):
 const orders = await database.order.findMany({
   select: {
     id: true,
     total: true,
-    customerId: true  // Just the ID
-  }
+    customerId: true, // Just the ID
+  },
 });
 
 // Fetch customers separately:
-const customerIds = [...new Set(orders.map(o => o.customerId))];
+const customerIds = [...new Set(orders.map((o) => o.customerId))];
 const customers = await database.user.findMany({
   where: { id: { in: customerIds } },
-  select: { id: true, email: true, name: true }
+  select: { id: true, email: true, name: true },
 });
 
 // Create lookup map:
-const customerMap = new Map(customers.map(c => [c.id, c]));
+const customerMap = new Map(customers.map((c) => [c.id, c]));
 
 // Combine:
-const ordersWithCustomers = orders.map(order => ({
+const ordersWithCustomers = orders.map((order) => ({
   ...order,
-  customer: customerMap.get(order.customerId)
+  customer: customerMap.get(order.customerId),
 }));
 ```
 
@@ -464,28 +492,36 @@ const ordersWithCustomers = orders.map(order => ({
 ## 🚨 Critical Reminders
 
 ### 1. Always Check Prisma Schema First!
+
 Before writing any query, open `prisma/schema.prisma` and verify:
+
 - Exact field names (case-sensitive)
 - Relation names (can differ from model names)
 - Enum values
 - Required vs optional fields
 
 ### 2. Run TypeScript Check Frequently
+
 ```bash
 npx tsc --noEmit
 ```
+
 Catches schema mismatches immediately!
 
 ### 3. Use Prisma Studio for Exploration
+
 ```bash
 npx prisma studio
 ```
+
 Visual interface to explore your schema and data.
 
 ### 4. Generate Fresh Prisma Client After Schema Changes
+
 ```bash
 npx prisma generate
 ```
+
 Updates TypeScript types to match schema.
 
 ---
@@ -493,6 +529,7 @@ Updates TypeScript types to match schema.
 ## 🔍 Quick Search Patterns
 
 ### Find All Uses of a Field
+
 ```bash
 # In PowerShell/CMD:
 grep -r "totalPrice" src/
@@ -501,6 +538,7 @@ grep -r "totalPrice" src/
 ```
 
 ### Find Incorrect Relation Names
+
 ```bash
 grep -r "order\.payment\b" src/
 # Should be order.Payment (capital P)

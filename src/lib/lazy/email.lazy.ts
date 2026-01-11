@@ -7,7 +7,7 @@
  * @category Performance Optimization
  */
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 import type nodemailer from "nodemailer";
 import type { SendMailOptions, SentMessageInfo, Transporter } from "nodemailer";
 

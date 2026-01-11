@@ -39,9 +39,7 @@ const shippingSchema = z.object({
     .string()
     .length(2, "State must be 2 characters (e.g., CA, NY, TX)")
     .regex(/^[A-Z]{2}$/, "State must be uppercase letters"),
-  zipCode: z
-    .string()
-    .regex(/^\d{5}$/, "ZIP code must be 5 digits"),
+  zipCode: z.string().regex(/^\d{5}$/, "ZIP code must be 5 digits"),
   country: z.string(),
   saveAddress: z.boolean().optional(),
 });
@@ -137,9 +135,7 @@ export function ShippingStep({
       {/* Saved Addresses Section */}
       {savedAddresses.length > 0 && (
         <div className="space-y-3">
-          <Label className="text-base font-semibold">
-            Use a saved address
-          </Label>
+          <Label className="text-base font-semibold">Use a saved address</Label>
           <div className="space-y-2">
             {savedAddresses.slice(0, 3).map((address: any) => (
               <button
@@ -239,17 +235,13 @@ export function ShippingStep({
             className={errors.street ? "border-red-500" : ""}
           />
           {errors.street && (
-            <p className="mt-1 text-xs text-red-600">
-              {errors.street.message}
-            </p>
+            <p className="mt-1 text-xs text-red-600">{errors.street.message}</p>
           )}
         </div>
 
         {/* Address Line 2 */}
         <div>
-          <Label htmlFor="street2">
-            Apartment, Suite, etc. (Optional)
-          </Label>
+          <Label htmlFor="street2">Apartment, Suite, etc. (Optional)</Label>
           <Input
             id="street2"
             type="text"

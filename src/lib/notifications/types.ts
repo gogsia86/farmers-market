@@ -251,12 +251,12 @@ export interface ToastNotification extends Omit<BaseNotification, "type"> {
 
   /** Toast position */
   position?:
-  | "top-left"
-  | "top-center"
-  | "top-right"
-  | "bottom-left"
-  | "bottom-center"
-  | "bottom-right";
+    | "top-left"
+    | "top-center"
+    | "top-right"
+    | "bottom-left"
+    | "bottom-center"
+    | "bottom-right";
 
   /** Duration in milliseconds (0 = persistent) */
   duration?: number;
@@ -765,7 +765,7 @@ export interface NotificationContextValue {
  * Check if notification is a toast
  */
 export function isToastNotification(
-  notification: BaseNotification
+  notification: BaseNotification,
 ): notification is ToastNotification {
   return notification.type === "toast";
 }
@@ -774,7 +774,7 @@ export function isToastNotification(
  * Check if notification is a banner
  */
 export function isBannerNotification(
-  notification: BaseNotification
+  notification: BaseNotification,
 ): notification is BannerNotification {
   return notification.type === "banner";
 }
@@ -783,7 +783,7 @@ export function isBannerNotification(
  * Check if notification is in-app
  */
 export function isInAppNotification(
-  notification: BaseNotification
+  notification: BaseNotification,
 ): notification is InAppNotification {
   return notification.type === "in-app";
 }
@@ -792,7 +792,7 @@ export function isInAppNotification(
  * Check if notification is push
  */
 export function isPushNotification(
-  notification: BaseNotification
+  notification: BaseNotification,
 ): notification is PushNotification {
   return notification.type === "push";
 }
@@ -801,7 +801,7 @@ export function isPushNotification(
  * Check if notification is email
  */
 export function isEmailNotification(
-  notification: BaseNotification
+  notification: BaseNotification,
 ): notification is EmailNotification {
   return notification.type === "email";
 }
@@ -810,7 +810,7 @@ export function isEmailNotification(
  * Check if notification is agricultural
  */
 export function isAgriculturalNotification(
-  notification: BaseNotification
+  notification: BaseNotification,
 ): boolean {
   return (
     notification.severity === "agricultural" ||
@@ -836,7 +836,7 @@ export function isNotificationExpired(notification: BaseNotification): boolean {
  * Check if notification is dismissible
  */
 export function isNotificationDismissible(
-  notification: BaseNotification
+  notification: BaseNotification,
 ): boolean {
   if (isToastNotification(notification)) {
     return notification.dismissible ?? true;
@@ -973,5 +973,4 @@ export type TemplateVariables = Record<string, string | number | boolean>;
 // Export all types
 // ============================================================================
 
-export type { };
-
+export type {};

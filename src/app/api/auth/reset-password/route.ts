@@ -16,7 +16,7 @@ import { database } from "@/lib/database";
 import { hash } from "bcryptjs";
 import { NextRequest, NextResponse } from "next/server";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 export async function POST(request: NextRequest) {
   try {
@@ -27,14 +27,14 @@ export async function POST(request: NextRequest) {
     if (!token || typeof token !== "string") {
       return NextResponse.json(
         { error: "Valid reset token is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (!password || typeof password !== "string") {
       return NextResponse.json(
         { error: "Valid password is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -42,28 +42,28 @@ export async function POST(request: NextRequest) {
     if (password.length < 8) {
       return NextResponse.json(
         { error: "Password must be at least 8 characters long" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (!/[A-Z]/.test(password)) {
       return NextResponse.json(
         { error: "Password must contain at least one uppercase letter" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (!/[a-z]/.test(password)) {
       return NextResponse.json(
         { error: "Password must contain at least one lowercase letter" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (!/[0-9]/.test(password)) {
       return NextResponse.json(
         { error: "Password must contain at least one number" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
     if (!user) {
       return NextResponse.json(
         { error: "Invalid or expired reset token" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -98,8 +98,11 @@ export async function POST(request: NextRequest) {
       });
 
       return NextResponse.json(
-        { error: "Reset token has expired. Please request a new password reset." },
-        { status: 400 }
+        {
+          error:
+            "Reset token has expired. Please request a new password reset.",
+        },
+        { status: 400 },
       );
     }
 
@@ -121,7 +124,8 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: "Password has been reset successfully. You can now login with your new password.",
+      message:
+        "Password has been reset successfully. You can now login with your new password.",
     });
   } catch (error) {
     logger.error("Reset password error:", {
@@ -129,36 +133,24 @@ export async function POST(request: NextRequest) {
     });
     return NextResponse.json(
       { error: "An unexpected error occurred. Please try again later." },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 // Only allow POST requests
 export async function GET() {
-  return NextResponse.json(
-    { error: "Method not allowed" },
-    { status: 405 }
-  );
+  return NextResponse.json({ error: "Method not allowed" }, { status: 405 });
 }
 
 export async function PUT() {
-  return NextResponse.json(
-    { error: "Method not allowed" },
-    { status: 405 }
-  );
+  return NextResponse.json({ error: "Method not allowed" }, { status: 405 });
 }
 
 export async function DELETE() {
-  return NextResponse.json(
-    { error: "Method not allowed" },
-    { status: 405 }
-  );
+  return NextResponse.json({ error: "Method not allowed" }, { status: 405 });
 }
 
 export async function PATCH() {
-  return NextResponse.json(
-    { error: "Method not allowed" },
-    { status: 405 }
-  );
+  return NextResponse.json({ error: "Method not allowed" }, { status: 405 });
 }

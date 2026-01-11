@@ -12,15 +12,18 @@
 ### 1. Fix Product Schema Type Mismatch 🔴 BREAKING
 
 **Files:**
+
 - `src/app/page.tsx` (lines 242, 245)
 - `prisma/schema.prisma`
 
 **Error:**
+
 ```
 Property 'quantityAvailable' does not exist on type Product
 ```
 
 **Quick Fix:**
+
 ```typescript
 // Option A: Update frontend code
 - product.quantityAvailable
@@ -42,16 +45,19 @@ model Product {
 ### 2. Fix Cart Hook Type Errors 🔴 BREAKING
 
 **Files:**
+
 - `src/components/features/cart/cart-badge.tsx:61`
 - `src/components/features/cart/mini-cart.tsx:37`
 - `src/components/features/cart/cart-badge.tsx:305`
 
 **Error:**
+
 ```
 Property 'userId' does not exist in type 'UseCartOptions'
 ```
 
 **Quick Fix:**
+
 ```typescript
 // WRONG ❌
 const { cart } = useCart({ userId: session?.user?.id });
@@ -61,6 +67,7 @@ const { cart } = useCart(); // userId comes from session automatically
 ```
 
 **Files to Update:**
+
 - Find all `useCart({ userId:` and remove the userId parameter
 - Run: `git grep "useCart({ userId" src/` to find all occurrences
 
@@ -72,15 +79,18 @@ const { cart } = useCart(); // userId comes from session automatically
 ### 3. Fix Image Component Type Errors 🟡 HIGH
 
 **Files:**
+
 - `src/components/images/FarmImage.tsx`
 - `src/components/images/ProductImage.tsx`
 
 **Error:**
+
 ```
 Type 'string | undefined' is not assignable to type 'string | StaticImport'
 ```
 
 **Quick Fix:**
+
 ```typescript
 // Update prop types
 interface ImageProps {
@@ -103,25 +113,29 @@ interface ImageProps {
 ### 4. Disable Broken Testing Framework 🟡 HIGH
 
 **Files:**
+
 - `tsconfig.json`
 
 **Error:**
+
 ```
 82 errors in src/lib/testing/**/*.ts
 ```
 
 **Quick Fix (Temporary):**
+
 ```json
 // tsconfig.json - Add to exclude array
 {
   "exclude": [
     // ... existing excludes
-    "src/lib/testing/**/*"  // Add this line
+    "src/lib/testing/**/*" // Add this line
   ]
 }
 ```
 
 **Long-term Fix:**
+
 - Refactor testing types or switch to standard Playwright
 - Not needed for production deployment
 
@@ -137,7 +151,7 @@ interface ImageProps {
 **Create:** `src/lib/config/env.ts`
 
 ```typescript
-import { z } from 'zod';
+import { z } from "zod";
 
 const envSchema = z.object({
   // Database (REQUIRED)
@@ -148,9 +162,9 @@ const envSchema = z.object({
   NEXTAUTH_URL: z.string().url(),
 
   // Stripe (REQUIRED)
-  STRIPE_SECRET_KEY: z.string().startsWith('sk_'),
-  STRIPE_PUBLISHABLE_KEY: z.string().startsWith('pk_'),
-  STRIPE_WEBHOOK_SECRET: z.string().startsWith('whsec_'),
+  STRIPE_SECRET_KEY: z.string().startsWith("sk_"),
+  STRIPE_PUBLISHABLE_KEY: z.string().startsWith("pk_"),
+  STRIPE_WEBHOOK_SECRET: z.string().startsWith("whsec_"),
 
   // Optional
   SENDGRID_API_KEY: z.string().optional(),
@@ -161,7 +175,7 @@ export function validateEnv() {
   try {
     return envSchema.parse(process.env);
   } catch (error) {
-    console.error('❌ Invalid environment variables:', error);
+    console.error("❌ Invalid environment variables:", error);
     process.exit(1);
   }
 }
@@ -170,8 +184,9 @@ export const env = validateEnv();
 ```
 
 **Update:** `src/lib/database/index.ts`
+
 ```typescript
-import { env } from '@/lib/config/env';
+import { env } from "@/lib/config/env";
 
 // Replace all process.env.DATABASE_URL with env.DATABASE_URL
 ```
@@ -186,13 +201,14 @@ import { env } from '@/lib/config/env';
 **Check:** `src/app/api/webhooks/stripe/route.ts`
 
 **Must have:**
+
 ```typescript
 export async function POST(request: Request) {
   const body = await request.text();
-  const signature = request.headers.get('stripe-signature');
+  const signature = request.headers.get("stripe-signature");
 
   if (!signature) {
-    return NextResponse.json({ error: 'No signature' }, { status: 400 });
+    return NextResponse.json({ error: "No signature" }, { status: 400 });
   }
 
   try {
@@ -200,13 +216,13 @@ export async function POST(request: Request) {
     const event = stripe.webhooks.constructEvent(
       body,
       signature,
-      process.env.STRIPE_WEBHOOK_SECRET!
+      process.env.STRIPE_WEBHOOK_SECRET!,
     );
 
     // Process verified event...
   } catch (err) {
-    logger.error('Invalid webhook signature', { error: err });
-    return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
+    logger.error("Invalid webhook signature", { error: err });
+    return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 }
 ```
@@ -223,6 +239,7 @@ export async function POST(request: Request) {
 **File:** `src/lib/database/index.ts`
 
 **Current:**
+
 ```typescript
 const pool = new Pool({
   max: isDevelopment ? 10 : 5, // ❌ Too high for serverless
@@ -230,6 +247,7 @@ const pool = new Pool({
 ```
 
 **Fix:**
+
 ```typescript
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -240,6 +258,7 @@ const pool = new Pool({
 ```
 
 **OR Use Connection Pooler:**
+
 ```bash
 # Add to .env
 DATABASE_URL="postgresql://user:pass@host:6543/db?pgbouncer=true"
@@ -315,22 +334,23 @@ npm run dev
 
 ## 🎯 PRIORITY MATRIX
 
-| Issue | Priority | Impact | Time | Blocker? |
-|-------|----------|--------|------|----------|
-| Product schema | 🔴 CRITICAL | Homepage crash | 30min | YES |
-| Cart hook | 🔴 CRITICAL | Cart broken | 15min | YES |
-| Environment validation | 🔴 CRITICAL | Silent failures | 1hr | YES |
-| Stripe webhook | 🔴 CRITICAL | Security | 1hr | YES |
-| DB connection pool | 🔴 CRITICAL | Crashes under load | 30min | YES |
-| Image types | 🟡 HIGH | Images broken | 30min | NO |
-| Testing framework | 🟡 HIGH | Build blocked | 5min | YES |
-| Error boundaries | 🟡 HIGH | UX degradation | 1hr | NO |
+| Issue                  | Priority    | Impact             | Time  | Blocker? |
+| ---------------------- | ----------- | ------------------ | ----- | -------- |
+| Product schema         | 🔴 CRITICAL | Homepage crash     | 30min | YES      |
+| Cart hook              | 🔴 CRITICAL | Cart broken        | 15min | YES      |
+| Environment validation | 🔴 CRITICAL | Silent failures    | 1hr   | YES      |
+| Stripe webhook         | 🔴 CRITICAL | Security           | 1hr   | YES      |
+| DB connection pool     | 🔴 CRITICAL | Crashes under load | 30min | YES      |
+| Image types            | 🟡 HIGH     | Images broken      | 30min | NO       |
+| Testing framework      | 🟡 HIGH     | Build blocked      | 5min  | YES      |
+| Error boundaries       | 🟡 HIGH     | UX degradation     | 1hr   | NO       |
 
 ---
 
 ## 📊 ESTIMATED TIMELINE
 
 ### Minimum Viable Fixes (Can Deploy)
+
 - **Day 1 Morning:** Product schema + Cart hook (45min)
 - **Day 1 Afternoon:** Image types + Disable tests (35min)
 - **Day 2 Morning:** Environment validation (1hr)
@@ -340,6 +360,7 @@ npm run dev
 **Total: 2-3 days** → Can deploy to production
 
 ### Recommended Full Fix
+
 - **Week 1:** All above + Error boundaries
 - **Week 2:** Performance optimization + monitoring
 - **Week 3:** Testing framework refactor

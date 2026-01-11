@@ -70,11 +70,11 @@ import { logger } from "@/lib/monitoring/logger";
 const createPrismaClient = () => {
   return new PrismaClient({
     log: [
-      { level: 'query', emit: 'event' },
-      { level: 'error', emit: 'event' },
-      { level: 'warn', emit: 'event' }
+      { level: "query", emit: "event" },
+      { level: "error", emit: "event" },
+      { level: "warn", emit: "event" },
     ],
-    errorFormat: 'pretty'
+    errorFormat: "pretty",
   });
 };
 
@@ -85,24 +85,24 @@ const globalForPrisma = globalThis as unknown as {
 
 export const database = globalForPrisma.prisma ?? createPrismaClient();
 
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !== "production") {
   globalForPrisma.prisma = database;
 }
 
 // Query logging for slow queries
-database.$on('query', (e) => {
+database.$on("query", (e) => {
   if (e.duration > 1000) {
-    logger.warn('Slow query detected', {
+    logger.warn("Slow query detected", {
       query: e.query,
       duration: e.duration,
-      params: e.params
+      params: e.params,
     });
   }
 });
 
 // Error handling
-database.$on('error', (e) => {
-  logger.error('Database error', { error: e });
+database.$on("error", (e) => {
+  logger.error("Database error", { error: e });
 });
 ```
 
@@ -127,10 +127,10 @@ const farms = await database.farm.findMany({
       select: {
         city: true,
         state: true,
-        coordinates: true
-      }
-    }
-  }
+        coordinates: true,
+      },
+    },
+  },
 });
 
 // ✅ EXCELLENT - Reusable select pattern
@@ -143,19 +143,19 @@ const farmSummarySelect = {
   location: {
     select: {
       city: true,
-      state: true
-    }
+      state: true,
+    },
   },
   _count: {
     select: {
       products: true,
-      reviews: true
-    }
-  }
+      reviews: true,
+    },
+  },
 } as const;
 
 const farms = await database.farm.findMany({
-  select: farmSummarySelect
+  select: farmSummarySelect,
 });
 ```
 
@@ -170,8 +170,8 @@ const farm = await database.farm.findUnique({
     products: true,
     reviews: true,
     orders: true,
-    location: true
-  }
+    location: true,
+  },
 });
 
 // ✅ GOOD - Include only what's needed
@@ -182,17 +182,17 @@ const farm = await database.farm.findUnique({
       select: {
         id: true,
         name: true,
-        email: true
-      }
+        email: true,
+      },
     },
     location: true,
     _count: {
       select: {
         products: true,
-        reviews: true
-      }
-    }
-  }
+        reviews: true,
+      },
+    },
+  },
 });
 
 // ✅ EXCELLENT - Conditional includes
@@ -204,18 +204,18 @@ async function getFarm(id: string, includeProducts: boolean = false) {
         select: {
           id: true,
           name: true,
-          email: true
-        }
+          email: true,
+        },
       },
       location: true,
       ...(includeProducts && {
         products: {
-          where: { status: 'ACTIVE' },
+          where: { status: "ACTIVE" },
           take: 10,
-          orderBy: { createdAt: 'desc' }
-        }
-      })
-    }
+          orderBy: { createdAt: "desc" },
+        },
+      }),
+    },
   });
 }
 ```
@@ -226,13 +226,15 @@ async function getFarm(id: string, includeProducts: boolean = false) {
 // ❌ BAD - Sequential queries (slow)
 const farms = await database.farm.findMany({ where, take, skip });
 const totalCount = await database.farm.count({ where });
-const categories = await database.category.findMany({ where: { active: true } });
+const categories = await database.category.findMany({
+  where: { active: true },
+});
 
 // ✅ GOOD - Parallel queries (fast)
 const [farms, totalCount, categories] = await Promise.all([
   database.farm.findMany({ where, take, skip }),
   database.farm.count({ where }),
-  database.category.findMany({ where: { active: true } })
+  database.category.findMany({ where: { active: true } }),
 ]);
 ```
 
@@ -244,7 +246,7 @@ const page = 1000; // Very slow!
 const pageSize = 20;
 const farms = await database.farm.findMany({
   skip: (page - 1) * pageSize,
-  take: pageSize
+  take: pageSize,
 });
 
 // ✅ GOOD - Cursor-based pagination
@@ -253,13 +255,14 @@ async function getFarmsPaginated(cursor?: string, pageSize: number = 20) {
     take: pageSize,
     skip: cursor ? 1 : 0, // Skip the cursor
     cursor: cursor ? { id: cursor } : undefined,
-    orderBy: { createdAt: 'desc' }
+    orderBy: { createdAt: "desc" },
   });
 
   return {
     items: farms,
-    nextCursor: farms.length === pageSize ? farms[farms.length - 1]?.id : undefined,
-    hasMore: farms.length === pageSize
+    nextCursor:
+      farms.length === pageSize ? farms[farms.length - 1]?.id : undefined,
+    hasMore: farms.length === pageSize,
   };
 }
 ```
@@ -277,7 +280,7 @@ const farms = await database.farm.findMany();
 for (const farm of farms) {
   // This creates a separate query for EACH farm!
   const products = await database.product.findMany({
-    where: { farmId: farm.id }
+    where: { farmId: farm.id },
   });
   console.log(farm.name, products.length);
 }
@@ -290,14 +293,14 @@ for (const farm of farms) {
 const farms = await database.farm.findMany({
   include: {
     products: {
-      where: { status: 'ACTIVE' },
-      orderBy: { createdAt: 'desc' },
-      take: 10
-    }
-  }
+      where: { status: "ACTIVE" },
+      orderBy: { createdAt: "desc" },
+      take: 10,
+    },
+  },
 });
 
-farms.forEach(farm => {
+farms.forEach((farm) => {
   console.log(farm.name, farm.products.length);
 });
 ```
@@ -309,24 +312,24 @@ farms.forEach(farm => {
 async function getFarmsWithProductCounts(farmIds: string[]) {
   // Single query to get all farms
   const farms = await database.farm.findMany({
-    where: { id: { in: farmIds } }
+    where: { id: { in: farmIds } },
   });
 
   // Single query to get all product counts
   const productCounts = await database.product.groupBy({
-    by: ['farmId'],
+    by: ["farmId"],
     where: { farmId: { in: farmIds } },
-    _count: { id: true }
+    _count: { id: true },
   });
 
   // Map counts to farms
   const countMap = new Map(
-    productCounts.map(pc => [pc.farmId, pc._count.id])
+    productCounts.map((pc) => [pc.farmId, pc._count.id]),
   );
 
-  return farms.map(farm => ({
+  return farms.map((farm) => ({
     ...farm,
-    productCount: countMap.get(farm.id) ?? 0
+    productCount: countMap.get(farm.id) ?? 0,
   }));
 }
 ```
@@ -335,30 +338,30 @@ async function getFarmsWithProductCounts(farmIds: string[]) {
 
 ```typescript
 // ✅ ADVANCED - DataLoader for batching and caching
-import DataLoader from 'dataloader';
+import DataLoader from "dataloader";
 
 const productLoader = new DataLoader<string, Product[]>(
   async (farmIds: readonly string[]) => {
     const products = await database.product.findMany({
-      where: { farmId: { in: [...farmIds] } }
+      where: { farmId: { in: [...farmIds] } },
     });
 
     // Group by farmId
     const productsByFarm = new Map<string, Product[]>();
-    products.forEach(product => {
+    products.forEach((product) => {
       const existing = productsByFarm.get(product.farmId) ?? [];
       productsByFarm.set(product.farmId, [...existing, product]);
     });
 
     // Return in same order as input
-    return farmIds.map(id => productsByFarm.get(id) ?? []);
-  }
+    return farmIds.map((id) => productsByFarm.get(id) ?? []);
+  },
 );
 
 // Usage - automatically batches and caches
 const [farm1Products, farm2Products] = await Promise.all([
-  productLoader.load('farm_1'),
-  productLoader.load('farm_2')
+  productLoader.load("farm_1"),
+  productLoader.load("farm_2"),
 ]);
 ```
 
@@ -373,23 +376,23 @@ const [farm1Products, farm2Products] = await Promise.all([
 async function transferInventory(
   fromProductId: string,
   toProductId: string,
-  quantity: number
+  quantity: number,
 ) {
   return await database.$transaction(async (tx) => {
     // Decrement source
     const fromProduct = await tx.product.update({
       where: { id: fromProductId },
-      data: { quantityAvailable: { decrement: quantity } }
+      data: { quantityAvailable: { decrement: quantity } },
     });
 
     if (fromProduct.quantityAvailable < 0) {
-      throw new Error('Insufficient inventory');
+      throw new Error("Insufficient inventory");
     }
 
     // Increment destination
     await tx.product.update({
       where: { id: toProductId },
-      data: { quantityAvailable: { increment: quantity } }
+      data: { quantityAvailable: { increment: quantity } },
     });
 
     return { success: true };
@@ -401,14 +404,16 @@ async function transferInventory(
 
 ```typescript
 // ✅ Batch operations in transaction
-async function updateMultiplePrices(updates: Array<{ id: string; price: number }>) {
+async function updateMultiplePrices(
+  updates: Array<{ id: string; price: number }>,
+) {
   return await database.$transaction(
-    updates.map(update =>
+    updates.map((update) =>
       database.product.update({
         where: { id: update.id },
-        data: { price: update.price }
-      })
-    )
+        data: { price: update.price },
+      }),
+    ),
   );
 }
 ```
@@ -418,53 +423,56 @@ async function updateMultiplePrices(updates: Array<{ id: string; price: number }
 ```typescript
 // ✅ Complex business logic in transaction
 async function processOrder(orderId: string) {
-  return await database.$transaction(async (tx) => {
-    // 1. Get order with items
-    const order = await tx.order.findUnique({
-      where: { id: orderId },
-      include: { items: true }
-    });
-
-    if (!order) {
-      throw new Error('Order not found');
-    }
-
-    // 2. Validate and update inventory
-    for (const item of order.items) {
-      const product = await tx.product.findUnique({
-        where: { id: item.productId }
+  return await database.$transaction(
+    async (tx) => {
+      // 1. Get order with items
+      const order = await tx.order.findUnique({
+        where: { id: orderId },
+        include: { items: true },
       });
 
-      if (!product || product.quantityAvailable < item.quantity) {
-        throw new Error(`Insufficient inventory for ${item.productId}`);
+      if (!order) {
+        throw new Error("Order not found");
       }
 
-      await tx.product.update({
-        where: { id: item.productId },
-        data: { quantityAvailable: { decrement: item.quantity } }
+      // 2. Validate and update inventory
+      for (const item of order.items) {
+        const product = await tx.product.findUnique({
+          where: { id: item.productId },
+        });
+
+        if (!product || product.quantityAvailable < item.quantity) {
+          throw new Error(`Insufficient inventory for ${item.productId}`);
+        }
+
+        await tx.product.update({
+          where: { id: item.productId },
+          data: { quantityAvailable: { decrement: item.quantity } },
+        });
+      }
+
+      // 3. Update order status
+      const updatedOrder = await tx.order.update({
+        where: { id: orderId },
+        data: { status: "PROCESSING" },
       });
-    }
 
-    // 3. Update order status
-    const updatedOrder = await tx.order.update({
-      where: { id: orderId },
-      data: { status: 'PROCESSING' }
-    });
+      // 4. Create notification
+      await tx.notification.create({
+        data: {
+          userId: order.customerId,
+          type: "ORDER_CONFIRMED",
+          message: `Your order ${orderId} has been confirmed`,
+        },
+      });
 
-    // 4. Create notification
-    await tx.notification.create({
-      data: {
-        userId: order.customerId,
-        type: 'ORDER_CONFIRMED',
-        message: `Your order ${orderId} has been confirmed`
-      }
-    });
-
-    return updatedOrder;
-  }, {
-    maxWait: 5000, // Max time to wait for transaction
-    timeout: 10000 // Max time transaction can run
-  });
+      return updatedOrder;
+    },
+    {
+      maxWait: 5000, // Max time to wait for transaction
+      timeout: 10000, // Max time transaction can run
+    },
+  );
 }
 ```
 
@@ -477,8 +485,8 @@ await database.$transaction(
     // Critical operations
   },
   {
-    isolationLevel: 'Serializable' // Strongest isolation
-  }
+    isolationLevel: "Serializable", // Strongest isolation
+  },
 );
 ```
 
@@ -503,9 +511,9 @@ datasource db {
 
 ```typescript
 // ✅ Monitor active connections
-database.$on('query', (e) => {
+database.$on("query", (e) => {
   // Track query duration
-  metrics.histogram('db.query.duration', e.duration);
+  metrics.histogram("db.query.duration", e.duration);
 });
 
 // ✅ Graceful shutdown
@@ -514,8 +522,8 @@ async function gracefulShutdown() {
   process.exit(0);
 }
 
-process.on('SIGTERM', gracefulShutdown);
-process.on('SIGINT', gracefulShutdown);
+process.on("SIGTERM", gracefulShutdown);
+process.on("SIGINT", gracefulShutdown);
 ```
 
 ### Connection Pool Sizing
@@ -626,19 +634,19 @@ model Farm {
   slug        String   @unique @db.VarChar(120)
   description String   @db.Text
   status      FarmStatus @default(PENDING_VERIFICATION)
-  
+
   // Foreign keys use model name + Id
   ownerId     String
   owner       User     @relation(fields: [ownerId], references: [id])
-  
+
   // Timestamps
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  
+
   // Relations (plural)
   products    Product[]
   orders      Order[]
-  
+
   @@index([ownerId])
   @@index([status])
   @@map("farms") // Table name in database
@@ -681,18 +689,18 @@ model Product {
   status      ProductStatus
   price       Decimal  @db.Decimal(10, 2)
   createdAt   DateTime @default(now())
-  
+
   // Single-column indexes for foreign keys
   @@index([farmId])
   @@index([categoryId])
-  
+
   // Index for filtering
   @@index([status])
-  
+
   // Composite index for common queries
   @@index([farmId, status])
   @@index([categoryId, status])
-  
+
   // Full-text search (PostgreSQL)
   @@index([name], type: Hash)
 }
@@ -704,10 +712,10 @@ model Product {
 model Farm {
   id       String @id
   name     String
-  
+
   // ⚠️ JSON for flexible, non-queryable data only
   metadata Json?  // Settings, preferences, etc.
-  
+
   // ✅ Prefer typed relations for queryable data
   location Location?
 }
@@ -716,12 +724,12 @@ model Location {
   id         String @id
   farmId     String @unique
   farm       Farm   @relation(fields: [farmId], references: [id])
-  
+
   address    String
   city       String
   state      String
   zipCode    String
-  
+
   // Structured data is better than JSON
   coordinates Json?  // { lat: number, lng: number }
 }
@@ -746,7 +754,7 @@ import type { Farm, Product, User, Prisma } from "@prisma/client";
 ```typescript
 // Get payload type with relations
 type FarmWithProducts = Prisma.FarmGetPayload<{
-  include: { products: true }
+  include: { products: true };
 }>;
 
 type FarmSummary = Prisma.FarmGetPayload<{
@@ -754,7 +762,7 @@ type FarmSummary = Prisma.FarmGetPayload<{
     id: true;
     name: true;
     status: true;
-  }
+  };
 }>;
 
 // Input types
@@ -787,28 +795,28 @@ async function createFarm(data: CreateFarmInput): Promise<Farm> {
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       // Unique constraint violation
-      if (error.code === 'P2002') {
+      if (error.code === "P2002") {
         throw new Error(`Farm with this ${error.meta?.target} already exists`);
       }
-      
+
       // Foreign key constraint violation
-      if (error.code === 'P2003') {
-        throw new Error('Invalid reference to related record');
+      if (error.code === "P2003") {
+        throw new Error("Invalid reference to related record");
       }
-      
+
       // Record not found
-      if (error.code === 'P2025') {
-        throw new Error('Farm not found');
+      if (error.code === "P2025") {
+        throw new Error("Farm not found");
       }
     }
-    
+
     if (error instanceof Prisma.PrismaClientValidationError) {
-      throw new Error('Invalid data provided');
+      throw new Error("Invalid data provided");
     }
-    
+
     // Unknown error
-    logger.error('Database error', { error });
-    throw new Error('An unexpected database error occurred');
+    logger.error("Database error", { error });
+    throw new Error("An unexpected database error occurred");
   }
 }
 ```
@@ -817,12 +825,12 @@ async function createFarm(data: CreateFarmInput): Promise<Farm> {
 
 ```typescript
 const PRISMA_ERROR_CODES = {
-  P2002: 'Unique constraint violation',
-  P2003: 'Foreign key constraint violation',
-  P2025: 'Record not found',
-  P2014: 'Relation violation',
-  P2021: 'Table does not exist',
-  P2022: 'Column does not exist',
+  P2002: "Unique constraint violation",
+  P2003: "Foreign key constraint violation",
+  P2025: "Record not found",
+  P2014: "Relation violation",
+  P2021: "Table does not exist",
+  P2022: "Column does not exist",
 } as const;
 ```
 
@@ -842,15 +850,15 @@ export async function createTestDatabase() {
   testDb = new PrismaClient({
     datasources: {
       db: {
-        url: process.env.TEST_DATABASE_URL
-      }
-    }
+        url: process.env.TEST_DATABASE_URL,
+      },
+    },
   });
 
   // Clean database
   await testDb.$executeRawUnsafe('TRUNCATE TABLE "Farm" CASCADE');
   await testDb.$executeRawUnsafe('TRUNCATE TABLE "Product" CASCADE');
-  
+
   return testDb;
 }
 
@@ -862,10 +870,10 @@ export async function cleanupTestDatabase() {
 ### Test Example
 
 ```typescript
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { createTestDatabase, cleanupTestDatabase } from './helpers/database';
+import { describe, it, expect, beforeAll, afterAll } from "vitest";
+import { createTestDatabase, cleanupTestDatabase } from "./helpers/database";
 
-describe('FarmRepository', () => {
+describe("FarmRepository", () => {
   let testDb: PrismaClient;
 
   beforeAll(async () => {
@@ -876,30 +884,30 @@ describe('FarmRepository', () => {
     await cleanupTestDatabase();
   });
 
-  it('should create a farm', async () => {
+  it("should create a farm", async () => {
     const farm = await testDb.farm.create({
       data: {
-        name: 'Test Farm',
-        slug: 'test-farm',
-        ownerId: 'user_123',
-        status: 'ACTIVE'
-      }
+        name: "Test Farm",
+        slug: "test-farm",
+        ownerId: "user_123",
+        status: "ACTIVE",
+      },
     });
 
-    expect(farm.name).toBe('Test Farm');
-    expect(farm.status).toBe('ACTIVE');
+    expect(farm.name).toBe("Test Farm");
+    expect(farm.status).toBe("ACTIVE");
   });
 
-  it('should enforce unique constraint', async () => {
+  it("should enforce unique constraint", async () => {
     await expect(
       testDb.farm.create({
         data: {
-          name: 'Duplicate',
-          slug: 'test-farm', // Same slug
-          ownerId: 'user_123',
-          status: 'ACTIVE'
-        }
-      })
+          name: "Duplicate",
+          slug: "test-farm", // Same slug
+          ownerId: "user_123",
+          status: "ACTIVE",
+        },
+      }),
     ).rejects.toThrow();
   });
 });
@@ -913,12 +921,12 @@ describe('FarmRepository', () => {
 
 ```typescript
 // Enable query logging
-database.$on('query', (e) => {
-  logger.debug('Query executed', {
+database.$on("query", (e) => {
+  logger.debug("Query executed", {
     query: e.query,
     params: e.params,
     duration: e.duration,
-    target: e.target
+    target: e.target,
   });
 });
 ```
@@ -926,17 +934,17 @@ database.$on('query', (e) => {
 ### Slow Query Detection
 
 ```typescript
-database.$on('query', (e) => {
+database.$on("query", (e) => {
   if (e.duration > 1000) {
-    logger.warn('Slow query detected', {
+    logger.warn("Slow query detected", {
       query: e.query,
       duration: e.duration,
-      params: e.params
+      params: e.params,
     });
-    
+
     // Send to monitoring service
-    metrics.increment('db.slow_queries');
-    metrics.histogram('db.query.duration', e.duration);
+    metrics.increment("db.slow_queries");
+    metrics.histogram("db.query.duration", e.duration);
   }
 });
 ```
@@ -950,12 +958,12 @@ async function monitorConnections() {
     FROM pg_stat_activity
     WHERE datname = current_database()
   `;
-  
+
   const count = result[0].connection_count;
-  metrics.gauge('db.connections.active', count);
-  
+  metrics.gauge("db.connections.active", count);
+
   if (count > 15) {
-    logger.warn('High connection count', { count });
+    logger.warn("High connection count", { count });
   }
 }
 
@@ -972,7 +980,7 @@ setInterval(monitorConnections, 30000);
 ```typescript
 // ✅ SAFE - Parameterized queries (Prisma default)
 const farms = await database.farm.findMany({
-  where: { name: { contains: userInput } }
+  where: { name: { contains: userInput } },
 });
 
 // ✅ SAFE - Raw queries with parameters
@@ -983,7 +991,7 @@ const result = await database.$queryRaw`
 
 // ❌ DANGEROUS - String concatenation
 const result = await database.$queryRawUnsafe(
-  `SELECT * FROM "Farm" WHERE name = '${userInput}'`
+  `SELECT * FROM "Farm" WHERE name = '${userInput}'`,
 ); // SQL injection risk!
 ```
 
@@ -993,23 +1001,27 @@ const result = await database.$queryRawUnsafe(
 // ✅ Always filter by user context
 async function getFarms(userId: string) {
   return await database.farm.findMany({
-    where: { ownerId: userId } // User can only see their farms
+    where: { ownerId: userId }, // User can only see their farms
   });
 }
 
 // ✅ Validate ownership before updates
-async function updateFarm(farmId: string, userId: string, data: UpdateFarmInput) {
+async function updateFarm(
+  farmId: string,
+  userId: string,
+  data: UpdateFarmInput,
+) {
   const farm = await database.farm.findUnique({
-    where: { id: farmId }
+    where: { id: farmId },
   });
 
   if (farm?.ownerId !== userId) {
-    throw new Error('Unauthorized');
+    throw new Error("Unauthorized");
   }
 
   return await database.farm.update({
     where: { id: farmId },
-    data
+    data,
   });
 }
 ```
@@ -1040,7 +1052,7 @@ console.log(farm.name); // Error if null!
 // ✅ GOOD - Handle null
 const farm = await database.farm.findUnique({ where: { id } });
 if (!farm) {
-  throw new Error('Farm not found');
+  throw new Error("Farm not found");
 }
 console.log(farm.name); // Safe
 ```
@@ -1062,7 +1074,7 @@ const count = await database.farm.count();
 // ❌ BAD - No transaction, can leave inconsistent state
 await database.product.update({
   where: { id: productId },
-  data: { quantityAvailable: { decrement: quantity } }
+  data: { quantityAvailable: { decrement: quantity } },
 });
 // If this fails, inventory is already decremented!
 await database.order.create({ data: orderData });
@@ -1071,7 +1083,7 @@ await database.order.create({ data: orderData });
 await database.$transaction(async (tx) => {
   await tx.product.update({
     where: { id: productId },
-    data: { quantityAvailable: { decrement: quantity } }
+    data: { quantityAvailable: { decrement: quantity } },
   });
   await tx.order.create({ data: orderData });
 });
@@ -1086,20 +1098,20 @@ const farms = await database.farm.findMany({
     owner: true,
     products: true,
     orders: true,
-    reviews: true
-  }
+    reviews: true,
+  },
 });
 
 // ✅ GOOD - Only what's needed
 const farms = await database.farm.findMany({
   include: {
     owner: {
-      select: { id: true, name: true }
+      select: { id: true, name: true },
     },
     _count: {
-      select: { products: true }
-    }
-  }
+      select: { products: true },
+    },
+  },
 });
 ```
 

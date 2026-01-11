@@ -30,7 +30,7 @@ import {
  * Create initial loading state
  */
 export function createLoadingState(
-  overrides?: Partial<BaseLoadingState>
+  overrides?: Partial<BaseLoadingState>,
 ): BaseLoadingState {
   return {
     state: LoadingState.IDLE,
@@ -46,7 +46,7 @@ export function createLoadingState(
 export function transitionState(
   current: BaseLoadingState,
   newState: LoadingState,
-  error?: Error
+  error?: Error,
 ): BaseLoadingState {
   const now = Date.now();
 
@@ -59,7 +59,8 @@ export function transitionState(
         ? now
         : undefined,
     duration:
-      current.startTime && (newState === LoadingState.SUCCESS || newState === LoadingState.ERROR)
+      current.startTime &&
+      (newState === LoadingState.SUCCESS || newState === LoadingState.ERROR)
         ? now - current.startTime
         : undefined,
     error: newState === LoadingState.ERROR ? error : undefined,
@@ -72,7 +73,8 @@ export function transitionState(
 export function getLoadingHelpers(state: LoadingState) {
   return {
     isIdle: state === LoadingState.IDLE,
-    isLoading: state === LoadingState.LOADING || state === LoadingState.REFRESHING,
+    isLoading:
+      state === LoadingState.LOADING || state === LoadingState.REFRESHING,
     isSuccess: state === LoadingState.SUCCESS,
     isError: state === LoadingState.ERROR,
     isRefreshing: state === LoadingState.REFRESHING,
@@ -83,7 +85,10 @@ export function getLoadingHelpers(state: LoadingState) {
 /**
  * Check if loading state should show loading UI
  */
-export function shouldShowLoading(state: BaseLoadingState, minDuration = 300): boolean {
+export function shouldShowLoading(
+  state: BaseLoadingState,
+  minDuration = 300,
+): boolean {
   if (state.state !== LoadingState.LOADING) return false;
   if (!state.startTime) return true;
 
@@ -94,7 +99,10 @@ export function shouldShowLoading(state: BaseLoadingState, minDuration = 300): b
 /**
  * Check if loading is taking too long
  */
-export function isLoadingTimeout(state: BaseLoadingState, timeout = 30000): boolean {
+export function isLoadingTimeout(
+  state: BaseLoadingState,
+  timeout = 30000,
+): boolean {
   if (state.state !== LoadingState.LOADING) return false;
   if (!state.startTime) return false;
 
@@ -110,7 +118,7 @@ export function isLoadingTimeout(state: BaseLoadingState, timeout = 30000): bool
  * Create multi-stage loading state
  */
 export function createMultiStageLoading(
-  stageNames: string[]
+  stageNames: string[],
 ): MultiStageLoadingState {
   const stages: LoadingStage[] = stageNames.map((name: any, index: any) => ({
     id: `stage-${index}`,
@@ -134,7 +142,7 @@ export function createMultiStageLoading(
 export function updateStageProgress(
   multiStage: MultiStageLoadingState,
   stageIndex: number,
-  progress: number
+  progress: number,
 ): MultiStageLoadingState {
   const stages = [...multiStage.stages];
   const currentStage = stages[stageIndex];
@@ -159,7 +167,7 @@ export function updateStageProgress(
  * Complete current stage and move to next
  */
 export function completeStage(
-  multiStage: MultiStageLoadingState
+  multiStage: MultiStageLoadingState,
 ): MultiStageLoadingState {
   const stages = [...multiStage.stages];
   const currentIndex = multiStage.currentStage;
@@ -207,7 +215,10 @@ export function completeStage(
 export function calculateOverallProgress(stages: LoadingStage[]): number {
   if (stages.length === 0) return 0;
 
-  const totalProgress = stages.reduce((sum: any, stage: any) => sum + stage.progress, 0);
+  const totalProgress = stages.reduce(
+    (sum: any, stage: any) => sum + stage.progress,
+    0,
+  );
   return Math.round(totalProgress / stages.length);
 }
 
@@ -218,7 +229,10 @@ export function calculateOverallProgress(stages: LoadingStage[]): number {
 /**
  * Calculate linear progress
  */
-export function calculateLinearProgress(current: number, total: number): number {
+export function calculateLinearProgress(
+  current: number,
+  total: number,
+): number {
   if (total === 0) return 0;
   return Math.round((current / total) * 100);
 }
@@ -228,7 +242,7 @@ export function calculateLinearProgress(current: number, total: number): number 
  */
 export function estimateTimeBasedProgress(
   startTime: number,
-  estimatedDuration: number
+  estimatedDuration: number,
 ): number {
   const elapsed = Date.now() - startTime;
   const progress = Math.round((elapsed / estimatedDuration) * 100);
@@ -241,7 +255,7 @@ export function estimateTimeBasedProgress(
 export function calculateExponentialProgress(
   current: number,
   total: number,
-  factor = 2
+  factor = 2,
 ): number {
   if (total === 0) return 0;
   const linear = current / total;
@@ -255,7 +269,7 @@ export function calculateExponentialProgress(
 export function smoothProgress(
   currentProgress: number,
   targetProgress: number,
-  smoothingFactor = 0.1
+  smoothingFactor = 0.1,
 ): number {
   const diff = targetProgress - currentProgress;
   const increment = diff * smoothingFactor;
@@ -271,7 +285,7 @@ export function smoothProgress(
  */
 export function createCacheEntry<T>(
   data: T,
-  ttl?: number
+  ttl?: number,
 ): LoadingCacheEntry<T> {
   const now = Date.now();
   return {
@@ -296,7 +310,7 @@ export function isCacheExpired<T>(entry: LoadingCacheEntry<T>): boolean {
  */
 export function needsRevalidation<T>(
   entry: LoadingCacheEntry<T>,
-  staleTime = 5000
+  staleTime = 5000,
 ): boolean {
   const age = Date.now() - entry.timestamp;
   return age > staleTime;
@@ -305,7 +319,9 @@ export function needsRevalidation<T>(
 /**
  * Mark cache entry as stale
  */
-export function markStale<T>(entry: LoadingCacheEntry<T>): LoadingCacheEntry<T> {
+export function markStale<T>(
+  entry: LoadingCacheEntry<T>,
+): LoadingCacheEntry<T> {
   return {
     ...entry,
     isStale: true,
@@ -316,7 +332,7 @@ export function markStale<T>(entry: LoadingCacheEntry<T>): LoadingCacheEntry<T> 
  * Start cache revalidation
  */
 export function startRevalidation<T>(
-  entry: LoadingCacheEntry<T>
+  entry: LoadingCacheEntry<T>,
 ): LoadingCacheEntry<T> {
   return {
     ...entry,
@@ -329,12 +345,14 @@ export function startRevalidation<T>(
  */
 export function completeRevalidation<T>(
   entry: LoadingCacheEntry<T>,
-  newData: T
+  newData: T,
 ): LoadingCacheEntry<T> {
   return {
     data: newData,
     timestamp: Date.now(),
-    expiresAt: entry.expiresAt ? Date.now() + (entry.expiresAt - entry.timestamp) : undefined,
+    expiresAt: entry.expiresAt
+      ? Date.now() + (entry.expiresAt - entry.timestamp)
+      : undefined,
     isStale: false,
     revalidating: false,
   };
@@ -349,7 +367,7 @@ export function completeRevalidation<T>(
  */
 export function createLoadingMetrics(
   startTime: number,
-  cacheHit = false
+  cacheHit = false,
 ): LoadingMetrics {
   return {
     startTime,
@@ -363,7 +381,7 @@ export function createLoadingMetrics(
  * Complete loading metrics
  */
 export function completeLoadingMetrics(
-  metrics: LoadingMetrics
+  metrics: LoadingMetrics,
 ): LoadingMetrics {
   const endTime = Date.now();
   return {
@@ -412,7 +430,7 @@ export function getSeasonalColors(season?: SeasonalLoadingTheme) {
  * Get agricultural loading message
  */
 export function getAgriculturalMessage(
-  metadata?: AgriculturalLoadingMetadata
+  metadata?: AgriculturalLoadingMetadata,
 ): string {
   if (!metadata) {
     return AGRICULTURAL_LOADING_MESSAGES.PROCESSING;
@@ -444,7 +462,7 @@ export function getAgriculturalMessage(
  * Create agricultural loading metadata
  */
 export function createAgriculturalMetadata(
-  overrides?: Partial<AgriculturalLoadingMetadata>
+  overrides?: Partial<AgriculturalLoadingMetadata>,
 ): AgriculturalLoadingMetadata {
   return {
     season: getCurrentSeason(),
@@ -462,7 +480,7 @@ export function createAgriculturalMetadata(
  */
 export function debounceLoading<T extends any[]>(
   fn: (...args: T) => void,
-  delay = 300
+  delay = 300,
 ): (...args: T) => void {
   let timeoutId: NodeJS.Timeout | null = null;
 
@@ -477,7 +495,7 @@ export function debounceLoading<T extends any[]>(
  */
 export function throttleLoading<T extends any[]>(
   fn: (...args: T) => void,
-  limit = 100
+  limit = 100,
 ): (...args: T) => void {
   let inThrottle = false;
 
@@ -499,7 +517,7 @@ export function throttleLoading<T extends any[]>(
  */
 export async function ensureMinimumLoadingTime<T>(
   promise: Promise<T>,
-  minTime = 300
+  minTime = 300,
 ): Promise<T> {
   const startTime = Date.now();
   const result = await promise;
@@ -517,7 +535,7 @@ export async function ensureMinimumLoadingTime<T>(
  */
 export async function withDelay<T>(
   promise: Promise<T>,
-  delay: number
+  delay: number,
 ): Promise<T> {
   const [result] = await Promise.all([
     promise,
@@ -532,7 +550,7 @@ export async function withDelay<T>(
 export async function withTimeout<T>(
   promise: Promise<T>,
   timeout: number,
-  timeoutError?: Error
+  timeoutError?: Error,
 ): Promise<T> {
   return Promise.race([
     promise,
@@ -540,10 +558,10 @@ export async function withTimeout<T>(
       setTimeout(
         () =>
           reject(
-            timeoutError || new Error(`Operation timed out after ${timeout}ms`)
+            timeoutError || new Error(`Operation timed out after ${timeout}ms`),
           ),
-        timeout
-      )
+        timeout,
+      ),
     ),
   ]);
 }
@@ -557,7 +575,7 @@ export async function withTimeout<T>(
  */
 export function comparePriority(
   a: LoadingPriority,
-  b: LoadingPriority
+  b: LoadingPriority,
 ): number {
   const priorities = {
     [LoadingPriority.LOW]: 1,
@@ -573,7 +591,7 @@ export function comparePriority(
  * Get highest priority from multiple states
  */
 export function getHighestPriority(
-  states: BaseLoadingState[]
+  states: BaseLoadingState[],
 ): LoadingPriority {
   if (states.length === 0) return LoadingPriority.NORMAL;
 
@@ -600,7 +618,7 @@ export function getHighestPriority(
  */
 export async function batchLoad<T>(
   operations: Array<() => Promise<T>>,
-  batchSize = 5
+  batchSize = 5,
 ): Promise<T[]> {
   const results: T[] = [];
 
@@ -619,7 +637,7 @@ export async function batchLoad<T>(
 export async function loadWithRetry<T>(
   operation: () => Promise<T>,
   maxRetries = 3,
-  backoff = 1000
+  backoff = 1000,
 ): Promise<T> {
   let lastError: Error | undefined;
 

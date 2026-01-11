@@ -205,8 +205,12 @@ describe("CartStore", () => {
       removeItem(mockProduct2.id);
 
       const currentItems = useCartStore.getState().items;
-      expect(currentItems.find((i: any) => i.id === mockProduct1.id)).toBeDefined();
-      expect(currentItems.find((i: any) => i.id === mockProduct3.id)).toBeDefined();
+      expect(
+        currentItems.find((i: any) => i.id === mockProduct1.id),
+      ).toBeDefined();
+      expect(
+        currentItems.find((i: any) => i.id === mockProduct3.id),
+      ).toBeDefined();
     });
 
     it("should handle removing non-existent item gracefully", () => {
@@ -257,7 +261,9 @@ describe("CartStore", () => {
       updateQuantity(mockProduct1.id, 5);
 
       const currentItems = useCartStore.getState().items;
-      const updatedItem = currentItems.find((i: any) => i.id === mockProduct1.id);
+      const updatedItem = currentItems.find(
+        (i: any) => i.id === mockProduct1.id,
+      );
       expect(updatedItem?.quantity).toBe(5);
     });
 
@@ -267,9 +273,9 @@ describe("CartStore", () => {
       updateQuantity(mockProduct1.id, 10);
 
       const currentItems = useCartStore.getState().items;
-      expect(currentItems.find((i: any) => i.id === mockProduct1.id)?.quantity).toBe(
-        10,
-      );
+      expect(
+        currentItems.find((i: any) => i.id === mockProduct1.id)?.quantity,
+      ).toBe(10);
     });
 
     it("should decrease quantity", () => {
@@ -278,9 +284,9 @@ describe("CartStore", () => {
       updateQuantity(mockProduct1.id, 1);
 
       const currentItems = useCartStore.getState().items;
-      expect(currentItems.find((i: any) => i.id === mockProduct1.id)?.quantity).toBe(
-        1,
-      );
+      expect(
+        currentItems.find((i: any) => i.id === mockProduct1.id)?.quantity,
+      ).toBe(1);
     });
 
     it("should remove item when quantity set to 0", () => {
@@ -587,12 +593,12 @@ describe("CartStore", () => {
 
       const currentItems = useCartStore.getState().items;
       expect(currentItems).toHaveLength(2);
-      expect(currentItems.find((i: any) => i.id === mockProduct1.id)?.quantity).toBe(
-        5,
-      );
-      expect(currentItems.find((i: any) => i.id === mockProduct3.id)?.quantity).toBe(
-        3,
-      );
+      expect(
+        currentItems.find((i: any) => i.id === mockProduct1.id)?.quantity,
+      ).toBe(5);
+      expect(
+        currentItems.find((i: any) => i.id === mockProduct3.id)?.quantity,
+      ).toBe(3);
     });
 
     it("should handle items with identical names but different IDs", () => {

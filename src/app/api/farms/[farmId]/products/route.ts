@@ -9,7 +9,7 @@ import type { Product, ProductCategory, ProductStatus } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 /**
  * Query parameters validation schema
@@ -18,23 +18,30 @@ const ProductQuerySchema = z.object({
   page: z.string().optional().default("1"),
   limit: z.string().optional().default("20"),
   search: z.string().optional(),
-  category: z.enum([
-    "VEGETABLES",
-    "FRUITS",
-    "GRAINS",
-    "DAIRY",
-    "MEAT",
-    "EGGS",
-    "HONEY",
-    "PRESERVES",
-    "BAKED_GOODS",
-    "HERBS",
-    "OTHER",
-  ]).optional(),
+  category: z
+    .enum([
+      "VEGETABLES",
+      "FRUITS",
+      "GRAINS",
+      "DAIRY",
+      "MEAT",
+      "EGGS",
+      "HONEY",
+      "PRESERVES",
+      "BAKED_GOODS",
+      "HERBS",
+      "OTHER",
+    ])
+    .optional(),
   organic: z.string().optional(),
   inStock: z.string().optional(),
-  status: z.enum(["ACTIVE", "OUT_OF_STOCK", "DISCONTINUED", "DRAFT"]).optional(),
-  sortBy: z.enum(["createdAt", "price", "name", "popularity"]).optional().default("createdAt"),
+  status: z
+    .enum(["ACTIVE", "OUT_OF_STOCK", "DISCONTINUED", "DRAFT"])
+    .optional(),
+  sortBy: z
+    .enum(["createdAt", "price", "name", "popularity"])
+    .optional()
+    .default("createdAt"),
   sortOrder: z.enum(["asc", "desc"]).optional().default("desc"),
 });
 
@@ -69,7 +76,7 @@ interface ProductListResponse {
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { farmId: string } }
+  { params }: { params: { farmId: string } },
 ): Promise<NextResponse<ProductListResponse>> {
   try {
     const { farmId } = params;
@@ -94,7 +101,7 @@ export async function GET(
             message: `Farm with ID ${farmId} not found`,
           },
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -122,7 +129,7 @@ export async function GET(
             message: "Invalid query parameters",
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -258,7 +265,7 @@ export async function GET(
               : "Failed to fetch farm products",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

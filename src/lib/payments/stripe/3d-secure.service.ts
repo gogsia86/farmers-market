@@ -20,7 +20,7 @@ import { stripe } from "@/lib/stripe";
 import type { ServiceResponse } from "@/lib/types/service.types";
 import Stripe from "stripe";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 // ============================================================================
 // TYPES & INTERFACES
@@ -154,8 +154,8 @@ export class Stripe3DSecureService {
       };
     } catch (error) {
       logger.error("Error checking 3D Secure status:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
 
       return {
         success: false,
@@ -240,8 +240,8 @@ export class Stripe3DSecureService {
       };
     } catch (error) {
       logger.error("Error confirming payment with authentication:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
 
       if (error instanceof Stripe.errors.StripeError) {
         return {
@@ -348,8 +348,8 @@ export class Stripe3DSecureService {
       };
     } catch (error) {
       logger.error("Error handling authentication completion:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
 
       return {
         success: false,
@@ -441,8 +441,8 @@ export class Stripe3DSecureService {
       };
     } catch (error) {
       logger.error("Error getting verification details:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
 
       return {
         success: false,
@@ -491,8 +491,8 @@ export class Stripe3DSecureService {
       };
     } catch (error) {
       logger.error("Error retrying authentication:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
 
       return {
         success: false,
@@ -579,8 +579,8 @@ export class Stripe3DSecureService {
       return paymentMethod.type === "card" && paymentMethod.card !== null;
     } catch (error) {
       logger.error("Error checking card 3DS support:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
       return false;
     }
   }

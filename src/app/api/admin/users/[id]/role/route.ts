@@ -9,7 +9,7 @@ import { notificationService } from "@/lib/services/notification.service";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 // ============================================================================
 // Validation Schemas
@@ -36,7 +36,7 @@ async function logAdminAction(
   adminId: string,
   actionType: string,
   targetUserId: string,
-  details?: Record<string, any>
+  details?: Record<string, any>,
 ): Promise<void> {
   await database.adminAction.create({
     data: {
@@ -56,7 +56,7 @@ async function logAdminAction(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ): Promise<NextResponse> {
   try {
     const session = await auth();
@@ -70,7 +70,7 @@ export async function PATCH(
             message: "Authentication required",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -85,7 +85,7 @@ export async function PATCH(
             message: "Admin access required",
           },
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -101,7 +101,7 @@ export async function PATCH(
             message: "Cannot modify your own role",
           },
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -118,7 +118,7 @@ export async function PATCH(
             details: validation.error.flatten(),
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -146,7 +146,7 @@ export async function PATCH(
             message: "User not found",
           },
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -283,7 +283,7 @@ export async function PATCH(
               : "Failed to update user role",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

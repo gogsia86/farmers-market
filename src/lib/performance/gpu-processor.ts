@@ -10,7 +10,6 @@ import { logger } from "@/lib/monitoring/logger";
 import { loadTensorFlow } from "@/lib/lazy/ml.lazy";
 import { loadSharp } from "@/lib/lazy/image.lazy";
 
-
 import type * as tf from "@tensorflow/tfjs";
 import type Sharp from "sharp";
 
@@ -179,7 +178,9 @@ export async function initializeTensorFlowGPU(): Promise<void> {
 
     logger.info("🔥 TensorFlow.js GPU backend initialized");
     logger.info("   Backend:", { backend: tfInstance.getBackend() });
-    logger.info("   WebGL Version:", { version: tfInstance.env().get("WEBGL_VERSION") as number });
+    logger.info("   WebGL Version:", {
+      version: tfInstance.env().get("WEBGL_VERSION") as number,
+    });
     logger.info("   Memory:", { memory: tfInstance.memory() });
   } catch (error) {
     logger.warn(
@@ -283,13 +284,17 @@ export class GPUProcessor {
       }
 
       const duration = performance.now() - startTime;
-      const totalOriginalSize = originalSizes.reduce((a: any, b: any) => a + b, 0);
+      const totalOriginalSize = originalSizes.reduce(
+        (a: any, b: any) => a + b,
+        0,
+      );
       const totalNewSize = newSizes.reduce((a: any, b: any) => a + b, 0);
       const compressionRatio = totalOriginalSize / totalNewSize;
 
       logger.info(`✅ Image processing complete: ${duration.toFixed(2)}ms`);
       logger.info(
-        `   Compression: ${totalOriginalSize / 1024 / 1024}MB → ${totalNewSize / 1024 / 1024}MB`);
+        `   Compression: ${totalOriginalSize / 1024 / 1024}MB → ${totalNewSize / 1024 / 1024}MB`,
+      );
       logger.info(`   Ratio: ${compressionRatio.toFixed(2)}x`);
 
       this.recordMetric("image-processing", {
@@ -377,10 +382,7 @@ export class GPUProcessor {
 
       return recommendations.indices;
     } catch (error) {
-      logger.error(
-        "Product recommendation generation failed",
-        error as Error,
-      );
+      logger.error("Product recommendation generation failed", error as Error);
       // Return empty array on error
       return [];
     }
@@ -479,7 +481,8 @@ export class GPUProcessor {
     }
 
     logger.info(
-      `🧮 GPU Matrix Multiply: [${rowsA}x${colsA}] * [${rowsB}x${colsB}]`);
+      `🧮 GPU Matrix Multiply: [${rowsA}x${colsA}] * [${rowsB}x${colsB}]`,
+    );
 
     try {
       // CPU fallback for matrix multiplication
@@ -595,7 +598,8 @@ export class GPUProcessor {
         avgDuration,
         minDuration: Math.min(...durations),
         maxDuration: Math.max(...durations),
-        successRate: metrics.filter((m: any) => m.success).length / metrics.length,
+        successRate:
+          metrics.filter((m: any) => m.success).length / metrics.length,
       };
     }
 
@@ -692,7 +696,8 @@ export class GPUPerformanceMonitor {
 
     return {
       count: measurements.length,
-      avg: measurements.reduce((a: any, b: any) => a + b, 0) / measurements.length,
+      avg:
+        measurements.reduce((a: any, b: any) => a + b, 0) / measurements.length,
       min: Math.min(...measurements),
       max: Math.max(...measurements),
       p50: sorted[Math.floor(sorted.length * 0.5)],

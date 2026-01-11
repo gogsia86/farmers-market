@@ -98,7 +98,10 @@ describe("🔬 matchMedia Mock Diagnostics", () => {
     const result = window.matchMedia("(prefers-reduced-motion: reduce)");
 
     console.log("result.addEventListener:", result?.addEventListener);
-    console.log("typeof result.addEventListener:", typeof result?.addEventListener);
+    console.log(
+      "typeof result.addEventListener:",
+      typeof result?.addEventListener,
+    );
 
     expect(result).toHaveProperty("addEventListener");
     expect(typeof result.addEventListener).toBe("function");
@@ -190,16 +193,24 @@ describe("🔬 matchMedia Mock Diagnostics", () => {
     console.log("Custom mock result.matches:", result.matches);
 
     expect(result.matches).toBe(true);
-    expect(mockMatchMedia).toHaveBeenCalledWith("(prefers-reduced-motion: reduce)");
+    expect(mockMatchMedia).toHaveBeenCalledWith(
+      "(prefers-reduced-motion: reduce)",
+    );
   });
 
   it("should check if Jest is clearing mocks between tests", () => {
     console.log("\n🧪 TEST: Jest mock clearing behavior");
-    console.log("jest.isMockFunction(window.matchMedia):", jest.isMockFunction(window.matchMedia));
+    console.log(
+      "jest.isMockFunction(window.matchMedia):",
+      jest.isMockFunction(window.matchMedia),
+    );
 
     if (jest.isMockFunction(window.matchMedia)) {
       console.log("✅ matchMedia is a Jest mock function");
-      console.log("Mock calls:", (window.matchMedia as jest.Mock).mock.calls.length);
+      console.log(
+        "Mock calls:",
+        (window.matchMedia as jest.Mock).mock.calls.length,
+      );
     } else {
       console.log("❌ matchMedia is NOT a Jest mock function");
     }
@@ -221,7 +232,10 @@ describe("🔬 Global vs Window Comparison", () => {
     console.log("\n🧪 TEST: global vs window");
     console.log("typeof global.matchMedia:", typeof (global as any).matchMedia);
     console.log("typeof window.matchMedia:", typeof window.matchMedia);
-    console.log("Are they the same?", (global as any).matchMedia === window.matchMedia);
+    console.log(
+      "Are they the same?",
+      (global as any).matchMedia === window.matchMedia,
+    );
 
     if (typeof (global as any).matchMedia === "function") {
       const globalResult = (global as any).matchMedia("test");
@@ -252,7 +266,10 @@ describe("🔬 jsdom Environment Check", () => {
     console.log("window.localStorage:", typeof window.localStorage);
     console.log("window.sessionStorage:", typeof window.sessionStorage);
     console.log("window.matchMedia:", typeof window.matchMedia);
-    console.log("window.IntersectionObserver:", typeof window.IntersectionObserver);
+    console.log(
+      "window.IntersectionObserver:",
+      typeof window.IntersectionObserver,
+    );
     console.log("window.ResizeObserver:", typeof window.ResizeObserver);
   });
 });

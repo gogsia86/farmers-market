@@ -9,12 +9,12 @@
 ## Summary by Category
 
 | Category | Count | High Priority | Medium Priority | Low Priority |
-|----------|-------|---------------|-----------------|--------------|
-| API | 9 | 0 | 0 | 9 |
-| General | 5 | 0 | 0 | 5 |
-| Payments | 2 | 0 | 0 | 2 |
-| Services | 5 | 0 | 0 | 5 |
-| Testing | 6 | 0 | 0 | 6 |
+| -------- | ----- | ------------- | --------------- | ------------ |
+| API      | 9     | 0             | 0               | 9            |
+| General  | 5     | 0             | 0               | 5            |
+| Payments | 2     | 0             | 0               | 2            |
+| Services | 5     | 0             | 0               | 5            |
+| Testing  | 6     | 0             | 0               | 6            |
 
 ---
 
@@ -26,7 +26,7 @@
 
 **Priority**: LOW  
 **Type**: TODO  
-**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `api`  
+**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `api`
 
 ## Description
 
@@ -36,7 +36,7 @@ Implement API call to fetch order details
 
 **File**: `src\app\(customer)\checkout\success\page.tsx`
 **Line**: 63
-[View in code](./src\app\(customer)\checkout\success\page.tsx#L63)
+[View in code](./src\app(customer)\checkout\success\page.tsx#L63)
 
 ## Context
 
@@ -58,7 +58,7 @@ API
 
 ---
 
-*This issue was automatically generated from a code comment.*
+_This issue was automatically generated from a code comment._
 
 ---
 
@@ -66,7 +66,7 @@ API
 
 **Priority**: LOW  
 **Type**: TODO  
-**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `api`  
+**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `api`
 
 ## Description
 
@@ -98,7 +98,7 @@ API
 
 ---
 
-*This issue was automatically generated from a code comment.*
+_This issue was automatically generated from a code comment._
 
 ---
 
@@ -106,7 +106,7 @@ API
 
 **Priority**: LOW  
 **Type**: TODO  
-**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `api`  
+**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `api`
 
 ## Description
 
@@ -121,11 +121,11 @@ Create notification for farm owner
 ## Context
 
 ```ts
-      // await sendFarmApprovalEmail(updatedFarm.owner.email, updatedFarm);
+// await sendFarmApprovalEmail(updatedFarm.owner.email, updatedFarm);
 
-      // TODO: Create notification for farm owner
-      // await createNotification({
-      //   userId: updatedFarm.ownerId,
+// TODO: Create notification for farm owner
+// await createNotification({
+//   userId: updatedFarm.ownerId,
 ```
 
 ## Type
@@ -138,7 +138,7 @@ API
 
 ---
 
-*This issue was automatically generated from a code comment.*
+_This issue was automatically generated from a code comment._
 
 ---
 
@@ -146,7 +146,7 @@ API
 
 **Priority**: LOW  
 **Type**: TODO  
-**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `api`  
+**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `api`
 
 ## Description
 
@@ -178,7 +178,7 @@ API
 
 ---
 
-*This issue was automatically generated from a code comment.*
+_This issue was automatically generated from a code comment._
 
 ---
 
@@ -186,7 +186,7 @@ API
 
 **Priority**: LOW  
 **Type**: TODO  
-**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `api`  
+**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `api`
 
 ## Description
 
@@ -201,11 +201,11 @@ Create notification for farm owner
 ## Context
 
 ```ts
-      // await sendFarmRejectionEmail(updatedFarm.owner.email, updatedFarm, reason);
+// await sendFarmRejectionEmail(updatedFarm.owner.email, updatedFarm, reason);
 
-      // TODO: Create notification for farm owner
-      // await createNotification({
-      //   userId: updatedFarm.ownerId,
+// TODO: Create notification for farm owner
+// await createNotification({
+//   userId: updatedFarm.ownerId,
 ```
 
 ## Type
@@ -218,7 +218,7 @@ API
 
 ---
 
-*This issue was automatically generated from a code comment.*
+_This issue was automatically generated from a code comment._
 
 ---
 
@@ -226,7 +226,7 @@ API
 
 **Priority**: LOW  
 **Type**: TODO  
-**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `api`  
+**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `api`
 
 ## Description
 
@@ -258,7 +258,7 @@ API
 
 ---
 
-*This issue was automatically generated from a code comment.*
+_This issue was automatically generated from a code comment._
 
 ---
 
@@ -266,7 +266,7 @@ API
 
 **Priority**: LOW  
 **Type**: TODO  
-**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `api`  
+**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `api`
 
 ## Description
 
@@ -298,7 +298,7 @@ API
 
 ---
 
-*This issue was automatically generated from a code comment.*
+_This issue was automatically generated from a code comment._
 
 ---
 
@@ -306,7 +306,7 @@ API
 
 **Priority**: LOW  
 **Type**: TODO  
-**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `api`  
+**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `api`
 
 ## Description
 
@@ -338,7 +338,7 @@ API
 
 ---
 
-*This issue was automatically generated from a code comment.*
+_This issue was automatically generated from a code comment._
 
 ---
 
@@ -346,7 +346,7 @@ API
 
 **Priority**: LOW  
 **Type**: TODO  
-**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `api`  
+**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `api`
 
 ## Description
 
@@ -378,7 +378,7 @@ API
 
 ---
 
-*This issue was automatically generated from a code comment.*
+_This issue was automatically generated from a code comment._
 
 ---
 
@@ -388,7 +388,7 @@ API
 
 **Priority**: LOW  
 **Type**: TODO  
-**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `general`  
+**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `general`
 
 ## Description
 
@@ -398,7 +398,7 @@ Get userId from auth session
 
 **File**: `src\app\(customer)\cart\page.tsx`
 **Line**: 45
-[View in code](./src\app\(customer)\cart\page.tsx#L45)
+[View in code](./src\app(customer)\cart\page.tsx#L45)
 
 ## Context
 
@@ -420,7 +420,7 @@ General
 
 ---
 
-*This issue was automatically generated from a code comment.*
+_This issue was automatically generated from a code comment._
 
 ---
 
@@ -428,7 +428,7 @@ General
 
 **Priority**: LOW  
 **Type**: TODO  
-**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `general`  
+**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `general`
 
 ## Description
 
@@ -438,16 +438,15 @@ Implement receipt download
 
 **File**: `src\app\(customer)\checkout\success\page.tsx`
 **Line**: 96
-[View in code](./src\app\(customer)\checkout\success\page.tsx#L96)
+[View in code](./src\app(customer)\checkout\success\page.tsx#L96)
 
 ## Context
 
 ```tsx
-
-  const handleDownloadReceipt = () => {
-    // TODO: Implement receipt download
-    alert("Receipt download will be implemented");
-  };
+const handleDownloadReceipt = () => {
+  // TODO: Implement receipt download
+  alert("Receipt download will be implemented");
+};
 ```
 
 ## Type
@@ -460,7 +459,7 @@ General
 
 ---
 
-*This issue was automatically generated from a code comment.*
+_This issue was automatically generated from a code comment._
 
 ---
 
@@ -468,7 +467,7 @@ General
 
 **Priority**: LOW  
 **Type**: TODO  
-**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `general`  
+**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `general`
 
 ## Description
 
@@ -500,7 +499,7 @@ General
 
 ---
 
-*This issue was automatically generated from a code comment.*
+_This issue was automatically generated from a code comment._
 
 ---
 
@@ -508,7 +507,7 @@ General
 
 **Priority**: LOW  
 **Type**: TODO  
-**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `general`  
+**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `general`
 
 ## Description
 
@@ -540,7 +539,7 @@ General
 
 ---
 
-*This issue was automatically generated from a code comment.*
+_This issue was automatically generated from a code comment._
 
 ---
 
@@ -548,7 +547,7 @@ General
 
 **Priority**: LOW  
 **Type**: TODO  
-**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `general`  
+**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `general`
 
 ## Description
 
@@ -580,7 +579,7 @@ General
 
 ---
 
-*This issue was automatically generated from a code comment.*
+_This issue was automatically generated from a code comment._
 
 ---
 
@@ -590,7 +589,7 @@ General
 
 **Priority**: LOW  
 **Type**: TODO  
-**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `payments`  
+**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `payments`
 
 ## Description
 
@@ -622,7 +621,7 @@ Payments
 
 ---
 
-*This issue was automatically generated from a code comment.*
+_This issue was automatically generated from a code comment._
 
 ---
 
@@ -630,7 +629,7 @@ Payments
 
 **Priority**: LOW  
 **Type**: TODO  
-**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `payments`  
+**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `payments`
 
 ## Description
 
@@ -662,7 +661,7 @@ Payments
 
 ---
 
-*This issue was automatically generated from a code comment.*
+_This issue was automatically generated from a code comment._
 
 ---
 
@@ -672,7 +671,7 @@ Payments
 
 **Priority**: LOW  
 **Type**: TODO  
-**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `services`  
+**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `services`
 
 ## Description
 
@@ -704,7 +703,7 @@ Services
 
 ---
 
-*This issue was automatically generated from a code comment.*
+_This issue was automatically generated from a code comment._
 
 ---
 
@@ -712,7 +711,7 @@ Services
 
 **Priority**: LOW  
 **Type**: TODO  
-**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `services`  
+**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `services`
 
 ## Description
 
@@ -744,7 +743,7 @@ Services
 
 ---
 
-*This issue was automatically generated from a code comment.*
+_This issue was automatically generated from a code comment._
 
 ---
 
@@ -752,7 +751,7 @@ Services
 
 **Priority**: LOW  
 **Type**: TODO  
-**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `services`  
+**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `services`
 
 ## Description
 
@@ -784,7 +783,7 @@ Services
 
 ---
 
-*This issue was automatically generated from a code comment.*
+_This issue was automatically generated from a code comment._
 
 ---
 
@@ -792,7 +791,7 @@ Services
 
 **Priority**: LOW  
 **Type**: TODO  
-**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `services`  
+**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `services`
 
 ## Description
 
@@ -824,7 +823,7 @@ Services
 
 ---
 
-*This issue was automatically generated from a code comment.*
+_This issue was automatically generated from a code comment._
 
 ---
 
@@ -832,7 +831,7 @@ Services
 
 **Priority**: LOW  
 **Type**: TODO  
-**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `services`  
+**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `services`
 
 ## Description
 
@@ -864,7 +863,7 @@ Services
 
 ---
 
-*This issue was automatically generated from a code comment.*
+_This issue was automatically generated from a code comment._
 
 ---
 
@@ -874,7 +873,7 @@ Services
 
 **Priority**: LOW  
 **Type**: TODO  
-**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `testing`  
+**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `testing`
 
 ## Description
 
@@ -884,7 +883,7 @@ Fix infinite loop - useCheckoutValidation calls canProceedFromStep as selector
 
 **File**: `src\stores\__tests__\checkoutStore.test.ts`
 **Line**: 714
-[View in code](./src\stores\__tests__\checkoutStore.test.ts#L714)
+[View in code](./src\stores__tests__\checkoutStore.test.ts#L714)
 
 ## Context
 
@@ -906,7 +905,7 @@ Testing
 
 ---
 
-*This issue was automatically generated from a code comment.*
+_This issue was automatically generated from a code comment._
 
 ---
 
@@ -914,7 +913,7 @@ Testing
 
 **Priority**: LOW  
 **Type**: TODO  
-**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `testing`  
+**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `testing`
 
 ## Description
 
@@ -924,7 +923,7 @@ Re-enable when NotificationCenter component is created
 
 **File**: `src\__tests__\animations\animation-accessibility.test.tsx`
 **Line**: 204
-[View in code](./src\__tests__\animations\animation-accessibility.test.tsx#L204)
+[View in code](./src__tests__\animations\animation-accessibility.test.tsx#L204)
 
 ## Context
 
@@ -946,7 +945,7 @@ Testing
 
 ---
 
-*This issue was automatically generated from a code comment.*
+_This issue was automatically generated from a code comment._
 
 ---
 
@@ -954,7 +953,7 @@ Testing
 
 **Priority**: LOW  
 **Type**: TODO  
-**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `testing`  
+**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `testing`
 
 ## Description
 
@@ -964,7 +963,7 @@ Re-enable when NotificationCenter component is created
 
 **File**: `src\__tests__\animations\animation-accessibility.test.tsx`
 **Line**: 263
-[View in code](./src\__tests__\animations\animation-accessibility.test.tsx#L263)
+[View in code](./src__tests__\animations\animation-accessibility.test.tsx#L263)
 
 ## Context
 
@@ -986,7 +985,7 @@ Testing
 
 ---
 
-*This issue was automatically generated from a code comment.*
+_This issue was automatically generated from a code comment._
 
 ---
 
@@ -994,7 +993,7 @@ Testing
 
 **Priority**: LOW  
 **Type**: TODO  
-**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `testing`  
+**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `testing`
 
 ## Description
 
@@ -1004,7 +1003,7 @@ Re-enable when NotificationCenter component is created
 
 **File**: `src\__tests__\animations\animation-accessibility.test.tsx`
 **Line**: 449
-[View in code](./src\__tests__\animations\animation-accessibility.test.tsx#L449)
+[View in code](./src__tests__\animations\animation-accessibility.test.tsx#L449)
 
 ## Context
 
@@ -1026,7 +1025,7 @@ Testing
 
 ---
 
-*This issue was automatically generated from a code comment.*
+_This issue was automatically generated from a code comment._
 
 ---
 
@@ -1034,7 +1033,7 @@ Testing
 
 **Priority**: LOW  
 **Type**: TODO  
-**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `testing`  
+**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `testing`
 
 ## Description
 
@@ -1044,7 +1043,7 @@ Re-enable when NotificationCenter component is created
 
 **File**: `src\__tests__\animations\animation-accessibility.test.tsx`
 **Line**: 555
-[View in code](./src\__tests__\animations\animation-accessibility.test.tsx#L555)
+[View in code](./src__tests__\animations\animation-accessibility.test.tsx#L555)
 
 ## Context
 
@@ -1066,7 +1065,7 @@ Testing
 
 ---
 
-*This issue was automatically generated from a code comment.*
+_This issue was automatically generated from a code comment._
 
 ---
 
@@ -1074,7 +1073,7 @@ Testing
 
 **Priority**: LOW  
 **Type**: TODO  
-**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `testing`  
+**Labels**: `tech-debt`, `refactor`, `priority:low`, `todo`, `testing`
 
 ## Description
 
@@ -1084,7 +1083,7 @@ Re-enable when NotificationCenter component is created
 
 **File**: `src\__tests__\animations\animation-accessibility.test.tsx`
 **Line**: 606
-[View in code](./src\__tests__\animations\animation-accessibility.test.tsx#L606)
+[View in code](./src__tests__\animations\animation-accessibility.test.tsx#L606)
 
 ## Context
 
@@ -1106,7 +1105,7 @@ Testing
 
 ---
 
-*This issue was automatically generated from a code comment.*
+_This issue was automatically generated from a code comment._
 
 ---
 
@@ -1227,4 +1226,4 @@ curl -X POST -H "Authorization: token YOUR_TOKEN" \
 
 ---
 
-*Generated by create-issues-from-todos.js*
+_Generated by create-issues-from-todos.js_

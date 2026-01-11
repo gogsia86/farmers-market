@@ -4,7 +4,7 @@
  * Uses Server-Sent Events (SSE) for real-time updates
  */
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 export interface Notification {
   id: string;
@@ -69,8 +69,8 @@ export class NotificationService {
           callback(fullNotification);
         } catch (error) {
           logger.error("Notification callback error:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+            error: error instanceof Error ? error.message : String(error),
+          });
         }
       });
     }

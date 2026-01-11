@@ -14,6 +14,7 @@
 **URL:** https://vercel.com/dashboard
 
 **What to check:**
+
 - [ ] Deployment appears in "Deployments" tab
 - [ ] Status shows "Building" → "Deploying" → "Ready"
 - [ ] Build logs are accessible (click deployment)
@@ -68,6 +69,7 @@
 **Wait:** 2-3 minutes after deployment completes
 
 **Steps:**
+
 1. [ ] Find release with commit SHA `1c7aa4ab`
 2. [ ] Click on the release
 3. [ ] Navigate to "Artifacts" tab
@@ -75,11 +77,13 @@
 5. [ ] Check file sizes (should be reasonable, not 0 bytes)
 
 **Expected artifacts:**
+
 - `.next/static/chunks/**/*.js.map`
 - `.next/server/**/*.js.map`
 - `.next/static/css/**/*.css.map`
 
 **What success looks like:**
+
 ```
 ✅ 50-100+ source map artifacts uploaded
 ✅ File sizes: 10KB - 500KB each
@@ -94,6 +98,7 @@
 **URL:** Your production URL (e.g., https://farmers-market.vercel.app)
 
 **Basic checks:**
+
 - [ ] Homepage loads without errors
 - [ ] Navigation works (click around)
 - [ ] Images load correctly
@@ -101,6 +106,7 @@
 - [ ] API endpoints respond (if applicable)
 
 **Advanced checks:**
+
 - [ ] Test user authentication/login
 - [ ] Test creating/viewing a farm
 - [ ] Test adding products to cart
@@ -115,7 +121,9 @@
 1. Open browser console (F12) on your production site
 2. Run test error:
    ```javascript
-   throw new Error("Test error - Sentry verification [" + new Date().toISOString() + "]");
+   throw new Error(
+     "Test error - Sentry verification [" + new Date().toISOString() + "]",
+   );
    ```
 3. Go to Sentry → Issues
 4. Find your test error (should appear within 30 seconds)
@@ -127,6 +135,7 @@
    - [ ] Context shows variable values
 
 **Success example:**
+
 ```
 Error: Test error - Sentry verification
   at HomePage (app/page.tsx:42:11)
@@ -134,6 +143,7 @@ Error: Test error - Sentry verification
 ```
 
 **Failure example (before fix):**
+
 ```
 Error: Test error
   at a (chunk-ABC123.js:1:234)
@@ -146,14 +156,15 @@ Error: Test error
 
 ### **Build Time Comparison**
 
-| Metric | Before | Target | Actual | Status |
-|--------|--------|--------|--------|--------|
-| Build Duration | 2:00 min | 1:30-1:45 min | ___ min | ⬜ |
-| Cache Upload | 337 MB | ~220 MB | ___ MB | ⬜ |
-| Config Warnings | 5 | 0 | ___ | ⬜ |
-| Deprecation Warnings | 2 | 0 | ___ | ⬜ |
+| Metric               | Before   | Target        | Actual     | Status |
+| -------------------- | -------- | ------------- | ---------- | ------ |
+| Build Duration       | 2:00 min | 1:30-1:45 min | \_\_\_ min | ⬜     |
+| Cache Upload         | 337 MB   | ~220 MB       | \_\_\_ MB  | ⬜     |
+| Config Warnings      | 5        | 0             | \_\_\_     | ⬜     |
+| Deprecation Warnings | 2        | 0             | \_\_\_     | ⬜     |
 
 **How to find actual values:**
+
 1. Check Vercel build logs
 2. Look for "Build Duration" at end
 3. Find "Cache upload" size in logs
@@ -166,11 +177,13 @@ Error: Test error
 ### **Issue: Build takes longer than expected (>2:30)**
 
 **Possible causes:**
+
 - First build after config changes (cache rebuild)
 - Vercel platform issues
 - Network latency
 
 **Actions:**
+
 1. Wait for completion (first build can be slower)
 2. Check Vercel status page: https://www.vercel-status.com/
 3. If >5 minutes, contact Vercel support
@@ -180,11 +193,13 @@ Error: Test error
 ### **Issue: Still seeing deprecation warnings**
 
 **Possible causes:**
+
 - Vercel cache not cleared
 - Changes didn't deploy correctly
 - Old build artifacts
 
 **Actions:**
+
 1. Verify commit `1c7aa4ab` is the one being deployed
 2. Check GitHub that changes are in master branch
 3. Clear Vercel build cache:
@@ -196,11 +211,13 @@ Error: Test error
 ### **Issue: Sentry not uploading source maps**
 
 **Possible causes:**
+
 - `SENTRY_AUTH_TOKEN` not set in Vercel
 - Sentry project settings incorrect
 - Network issues during upload
 
 **Actions:**
+
 1. Verify environment variables in Vercel:
    - Settings → Environment Variables
    - Check: `SENTRY_AUTH_TOKEN`, `NEXT_PUBLIC_SENTRY_DSN`
@@ -213,11 +230,13 @@ Error: Test error
 ### **Issue: Production site returns errors**
 
 **Possible causes:**
+
 - Database connection issues
 - Missing environment variables
 - Breaking changes in code
 
 **Actions:**
+
 1. Check Vercel Function Logs for error details
 2. Verify all environment variables are set
 3. Test specific API endpoints directly
@@ -230,6 +249,7 @@ Error: Test error
 **If deployment causes critical issues:**
 
 ### **Option 1: Vercel Dashboard (Fastest)**
+
 1. Go to Vercel → Deployments
 2. Find previous successful deployment (before `1c7aa4ab`)
 3. Click "⋯" menu
@@ -237,17 +257,21 @@ Error: Test error
 5. Wait 30 seconds for rollback
 
 ### **Option 2: Git Revert (Recommended)**
+
 ```bash
 git revert HEAD
 git push origin master
 ```
+
 This creates a new commit that undoes changes (preserves history)
 
 ### **Option 3: Hard Reset (Emergency Only)**
+
 ```bash
 git reset --hard 825d1c97  # Previous commit
 git push --force origin master
 ```
+
 ⚠️ **Warning:** This rewrites history - use only if absolutely necessary
 
 ---
@@ -257,6 +281,7 @@ git push --force origin master
 Mark each item as you verify:
 
 ### **Build & Deployment**
+
 - [ ] Vercel deployment status: "Ready"
 - [ ] Build completed in 1:30-1:45 minutes
 - [ ] No config warnings in logs
@@ -264,6 +289,7 @@ Mark each item as you verify:
 - [ ] Cache upload ~220-250 MB
 
 ### **Sentry Integration**
+
 - [ ] Release appears in Sentry dashboard
 - [ ] 50-100+ source map artifacts uploaded
 - [ ] Test error shows proper stack trace
@@ -271,6 +297,7 @@ Mark each item as you verify:
 - [ ] Can navigate to source code
 
 ### **Production Site**
+
 - [ ] Homepage loads successfully
 - [ ] Navigation works correctly
 - [ ] No console errors
@@ -278,6 +305,7 @@ Mark each item as you verify:
 - [ ] API endpoints respond
 
 ### **Performance**
+
 - [ ] Build time reduced (vs. previous)
 - [ ] Cache size reduced (vs. previous)
 - [ ] Site loads quickly
@@ -290,6 +318,7 @@ Mark each item as you verify:
 ### **What You Should See:**
 
 ✅ **Build Logs:**
+
 ```
 Building...
 ✓ Compiled successfully
@@ -304,6 +333,7 @@ Cache upload: 224.5 MB
 ```
 
 ✅ **Sentry Artifacts:**
+
 ```
 Release: 1c7aa4ab
 Artifacts: 87 source maps
@@ -312,6 +342,7 @@ Status: Active
 ```
 
 ✅ **Performance:**
+
 ```
 Build time: -25% (2:00 → 1:30)
 Cache size: -35% (337 MB → 220 MB)
@@ -323,6 +354,7 @@ Warnings: -100% (5 → 0 config/deprecation)
 ## 📞 Support & Next Steps
 
 ### **If Everything Looks Good:**
+
 1. ✅ Mark all checklist items complete
 2. ✅ Document actual metrics in tracking table
 3. ✅ Notify team of successful optimization
@@ -330,6 +362,7 @@ Warnings: -100% (5 → 0 config/deprecation)
 5. ✅ Update this document with actual results
 
 ### **If Issues Occur:**
+
 1. Document the issue in detail
 2. Check troubleshooting section
 3. Review full documentation:
@@ -344,14 +377,14 @@ Warnings: -100% (5 → 0 config/deprecation)
 
 **Fill in after 24 hours:**
 
-| Metric | Value | Status |
-|--------|-------|--------|
-| **Build Success Rate** | ___% | ⬜ |
-| **Average Build Time** | ___ min | ⬜ |
-| **Cache Hit Rate** | ___% | ⬜ |
-| **Error Rate (24h)** | ___% | ⬜ |
-| **Sentry Events Tracked** | ___ | ⬜ |
-| **Production Incidents** | ___ | ⬜ |
+| Metric                    | Value      | Status |
+| ------------------------- | ---------- | ------ |
+| **Build Success Rate**    | \_\_\_%    | ⬜     |
+| **Average Build Time**    | \_\_\_ min | ⬜     |
+| **Cache Hit Rate**        | \_\_\_%    | ⬜     |
+| **Error Rate (24h)**      | \_\_\_%    | ⬜     |
+| **Sentry Events Tracked** | \_\_\_     | ⬜     |
+| **Production Incidents**  | \_\_\_     | ⬜     |
 
 ---
 
@@ -370,9 +403,9 @@ Warnings: -100% (5 → 0 config/deprecation)
 
 ---
 
-**Deployment Started:** ___________  
-**Deployment Completed:** ___________  
-**Verified By:** ___________  
+**Deployment Started:** ****\_\_\_****  
+**Deployment Completed:** ****\_\_\_****  
+**Verified By:** ****\_\_\_****  
 **Status:** 🚀 Monitoring in Progress
 
 ---

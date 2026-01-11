@@ -20,7 +20,7 @@ import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 import { telemetryService } from "@/lib/telemetry/azure-insights";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 // ============================================================================
 // REDIS CONFIGURATION
@@ -319,8 +319,8 @@ export async function checkRateLimit(
     return result;
   } catch (error) {
     logger.error("⚠️ Rate limiter error, using memory fallback:", {
-        error: error instanceof Error ? error.message : String(error)
-      });
+      error: error instanceof Error ? error.message : String(error),
+    });
 
     // Fallback to memory limiter
     if (fallbackConfig) {
@@ -532,10 +532,12 @@ export async function logRateLimitEvent(event: {
 }) {
   // Log to console in development
   if (process.env.NODE_ENV === "development") {
-    logger.info("🛡️ Rate Limit", { successALLOWEDBLOCKED: {
-      ...event,
-      status: event.success ? "✅ ALLOWED" : "🚫 BLOCKED",
-    } });
+    logger.info("🛡️ Rate Limit", {
+      successALLOWEDBLOCKED: {
+        ...event,
+        status: event.success ? "✅ ALLOWED" : "🚫 BLOCKED",
+      },
+    });
   }
 
   // Send to Azure Application Insights in production

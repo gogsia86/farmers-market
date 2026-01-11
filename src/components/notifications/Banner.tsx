@@ -72,7 +72,7 @@ import {
 import { useAnimationContext } from "./context/AnimationContext";
 import { useReducedMotion } from "./hooks/useReducedMotion";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 // ============================================================================
 // Banner Variants
@@ -193,7 +193,7 @@ const bannerVariants = cva(
       bordered: true,
       position: "inline",
     },
-  }
+  },
 );
 
 const iconVariants = cva("h-5 w-5 flex-shrink-0", {
@@ -222,8 +222,9 @@ const iconVariants = cva("h-5 w-5 flex-shrink-0", {
 // ============================================================================
 
 export interface BannerProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, "title">,
-  VariantProps<typeof bannerVariants> {
+  extends
+    Omit<React.HTMLAttributes<HTMLDivElement>, "title">,
+    VariantProps<typeof bannerVariants> {
   /** Banner notification data */
   notification: BannerNotification;
 
@@ -247,7 +248,7 @@ export const Banner = React.forwardRef<HTMLDivElement, BannerProps>(
       className,
       ...props
     },
-    ref
+    ref,
   ) => {
     const dismissible = notification.dismissible ?? true;
     const sticky = notification.sticky ?? false;
@@ -282,8 +283,14 @@ export const Banner = React.forwardRef<HTMLDivElement, BannerProps>(
     let motionVariants;
     if (prefersReducedMotion) {
       // Accessible variants with minimal motion
-      motionVariants = getAccessibleBannerVariants(effectivePosition === "top" || effectivePosition === "bottom");
-    } else if (isAgricultural && agriculturalData?.season && animationContext?.useSeasonalAnimations) {
+      motionVariants = getAccessibleBannerVariants(
+        effectivePosition === "top" || effectivePosition === "bottom",
+      );
+    } else if (
+      isAgricultural &&
+      agriculturalData?.season &&
+      animationContext?.useSeasonalAnimations
+    ) {
       // Seasonal variants for agricultural banners
       motionVariants = getSeasonalBannerVariants(agriculturalData.season);
     } else if (effectiveSeverity) {
@@ -312,13 +319,18 @@ export const Banner = React.forwardRef<HTMLDivElement, BannerProps>(
         aria-live={severity === "error" ? "assertive" : "polite"}
         aria-atomic="true"
         className={cn(
-          bannerVariants({ severity: effectiveSeverity, variant, bordered, position: effectivePosition }),
+          bannerVariants({
+            severity: effectiveSeverity,
+            variant,
+            bordered,
+            position: effectivePosition,
+          }),
           sticky &&
-          (effectivePosition === "top" || effectivePosition === "bottom") &&
-          "sticky z-50",
+            (effectivePosition === "top" || effectivePosition === "bottom") &&
+            "sticky z-50",
           effectivePosition === "top" && sticky && "top-0",
           effectivePosition === "bottom" && sticky && "bottom-0",
-          className
+          className,
         )}
         initial="initial"
         animate="animate"
@@ -343,7 +355,7 @@ export const Banner = React.forwardRef<HTMLDivElement, BannerProps>(
               <p
                 className={cn(
                   "text-sm font-semibold leading-none",
-                  variant === "filled" && "text-white"
+                  variant === "filled" && "text-white",
                 )}
               >
                 {isAgricultural &&
@@ -359,7 +371,7 @@ export const Banner = React.forwardRef<HTMLDivElement, BannerProps>(
             <p
               className={cn(
                 "text-sm",
-                variant === "filled" ? "text-white/90" : "opacity-90"
+                variant === "filled" ? "text-white/90" : "opacity-90",
               )}
             >
               {notification.message}
@@ -375,7 +387,7 @@ export const Banner = React.forwardRef<HTMLDivElement, BannerProps>(
                     "rounded px-2 py-0.5",
                     variant === "filled"
                       ? "bg-white/20 text-white"
-                      : "bg-white/50"
+                      : "bg-white/50",
                   )}
                 >
                   🏡 {agriculturalData.farmName}
@@ -387,7 +399,7 @@ export const Banner = React.forwardRef<HTMLDivElement, BannerProps>(
                     "rounded px-2 py-0.5",
                     variant === "filled"
                       ? "bg-white/20 text-white"
-                      : "bg-white/50"
+                      : "bg-white/50",
                   )}
                 >
                   🌾 {agriculturalData.productName}
@@ -399,7 +411,7 @@ export const Banner = React.forwardRef<HTMLDivElement, BannerProps>(
                     "rounded px-2 py-0.5",
                     variant === "filled"
                       ? "bg-white/20 text-white"
-                      : "bg-white/50"
+                      : "bg-white/50",
                   )}
                 >
                   {getEventTypeLabel(agriculturalData.eventType)}
@@ -425,35 +437,35 @@ export const Banner = React.forwardRef<HTMLDivElement, BannerProps>(
                     "focus:outline-none focus:ring-2 focus:ring-offset-1",
                     // Primary action styling
                     action.type === "primary" &&
-                    variant !== "filled" &&
-                    severity === "info" &&
-                    "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500",
+                      variant !== "filled" &&
+                      severity === "info" &&
+                      "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500",
                     action.type === "primary" &&
-                    variant !== "filled" &&
-                    severity === "success" &&
-                    "bg-green-600 text-white hover:bg-green-700 focus:ring-green-500",
+                      variant !== "filled" &&
+                      severity === "success" &&
+                      "bg-green-600 text-white hover:bg-green-700 focus:ring-green-500",
                     action.type === "primary" &&
-                    variant !== "filled" &&
-                    severity === "warning" &&
-                    "bg-yellow-600 text-white hover:bg-yellow-700 focus:ring-yellow-500",
+                      variant !== "filled" &&
+                      severity === "warning" &&
+                      "bg-yellow-600 text-white hover:bg-yellow-700 focus:ring-yellow-500",
                     action.type === "primary" &&
-                    variant !== "filled" &&
-                    severity === "error" &&
-                    "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500",
+                      variant !== "filled" &&
+                      severity === "error" &&
+                      "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500",
                     action.type === "primary" &&
-                    variant !== "filled" &&
-                    severity === "agricultural" &&
-                    "bg-emerald-600 text-white hover:bg-emerald-700 focus:ring-emerald-500",
+                      variant !== "filled" &&
+                      severity === "agricultural" &&
+                      "bg-emerald-600 text-white hover:bg-emerald-700 focus:ring-emerald-500",
                     // Primary on filled variant
                     action.type === "primary" &&
-                    variant === "filled" &&
-                    "bg-white text-gray-900 hover:bg-gray-100 focus:ring-white",
+                      variant === "filled" &&
+                      "bg-white text-gray-900 hover:bg-gray-100 focus:ring-white",
                     // Secondary action styling
                     action.type === "secondary" &&
-                    "bg-white/80 text-gray-700 hover:bg-white focus:ring-gray-400",
+                      "bg-white/80 text-gray-700 hover:bg-white focus:ring-gray-400",
                     action.type === "tertiary" &&
-                    "text-gray-700 hover:bg-white/50 focus:ring-gray-400",
-                    action.disabled && "cursor-not-allowed opacity-50"
+                      "text-gray-700 hover:bg-white/50 focus:ring-gray-400",
+                    action.disabled && "cursor-not-allowed opacity-50",
                   )}
                 >
                   {action.icon && <span>{action.icon}</span>}
@@ -472,12 +484,23 @@ export const Banner = React.forwardRef<HTMLDivElement, BannerProps>(
             className={cn(
               "flex-shrink-0 rounded p-1 transition-colors",
               "hover:bg-black/10 focus:outline-none focus:ring-2 focus:ring-offset-1",
-              variant !== "filled" && severity === "info" && "focus:ring-blue-500",
-              variant !== "filled" && severity === "success" && "focus:ring-green-500",
-              variant !== "filled" && severity === "warning" && "focus:ring-yellow-500",
-              variant !== "filled" && severity === "error" && "focus:ring-red-500",
-              variant !== "filled" && severity === "agricultural" && "focus:ring-emerald-500",
-              variant === "filled" && "text-white hover:bg-white/20 focus:ring-white"
+              variant !== "filled" &&
+                severity === "info" &&
+                "focus:ring-blue-500",
+              variant !== "filled" &&
+                severity === "success" &&
+                "focus:ring-green-500",
+              variant !== "filled" &&
+                severity === "warning" &&
+                "focus:ring-yellow-500",
+              variant !== "filled" &&
+                severity === "error" &&
+                "focus:ring-red-500",
+              variant !== "filled" &&
+                severity === "agricultural" &&
+                "focus:ring-emerald-500",
+              variant === "filled" &&
+                "text-white hover:bg-white/20 focus:ring-white",
             )}
             aria-label="Dismiss banner"
           >
@@ -486,7 +509,7 @@ export const Banner = React.forwardRef<HTMLDivElement, BannerProps>(
         )}
       </motion.div>
     );
-  }
+  },
 );
 
 Banner.displayName = "Banner";

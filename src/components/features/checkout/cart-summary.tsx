@@ -15,7 +15,10 @@ import { Package, ShoppingBag } from "lucide-react";
 interface CartSummaryProps {
   cart: (CartItem & {
     product: Product & {
-      farm: Pick<Farm, "id" | "name" | "slug" | "address" | "city" | "state" | "zipCode">;
+      farm: Pick<
+        Farm,
+        "id" | "name" | "slug" | "address" | "city" | "state" | "zipCode"
+      >;
     };
   })[];
 }
@@ -52,18 +55,24 @@ export function CartSummary({ cart }: CartSummaryProps) {
   const totals = calculateTotals();
 
   // Group items by farm
-  const itemsByFarm = cart.reduce((groups: any, item: any) => {
-    const farmId = item.farmId;
-    if (!groups[farmId]) {
-      groups[farmId] = {
-        farmName: item.product.farm.name,
-        farmId,
-        items: [],
-      };
-    }
-    groups[farmId].items.push(item);
-    return groups;
-  }, {} as Record<string, { farmName: string; farmId: string; items: typeof cart }>);
+  const itemsByFarm = cart.reduce(
+    (groups: any, item: any) => {
+      const farmId = item.farmId;
+      if (!groups[farmId]) {
+        groups[farmId] = {
+          farmName: item.product.farm.name,
+          farmId,
+          items: [],
+        };
+      }
+      groups[farmId].items.push(item);
+      return groups;
+    },
+    {} as Record<
+      string,
+      { farmName: string; farmId: string; items: typeof cart }
+    >,
+  );
 
   // ==========================================================================
   // RENDER
@@ -95,21 +104,21 @@ export function CartSummary({ cart }: CartSummaryProps) {
               {/* Farm Items */}
               <div className="space-y-2">
                 {farmGroup.items.map((item: any) => (
-                  <div
-                    key={item.id}
-                    className="flex items-start gap-3 text-sm"
-                  >
+                  <div key={item.id} className="flex items-start gap-3 text-sm">
                     <div className="flex-1">
                       <p className="font-medium text-gray-900">
                         {item.product.name}
                       </p>
                       <p className="text-xs text-gray-500">
-                        {Number(item.quantity)} {item.unit} × {formatCurrency(Number(item.priceAtAdd))}
+                        {Number(item.quantity)} {item.unit} ×{" "}
+                        {formatCurrency(Number(item.priceAtAdd))}
                       </p>
                     </div>
                     <div className="text-right">
                       <p className="font-medium text-gray-900">
-                        {formatCurrency(Number(item.priceAtAdd) * Number(item.quantity))}
+                        {formatCurrency(
+                          Number(item.priceAtAdd) * Number(item.quantity),
+                        )}
                       </p>
                     </div>
                   </div>

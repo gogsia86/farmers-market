@@ -10,7 +10,7 @@
 
 import { NextResponse } from "next/server";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -73,24 +73,28 @@ function maskValue(value: string): string {
 export async function GET(request: Request) {
   // Only allow in development or with special header
   const isDevelopment = process.env.NODE_ENV === "development";
-  const hasDebugHeader = request.headers.get("x-debug-token") === process.env.DEBUG_TOKEN;
+  const hasDebugHeader =
+    request.headers.get("x-debug-token") === process.env.DEBUG_TOKEN;
 
   if (!isDevelopment && !hasDebugHeader) {
     return NextResponse.json(
       {
         error: "This endpoint is only available in development mode",
-        hint: "Set NODE_ENV=development or provide x-debug-token header"
+        hint: "Set NODE_ENV=development or provide x-debug-token header",
       },
-      { status: 403 }
+      { status: 403 },
     );
   }
 
   // Check each environment variable
-  const envStatus: Record<string, {
-    exists: boolean;
-    masked?: string;
-    length?: number;
-  }> = {};
+  const envStatus: Record<
+    string,
+    {
+      exists: boolean;
+      masked?: string;
+      length?: number;
+    }
+  > = {};
 
   for (const envVar of ENV_VARS_TO_CHECK) {
     const value = process.env[envVar];
@@ -110,13 +114,13 @@ export async function GET(request: Request) {
 
   // Calculate statistics
   const totalChecked = ENV_VARS_TO_CHECK.length;
-  const totalSet = Object.values(envStatus).filter(v => v.exists).length;
+  const totalSet = Object.values(envStatus).filter((v) => v.exists).length;
   const totalMissing = totalChecked - totalSet;
 
   // Identify critical missing variables
   const criticalVars = ["NEXTAUTH_SECRET", "NEXTAUTH_URL", "DATABASE_URL"];
   const missingCritical = criticalVars.filter(
-    varName => !envStatus[varName]?.exists
+    (varName) => !envStatus[varName]?.exists,
   );
 
   return NextResponse.json({
@@ -126,7 +130,9 @@ export async function GET(request: Request) {
     vercel: {
       isVercel: process.env.VERCEL === "1",
       env: process.env.VERCEL_ENV,
-      url: process.env.VERCEL_URL ? maskValue(process.env.VERCEL_URL) : "not set",
+      url: process.env.VERCEL_URL
+        ? maskValue(process.env.VERCEL_URL)
+        : "not set",
     },
     summary: {
       totalChecked,
@@ -145,47 +151,47 @@ export async function GET(request: Request) {
 
 function generateRecommendations(
   envStatus: Record<string, { exists: boolean }>,
-  missingCritical: string[]
+  missingCritical: string[],
 ): string[] {
   const recommendations: string[] = [];
 
   // Critical variables
   if (missingCritical.length > 0) {
     recommendations.push(
-      `🚨 CRITICAL: Set these required variables: ${missingCritical.join(", ")}`
+      `🚨 CRITICAL: Set these required variables: ${missingCritical.join(", ")}`,
     );
   }
 
   // NextAuth
   if (!envStatus.NEXTAUTH_SECRET?.exists) {
     recommendations.push(
-      "🔐 Generate NEXTAUTH_SECRET: node -e \"logger.info(require('crypto').randomBytes(32).toString('base64'))\""
+      "🔐 Generate NEXTAUTH_SECRET: node -e \"logger.info(require('crypto').randomBytes(32).toString('base64'))\"",
     );
   }
 
   if (!envStatus.NEXTAUTH_URL?.exists) {
     recommendations.push(
-      "🌐 Set NEXTAUTH_URL to your application URL (e.g., http://localhost:3001 or https://your-domain.vercel.app)"
+      "🌐 Set NEXTAUTH_URL to your application URL (e.g., http://localhost:3001 or https://your-domain.vercel.app)",
     );
   }
 
   // Database
   if (!envStatus.DATABASE_URL?.exists) {
     recommendations.push(
-      "🗄️ Set DATABASE_URL to your PostgreSQL connection string"
+      "🗄️ Set DATABASE_URL to your PostgreSQL connection string",
     );
   }
 
   // Optional but recommended
   if (!envStatus.SENTRY_DSN?.exists) {
     recommendations.push(
-      "📊 Consider setting SENTRY_DSN for error tracking (optional)"
+      "📊 Consider setting SENTRY_DSN for error tracking (optional)",
     );
   }
 
   if (!envStatus.REDIS_HOST?.exists) {
     recommendations.push(
-      "⚡ Consider setting Redis variables for caching (optional but recommended)"
+      "⚡ Consider setting Redis variables for caching (optional but recommended)",
     );
   }
 

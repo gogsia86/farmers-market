@@ -18,7 +18,7 @@ import type * as tf from "@tensorflow/tfjs";
 // TYPE DEFINITIONS
 // ============================================================================
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 export interface PredictionResult {
   prediction: number | number[];
@@ -436,7 +436,7 @@ export function preloadTensorFlow(): void {
  */
 export async function getTensorFlowVersion(): Promise<string> {
   const tf = await loadTensorFlow();
-  return tf.version.tfjs || tf.version['tfjs-core'] || 'unknown';
+  return tf.version.tfjs || tf.version["tfjs-core"] || "unknown";
 }
 
 /**

@@ -7,7 +7,7 @@
  * with agricultural consciousness and divine precision.
  */
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 import type {
   MonitoringReport,
   NotificationConfig,
@@ -613,4 +613,3 @@ export function createDiscordNotifier(
 // ============================================================================
 
 export type { DiscordEmbed, DiscordMessage, DiscordNotificationResult };
-

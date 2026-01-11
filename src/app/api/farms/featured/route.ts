@@ -6,11 +6,11 @@
  * @route GET /api/farms/featured
  */
 
-import { database } from '@/lib/database';
-import { logger } from '@/lib/monitoring/logger';
-import type { Farm } from '@prisma/client';
-import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
+import { database } from "@/lib/database";
+import { logger } from "@/lib/monitoring/logger";
+import type { Farm } from "@prisma/client";
+import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 
 // ============================================================================
 // TYPES
@@ -38,7 +38,7 @@ interface FeaturedFarmsResponse {
 // ============================================================================
 
 const FeaturedFarmsQuerySchema = z.object({
-  limit: z.string().optional().default('10').transform(Number),
+  limit: z.string().optional().default("10").transform(Number),
 });
 
 // ============================================================================
@@ -56,13 +56,15 @@ const FeaturedFarmsQuerySchema = z.object({
  * - Verified
  * - Sorted by rating and order count
  */
-export async function GET(request: NextRequest): Promise<NextResponse<FeaturedFarmsResponse>> {
+export async function GET(
+  request: NextRequest,
+): Promise<NextResponse<FeaturedFarmsResponse>> {
   try {
     const { searchParams } = new URL(request.url);
 
     // Validate query parameters
     const queryValidation = FeaturedFarmsQuerySchema.safeParse({
-      limit: searchParams.get('limit') || '10',
+      limit: searchParams.get("limit") || "10",
     });
 
     if (!queryValidation.success) {
@@ -70,12 +72,12 @@ export async function GET(request: NextRequest): Promise<NextResponse<FeaturedFa
         {
           success: false,
           error: {
-            code: 'VALIDATION_ERROR',
-            message: 'Invalid query parameters',
+            code: "VALIDATION_ERROR",
+            message: "Invalid query parameters",
             details: queryValidation.error.flatten(),
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -87,8 +89,8 @@ export async function GET(request: NextRequest): Promise<NextResponse<FeaturedFa
     // Fetch featured farms from database
     const farms = await database.farm.findMany({
       where: {
-        status: 'ACTIVE',
-        verificationStatus: 'VERIFIED',
+        status: "ACTIVE",
+        verificationStatus: "VERIFIED",
       },
       select: {
         id: true,
@@ -122,14 +124,14 @@ export async function GET(request: NextRequest): Promise<NextResponse<FeaturedFa
         },
       },
       orderBy: [
-        { averageRating: 'desc' },
-        { totalOrdersCount: 'desc' },
-        { reviewCount: 'desc' },
+        { averageRating: "desc" },
+        { totalOrdersCount: "desc" },
+        { reviewCount: "desc" },
       ],
       take: cappedLimit,
     });
 
-    logger.info('Featured farms retrieved successfully', {
+    logger.info("Featured farms retrieved successfully", {
       count: farms.length,
       limit: cappedLimit,
     });
@@ -146,19 +148,19 @@ export async function GET(request: NextRequest): Promise<NextResponse<FeaturedFa
       },
     });
   } catch (error) {
-    logger.error('Failed to fetch featured farms', {
-      error: error instanceof Error ? error.message : 'Unknown error',
+    logger.error("Failed to fetch featured farms", {
+      error: error instanceof Error ? error.message : "Unknown error",
     });
 
     return NextResponse.json(
       {
         success: false,
         error: {
-          code: 'INTERNAL_ERROR',
-          message: 'Failed to fetch featured farms',
+          code: "INTERNAL_ERROR",
+          message: "Failed to fetch featured farms",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -167,6 +169,6 @@ export async function GET(request: NextRequest): Promise<NextResponse<FeaturedFa
 // EXPORT ROUTE CONFIG
 // ============================================================================
 
-export const runtime = 'nodejs';
-export const dynamic = 'force-dynamic';
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 export const revalidate = 0;

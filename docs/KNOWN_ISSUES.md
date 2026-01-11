@@ -18,17 +18,20 @@ This document tracks known non-critical issues, deprecation warnings, and techni
 **Status:** ℹ️ Non-Critical (Safe to Ignore)
 
 **Warning Message:**
+
 ```
 npm warn deprecated scmp@2.1.0: Just use Node.js's crypto.timingSafeEqual()
 ```
 
 **Details:**
+
 - **Cause**: The `scmp` package is a transitive dependency of `twilio@5.11.1`
 - **Impact**: None - purely informational warning
 - **Risk Level**: None - the package works correctly
 - **Modern Alternative**: Node.js's built-in `crypto.timingSafeEqual()` (available since Node v6.6.0)
 
 **Why It Exists:**
+
 ```
 farmers-market@1.0.0
 └─┬ twilio@5.11.1
@@ -38,12 +41,14 @@ farmers-market@1.0.0
 The Twilio SDK uses `scmp` internally for constant-time buffer comparisons to prevent timing attacks during webhook signature validation. While Node.js now provides this functionality natively via `crypto.timingSafeEqual()`, Twilio has not yet updated their dependency.
 
 **Why We Can't Fix It:**
+
 1. `scmp` is a **transitive dependency** (dependency of a dependency)
 2. We don't control Twilio's package.json
 3. Twilio SDK v5.11.1 is the latest version and still uses `scmp`
 4. Attempting to override with `npm` overrides causes installation errors
 
 **Resolution Timeline:**
+
 - Waiting for Twilio to release updated SDK
 - Track issue: https://github.com/twilio/twilio-node/issues
 - Expected: Twilio v6.x may update dependencies
@@ -52,6 +57,7 @@ The Twilio SDK uses `scmp` internally for constant-time buffer comparisons to pr
 ✅ **None** - This warning can be safely ignored
 
 **Verification:**
+
 ```bash
 # Check if Twilio has updated
 npm view twilio version
@@ -71,9 +77,11 @@ npm view twilio dependencies
 **Issue:** SMS service uses Twilio but lacks comprehensive test coverage
 
 **Files Affected:**
+
 - `src/lib/services/sms.service.ts`
 
 **Recommendation:**
+
 - Add unit tests with Twilio mocks
 - Add integration tests with Twilio test credentials
 - Add E2E tests for SMS verification flow
@@ -85,6 +93,7 @@ npm view twilio dependencies
 **Issue:** Some dependencies may have newer versions with security/performance improvements
 
 **Action Items:**
+
 - Regular dependency audits: `npm audit`
 - Check for updates: `npm outdated`
 - Review major version updates before upgrading
@@ -111,6 +120,7 @@ npm ci --quiet
 #### Option 2: Use .npmrc to Reduce Warnings
 
 Add to `.npmrc`:
+
 ```
 loglevel=error
 ```
@@ -122,6 +132,7 @@ loglevel=error
 We've created a timing-safe comparison shim at `shims/scmp/` that uses Node.js's native `crypto.timingSafeEqual()`. However, npm overrides with local file paths are unreliable.
 
 **Files:**
+
 - `shims/scmp/index.js` - Modern implementation
 - `shims/scmp/package.json` - Package metadata
 
@@ -134,6 +145,7 @@ We've created a timing-safe comparison shim at `shims/scmp/` that uses Node.js's
 ### Dependency Security
 
 **Tools:**
+
 ```bash
 # Check for security vulnerabilities
 npm audit
@@ -147,6 +159,7 @@ npm ls scmp
 ```
 
 **Automated Checks:**
+
 - GitHub Dependabot enabled ✅
 - Security alerts configured ✅
 - Monthly dependency review scheduled ✅
@@ -154,11 +167,13 @@ npm ls scmp
 ### Testing Status
 
 **Current Coverage:**
+
 - Unit Tests: ~75%
 - Integration Tests: ~60%
 - E2E Tests: ~50%
 
 **Areas Needing Coverage:**
+
 - SMS verification flows
 - Payment processing
 - File uploads
@@ -168,12 +183,12 @@ npm ls scmp
 
 ## 🔄 Update History
 
-| Date | Issue | Action | Status |
-|------|-------|--------|--------|
-| 2026-01-06 | scmp deprecation | Documented as non-critical | Open |
-| 2026-01-06 | Redis credentials exposure | Rotated passwords | ✅ Fixed |
-| 2026-01-06 | Input text visibility | Added text-foreground class | ✅ Fixed |
-| 2026-01-06 | Farm registration Prisma error | Fixed include wrapping | ✅ Fixed |
+| Date       | Issue                          | Action                      | Status   |
+| ---------- | ------------------------------ | --------------------------- | -------- |
+| 2026-01-06 | scmp deprecation               | Documented as non-critical  | Open     |
+| 2026-01-06 | Redis credentials exposure     | Rotated passwords           | ✅ Fixed |
+| 2026-01-06 | Input text visibility          | Added text-foreground class | ✅ Fixed |
+| 2026-01-06 | Farm registration Prisma error | Fixed include wrapping      | ✅ Fixed |
 
 ---
 

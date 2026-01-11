@@ -65,6 +65,7 @@ This will display the framework version, status, and available features.
 ### Core Commands
 
 #### `bot help`
+
 Display comprehensive help information.
 
 ```bash
@@ -72,6 +73,7 @@ npm run bot:help
 ```
 
 #### `bot info`
+
 Show framework information, version, and status.
 
 ```bash
@@ -79,6 +81,7 @@ npm run bot:info
 ```
 
 #### `bot list [modules|suites]`
+
 List all available test modules or suites.
 
 ```bash
@@ -90,6 +93,7 @@ npm run bot:list:suites
 ```
 
 #### `bot test <module|suite>`
+
 Run a specific test module or suite.
 
 ```bash
@@ -101,6 +105,7 @@ npm run bot test marketplace
 ```
 
 #### `bot test:all`
+
 Run all registered test modules.
 
 ```bash
@@ -108,6 +113,7 @@ npm run bot:test:all
 ```
 
 #### `bot test:health`
+
 Quick command to run health checks (alias).
 
 ```bash
@@ -115,6 +121,7 @@ npm run bot:test:health
 ```
 
 #### `bot test:critical`
+
 Run only critical priority tests.
 
 ```bash
@@ -122,6 +129,7 @@ npm run bot:test:critical
 ```
 
 #### `bot monitor <suite>`
+
 Start continuous monitoring mode.
 
 ```bash
@@ -133,6 +141,7 @@ npm run bot monitor health -- --interval=30
 ```
 
 #### `bot report [latest|<path>]`
+
 View or generate test reports.
 
 ```bash
@@ -148,6 +157,7 @@ npm run bot:report
 The CLI supports multiple configuration presets optimized for different scenarios:
 
 #### `quick` - Fast Validation
+
 - 1 retry on failure
 - Short timeouts (15s)
 - Minimal logging
@@ -158,6 +168,7 @@ npm run bot test health -- --preset=quick
 ```
 
 #### `mvp` - MVP Validation (Default)
+
 - 2 retries on failure
 - Standard timeouts (30s)
 - Balanced logging
@@ -168,6 +179,7 @@ npm run bot test health -- --preset=mvp
 ```
 
 #### `ci` - CI/CD Optimized
+
 - Headless mode
 - 2 retries
 - Continue on failure
@@ -179,6 +191,7 @@ npm run bot test:all -- --preset=ci
 ```
 
 #### `debug` - Debug Mode
+
 - Headed browser (visible)
 - No retries
 - Verbose logging
@@ -190,6 +203,7 @@ npm run bot test health -- --preset=debug
 ```
 
 #### `monitoring` - Continuous Monitoring
+
 - Alert notifications enabled
 - Health check optimized
 - Graceful degradation
@@ -233,20 +247,20 @@ export CONTINUE_ON_FAILURE=true
 
 Override configuration with CLI flags:
 
-| Flag | Type | Description |
-|------|------|-------------|
-| `--preset=<name>` | string | Configuration preset |
-| `--headless` | boolean | Run in headless mode |
-| `--headed` | boolean | Run with visible browser |
-| `--verbose` | boolean | Enable verbose logging |
-| `--quiet` | boolean | Suppress non-essential output |
-| `--filter=<json>` | string | Filter tests (JSON) |
-| `--tags=<list>` | string | Filter by tags (comma-separated) |
-| `--category=<cat>` | string | Filter by category |
-| `--format=<fmt>` | string | Report format |
-| `--output=<dir>` | string | Output directory |
-| `--interval=<sec>` | number | Monitoring interval |
-| `--continue-on-failure` | boolean | Continue after failures |
+| Flag                    | Type    | Description                      |
+| ----------------------- | ------- | -------------------------------- |
+| `--preset=<name>`       | string  | Configuration preset             |
+| `--headless`            | boolean | Run in headless mode             |
+| `--headed`              | boolean | Run with visible browser         |
+| `--verbose`             | boolean | Enable verbose logging           |
+| `--quiet`               | boolean | Suppress non-essential output    |
+| `--filter=<json>`       | string  | Filter tests (JSON)              |
+| `--tags=<list>`         | string  | Filter by tags (comma-separated) |
+| `--category=<cat>`      | string  | Filter by category               |
+| `--format=<fmt>`        | string  | Report format                    |
+| `--output=<dir>`        | string  | Output directory                 |
+| `--interval=<sec>`      | number  | Monitoring interval              |
+| `--continue-on-failure` | boolean | Continue after failures          |
 
 ---
 
@@ -503,17 +517,18 @@ Human-readable format for documentation:
 
 ## Summary
 
-| Metric | Value |
-|--------|-------|
-| Total Tests | 15 |
-| Passed | 12 |
-| Failed | 2 |
-| Skipped | 1 |
+| Metric       | Value  |
+| ------------ | ------ |
+| Total Tests  | 15     |
+| Passed       | 12     |
+| Failed       | 2      |
+| Skipped      | 1      |
 | Success Rate | 80.00% |
 
 ## Failed Tests
 
 ### Cart & Checkout - Add Product to Cart
+
 - **Status:** Failed
 - **Error:** Timeout waiting for cart button selector
 - **Screenshot:** [View](./screenshots/cart-checkout-1673780400000.png)
@@ -526,21 +541,23 @@ Visual dashboard with charts and details:
 ```html
 <!DOCTYPE html>
 <html>
-<head><title>Test Report</title></head>
-<body>
-  <div class="summary">
-    <h1>Test Run Report</h1>
-    <div class="metrics">
-      <div class="metric success">
-        <h2>12</h2>
-        <p>Passed</p>
+  <head>
+    <title>Test Report</title>
+  </head>
+  <body>
+    <div class="summary">
+      <h1>Test Run Report</h1>
+      <div class="metrics">
+        <div class="metric success">
+          <h2>12</h2>
+          <p>Passed</p>
+        </div>
+        <!-- More metrics -->
       </div>
-      <!-- More metrics -->
+      <canvas id="chart"></canvas>
     </div>
-    <canvas id="chart"></canvas>
-  </div>
-  <!-- Test details -->
-</body>
+    <!-- Test details -->
+  </body>
 </html>
 ```
 
@@ -583,8 +600,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'npm'
+          node-version: "18"
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
@@ -619,7 +636,7 @@ name: UBF Full Suite
 
 on:
   schedule:
-    - cron: '0 */6 * * *' # Every 6 hours
+    - cron: "0 */6 * * *" # Every 6 hours
   workflow_dispatch:
 
 jobs:
@@ -637,8 +654,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'npm'
+          node-version: "18"
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
@@ -800,11 +817,13 @@ pipeline {
 #### Playwright Not Installed
 
 **Error:**
+
 ```
 browserType.launch: Executable doesn't exist at /path/to/chromium
 ```
 
 **Solution:**
+
 ```bash
 npx playwright install --with-deps
 ```
@@ -812,11 +831,13 @@ npx playwright install --with-deps
 #### Port Already in Use
 
 **Error:**
+
 ```
 Error: listen EADDRINUSE: address already in use :::3000
 ```
 
 **Solution:**
+
 ```bash
 # Find and kill process using port 3000
 npx kill-port 3000
@@ -828,11 +849,13 @@ BASE_URL=http://localhost:3001 npm run bot test health
 #### Timeout Errors
 
 **Error:**
+
 ```
 Timeout 30000ms exceeded waiting for selector
 ```
 
 **Solution:**
+
 ```bash
 # Increase timeout
 TIMEOUT=60000 npm run bot test health
@@ -844,11 +867,13 @@ npm run bot test health -- --preset=debug
 #### Module Not Found
 
 **Error:**
+
 ```
 Cannot find module 'health-checks'
 ```
 
 **Solution:**
+
 ```bash
 # List available modules
 npm run bot:list

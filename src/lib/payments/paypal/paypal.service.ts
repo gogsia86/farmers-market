@@ -18,7 +18,7 @@
 
 import { database } from "@/lib/database";
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 
 import type { ServiceResponse } from "@/lib/types/service.types";
 
@@ -392,8 +392,8 @@ export class PayPalService {
       if (!response.ok) {
         const error = await response.json();
         logger.error("PayPal order creation failed:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+          error: error instanceof Error ? error.message : String(error),
+        });
 
         return {
           success: false,
@@ -447,8 +447,8 @@ export class PayPalService {
       };
     } catch (error) {
       logger.error("Error creating PayPal order:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
 
       return {
         success: false,
@@ -521,8 +521,8 @@ export class PayPalService {
       if (!response.ok) {
         const error = await response.json();
         logger.error("PayPal capture failed:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+          error: error instanceof Error ? error.message : String(error),
+        });
 
         return {
           success: false,
@@ -605,8 +605,8 @@ export class PayPalService {
       };
     } catch (error) {
       logger.error("Error capturing PayPal order:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
 
       return {
         success: false,
@@ -679,8 +679,8 @@ export class PayPalService {
       };
     } catch (error) {
       logger.error("Error fetching PayPal order details:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
 
       return {
         success: false,
@@ -772,8 +772,8 @@ export class PayPalService {
       if (!response.ok) {
         const error = await response.json();
         logger.error("PayPal refund failed:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+          error: error instanceof Error ? error.message : String(error),
+        });
 
         return {
           success: false,
@@ -814,8 +814,8 @@ export class PayPalService {
       };
     } catch (error) {
       logger.error("Error processing PayPal refund:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
 
       return {
         success: false,
@@ -877,8 +877,8 @@ export class PayPalService {
       return result.verification_status === "SUCCESS";
     } catch (error) {
       logger.error("Error verifying PayPal webhook:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
       return false;
     }
   }
@@ -941,8 +941,8 @@ export class PayPalService {
       return this.accessToken;
     } catch (error) {
       logger.error("Error getting PayPal access token:", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+        error: error instanceof Error ? error.message : String(error),
+      });
       return null;
     }
   }

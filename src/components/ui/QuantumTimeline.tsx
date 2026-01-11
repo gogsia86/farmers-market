@@ -112,7 +112,7 @@ const getEventIcon = (type: TimelineEventType, status: TimelineEventStatus) => {
 const getEventColor = (
   type: TimelineEventType,
   status: TimelineEventStatus,
-  customColor?: string
+  customColor?: string,
 ): string => {
   if (customColor) return customColor;
 
@@ -185,7 +185,7 @@ function TimelineItem({
   const color = getEventColor(
     event.type || "general",
     event.status,
-    event.color
+    event.color,
   );
   const icon =
     event.icon || getEventIcon(event.type || "general", event.status);
@@ -227,7 +227,7 @@ function TimelineItem({
       className={cn(
         "group relative flex gap-4 pb-8",
         animate && "animate-in fade-in slide-in-from-left-4",
-        animate && `duration-${300 + index * 100}`
+        animate && `duration-${300 + index * 100}`,
       )}
       style={animate ? { animationDelay: `${index * 100}ms` } : undefined}
     >
@@ -238,7 +238,7 @@ function TimelineItem({
           className={cn(
             "z-10 flex h-10 w-10 items-center justify-center rounded-full border-4 border-white bg-white shadow-lg transition-transform",
             bgColorClass.split(" ")[1], // border color
-            isClickable && "group-hover:scale-110 cursor-pointer"
+            isClickable && "group-hover:scale-110 cursor-pointer",
           )}
         >
           <div className={bgColorClass.split(" ")[2]}>{showIcons && icon}</div>
@@ -250,7 +250,7 @@ function TimelineItem({
             className={cn(
               "absolute top-10 h-full w-0.5",
               bgColorClass.split(" ")[0],
-              "opacity-30"
+              "opacity-30",
             )}
           />
         )}
@@ -262,8 +262,8 @@ function TimelineItem({
           className={cn(
             "rounded-lg border bg-white p-4 shadow-sm transition-all",
             isClickable &&
-            "cursor-pointer hover:shadow-md hover:border-gray-300",
-            variant === "compact" && "p-3"
+              "cursor-pointer hover:shadow-md hover:border-gray-300",
+            variant === "compact" && "p-3",
           )}
           onClick={() => {
             if (onClick) onClick(event);
@@ -276,7 +276,7 @@ function TimelineItem({
               <h3
                 className={cn(
                   "font-semibold text-gray-900",
-                  variant === "compact" ? "text-sm" : "text-base"
+                  variant === "compact" ? "text-sm" : "text-base",
                 )}
               >
                 {event.title}
@@ -297,7 +297,7 @@ function TimelineItem({
               className={cn(
                 "rounded-full px-2.5 py-1 text-xs font-medium",
                 bgColorClass.split(" ")[0],
-                "bg-opacity-10"
+                "bg-opacity-10",
               )}
             >
               {getStatusBadge(event.status)}
@@ -485,11 +485,10 @@ export function QuantumTimeline({
             const color = getEventColor(
               event.type || "general",
               event.status,
-              event.color
+              event.color,
             );
             const icon =
-              event.icon ||
-              getEventIcon(event.type || "general", event.status);
+              event.icon || getEventIcon(event.type || "general", event.status);
 
             const timestamp =
               typeof event.timestamp === "string"
@@ -514,7 +513,8 @@ export function QuantumTimeline({
               gray: "bg-gray-500 text-gray-700",
             };
 
-            const bgColorClass = colorClasses[color as keyof typeof colorClasses];
+            const bgColorClass =
+              colorClasses[color as keyof typeof colorClasses];
 
             return (
               <div
@@ -522,7 +522,7 @@ export function QuantumTimeline({
                 className={cn(
                   "flex flex-col items-center gap-2 w-32",
                   animate && "animate-in fade-in zoom-in-95",
-                  animate && `duration-${300 + index * 100}`
+                  animate && `duration-${300 + index * 100}`,
                 )}
                 style={
                   animate ? { animationDelay: `${index * 100}ms` } : undefined
@@ -531,7 +531,7 @@ export function QuantumTimeline({
                 <div
                   className={cn(
                     "flex h-12 w-12 items-center justify-center rounded-full border-4 border-white shadow-lg",
-                    bgColorClass.split(" ")[0]
+                    bgColorClass.split(" ")[0],
                   )}
                 >
                   <div className="text-white">{showIcons && icon}</div>

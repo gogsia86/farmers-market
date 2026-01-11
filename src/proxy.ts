@@ -21,7 +21,7 @@
  * @see https://nextjs.org/docs/app/building-your-application/routing/middleware
  */
 
-import { logger } from '@/lib/monitoring/logger';
+import { logger } from "@/lib/monitoring/logger";
 import { getToken } from "next-auth/jwt";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";

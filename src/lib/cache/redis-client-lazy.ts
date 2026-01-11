@@ -239,7 +239,12 @@ export const redisClientLazy: IRedisClient = {
     if (!isRedisEnabled()) {
       return { connected: true, reconnectAttempts: 0 }; // In-memory is always "connected"
     }
-    return cachedRedisClient?.getConnectionStatus() ?? { connected: false, reconnectAttempts: 0 };
+    return (
+      cachedRedisClient?.getConnectionStatus() ?? {
+        connected: false,
+        reconnectAttempts: 0,
+      }
+    );
   },
 };
 

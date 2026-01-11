@@ -13,9 +13,7 @@
 import { cva } from "class-variance-authority";
 import * as React from "react";
 
-import {
-  DEFAULT_SKELETON_CONFIG
-} from "@/lib/loading/types";
+import { DEFAULT_SKELETON_CONFIG } from "@/lib/loading/types";
 import { cn } from "@/lib/utils";
 
 // ============================================================================
@@ -53,10 +51,16 @@ const skeletonVariants = cva("relative overflow-hidden", {
 // Define animation type to match cva variants
 type SkeletonAnimationType = "pulse" | "wave" | "shimmer" | "none";
 
-export interface SkeletonProps
-  extends React.HTMLAttributes<HTMLDivElement> {
+export interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
   // Appearance
-  variant?: "text" | "circular" | "rectangular" | "rounded" | "avatar" | "card" | "thumbnail";
+  variant?:
+    | "text"
+    | "circular"
+    | "rectangular"
+    | "rounded"
+    | "avatar"
+    | "card"
+    | "thumbnail";
   animation?: SkeletonAnimationType;
 
   // Dimensions
@@ -108,13 +112,21 @@ export const Skeleton = React.forwardRef<HTMLDivElement, SkeletonProps>(
       "aria-label": ariaLabel,
       ...props
     },
-    ref
+    ref,
   ) => {
     // Build inline styles
     const inlineStyles: React.CSSProperties = {
       ...style,
-      width: width ? (typeof width === "number" ? `${width}px` : width) : undefined,
-      height: height ? (typeof height === "number" ? `${height}px` : height) : undefined,
+      width: width
+        ? typeof width === "number"
+          ? `${width}px`
+          : width
+        : undefined,
+      height: height
+        ? typeof height === "number"
+          ? `${height}px`
+          : height
+        : undefined,
       backgroundColor: baseColor || DEFAULT_SKELETON_CONFIG.baseColor,
       borderRadius: borderRadius || DEFAULT_SKELETON_CONFIG.borderRadius,
       ...(speed && {
@@ -124,15 +136,23 @@ export const Skeleton = React.forwardRef<HTMLDivElement, SkeletonProps>(
 
     // Generate multiple skeletons if count > 1
     if (count > 1) {
-      const animationValue: SkeletonAnimationType = (animation || "pulse") as SkeletonAnimationType;
+      const animationValue: SkeletonAnimationType = (animation ||
+        "pulse") as SkeletonAnimationType;
 
       return (
-        <div className="space-y-2" role="status" aria-label={ariaLabel || "Loading"}>
+        <div
+          className="space-y-2"
+          role="status"
+          aria-label={ariaLabel || "Loading"}
+        >
           {Array.from({ length: count }, (_, index) => (
             <div
               key={index}
               ref={index === 0 ? ref : undefined}
-              className={cn(skeletonVariants({ variant, animation: animationValue }), className)}
+              className={cn(
+                skeletonVariants({ variant, animation: animationValue }),
+                className,
+              )}
               style={inlineStyles}
               {...props}
             />
@@ -142,14 +162,18 @@ export const Skeleton = React.forwardRef<HTMLDivElement, SkeletonProps>(
       );
     }
 
-    const animationValue: SkeletonAnimationType = (animation || "pulse") as SkeletonAnimationType;
+    const animationValue: SkeletonAnimationType = (animation ||
+      "pulse") as SkeletonAnimationType;
 
     return (
       <div
         ref={ref}
         role="status"
         aria-label={ariaLabel || "Loading"}
-        className={cn(skeletonVariants({ variant, animation: animationValue }), className)}
+        className={cn(
+          skeletonVariants({ variant, animation: animationValue }),
+          className,
+        )}
         style={inlineStyles}
         {...props}
       >
@@ -157,8 +181,9 @@ export const Skeleton = React.forwardRef<HTMLDivElement, SkeletonProps>(
           <div
             className="absolute inset-0 -translate-x-full animate-shimmer-sweep"
             style={{
-              background: `linear-gradient(90deg, transparent, ${highlightColor || DEFAULT_SKELETON_CONFIG.highlightColor
-                }, transparent)`,
+              background: `linear-gradient(90deg, transparent, ${
+                highlightColor || DEFAULT_SKELETON_CONFIG.highlightColor
+              }, transparent)`,
             }}
           />
         )}
@@ -166,15 +191,16 @@ export const Skeleton = React.forwardRef<HTMLDivElement, SkeletonProps>(
           <div
             className="absolute inset-0 -translate-x-full animate-wave-sweep"
             style={{
-              background: `linear-gradient(90deg, transparent, ${highlightColor || DEFAULT_SKELETON_CONFIG.highlightColor
-                }, transparent)`,
+              background: `linear-gradient(90deg, transparent, ${
+                highlightColor || DEFAULT_SKELETON_CONFIG.highlightColor
+              }, transparent)`,
             }}
           />
         )}
         <span className="sr-only">Loading...</span>
       </div>
     );
-  }
+  },
 );
 
 Skeleton.displayName = "Skeleton";
@@ -205,7 +231,7 @@ export const TextSkeleton = React.forwardRef<HTMLDivElement, TextSkeletonProps>(
         ))}
       </div>
     );
-  }
+  },
 );
 
 TextSkeleton.displayName = "TextSkeleton";
@@ -219,19 +245,30 @@ export interface AvatarSkeletonProps extends Omit<SkeletonProps, "variant"> {
   labelWidth?: string | number;
 }
 
-export const AvatarSkeleton = React.forwardRef<HTMLDivElement, AvatarSkeletonProps>(
-  ({ size = 40, showLabel = false, labelWidth = 100, className, ...props }, ref) => {
+export const AvatarSkeleton = React.forwardRef<
+  HTMLDivElement,
+  AvatarSkeletonProps
+>(
+  (
+    { size = 40, showLabel = false, labelWidth = 100, className, ...props },
+    ref,
+  ) => {
     return (
       <div ref={ref} className={cn("flex items-center gap-3", className)}>
         <Skeleton variant="circular" width={size} height={size} {...props} />
         {showLabel && (
           <div className="flex-1">
-            <Skeleton variant="text" width={labelWidth} height={16} {...props} />
+            <Skeleton
+              variant="text"
+              width={labelWidth}
+              height={16}
+              {...props}
+            />
           </div>
         )}
       </div>
     );
-  }
+  },
 );
 
 AvatarSkeleton.displayName = "AvatarSkeleton";
@@ -256,12 +293,15 @@ export const CardSkeleton = React.forwardRef<HTMLDivElement, CardSkeletonProps>(
       className,
       ...props
     },
-    ref
+    ref,
   ) => {
     return (
       <div
         ref={ref}
-        className={cn("rounded-lg border border-gray-200 bg-white p-4", className)}
+        className={cn(
+          "rounded-lg border border-gray-200 bg-white p-4",
+          className,
+        )}
       >
         {showImage && (
           <Skeleton
@@ -280,7 +320,7 @@ export const CardSkeleton = React.forwardRef<HTMLDivElement, CardSkeletonProps>(
         </div>
       </div>
     );
-  }
+  },
 );
 
 CardSkeleton.displayName = "CardSkeleton";
@@ -295,7 +335,10 @@ export interface ListSkeletonProps extends Omit<SkeletonProps, "variant"> {
 }
 
 export const ListSkeleton = React.forwardRef<HTMLDivElement, ListSkeletonProps>(
-  ({ items = 5, showAvatar = true, textLines = 2, className, ...props }, ref) => {
+  (
+    { items = 5, showAvatar = true, textLines = 2, className, ...props },
+    ref,
+  ) => {
     return (
       <div ref={ref} className={cn("space-y-4", className)}>
         {Array.from({ length: items }, (_, index) => (
@@ -311,7 +354,7 @@ export const ListSkeleton = React.forwardRef<HTMLDivElement, ListSkeletonProps>(
         ))}
       </div>
     );
-  }
+  },
 );
 
 ListSkeleton.displayName = "ListSkeleton";
@@ -325,36 +368,37 @@ export interface TableSkeletonProps extends Omit<SkeletonProps, "variant"> {
   showHeader?: boolean;
 }
 
-export const TableSkeleton = React.forwardRef<HTMLTableElement, TableSkeletonProps>(
-  ({ rows = 5, columns = 4, showHeader = true, className, ...props }, ref) => {
-    return (
-      <table ref={ref} className={cn("w-full", className)}>
-        {showHeader && (
-          <thead>
-            <tr>
-              {Array.from({ length: columns }, (_, index) => (
-                <th key={index} className="px-4 py-3 text-left">
-                  <Skeleton variant="text" width="80%" height={16} {...props} />
-                </th>
-              ))}
-            </tr>
-          </thead>
-        )}
-        <tbody>
-          {Array.from({ length: rows }, (_, rowIndex) => (
-            <tr key={rowIndex} className="border-t">
-              {Array.from({ length: columns }, (_, colIndex) => (
-                <td key={colIndex} className="px-4 py-3">
-                  <Skeleton variant="text" height={16} {...props} />
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    );
-  }
-);
+export const TableSkeleton = React.forwardRef<
+  HTMLTableElement,
+  TableSkeletonProps
+>(({ rows = 5, columns = 4, showHeader = true, className, ...props }, ref) => {
+  return (
+    <table ref={ref} className={cn("w-full", className)}>
+      {showHeader && (
+        <thead>
+          <tr>
+            {Array.from({ length: columns }, (_, index) => (
+              <th key={index} className="px-4 py-3 text-left">
+                <Skeleton variant="text" width="80%" height={16} {...props} />
+              </th>
+            ))}
+          </tr>
+        </thead>
+      )}
+      <tbody>
+        {Array.from({ length: rows }, (_, rowIndex) => (
+          <tr key={rowIndex} className="border-t">
+            {Array.from({ length: columns }, (_, colIndex) => (
+              <td key={colIndex} className="px-4 py-3">
+                <Skeleton variant="text" height={16} {...props} />
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+});
 
 TableSkeleton.displayName = "TableSkeleton";
 
@@ -378,16 +422,11 @@ export const GridSkeleton = React.forwardRef<HTMLDivElement, GridSkeletonProps>(
         }}
       >
         {Array.from({ length: items }, (_, index) => (
-          <Skeleton
-            key={index}
-            variant="card"
-            height={itemHeight}
-            {...props}
-          />
+          <Skeleton key={index} variant="card" height={itemHeight} {...props} />
         ))}
       </div>
     );
-  }
+  },
 );
 
 GridSkeleton.displayName = "GridSkeleton";
@@ -404,27 +443,28 @@ export interface SkeletonGroupProps extends React.HTMLAttributes<HTMLDivElement>
   gap?: number;
 }
 
-export const SkeletonGroup = React.forwardRef<HTMLDivElement, SkeletonGroupProps>(
-  ({ layout = "vertical", gap = 4, className, children, ...props }, ref) => {
-    const layoutClasses = {
-      vertical: "flex flex-col",
-      horizontal: "flex flex-row",
-      grid: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3",
-    };
+export const SkeletonGroup = React.forwardRef<
+  HTMLDivElement,
+  SkeletonGroupProps
+>(({ layout = "vertical", gap = 4, className, children, ...props }, ref) => {
+  const layoutClasses = {
+    vertical: "flex flex-col",
+    horizontal: "flex flex-row",
+    grid: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3",
+  };
 
-    const gapClass = `gap-${gap}`;
+  const gapClass = `gap-${gap}`;
 
-    return (
-      <div
-        ref={ref}
-        className={cn(layoutClasses[layout], gapClass, className)}
-        {...props}
-      >
-        {children}
-      </div>
-    );
-  }
-);
+  return (
+    <div
+      ref={ref}
+      className={cn(layoutClasses[layout], gapClass, className)}
+      {...props}
+    >
+      {children}
+    </div>
+  );
+});
 
 SkeletonGroup.displayName = "SkeletonGroup";
 

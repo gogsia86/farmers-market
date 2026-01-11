@@ -723,7 +723,9 @@ export class QuantumProductRepository extends BaseRepository<
    * Fetches product with only essential fields for detail page rendering
    * Reduces payload size and query time by 60-70%
    */
-  async findBySlugWithMinimalData(slug: string): Promise<ProductDetailData | null> {
+  async findBySlugWithMinimalData(
+    slug: string,
+  ): Promise<ProductDetailData | null> {
     this.logOperation("findBySlugWithMinimalData:start", { slug });
 
     try {
@@ -803,7 +805,10 @@ export class QuantumProductRepository extends BaseRepository<
         return null;
       }
 
-      this.logOperation("findBySlugWithMinimalData:found", { slug, productId: product.id });
+      this.logOperation("findBySlugWithMinimalData:found", {
+        slug,
+        productId: product.id,
+      });
       return product;
     } catch (error) {
       this.logOperation("findBySlugWithMinimalData:error", { slug, error });
@@ -815,8 +820,18 @@ export class QuantumProductRepository extends BaseRepository<
    * 🌾 FIND RELATED PRODUCTS (OPTIMIZED)
    * Fetches related products based on category and farm
    */
-  async findRelatedProducts(productId: string, category: string | null, farmId: string, limit: number = 6) {
-    this.logOperation("findRelatedProducts:start", { productId, category, farmId, limit });
+  async findRelatedProducts(
+    productId: string,
+    category: string | null,
+    farmId: string,
+    limit: number = 6,
+  ) {
+    this.logOperation("findRelatedProducts:start", {
+      productId,
+      category,
+      farmId,
+      limit,
+    });
 
     try {
       const whereConditions: any[] = [{ farmId }];
@@ -1038,7 +1053,9 @@ export class QuantumProductRepository extends BaseRepository<
         take: limit,
       });
 
-      this.logOperation("findFeaturedProducts:found", { count: products.length });
+      this.logOperation("findFeaturedProducts:found", {
+        count: products.length,
+      });
 
       return products;
     } catch (error) {

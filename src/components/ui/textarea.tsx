@@ -16,18 +16,20 @@ const textareaVariants = cva(
         default: "border-gray-300 hover:border-gray-400 focus:border-blue-500",
         error: "border-red-500 focus:border-red-600 focus:ring-red-500",
         success: "border-green-500 focus:border-green-600 focus:ring-green-500",
-        agricultural: "border-green-300 hover:border-green-400 focus:border-green-500 focus:ring-green-500",
+        agricultural:
+          "border-green-300 hover:border-green-400 focus:border-green-500 focus:ring-green-500",
       },
     },
     defaultVariants: {
       variant: "default",
     },
-  }
+  },
 );
 
 export interface TextareaProps
-  extends React.TextareaHTMLAttributes<HTMLTextAreaElement>,
-  VariantProps<typeof textareaVariants> { }
+  extends
+    React.TextareaHTMLAttributes<HTMLTextAreaElement>,
+    VariantProps<typeof textareaVariants> {}
 
 const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
   ({ className, variant, ...props }, ref) => {
@@ -38,7 +40,7 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         {...props}
       />
     );
-  }
+  },
 );
 Textarea.displayName = "Textarea";
 

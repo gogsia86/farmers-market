@@ -7,7 +7,7 @@
  * @see https://nodejs.org/api/crypto.html#cryptotimingsafeequala-b
  */
 
-const crypto = require('crypto');
+const crypto = require("crypto");
 
 /**
  * Constant-time comparison of two buffers/strings

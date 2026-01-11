@@ -428,20 +428,27 @@ export class ApiError extends AppError {
     super({
       message: config.message,
       code: `API_ERROR_${config.statusCode}`,
-      severity: config.statusCode >= 500 ? ErrorSeverity.ERROR : ErrorSeverity.WARNING,
+      severity:
+        config.statusCode >= 500 ? ErrorSeverity.ERROR : ErrorSeverity.WARNING,
       category: ErrorCategory.API,
       userDetails: {
         title: "Service Error",
-        message: config.statusCode >= 500
-          ? "The service is temporarily unavailable"
-          : "Unable to process your request",
+        message:
+          config.statusCode >= 500
+            ? "The service is temporarily unavailable"
+            : "Unable to process your request",
         suggestions: [
           "Please try again",
-          config.statusCode >= 500 ? "Check service status page" : "Verify your input",
+          config.statusCode >= 500
+            ? "Check service status page"
+            : "Verify your input",
           "Contact support if the issue continues",
         ],
       },
-      recoveryStrategy: config.statusCode >= 500 ? RecoveryStrategy.RETRY : RecoveryStrategy.CONTINUE,
+      recoveryStrategy:
+        config.statusCode >= 500
+          ? RecoveryStrategy.RETRY
+          : RecoveryStrategy.CONTINUE,
       retryable: config.statusCode >= 500,
       metadata: config.metadata,
       originalError: config.originalError,
@@ -646,7 +653,7 @@ export class QuantumCoherenceError extends AppError {
 ║ 🎯 EXPECTED REALITY: ${JSON.stringify(config.expectedState, null, 2)}
 ║
 ║ 🛠️  PATH TO ENLIGHTENMENT:
-║    ${config.resolutionPath.map((step: any, i: any) => `${i + 1}. ${step}`).join('\n║    ')}
+║    ${config.resolutionPath.map((step: any, i: any) => `${i + 1}. ${step}`).join("\n║    ")}
 ╚════════════════════════════════════════════════════════════╝
     `.trim();
 
@@ -741,14 +748,18 @@ export function isValidationError(error: unknown): error is ValidationError {
 /**
  * Type guard for authentication error
  */
-export function isAuthenticationError(error: unknown): error is AuthenticationError {
+export function isAuthenticationError(
+  error: unknown,
+): error is AuthenticationError {
   return error instanceof AuthenticationError;
 }
 
 /**
  * Type guard for authorization error
  */
-export function isAuthorizationError(error: unknown): error is AuthorizationError {
+export function isAuthorizationError(
+  error: unknown,
+): error is AuthorizationError {
   return error instanceof AuthorizationError;
 }
 
@@ -769,7 +780,9 @@ export function isPaymentError(error: unknown): error is PaymentError {
 /**
  * Type guard for seasonal error
  */
-export function isSeasonalError(error: unknown): error is SeasonalViolationError {
+export function isSeasonalError(
+  error: unknown,
+): error is SeasonalViolationError {
   return error instanceof SeasonalViolationError;
 }
 
@@ -788,7 +801,10 @@ export function getErrorMessage(error: unknown): string {
 /**
  * Convert unknown error to AppError
  */
-export function toAppError(error: unknown, defaultCategory: ErrorCategory = ErrorCategory.UNKNOWN): AppError {
+export function toAppError(
+  error: unknown,
+  defaultCategory: ErrorCategory = ErrorCategory.UNKNOWN,
+): AppError {
   if (isAppError(error)) {
     return error;
   }

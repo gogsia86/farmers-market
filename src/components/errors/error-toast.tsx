@@ -13,13 +13,7 @@ import type { AppError } from "@/lib/errors/types";
 import { ErrorCategory, ErrorSeverity } from "@/lib/errors/types";
 import { cn } from "@/lib/utils";
 import { cva } from "class-variance-authority";
-import {
-  AlertCircle,
-  AlertTriangle,
-  CheckCircle,
-  Info,
-  X
-} from "lucide-react";
+import { AlertCircle, AlertTriangle, CheckCircle, Info, X } from "lucide-react";
 import {
   createContext,
   useCallback,
@@ -151,7 +145,7 @@ export function ToastProvider({
 
       return id;
     },
-    [defaultDuration, maxToasts]
+    [defaultDuration, maxToasts],
   );
 
   const removeToast = useCallback((id: string) => {
@@ -170,7 +164,7 @@ export function ToastProvider({
         agricultural: options?.agricultural,
       });
     },
-    [addToast]
+    [addToast],
   );
 
   const error = useCallback(
@@ -185,7 +179,7 @@ export function ToastProvider({
         agricultural: options?.agricultural,
       });
     },
-    [addToast]
+    [addToast],
   );
 
   const warning = useCallback(
@@ -200,7 +194,7 @@ export function ToastProvider({
         agricultural: options?.agricultural,
       });
     },
-    [addToast]
+    [addToast],
   );
 
   const info = useCallback(
@@ -215,7 +209,7 @@ export function ToastProvider({
         agricultural: options?.agricultural,
       });
     },
-    [addToast]
+    [addToast],
   );
 
   const errorFromAppError = useCallback(
@@ -235,13 +229,13 @@ export function ToastProvider({
         error: appError,
         agricultural: isAgricultural
           ? {
-            consciousness: "DIVINE",
-            ...options?.agricultural,
-          }
+              consciousness: "DIVINE",
+              ...options?.agricultural,
+            }
           : options?.agricultural,
       });
     },
-    [addToast]
+    [addToast],
   );
 
   const clearAll = useCallback(() => {
@@ -263,7 +257,11 @@ export function ToastProvider({
   return (
     <ToastContext.Provider value={value}>
       {children}
-      <ToastContainer toasts={toasts} position={position} onRemove={removeToast} />
+      <ToastContainer
+        toasts={toasts}
+        position={position}
+        onRemove={removeToast}
+      />
     </ToastContext.Provider>
   );
 }
@@ -281,7 +279,10 @@ interface ToastContainerProps {
 function ToastContainer({ toasts, position, onRemove }: ToastContainerProps) {
   return (
     <div
-      className={cn("fixed z-50 flex flex-col gap-2 p-4", getPositionClasses(position))}
+      className={cn(
+        "fixed z-50 flex flex-col gap-2 p-4",
+        getPositionClasses(position),
+      )}
       aria-live="polite"
       aria-atomic="true"
     >
@@ -331,7 +332,7 @@ const toastVariants = cva(
         info: "bg-blue-50 border-blue-200 text-blue-900",
       },
     },
-  }
+  },
 );
 
 function ToastItem({ toast, onRemove }: ToastItemProps) {
@@ -373,7 +374,8 @@ function ToastItem({ toast, onRemove }: ToastItemProps) {
     // Always return cleanup function
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
-      if (progressIntervalRef.current) clearInterval(progressIntervalRef.current);
+      if (progressIntervalRef.current)
+        clearInterval(progressIntervalRef.current);
     };
   }, [toast.duration, handleRemove]);
 
@@ -412,7 +414,7 @@ function ToastItem({ toast, onRemove }: ToastItemProps) {
     <div
       className={cn(
         toastVariants({ type: toast.type }),
-        isExiting && "animate-out slide-out-to-top-5 fade-out"
+        isExiting && "animate-out slide-out-to-top-5 fade-out",
       )}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -534,7 +536,7 @@ export function useErrorToast() {
         action: onRetry ? { label: "Retry", onClick: onRetry } : undefined,
       });
     },
-    [toast]
+    [toast],
   );
 
   return {
@@ -581,7 +583,7 @@ export function useUndoToast() {
     (
       message: string,
       onUndo: () => void,
-      options?: Omit<ToastOptions, "action">
+      options?: Omit<ToastOptions, "action">,
     ): string => {
       return toast.info("Action completed", message, {
         ...options,
@@ -592,7 +594,7 @@ export function useUndoToast() {
         },
       });
     },
-    [toast]
+    [toast],
   );
 
   return { showUndo };

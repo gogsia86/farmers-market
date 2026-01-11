@@ -21,18 +21,18 @@
  * @reference .cursorrules - Testing Patterns
  */
 
-import { multiLayerCache } from '@/lib/cache/multi-layer.cache';
-import { farmRepository } from '@/lib/repositories/farm.repository';
-import { farmService } from '@/lib/services/farm.service';
-import { beforeEach, describe, expect, it } from '@jest/globals';
-import type { Farm, FarmStatus, Prisma } from '@prisma/client';
+import { multiLayerCache } from "@/lib/cache/multi-layer.cache";
+import { farmRepository } from "@/lib/repositories/farm.repository";
+import { farmService } from "@/lib/services/farm.service";
+import { beforeEach, describe, expect, it } from "@jest/globals";
+import type { Farm, FarmStatus, Prisma } from "@prisma/client";
 
 // ============================================================================
 // MOCKS
 // ============================================================================
 
 // Mock the repository
-jest.mock('@/lib/repositories/farm.repository', () => ({
+jest.mock("@/lib/repositories/farm.repository", () => ({
   farmRepository: {
     create: jest.fn(),
     findById: jest.fn(),
@@ -46,7 +46,7 @@ jest.mock('@/lib/repositories/farm.repository', () => ({
 }));
 
 // Mock the cache
-jest.mock('@/lib/cache/multi-layer.cache', () => ({
+jest.mock("@/lib/cache/multi-layer.cache", () => ({
   multiLayerCache: {
     get: jest.fn(),
     set: jest.fn(),
@@ -58,7 +58,8 @@ jest.mock('@/lib/cache/multi-layer.cache', () => ({
     farm: (id: string) => `farm:${id}`,
     farmBySlug: (slug: string) => `farm:slug:${slug}`,
     farmsByOwner: (ownerId: string) => `farms:owner:${ownerId}`,
-    farmsList: (page: number, filters?: string) => `farms:list:${page}:${filters || 'all'}`,
+    farmsList: (page: number, filters?: string) =>
+      `farms:list:${page}:${filters || "all"}`,
   },
   CacheTTL: {
     SHORT: 300,
@@ -68,13 +69,13 @@ jest.mock('@/lib/cache/multi-layer.cache', () => ({
 }));
 
 // Mock the logger
-jest.mock('@/lib/monitoring/logger', () => ({
+jest.mock("@/lib/monitoring/logger", () => ({
   createLogger: jest.fn(() => ({
     info: jest.fn(),
     warn: jest.fn(),
     error: jest.fn(),
     debug: jest.fn(),
-    generateRequestId: jest.fn(() => 'test-request-id-123'),
+    generateRequestId: jest.fn(() => "test-request-id-123"),
   })),
   logger: {
     info: jest.fn(),
@@ -93,36 +94,36 @@ jest.mock('@/lib/monitoring/logger', () => ({
  */
 function createMockFarm(overrides: Partial<Farm> = {}): Farm {
   return {
-    id: 'farm_123',
-    name: 'Green Valley Farm',
-    slug: 'green-valley-farm',
-    description: 'Organic vegetables and fruits',
-    ownerId: 'user_456',
-    email: 'contact@greenvalley.com',
-    phone: '+1234567890',
-    website: 'https://greenvalley.com',
-    status: 'ACTIVE' as FarmStatus,
-    verificationStatus: 'VERIFIED',
+    id: "farm_123",
+    name: "Green Valley Farm",
+    slug: "green-valley-farm",
+    description: "Organic vegetables and fruits",
+    ownerId: "user_456",
+    email: "contact@greenvalley.com",
+    phone: "+1234567890",
+    website: "https://greenvalley.com",
+    status: "ACTIVE" as FarmStatus,
+    verificationStatus: "VERIFIED",
     location: {
-      address: '123 Farm Road',
-      city: 'Farmville',
-      state: 'CA',
-      zipCode: '12345',
-      country: 'USA',
-      coordinates: { lat: 40.7128, lng: -74.0060 },
+      address: "123 Farm Road",
+      city: "Farmville",
+      state: "CA",
+      zipCode: "12345",
+      country: "USA",
+      coordinates: { lat: 40.7128, lng: -74.006 },
     } as Prisma.JsonValue,
-    logoUrl: 'https://example.com/logo.jpg',
-    bannerUrl: 'https://example.com/banner.jpg',
-    certifications: ['ORGANIC', 'NON_GMO'] as Prisma.JsonValue,
-    farmingPractices: ['ORGANIC', 'REGENERATIVE'] as Prisma.JsonValue,
+    logoUrl: "https://example.com/logo.jpg",
+    bannerUrl: "https://example.com/banner.jpg",
+    certifications: ["ORGANIC", "NON_GMO"] as Prisma.JsonValue,
+    farmingPractices: ["ORGANIC", "REGENERATIVE"] as Prisma.JsonValue,
     deliveryRadius: 50,
-    businessName: 'Green Valley Farms LLC',
-    taxId: '12-3456789',
-    businessType: 'LLC',
+    businessName: "Green Valley Farms LLC",
+    taxId: "12-3456789",
+    businessType: "LLC",
     yearEstablished: 2010,
     farmSize: 100,
-    createdAt: new Date('2024-01-01'),
-    updatedAt: new Date('2024-01-01'),
+    createdAt: new Date("2024-01-01"),
+    updatedAt: new Date("2024-01-01"),
     deletedAt: null,
     ...overrides,
   };
@@ -133,25 +134,25 @@ function createMockFarm(overrides: Partial<Farm> = {}): Farm {
  */
 function createMockFarmRequest(overrides = {}) {
   return {
-    name: 'New Test Farm',
-    description: 'A test farm for unit testing',
-    address: '456 Test Road',
-    city: 'Testville',
-    state: 'CA',
-    zipCode: '54321',
-    country: 'USA',
+    name: "New Test Farm",
+    description: "A test farm for unit testing",
+    address: "456 Test Road",
+    city: "Testville",
+    state: "CA",
+    zipCode: "54321",
+    country: "USA",
     latitude: 40.7128,
-    longitude: -74.0060,
-    ownerId: 'user_789',
-    phone: '+1987654321',
-    email: 'test@example.com',
-    website: 'https://testfarm.com',
-    certifications: ['ORGANIC'],
-    farmingPractices: ['ORGANIC'],
+    longitude: -74.006,
+    ownerId: "user_789",
+    phone: "+1987654321",
+    email: "test@example.com",
+    website: "https://testfarm.com",
+    certifications: ["ORGANIC"],
+    farmingPractices: ["ORGANIC"],
     deliveryRadius: 30,
-    businessName: 'Test Farm LLC',
-    taxId: '98-7654321',
-    businessType: 'LLC',
+    businessName: "Test Farm LLC",
+    taxId: "98-7654321",
+    businessType: "LLC",
     yearEstablished: 2020,
     farmSize: 50,
     ...overrides,
@@ -162,7 +163,7 @@ function createMockFarmRequest(overrides = {}) {
 // TEST SUITE
 // ============================================================================
 
-describe('FarmService', () => {
+describe("FarmService", () => {
   // Reset mocks before each test
   beforeEach(() => {
     jest.clearAllMocks();
@@ -172,8 +173,8 @@ describe('FarmService', () => {
   // CREATE FARM TESTS
   // ==========================================================================
 
-  describe('createFarm', () => {
-    it('should create a farm successfully with all required fields', async () => {
+  describe("createFarm", () => {
+    it("should create a farm successfully with all required fields", async () => {
       // Arrange
       const farmRequest = createMockFarmRequest();
       const expectedFarm = createMockFarm({
@@ -183,7 +184,9 @@ describe('FarmService', () => {
       });
 
       jest.mocked(farmRepository.create).mockResolvedValue(expectedFarm);
-      jest.mocked(multiLayerCache.invalidatePattern).mockResolvedValue(undefined);
+      jest
+        .mocked(multiLayerCache.invalidatePattern)
+        .mockResolvedValue(undefined);
 
       // Act
       const result = await farmService.createFarm(farmRequest);
@@ -196,16 +199,16 @@ describe('FarmService', () => {
           name: farmRequest.name,
           ownerId: farmRequest.ownerId,
           email: farmRequest.email,
-        })
+        }),
       );
 
       // Verify cache invalidation
-      expect(multiLayerCache.invalidatePattern).toHaveBeenCalledWith('farms:*');
+      expect(multiLayerCache.invalidatePattern).toHaveBeenCalledWith("farms:*");
     });
 
-    it('should generate a unique slug from farm name', async () => {
+    it("should generate a unique slug from farm name", async () => {
       // Arrange
-      const farmRequest = createMockFarmRequest({ name: 'Amazing Farm & Co!' });
+      const farmRequest = createMockFarmRequest({ name: "Amazing Farm & Co!" });
       const expectedFarm = createMockFarm();
 
       jest.mocked(farmRepository.create).mockResolvedValue(expectedFarm);
@@ -217,14 +220,16 @@ describe('FarmService', () => {
       expect(farmRepository.create).toHaveBeenCalledWith(
         expect.objectContaining({
           slug: expect.stringMatching(/^[a-z0-9-]+$/), // Should be URL-safe
-        })
+        }),
       );
     });
 
-    it('should set status to PENDING_VERIFICATION for new farms', async () => {
+    it("should set status to PENDING_VERIFICATION for new farms", async () => {
       // Arrange
       const farmRequest = createMockFarmRequest();
-      const expectedFarm = createMockFarm({ status: 'PENDING_VERIFICATION' as FarmStatus });
+      const expectedFarm = createMockFarm({
+        status: "PENDING_VERIFICATION" as FarmStatus,
+      });
 
       jest.mocked(farmRepository.create).mockResolvedValue(expectedFarm);
 
@@ -232,32 +237,36 @@ describe('FarmService', () => {
       const result = await farmService.createFarm(farmRequest);
 
       // Assert
-      expect(result.status).toBe('PENDING_VERIFICATION');
+      expect(result.status).toBe("PENDING_VERIFICATION");
     });
 
-    it('should handle validation errors gracefully', async () => {
+    it("should handle validation errors gracefully", async () => {
       // Arrange
-      const invalidRequest = { name: 'AB' }; // Too short
+      const invalidRequest = { name: "AB" }; // Too short
 
       // Act & Assert
-      await expect(farmService.createFarm(invalidRequest as any)).rejects.toThrow();
+      await expect(
+        farmService.createFarm(invalidRequest as any),
+      ).rejects.toThrow();
     });
 
-    it('should handle database errors during creation', async () => {
+    it("should handle database errors during creation", async () => {
       // Arrange
       const farmRequest = createMockFarmRequest();
-      const dbError = new Error('Database connection failed');
+      const dbError = new Error("Database connection failed");
 
       jest.mocked(farmRepository.create).mockRejectedValue(dbError);
 
       // Act & Assert
-      await expect(farmService.createFarm(farmRequest)).rejects.toThrow('Database connection failed');
+      await expect(farmService.createFarm(farmRequest)).rejects.toThrow(
+        "Database connection failed",
+      );
     });
 
-    it('should handle duplicate slug conflicts', async () => {
+    it("should handle duplicate slug conflicts", async () => {
       // Arrange
       const farmRequest = createMockFarmRequest();
-      const duplicateError = new Error('Unique constraint failed on slug');
+      const duplicateError = new Error("Unique constraint failed on slug");
 
       jest.mocked(farmRepository.create).mockRejectedValue(duplicateError);
 
@@ -270,10 +279,10 @@ describe('FarmService', () => {
   // GET FARM BY ID TESTS
   // ==========================================================================
 
-  describe('getFarmById', () => {
-    it('should return farm from cache if available', async () => {
+  describe("getFarmById", () => {
+    it("should return farm from cache if available", async () => {
       // Arrange
-      const farmId = 'farm_123';
+      const farmId = "farm_123";
       const cachedFarm = createMockFarm({ id: farmId });
 
       jest.mocked(multiLayerCache.get).mockResolvedValue(cachedFarm);
@@ -287,9 +296,9 @@ describe('FarmService', () => {
       expect(farmRepository.findById).not.toHaveBeenCalled(); // Should not hit DB
     });
 
-    it('should fetch from database and cache if not in cache', async () => {
+    it("should fetch from database and cache if not in cache", async () => {
       // Arrange
-      const farmId = 'farm_123';
+      const farmId = "farm_123";
       const dbFarm = createMockFarm({ id: farmId });
 
       jest.mocked(multiLayerCache.get).mockResolvedValue(null); // Cache miss
@@ -306,13 +315,13 @@ describe('FarmService', () => {
       expect(multiLayerCache.set).toHaveBeenCalledWith(
         `farm:${farmId}`,
         dbFarm,
-        expect.any(Object)
+        expect.any(Object),
       );
     });
 
-    it('should return null if farm not found', async () => {
+    it("should return null if farm not found", async () => {
       // Arrange
-      const farmId = 'nonexistent_farm';
+      const farmId = "nonexistent_farm";
 
       jest.mocked(multiLayerCache.get).mockResolvedValue(null);
       jest.mocked(farmRepository.findById).mockResolvedValue(null);
@@ -324,16 +333,18 @@ describe('FarmService', () => {
       expect(result).toBeNull();
     });
 
-    it('should handle database errors when fetching', async () => {
+    it("should handle database errors when fetching", async () => {
       // Arrange
-      const farmId = 'farm_123';
-      const dbError = new Error('Database query failed');
+      const farmId = "farm_123";
+      const dbError = new Error("Database query failed");
 
       jest.mocked(multiLayerCache.get).mockResolvedValue(null);
       jest.mocked(farmRepository.findById).mockRejectedValue(dbError);
 
       // Act & Assert
-      await expect(farmService.getFarmById(farmId)).rejects.toThrow('Database query failed');
+      await expect(farmService.getFarmById(farmId)).rejects.toThrow(
+        "Database query failed",
+      );
     });
   });
 
@@ -341,10 +352,10 @@ describe('FarmService', () => {
   // GET FARM BY SLUG TESTS
   // ==========================================================================
 
-  describe('getFarmBySlug', () => {
-    it('should return farm from cache if available', async () => {
+  describe("getFarmBySlug", () => {
+    it("should return farm from cache if available", async () => {
       // Arrange
-      const slug = 'green-valley-farm';
+      const slug = "green-valley-farm";
       const cachedFarm = createMockFarm({ slug });
 
       jest.mocked(multiLayerCache.get).mockResolvedValue(cachedFarm);
@@ -357,9 +368,9 @@ describe('FarmService', () => {
       expect(multiLayerCache.get).toHaveBeenCalledWith(`farm:slug:${slug}`);
     });
 
-    it('should fetch from database if not cached', async () => {
+    it("should fetch from database if not cached", async () => {
       // Arrange
-      const slug = 'organic-acres';
+      const slug = "organic-acres";
       const dbFarm = createMockFarm({ slug });
 
       jest.mocked(multiLayerCache.get).mockResolvedValue(null);
@@ -374,9 +385,9 @@ describe('FarmService', () => {
       expect(farmRepository.findBySlug).toHaveBeenCalledWith(slug);
     });
 
-    it('should return null for non-existent slug', async () => {
+    it("should return null for non-existent slug", async () => {
       // Arrange
-      const slug = 'non-existent-farm';
+      const slug = "non-existent-farm";
 
       jest.mocked(multiLayerCache.get).mockResolvedValue(null);
       jest.mocked(farmRepository.findBySlug).mockResolvedValue(null);
@@ -393,16 +404,21 @@ describe('FarmService', () => {
   // UPDATE FARM TESTS
   // ==========================================================================
 
-  describe('updateFarm', () => {
-    it('should update farm and invalidate cache', async () => {
+  describe("updateFarm", () => {
+    it("should update farm and invalidate cache", async () => {
       // Arrange
-      const farmId = 'farm_123';
-      const updates = { name: 'Updated Farm Name', description: 'New description' };
+      const farmId = "farm_123";
+      const updates = {
+        name: "Updated Farm Name",
+        description: "New description",
+      };
       const updatedFarm = createMockFarm({ ...updates, id: farmId });
 
       jest.mocked(farmRepository.update).mockResolvedValue(updatedFarm);
       jest.mocked(multiLayerCache.delete).mockResolvedValue(undefined);
-      jest.mocked(multiLayerCache.invalidatePattern).mockResolvedValue(undefined);
+      jest
+        .mocked(multiLayerCache.invalidatePattern)
+        .mockResolvedValue(undefined);
 
       // Act
       const result = await farmService.updateFarm(farmId, updates);
@@ -413,19 +429,21 @@ describe('FarmService', () => {
 
       // Verify cache invalidation
       expect(multiLayerCache.delete).toHaveBeenCalledWith(`farm:${farmId}`);
-      expect(multiLayerCache.invalidatePattern).toHaveBeenCalledWith('farms:*');
+      expect(multiLayerCache.invalidatePattern).toHaveBeenCalledWith("farms:*");
     });
 
-    it('should handle update errors', async () => {
+    it("should handle update errors", async () => {
       // Arrange
-      const farmId = 'farm_123';
-      const updates = { name: 'Updated Name' };
-      const error = new Error('Update failed');
+      const farmId = "farm_123";
+      const updates = { name: "Updated Name" };
+      const error = new Error("Update failed");
 
       jest.mocked(farmRepository.update).mockRejectedValue(error);
 
       // Act & Assert
-      await expect(farmService.updateFarm(farmId, updates)).rejects.toThrow('Update failed');
+      await expect(farmService.updateFarm(farmId, updates)).rejects.toThrow(
+        "Update failed",
+      );
     });
   });
 
@@ -433,14 +451,16 @@ describe('FarmService', () => {
   // DELETE FARM TESTS
   // ==========================================================================
 
-  describe('deleteFarm', () => {
-    it('should soft delete farm and clear cache', async () => {
+  describe("deleteFarm", () => {
+    it("should soft delete farm and clear cache", async () => {
       // Arrange
-      const farmId = 'farm_123';
+      const farmId = "farm_123";
 
       jest.mocked(farmRepository.delete).mockResolvedValue(undefined);
       jest.mocked(multiLayerCache.delete).mockResolvedValue(undefined);
-      jest.mocked(multiLayerCache.invalidatePattern).mockResolvedValue(undefined);
+      jest
+        .mocked(multiLayerCache.invalidatePattern)
+        .mockResolvedValue(undefined);
 
       // Act
       await farmService.deleteFarm(farmId);
@@ -448,7 +468,7 @@ describe('FarmService', () => {
       // Assert
       expect(farmRepository.delete).toHaveBeenCalledWith(farmId);
       expect(multiLayerCache.delete).toHaveBeenCalledWith(`farm:${farmId}`);
-      expect(multiLayerCache.invalidatePattern).toHaveBeenCalledWith('farms:*');
+      expect(multiLayerCache.invalidatePattern).toHaveBeenCalledWith("farms:*");
     });
   });
 
@@ -456,13 +476,13 @@ describe('FarmService', () => {
   // GET FARMS BY OWNER TESTS
   // ==========================================================================
 
-  describe('getFarmsByOwner', () => {
-    it('should return farms owned by user', async () => {
+  describe("getFarmsByOwner", () => {
+    it("should return farms owned by user", async () => {
       // Arrange
-      const ownerId = 'user_456';
+      const ownerId = "user_456";
       const farms = [
-        createMockFarm({ id: 'farm_1', ownerId }),
-        createMockFarm({ id: 'farm_2', ownerId }),
+        createMockFarm({ id: "farm_1", ownerId }),
+        createMockFarm({ id: "farm_2", ownerId }),
       ];
 
       jest.mocked(farmRepository.findByOwner).mockResolvedValue(farms);
@@ -475,9 +495,9 @@ describe('FarmService', () => {
       expect(farmRepository.findByOwner).toHaveBeenCalledWith(ownerId);
     });
 
-    it('should return empty array if user has no farms', async () => {
+    it("should return empty array if user has no farms", async () => {
       // Arrange
-      const ownerId = 'user_789';
+      const ownerId = "user_789";
 
       jest.mocked(farmRepository.findByOwner).mockResolvedValue([]);
 
@@ -493,13 +513,13 @@ describe('FarmService', () => {
   // LIST FARMS WITH PAGINATION TESTS
   // ==========================================================================
 
-  describe('getAllFarms', () => {
-    it('should return paginated farms', async () => {
+  describe("getAllFarms", () => {
+    it("should return paginated farms", async () => {
       // Arrange
-      const filters = { page: 1, limit: 20, status: 'ACTIVE' as FarmStatus };
+      const filters = { page: 1, limit: 20, status: "ACTIVE" as FarmStatus };
       const farms = [
-        createMockFarm({ id: 'farm_1' }),
-        createMockFarm({ id: 'farm_2' }),
+        createMockFarm({ id: "farm_1" }),
+        createMockFarm({ id: "farm_2" }),
       ];
 
       jest.mocked(farmRepository.findMany).mockResolvedValue({
@@ -520,10 +540,10 @@ describe('FarmService', () => {
       expect(result.hasMore).toBe(true);
     });
 
-    it('should handle search queries', async () => {
+    it("should handle search queries", async () => {
       // Arrange
-      const filters = { page: 1, limit: 20, searchQuery: 'organic' };
-      const farms = [createMockFarm({ name: 'Organic Farm' })];
+      const filters = { page: 1, limit: 20, searchQuery: "organic" };
+      const farms = [createMockFarm({ name: "Organic Farm" })];
 
       jest.mocked(farmRepository.findMany).mockResolvedValue({
         farms,
@@ -538,7 +558,7 @@ describe('FarmService', () => {
 
       // Assert
       expect(result.farms).toHaveLength(1);
-      expect(result.farms[0].name).toContain('Organic');
+      expect(result.farms[0].name).toContain("Organic");
     });
   });
 
@@ -546,40 +566,42 @@ describe('FarmService', () => {
   // APPROVAL WORKFLOW TESTS
   // ==========================================================================
 
-  describe('approveFarm', () => {
-    it('should approve farm and update status', async () => {
+  describe("approveFarm", () => {
+    it("should approve farm and update status", async () => {
       // Arrange
-      const farmId = 'farm_123';
-      const adminId = 'admin_456';
+      const farmId = "farm_123";
+      const adminId = "admin_456";
       const approvedFarm = createMockFarm({
         id: farmId,
-        status: 'ACTIVE' as FarmStatus,
-        verificationStatus: 'VERIFIED',
+        status: "ACTIVE" as FarmStatus,
+        verificationStatus: "VERIFIED",
       });
 
       jest.mocked(farmRepository.update).mockResolvedValue(approvedFarm);
       jest.mocked(multiLayerCache.delete).mockResolvedValue(undefined);
-      jest.mocked(multiLayerCache.invalidatePattern).mockResolvedValue(undefined);
+      jest
+        .mocked(multiLayerCache.invalidatePattern)
+        .mockResolvedValue(undefined);
 
       // Act
       const result = await farmService.approveFarm(farmId, adminId);
 
       // Assert
-      expect(result.status).toBe('ACTIVE');
-      expect(result.verificationStatus).toBe('VERIFIED');
+      expect(result.status).toBe("ACTIVE");
+      expect(result.verificationStatus).toBe("VERIFIED");
     });
   });
 
-  describe('rejectFarm', () => {
-    it('should reject farm with reason', async () => {
+  describe("rejectFarm", () => {
+    it("should reject farm with reason", async () => {
       // Arrange
-      const farmId = 'farm_123';
-      const adminId = 'admin_456';
-      const reason = 'Incomplete documentation';
+      const farmId = "farm_123";
+      const adminId = "admin_456";
+      const reason = "Incomplete documentation";
       const rejectedFarm = createMockFarm({
         id: farmId,
-        status: 'INACTIVE' as FarmStatus,
-        verificationStatus: 'REJECTED',
+        status: "INACTIVE" as FarmStatus,
+        verificationStatus: "REJECTED",
       });
 
       jest.mocked(farmRepository.update).mockResolvedValue(rejectedFarm);
@@ -589,8 +611,8 @@ describe('FarmService', () => {
       const result = await farmService.rejectFarm(farmId, adminId, reason);
 
       // Assert
-      expect(result.status).toBe('INACTIVE');
-      expect(result.verificationStatus).toBe('REJECTED');
+      expect(result.status).toBe("INACTIVE");
+      expect(result.verificationStatus).toBe("REJECTED");
     });
   });
 });

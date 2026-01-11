@@ -28,11 +28,9 @@ const deliverySchema = z.object({
         today.setHours(0, 0, 0, 0);
         return selectedDate >= today;
       },
-      { message: "Delivery date must be today or later" }
+      { message: "Delivery date must be today or later" },
     ),
-  preferredTime: z
-    .string()
-    .min(1, "Please select a delivery time slot"),
+  preferredTime: z.string().min(1, "Please select a delivery time slot"),
   deliveryInstructions: z
     .string()
     .max(500, "Instructions must be less than 500 characters")
@@ -187,10 +185,11 @@ export function DeliveryStep({
             {timeSlots.map((slot: any) => (
               <label
                 key={slot.value}
-                className={`flex cursor-pointer items-center gap-3 rounded-lg border-2 p-4 transition-all ${selectedTime === slot.value
+                className={`flex cursor-pointer items-center gap-3 rounded-lg border-2 p-4 transition-all ${
+                  selectedTime === slot.value
                     ? "border-green-500 bg-green-50"
                     : "border-gray-200 bg-white hover:border-green-300 hover:bg-green-50"
-                  }`}
+                }`}
               >
                 <input
                   type="radio"
@@ -240,8 +239,9 @@ export function DeliveryStep({
             rows={4}
             placeholder="E.g., Leave at front door, Ring doorbell, Gate code: 1234"
             {...register("deliveryInstructions")}
-            className={`w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500 ${errors.deliveryInstructions ? "border-red-500" : ""
-              }`}
+            className={`w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500 ${
+              errors.deliveryInstructions ? "border-red-500" : ""
+            }`}
           />
           {errors.deliveryInstructions && (
             <p className="mt-1 text-xs text-red-600">

@@ -49,40 +49,48 @@ export const MarketplaceBrowseModule: TestModule = {
             // Navigate to products page
             await page.goto("/products", {
               waitUntil: "domcontentloaded",
-              timeout: 10000
+              timeout: 10000,
             });
 
             // Wait for page to be visible
             await page.waitForSelector("body", { state: "visible" });
 
             // Check for products container - try multiple selectors
-            const hasProductsContainer = await page.locator(
-              '[data-testid="products-grid"], [data-testid="product-list"], .products-grid, .product-list, main'
-            ).count();
+            const hasProductsContainer = await page
+              .locator(
+                '[data-testid="products-grid"], [data-testid="product-list"], .products-grid, .product-list, main',
+              )
+              .count();
 
             expect(hasProductsContainer).toBeGreaterThan(0);
 
             // Wait for products to load
-            await page.waitForSelector(
-              '[data-testid="product-card"], .product-card, article[class*="product"], [class*="product-item"]',
-              { timeout: 10000 }
-            ).catch(() => {
-              // Products might not be loaded yet, continue
-            });
+            await page
+              .waitForSelector(
+                '[data-testid="product-card"], .product-card, article[class*="product"], [class*="product-item"]',
+                { timeout: 10000 },
+              )
+              .catch(() => {
+                // Products might not be loaded yet, continue
+              });
 
             await page.waitForTimeout(2000);
 
             // Count product cards
-            const productCount = await page.locator(
-              '[data-testid="product-card"], .product-card, article[class*="product"], [class*="product-item"]'
-            ).count();
+            const productCount = await page
+              .locator(
+                '[data-testid="product-card"], .product-card, article[class*="product"], [class*="product-item"]',
+              )
+              .count();
 
             // If no product cards found, try grid items
             let gridItemCount = 0;
             if (productCount === 0) {
-              gridItemCount = await page.locator(
-                'div[class*="grid"] > div, div[class*="products"] > div'
-              ).count();
+              gridItemCount = await page
+                .locator(
+                  'div[class*="grid"] > div, div[class*="products"] > div',
+                )
+                .count();
             }
 
             const totalProducts = productCount + gridItemCount;
@@ -100,10 +108,10 @@ export const MarketplaceBrowseModule: TestModule = {
                 gridItemCount,
                 totalProducts,
                 pageTitle: title,
-                hasProducts: totalProducts > 0
-              }
+                hasProducts: totalProducts > 0,
+              },
             };
-          }
+          },
         },
 
         {
@@ -118,20 +126,24 @@ export const MarketplaceBrowseModule: TestModule = {
             await page.waitForTimeout(2000);
 
             // Get first few product cards
-            const productCards = await page.locator(
-              '[data-testid="product-card"], .product-card, article[class*="product"]'
-            ).all();
+            const productCards = await page
+              .locator(
+                '[data-testid="product-card"], .product-card, article[class*="product"]',
+              )
+              .all();
 
             if (productCards.length === 0) {
               // Try alternative selectors
-              const altCards = await page.locator('div[class*="grid"] > div').all();
+              const altCards = await page
+                .locator('div[class*="grid"] > div')
+                .all();
               expect(altCards.length).toBeGreaterThan(0);
 
               return {
                 data: {
                   productCardsFound: altCards.length,
-                  message: "Found grid items but not standard product cards"
-                }
+                  message: "Found grid items but not standard product cards",
+                },
               };
             }
 
@@ -141,38 +153,42 @@ export const MarketplaceBrowseModule: TestModule = {
 
             for (const card of cardsToCheck) {
               // Check for product name/title
-              const hasName = await card.locator(
-                'h3, h4, [class*="name"], [class*="title"], a'
-              ).count() > 0;
+              const hasName =
+                (await card
+                  .locator('h3, h4, [class*="name"], [class*="title"], a')
+                  .count()) > 0;
 
               // Check for price
-              const hasPrice = await card.locator(
-                '[class*="price"], .price, text=/\\$\\d+/, text=/\\d+\\.\\d{2}/'
-              ).count() > 0;
+              const hasPrice =
+                (await card
+                  .locator(
+                    '[class*="price"], .price, text=/\\$\\d+/, text=/\\d+\\.\\d{2}/',
+                  )
+                  .count()) > 0;
 
               // Check for image
-              const hasImage = await card.locator('img').count() > 0;
+              const hasImage = (await card.locator("img").count()) > 0;
 
               cardChecks.push({
                 hasName,
                 hasPrice,
                 hasImage,
-                complete: hasName && hasPrice && hasImage
+                complete: hasName && hasPrice && hasImage,
               });
             }
 
-            const allComplete = cardChecks.every(c => c.complete);
-            const completeCount = cardChecks.filter(c => c.complete).length;
+            const allComplete = cardChecks.every((c) => c.complete);
+            const completeCount = cardChecks.filter((c) => c.complete).length;
 
             return {
               data: {
                 cardsChecked: cardChecks.length,
                 allComplete,
                 completeCount,
-                checks: cardChecks
-              }
+                checks: cardChecks,
+              },
             };
-          }
+          },
         },
 
         {
@@ -187,16 +203,20 @@ export const MarketplaceBrowseModule: TestModule = {
             await page.waitForTimeout(2000);
 
             // Find first clickable product - the entire card is a link in this design
-            const productLink = await page.locator(
-              'a[href*="/products/"]:has-text(""), a[class*="group"]:has([class*="product"]), a[href^="/products/"]'
-            ).first();
+            const productLink = await page
+              .locator(
+                'a[href*="/products/"]:has-text(""), a[class*="group"]:has([class*="product"]), a[href^="/products/"]',
+              )
+              .first();
 
-            const linkExists = await productLink.count() > 0;
+            const linkExists = (await productLink.count()) > 0;
 
             if (!linkExists) {
               // Try alternative: any link on the page that goes to a product
-              const anyProductLink = await page.locator('a[href^="/products/"]').first();
-              const hasAnyLink = await anyProductLink.count() > 0;
+              const anyProductLink = await page
+                .locator('a[href^="/products/"]')
+                .first();
+              const hasAnyLink = (await anyProductLink.count()) > 0;
               expect(hasAnyLink).toBe(true);
             }
 
@@ -205,8 +225,8 @@ export const MarketplaceBrowseModule: TestModule = {
 
             // Click the product link with navigation wait
             await Promise.all([
-              page.waitForLoadState('domcontentloaded'),
-              productLink.click()
+              page.waitForLoadState("domcontentloaded"),
+              productLink.click(),
             ]);
 
             await page.waitForTimeout(1000);
@@ -218,14 +238,19 @@ export const MarketplaceBrowseModule: TestModule = {
             expect(afterUrl).not.toBe(beforeUrl);
 
             // Verify we're on a product detail page - check for /products/slug pattern
-            const isProductPage = afterUrl.includes("/products/") && afterUrl.split("/products/")[1]?.length > 0;
+            const isProductPage =
+              afterUrl.includes("/products/") &&
+              afterUrl.split("/products/")[1]?.length > 0;
 
             expect(isProductPage).toBe(true);
 
             // Check for product detail content
-            const hasProductDetails = await page.locator(
-              'h1, h2, [data-testid="product-title"], [data-testid="product-details"], [class*="product"]'
-            ).count() > 0;
+            const hasProductDetails =
+              (await page
+                .locator(
+                  'h1, h2, [data-testid="product-title"], [data-testid="product-details"], [class*="product"]',
+                )
+                .count()) > 0;
 
             expect(hasProductDetails).toBe(true);
 
@@ -235,12 +260,12 @@ export const MarketplaceBrowseModule: TestModule = {
                 afterUrl,
                 navigated: true,
                 hasProductDetails,
-                productSlug: afterUrl.split("/products/")[1]?.split("?")[0]
-              }
+                productSlug: afterUrl.split("/products/")[1]?.split("?")[0],
+              },
             };
-          }
-        }
-      ]
+          },
+        },
+      ],
     },
 
     {
@@ -259,25 +284,27 @@ export const MarketplaceBrowseModule: TestModule = {
             await page.goto("/products");
 
             // Look for search input
-            const searchInput = await page.locator(
-              'input[type="search"], input[placeholder*="search" i], input[name*="search" i], [data-testid="search"]'
-            ).count();
+            const searchInput = await page
+              .locator(
+                'input[type="search"], input[placeholder*="search" i], input[name*="search" i], [data-testid="search"]',
+              )
+              .count();
 
             const hasSearch = searchInput > 0;
 
             // Also check for search button
-            const searchButton = await page.locator(
-              'button:has-text("Search"), button[type="submit"]'
-            ).count();
+            const searchButton = await page
+              .locator('button:has-text("Search"), button[type="submit"]')
+              .count();
 
             return {
               data: {
                 hasSearchInput: hasSearch,
                 hasSearchButton: searchButton > 0,
-                searchAvailable: hasSearch
-              }
+                searchAvailable: hasSearch,
+              },
             };
-          }
+          },
         },
 
         {
@@ -292,34 +319,38 @@ export const MarketplaceBrowseModule: TestModule = {
             await page.waitForTimeout(1000);
 
             // Find search input
-            const searchInput = page.locator(
-              'input[type="search"], input[placeholder*="search" i]'
-            ).first();
+            const searchInput = page
+              .locator('input[type="search"], input[placeholder*="search" i]')
+              .first();
 
-            const inputExists = await searchInput.count() > 0;
+            const inputExists = (await searchInput.count()) > 0;
 
             if (!inputExists) {
               return {
                 data: {
                   skipped: true,
-                  reason: "Search input not found on page"
-                }
+                  reason: "Search input not found on page",
+                },
               };
             }
 
             // Count products before search
-            const beforeCount = await page.locator(
-              '[data-testid="product-card"], .product-card, article[class*="product"]'
-            ).count();
+            const beforeCount = await page
+              .locator(
+                '[data-testid="product-card"], .product-card, article[class*="product"]',
+              )
+              .count();
 
             // Perform search
             await searchInput.fill("tomato");
             await page.waitForTimeout(1500);
 
             // Count results after search
-            const afterCount = await page.locator(
-              '[data-testid="product-card"], .product-card, article[class*="product"]'
-            ).count();
+            const afterCount = await page
+              .locator(
+                '[data-testid="product-card"], .product-card, article[class*="product"]',
+              )
+              .count();
 
             // Search should either filter results or maintain count
             const searchWorked = afterCount >= 0;
@@ -330,10 +361,10 @@ export const MarketplaceBrowseModule: TestModule = {
                 beforeCount,
                 afterCount,
                 resultsChanged: beforeCount !== afterCount,
-                searchWorked
-              }
+                searchWorked,
+              },
             };
-          }
+          },
         },
 
         {
@@ -347,8 +378,8 @@ export const MarketplaceBrowseModule: TestModule = {
             const response = await page.request.get("/api/search", {
               params: {
                 q: "organic",
-                type: "products"
-              }
+                type: "products",
+              },
             });
 
             const isAvailable = response.status() < 500;
@@ -357,19 +388,21 @@ export const MarketplaceBrowseModule: TestModule = {
             let resultsCount = 0;
             if (response.ok()) {
               const data = await response.json();
-              resultsCount = Array.isArray(data) ? data.length : data.results?.length || 0;
+              resultsCount = Array.isArray(data)
+                ? data.length
+                : data.results?.length || 0;
             }
 
             return {
               data: {
                 status: response.status(),
                 available: response.ok(),
-                resultsCount
-              }
+                resultsCount,
+              },
             };
-          }
-        }
-      ]
+          },
+        },
+      ],
     },
 
     {
@@ -389,25 +422,29 @@ export const MarketplaceBrowseModule: TestModule = {
             await page.waitForTimeout(1000);
 
             // Look for category filter
-            const categoryFilter = await page.locator(
-              'select[name="category"], select[name*="category" i], [data-filter="category"], [data-testid="category-filter"]'
-            ).count();
+            const categoryFilter = await page
+              .locator(
+                'select[name="category"], select[name*="category" i], [data-filter="category"], [data-testid="category-filter"]',
+              )
+              .count();
 
             const hasCategoryFilter = categoryFilter > 0;
 
             // Look for category buttons/links
-            const categoryButtons = await page.locator(
-              'button[data-category], a[data-category], [class*="category-filter"] button'
-            ).count();
+            const categoryButtons = await page
+              .locator(
+                'button[data-category], a[data-category], [class*="category-filter"] button',
+              )
+              .count();
 
             return {
               data: {
                 hasCategoryFilter,
                 hasCategoryButtons: categoryButtons > 0,
-                filteringAvailable: hasCategoryFilter || categoryButtons > 0
-              }
+                filteringAvailable: hasCategoryFilter || categoryButtons > 0,
+              },
             };
-          }
+          },
         },
 
         {
@@ -421,19 +458,21 @@ export const MarketplaceBrowseModule: TestModule = {
             await page.goto("/products");
 
             // Look for sort dropdown
-            const sortDropdown = await page.locator(
-              'select[name*="sort" i], [data-testid="sort"], [class*="sort-select"]'
-            ).count();
+            const sortDropdown = await page
+              .locator(
+                'select[name*="sort" i], [data-testid="sort"], [class*="sort-select"]',
+              )
+              .count();
 
             return {
               data: {
                 hasSortDropdown: sortDropdown > 0,
-                sortAvailable: sortDropdown > 0
-              }
+                sortAvailable: sortDropdown > 0,
+              },
             };
-          }
-        }
-      ]
+          },
+        },
+      ],
     },
 
     {
@@ -452,14 +491,14 @@ export const MarketplaceBrowseModule: TestModule = {
             // Try marketplace or farms page
             let url = "/marketplace";
             let response = await page.goto(url, {
-              waitUntil: "domcontentloaded"
+              waitUntil: "domcontentloaded",
             });
 
             // If marketplace 404, try /farms
             if (response?.status() === 404) {
               url = "/farms";
               response = await page.goto(url, {
-                waitUntil: "domcontentloaded"
+                waitUntil: "domcontentloaded",
               });
             }
 
@@ -468,9 +507,11 @@ export const MarketplaceBrowseModule: TestModule = {
             await page.waitForTimeout(2000);
 
             // Count farm cards
-            const farmCards = await page.locator(
-              '[data-testid="farm-card"], .farm-card, article[class*="farm"]'
-            ).count();
+            const farmCards = await page
+              .locator(
+                '[data-testid="farm-card"], .farm-card, article[class*="farm"]',
+              )
+              .count();
 
             const pageTitle = await page.title();
 
@@ -479,10 +520,10 @@ export const MarketplaceBrowseModule: TestModule = {
                 url,
                 farmCards,
                 pageTitle,
-                accessible: true
-              }
+                accessible: true,
+              },
             };
-          }
+          },
         },
 
         {
@@ -498,18 +539,20 @@ export const MarketplaceBrowseModule: TestModule = {
             await page.waitForTimeout(2000);
 
             // Find first farm link
-            const farmLink = await page.locator(
-              '[data-testid="farm-card"] a, .farm-card a, article[class*="farm"] a'
-            ).first();
+            const farmLink = await page
+              .locator(
+                '[data-testid="farm-card"] a, .farm-card a, article[class*="farm"] a',
+              )
+              .first();
 
-            const linkExists = await farmLink.count() > 0;
+            const linkExists = (await farmLink.count()) > 0;
 
             if (!linkExists) {
               return {
                 data: {
                   skipped: true,
-                  reason: "No farm links found"
-                }
+                  reason: "No farm links found",
+                },
               };
             }
 
@@ -518,9 +561,12 @@ export const MarketplaceBrowseModule: TestModule = {
             await page.waitForTimeout(2000);
 
             const url = page.url();
-            const hasFarmContent = await page.locator(
-              'h1, [data-testid="farm-details"], [class*="farm-details"]'
-            ).count() > 0;
+            const hasFarmContent =
+              (await page
+                .locator(
+                  'h1, [data-testid="farm-details"], [class*="farm-details"]',
+                )
+                .count()) > 0;
 
             expect(hasFarmContent).toBe(true);
 
@@ -528,12 +574,12 @@ export const MarketplaceBrowseModule: TestModule = {
               data: {
                 url,
                 hasFarmContent,
-                accessible: true
-              }
+                accessible: true,
+              },
             };
-          }
-        }
-      ]
+          },
+        },
+      ],
     },
 
     {
@@ -552,26 +598,29 @@ export const MarketplaceBrowseModule: TestModule = {
             // Set mobile viewport
             await page.setViewportSize({
               width: 375,
-              height: 667
+              height: 667,
             });
 
             await page.goto("/products");
             await page.waitForTimeout(2000);
 
             // Check if products are visible
-            const productsVisible = await page.locator(
-              '[data-testid="product-card"], .product-card, article'
-            ).count();
+            const productsVisible = await page
+              .locator('[data-testid="product-card"], .product-card, article')
+              .count();
 
             // Check for mobile menu
-            const hasMobileMenu = await page.locator(
-              'button[aria-label*="menu" i], [class*="mobile-menu"], [data-testid="mobile-menu"]'
-            ).count() > 0;
+            const hasMobileMenu =
+              (await page
+                .locator(
+                  'button[aria-label*="menu" i], [class*="mobile-menu"], [data-testid="mobile-menu"]',
+                )
+                .count()) > 0;
 
             // Reset viewport
             await page.setViewportSize({
               width: 1280,
-              height: 720
+              height: 720,
             });
 
             return {
@@ -579,14 +628,14 @@ export const MarketplaceBrowseModule: TestModule = {
                 productsVisible: productsVisible > 0,
                 productCount: productsVisible,
                 hasMobileMenu,
-                mobileWorking: productsVisible > 0
-              }
+                mobileWorking: productsVisible > 0,
+              },
             };
-          }
-        }
-      ]
-    }
-  ]
+          },
+        },
+      ],
+    },
+  ],
 };
 
 export default MarketplaceBrowseModule;
