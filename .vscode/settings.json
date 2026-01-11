@@ -775,12 +775,12 @@
         {
           "name": "perplexity/pplx-70b-online",
           "display_name": "Perplexity 70B Online",
-          "max_tokens": 4000
+          "max_tokens": 128000
         },
         {
           "name": "perplexity/pplx-7b-online",
           "display_name": "Perplexity 7B Online",
-          "max_tokens": 4000
+          "max_tokens": 128000
         }
       ]
     }

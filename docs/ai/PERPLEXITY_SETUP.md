@@ -25,12 +25,12 @@ The following configuration has been added to `.vscode/settings.json`:
         {
           "name": "perplexity/pplx-70b-online",
           "display_name": "Perplexity 70B Online",
-          "max_tokens": 4000
+          "max_tokens": 128000
         },
         {
           "name": "perplexity/pplx-7b-online",
           "display_name": "Perplexity 7B Online",
-          "max_tokens": 4000
+          "max_tokens": 128000
         }
       ]
     }
@@ -77,7 +77,7 @@ OPENROUTER_SITE_URL=https://farmersmarket.com
 - ✅ Real-time web search integration
 - ✅ Up-to-date information (current events, documentation)
 - ✅ 70 billion parameters for advanced reasoning
-- ✅ 4,000 token context window
+- ✅ 128,000 token context window (128k)
 - ✅ Excellent for research and documentation lookups
 
 **Best For:**
@@ -98,7 +98,7 @@ OPENROUTER_SITE_URL=https://farmersmarket.com
 - ✅ Real-time web search integration
 - ✅ Faster responses than 70B model
 - ✅ 7 billion parameters
-- ✅ 4,000 token context window
+- ✅ 128,000 token context window (128k)
 - ✅ Cost-effective for quick queries
 
 **Best For:**
@@ -177,7 +177,7 @@ export class PerplexityService {
     const response = await this.client.createChatCompletion({
       model: `perplexity/${model}`,
       messages: [{ role: 'user', content: prompt }],
-      max_tokens: 4000,
+      max_tokens: 128000,
       temperature: 0.7,
     });
 
@@ -271,8 +271,8 @@ Track your OpenRouter usage at: https://openrouter.ai/activity
 
 2. **Set Token Limits**
    - Configure `max_tokens` based on needs
-   - Default 4000 is maximum
-   - Reduce to 1000-2000 for simple queries
+   - Default 128000 is maximum
+   - Reduce to 10000-20000 for simple queries
 
 3. **Cache Results**
    ```typescript
@@ -551,7 +551,7 @@ Solution:
 ## ✅ Configuration Checklist
 
 - [x] Added OpenRouter configuration to `.vscode/settings.json`
-- [ ] Created `.env.local` with `OPENROUTER_API_KEY`
+- [x] Created `.env.local` with `OPENROUTER_API_KEY` ✅
 - [ ] Signed up for OpenRouter account
 - [ ] Generated API key at openrouter.ai
 - [ ] Tested basic query with Perplexity 7B
