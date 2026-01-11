@@ -115,6 +115,7 @@
     "coverage", // Exclude test coverage
     "build", // Exclude build artifacts
     "mobile-app/**", // Exclude React Native mobile app (separate project)
+    "mobile-app-export-*/**", // Exclude mobile app export directories (Phase 2 backup)
     "scripts/**", // Exclude all script files (have separate TS errors)
     "tests/**", // Exclude test files
     "**/*.spec.ts", // Test files (handled by separate config)
