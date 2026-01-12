@@ -64,6 +64,8 @@
     "bot:quick": "tsx scripts/bot-cli.ts quick",
     "bot:production": "tsx scripts/production-health-check.ts",
     "test:security": "jest tests/security/security-scanner.test.ts --runInBand --detectOpenHandles",
+    "///// TEST USERS MANAGEMENT /////": "",
+    "test:users:create": "tsx scripts/create-test-users.ts",
     "///// COMPREHENSIVE WEBSITE INSPECTION /////": "",
     "inspect:website": "tsx scripts/comprehensive-website-inspector.ts",
     "inspect:website:quick": "tsx scripts/comprehensive-website-inspector.ts -- --quick",
@@ -81,6 +83,13 @@
     "db:validate": "prisma validate && prisma format --check",
     "db:fix": "tsx scripts/fix-database-connection.ts",
     "db:test": "tsx scripts/fix-database-connection.ts --test",
+    "validate:db": "tsx scripts/validate-database.ts",
+    "///// PRODUCTION DATABASE SEEDING /////": "",
+    "seed:production": "tsx scripts/seed-vercel-production.ts",
+    "seed:production:vercel": "tsx scripts/seed-vercel-production.ts",
+    "///// REDIS CACHE /////": "",
+    "redis:test": "tsx scripts/test-redis-connection.ts",
+    "redis:health": "tsx scripts/test-redis-connection.ts",
     "///// DOCKER (5 CORE COMMANDS - See docs/DOCKER.md for full reference) /////": "",
     "docker:build": "docker build -t farmers-market:latest -f docker/Dockerfile .",
     "docker:up": "docker-compose up -d",
@@ -230,6 +239,6 @@
     "@esbuild/win32-x64": "^0.27.2"
   },
   "prisma": {
-    "seed": "tsx prisma/seed.ts"
+    "seed": "tsx prisma/seed-sibenik-croatia.ts"
   }
 }
