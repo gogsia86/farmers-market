@@ -19,10 +19,10 @@ import { logger } from "@/lib/monitoring/logger";
 import Redis from "ioredis";
 import { LRUCache } from "lru-cache";
 import { promisify } from "util";
-import { compress, decompress } from "zlib";
+import { gunzip, gzip } from "zlib";
 
-const compressAsync = promisify(compress);
-const decompressAsync = promisify(decompress);
+const compressAsync = promisify(gzip);
+const decompressAsync = promisify(gunzip);
 
 // ============================================================================
 // Types & Interfaces
@@ -176,10 +176,7 @@ export class RedisCacheService {
           try {
             // Check if compressed
             if (redisCached.startsWith("COMPRESSED:")) {
-              const compressed = Buffer.from(
-                redisCached.slice(11),
-                "base64"
-              );
+              const compressed = Buffer.from(redisCached.slice(11), "base64");
               const decompressed = await decompressAsync(compressed);
               parsed = JSON.parse(decompressed.toString());
             } else {
@@ -210,11 +207,7 @@ export class RedisCacheService {
   /**
    * Set value in cache (stores in both L1 and L2)
    */
-  async set<T>(
-    key: string,
-    value: T,
-    options?: CacheOptions
-  ): Promise<void> {
+  async set<T>(key: string, value: T, options?: CacheOptions): Promise<void> {
     const prefixedKey = this.getPrefixedKey(key);
     const ttl = options?.ttl ?? 3600; // Default 1 hour
 
@@ -279,7 +272,7 @@ export class RedisCacheService {
       // Clear matching keys from memory
       const keys = Array.from(memoryCache.keys());
       const regex = new RegExp(
-        "^" + prefixedPattern.replace(/\*/g, ".*") + "$"
+        "^" + prefixedPattern.replace(/\*/g, ".*") + "$",
       );
       keys.forEach((key) => {
         if (regex.test(key)) {
@@ -315,7 +308,7 @@ export class RedisCacheService {
   async wrap<T>(
     key: string,
     fetcher: () => Promise<T>,
-    options?: CacheOptions
+    options?: CacheOptions,
   ): Promise<T> {
     // Try to get from cache
     const cached = await this.get<T>(key, options);
@@ -343,12 +336,10 @@ export class RedisCacheService {
    * Set multiple keys in parallel
    */
   async mset<T>(
-    entries: Array<{ key: string; value: T; options?: CacheOptions }>
+    entries: Array<{ key: string; value: T; options?: CacheOptions }>,
   ): Promise<void> {
     await Promise.all(
-      entries.map((entry) =>
-        this.set(entry.key, entry.value, entry.options)
-      )
+      entries.map((entry) => this.set(entry.key, entry.value, entry.options)),
     );
   }
 
@@ -508,7 +499,9 @@ export class RedisCacheService {
 export const cache = new RedisCacheService("fmp");
 
 // Recommendations cache (shorter TTL)
-export const recommendationsCache = new RedisCacheService("fmp:recommendations");
+export const recommendationsCache = new RedisCacheService(
+  "fmp:recommendations",
+);
 
 // Analytics cache (longer TTL)
 export const analyticsCache = new RedisCacheService("fmp:analytics");
@@ -575,7 +568,7 @@ export const invalidateCacheFor = {
   // Invalidate crop recommendations
   cropRecommendations: async (farmId: string) => {
     await recommendationsCache.invalidatePattern(
-      `crop:recommendations:${farmId}*`
+      `crop:recommendations:${farmId}*`,
     );
   },
 
