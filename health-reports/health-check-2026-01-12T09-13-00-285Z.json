@@ -1,0 +1,284 @@
+{
+  "overall": "critical",
+  "baseUrl": "https://farmers-market-platform.vercel.app",
+  "checks": [
+    {
+      "name": "Homepage Load",
+      "category": "Core",
+      "status": "pass",
+      "duration": 3630,
+      "message": "Successfully loaded with title: \"Farmers Market Platform | Fresh Local Produce\"",
+      "details": {
+        "statusCode": 200,
+        "title": "Farmers Market Platform | Fresh Local Produce",
+        "url": "https://farmers-market-platform.vercel.app"
+      },
+      "timestamp": "2026-01-12T09:11:41.932Z"
+    },
+    {
+      "name": "Health API Endpoint",
+      "category": "Core",
+      "status": "pass",
+      "duration": 2249,
+      "message": "Health status: degraded",
+      "details": {
+        "status": "degraded",
+        "version": "1.0.0",
+        "checks": 3
+      },
+      "timestamp": "2026-01-12T09:11:44.181Z"
+    },
+    {
+      "name": "Database Connection",
+      "category": "Core",
+      "status": "fail",
+      "duration": 702,
+      "message": "Database connection failed",
+      "error": "Database is responsive",
+      "timestamp": "2026-01-12T09:11:44.883Z"
+    },
+    {
+      "name": "Authentication Pages",
+      "category": "Authentication",
+      "status": "pass",
+      "duration": 1797,
+      "message": "Login and registration pages accessible",
+      "details": {
+        "loginStatus": 200,
+        "registerStatus": 200
+      },
+      "timestamp": "2026-01-12T09:11:46.680Z"
+    },
+    {
+      "name": "Auth API Endpoints",
+      "category": "Authentication",
+      "status": "pass",
+      "duration": 398,
+      "message": "NextAuth endpoints responding",
+      "details": {
+        "statusCode": 200
+      },
+      "timestamp": "2026-01-12T09:11:47.078Z"
+    },
+    {
+      "name": "Products API",
+      "category": "API",
+      "status": "pass",
+      "duration": 1187,
+      "message": "Products API working (0 products)",
+      "details": {
+        "productCount": 0,
+        "statusCode": 200
+      },
+      "timestamp": "2026-01-12T09:11:48.292Z"
+    },
+    {
+      "name": "Farms API",
+      "category": "API",
+      "status": "pass",
+      "duration": 814,
+      "message": "Farms API working (0 farms)",
+      "details": {
+        "farmCount": 0,
+        "statusCode": 200
+      },
+      "timestamp": "2026-01-12T09:11:49.131Z"
+    },
+    {
+      "name": "Categories API",
+      "category": "API",
+      "status": "pass",
+      "duration": 555,
+      "message": "Categories API working (0 categories)",
+      "details": {
+        "categoryCount": 0,
+        "statusCode": 200
+      },
+      "timestamp": "2026-01-12T09:11:49.688Z"
+    },
+    {
+      "name": "Search API",
+      "category": "API",
+      "status": "pass",
+      "duration": 1238,
+      "message": "Search API working (0 results for \"tomato\")",
+      "details": {
+        "resultCount": 0,
+        "statusCode": 200
+      },
+      "timestamp": "2026-01-12T09:11:50.927Z"
+    },
+    {
+      "name": "Marketplace Page",
+      "category": "Pages",
+      "status": "pass",
+      "duration": 2754,
+      "message": "Marketplace page loaded",
+      "details": {
+        "statusCode": 200,
+        "hasProducts": false
+      },
+      "timestamp": "2026-01-12T09:11:53.703Z"
+    },
+    {
+      "name": "Farms Page",
+      "category": "Pages",
+      "status": "pass",
+      "duration": 1977,
+      "message": "Farms page loaded successfully",
+      "details": {
+        "statusCode": 200
+      },
+      "timestamp": "2026-01-12T09:11:55.680Z"
+    },
+    {
+      "name": "About Page",
+      "category": "Pages",
+      "status": "pass",
+      "duration": 539,
+      "message": "About page accessible",
+      "details": {
+        "statusCode": 200
+      },
+      "timestamp": "2026-01-12T09:11:56.220Z"
+    },
+    {
+      "name": "Page Performance",
+      "category": "Performance",
+      "status": "pass",
+      "duration": 916,
+      "message": "Excellent load time: 916ms",
+      "details": {
+        "loadTime": 916,
+        "threshold": 3000
+      },
+      "timestamp": "2026-01-12T09:11:57.136Z"
+    },
+    {
+      "name": "Security Headers",
+      "category": "Security",
+      "status": "pass",
+      "duration": 790,
+      "message": "All security headers present",
+      "details": {
+        "found": 4,
+        "missing": 0,
+        "missingHeaders": ""
+      },
+      "timestamp": "2026-01-12T09:11:57.926Z"
+    },
+    {
+      "name": "SSL Certificate",
+      "category": "Security",
+      "status": "pass",
+      "duration": 0,
+      "message": "HTTPS enabled and working",
+      "details": {
+        "https": true,
+        "statusCode": 200
+      },
+      "timestamp": "2026-01-12T09:11:58.527Z"
+    },
+    {
+      "name": "SEO Meta Tags",
+      "category": "SEO",
+      "status": "warn",
+      "duration": 30731,
+      "message": "SEO check partially failed",
+      "error": "locator.getAttribute: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('meta[property=\"og:title\"]')\u001b[22m\n",
+      "timestamp": "2026-01-12T09:12:29.258Z"
+    },
+    {
+      "name": "Static Assets",
+      "category": "Performance",
+      "status": "warn",
+      "duration": 30006,
+      "message": "Static assets check incomplete",
+      "error": "page.goto: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"https://farmers-market-platform.vercel.app/\", waiting until \"networkidle\"\u001b[22m\n",
+      "timestamp": "2026-01-12T09:12:59.264Z"
+    },
+    {
+      "name": "Dashboard Route Protection",
+      "category": "Security",
+      "status": "pass",
+      "duration": 1019,
+      "message": "Dashboard correctly protected (redirects to login)",
+      "details": {
+        "statusCode": 307,
+        "protected": true
+      },
+      "timestamp": "2026-01-12T09:13:00.283Z"
+    }
+  ],
+  "totalDuration": 81982,
+  "timestamp": "2026-01-12T09:13:00.284Z",
+  "successRate": 83.33333333333334,
+  "categories": {
+    "Core": {
+      "total": 3,
+      "passed": 2,
+      "failed": 1,
+      "warned": 0
+    },
+    "Authentication": {
+      "total": 2,
+      "passed": 2,
+      "failed": 0,
+      "warned": 0
+    },
+    "API": {
+      "total": 4,
+      "passed": 4,
+      "failed": 0,
+      "warned": 0
+    },
+    "Pages": {
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "warned": 0
+    },
+    "Performance": {
+      "total": 2,
+      "passed": 1,
+      "failed": 0,
+      "warned": 1
+    },
+    "Security": {
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "warned": 0
+    },
+    "SEO": {
+      "total": 1,
+      "passed": 0,
+      "failed": 0,
+      "warned": 1
+    }
+  },
+  "performance": {
+    "fastest": {
+      "name": "SSL Certificate",
+      "category": "Security",
+      "status": "pass",
+      "duration": 0,
+      "message": "HTTPS enabled and working",
+      "details": {
+        "https": true,
+        "statusCode": 200
+      },
+      "timestamp": "2026-01-12T09:11:58.527Z"
+    },
+    "slowest": {
+      "name": "SEO Meta Tags",
+      "category": "SEO",
+      "status": "warn",
+      "duration": 30731,
+      "message": "SEO check partially failed",
+      "error": "locator.getAttribute: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('meta[property=\"og:title\"]')\u001b[22m\n",
+      "timestamp": "2026-01-12T09:12:29.258Z"
+    },
+    "average": 4516.777777777777
+  }
+}

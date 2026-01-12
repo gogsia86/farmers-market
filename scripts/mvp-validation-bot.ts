@@ -27,7 +27,7 @@ import { Browser, BrowserContext, chromium, Page } from "playwright";
 // ============================================================================
 
 const CONFIG = {
-  baseUrl: process.env.BASE_URL || "http://localhost:3001",
+  baseUrl: process.env.BASE_URL || "https://farmers-market-platform.vercel.app",
   timeout: 60000,
   headless: process.env.HEADLESS !== "false",
   screenshotsDir: "./mvp-validation-screenshots",

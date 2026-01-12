@@ -17,7 +17,8 @@
 
 import { Browser, BrowserContext, chromium, Page } from "playwright";
 
-const BASE_URL = process.env.BASE_URL || "http://localhost:3001";
+const BASE_URL =
+  process.env.BASE_URL || "https://farmers-market-platform.vercel.app";
 const HEADLESS = process.env.HEADLESS !== "false";
 const SLOW_MO = parseInt(process.env.SLOW_MO || "500");
 

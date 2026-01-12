@@ -26,7 +26,7 @@ const CONFIG = {
   baseUrl:
     process.env.NEXT_PUBLIC_APP_URL ||
     process.env.BASE_URL ||
-    "http://localhost:3001",
+    "https://farmers-market-platform.vercel.app",
   timeout: 30000,
   retries: 3,
   checkInterval: 60000, // Check every minute

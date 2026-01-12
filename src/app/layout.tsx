@@ -8,15 +8,78 @@ import Script from "next/script";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Farmers Market Platform",
+  title: {
+    default: "Farmers Market Platform - Fresh Local Produce Direct from Farms",
+    template: "%s | Farmers Market Platform",
+  },
   description:
-    "Connect local farmers with customers - Fresh, local, sustainable",
+    "Connect local farmers with customers - Fresh, local, sustainable produce delivered from farm to table. Support local agriculture and organic farming.",
   keywords: [
     "farmers market",
     "local produce",
     "organic food",
     "farm to table",
+    "local farms",
+    "fresh vegetables",
+    "organic fruits",
+    "sustainable agriculture",
+    "farm direct",
+    "local food",
   ],
+  authors: [{ name: "Farmers Market Platform" }],
+  creator: "Farmers Market Platform",
+  publisher: "Farmers Market Platform",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL ||
+      "https://farmers-market-platform.vercel.app",
+  ),
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "/",
+    siteName: "Farmers Market Platform",
+    title: "Farmers Market Platform - Fresh Local Produce Direct from Farms",
+    description:
+      "Connect with local farmers and get fresh, organic produce delivered directly from farm to table. Support sustainable agriculture in your community.",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Farmers Market Platform - Farm to Table",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Farmers Market Platform - Fresh Local Produce",
+    description:
+      "Connect with local farmers and get fresh, organic produce delivered directly from farm to table.",
+    images: ["/og-image.png"],
+    creator: "@farmersmarket",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  verification: {
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
+  },
 };
 
 const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "";

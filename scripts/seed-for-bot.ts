@@ -6,6 +6,7 @@
  * - Products for testing
  */
 
+import { ProductCategory } from "@prisma/client";
 import * as bcrypt from "bcryptjs";
 import "dotenv/config";
 import { database } from "../src/lib/database";
@@ -231,7 +232,7 @@ async function main() {
       name: "Fresh Organic Tomatoes",
       description:
         "Vine-ripened organic tomatoes bursting with flavor. Perfect for salads, sauces, and fresh eating. Grown using biodynamic farming practices.",
-      category: "VEGETABLES",
+      category: ProductCategory.VEGETABLES,
       unit: "LB",
       price: 5.99,
       quantityAvailable: 100,
@@ -249,7 +250,7 @@ async function main() {
       name: "Crisp Lettuce Mix",
       description:
         "Mixed greens including romaine, butterhead, and red leaf lettuce. Harvested fresh daily. Perfect for salads and sandwiches.",
-      category: "VEGETABLES",
+      category: ProductCategory.VEGETABLES,
       unit: "BAG",
       price: 4.99,
       quantityAvailable: 75,
@@ -266,7 +267,7 @@ async function main() {
       name: "Sweet Strawberries",
       description:
         "Juicy, sweet strawberries picked at peak ripeness. Grown without pesticides. Great for desserts, smoothies, or eating fresh.",
-      category: "FRUITS",
+      category: ProductCategory.FRUITS,
       unit: "PINT",
       price: 6.99,
       compareAtPrice: 7.99,
@@ -284,7 +285,7 @@ async function main() {
       name: "Farm Fresh Eggs",
       description:
         "Free-range chicken eggs from our happy hens. Rich, golden yolks and superior taste. Collected daily.",
-      category: "EGGS",
+      category: ProductCategory.EGGS,
       unit: "DOZEN",
       price: 7.99,
       quantityAvailable: 120,
@@ -301,7 +302,7 @@ async function main() {
       name: "Crispy Carrots",
       description:
         "Sweet, crunchy carrots perfect for snacking, roasting, or juicing. Grown in rich, organic soil.",
-      category: "VEGETABLES",
+      category: ProductCategory.VEGETABLES,
       unit: "LB",
       price: 3.99,
       quantityAvailable: 80,
@@ -318,7 +319,7 @@ async function main() {
       name: "Sweet Bell Peppers",
       description:
         "Colorful mix of red, yellow, and orange bell peppers. Sweet and crunchy. Perfect for grilling, stuffing, or eating raw.",
-      category: "VEGETABLES",
+      category: ProductCategory.VEGETABLES,
       unit: "LB",
       price: 5.49,
       quantityAvailable: 60,

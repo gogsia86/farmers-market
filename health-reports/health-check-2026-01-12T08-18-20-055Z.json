@@ -1,0 +1,240 @@
+{
+  "overall": "down",
+  "baseUrl": "http://localhost:3000",
+  "checks": [
+    {
+      "name": "Homepage Load",
+      "category": "Core",
+      "status": "fail",
+      "duration": 2355,
+      "message": "Failed to load homepage",
+      "error": "page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/\", waiting until \"domcontentloaded\"\u001b[22m\n",
+      "timestamp": "2026-01-12T08:18:15.069Z"
+    },
+    {
+      "name": "Health API Endpoint",
+      "category": "Core",
+      "status": "fail",
+      "duration": 37,
+      "message": "Health endpoint not responding",
+      "error": "fetch failed",
+      "timestamp": "2026-01-12T08:18:15.107Z"
+    },
+    {
+      "name": "Database Connection",
+      "category": "Core",
+      "status": "fail",
+      "duration": 2,
+      "message": "Cannot verify database connection",
+      "error": "fetch failed",
+      "timestamp": "2026-01-12T08:18:15.110Z"
+    },
+    {
+      "name": "Authentication Pages",
+      "category": "Authentication",
+      "status": "fail",
+      "duration": 2,
+      "message": "Authentication pages check failed",
+      "error": "fetch failed",
+      "timestamp": "2026-01-12T08:18:15.113Z"
+    },
+    {
+      "name": "Auth API Endpoints",
+      "category": "Authentication",
+      "status": "fail",
+      "duration": 4,
+      "message": "Auth API check failed",
+      "error": "fetch failed",
+      "timestamp": "2026-01-12T08:18:15.118Z"
+    },
+    {
+      "name": "Products API",
+      "category": "API",
+      "status": "fail",
+      "duration": 3,
+      "message": "Products API check failed",
+      "error": "fetch failed",
+      "timestamp": "2026-01-12T08:18:15.122Z"
+    },
+    {
+      "name": "Farms API",
+      "category": "API",
+      "status": "fail",
+      "duration": 2,
+      "message": "Farms API check failed",
+      "error": "fetch failed",
+      "timestamp": "2026-01-12T08:18:15.124Z"
+    },
+    {
+      "name": "Categories API",
+      "category": "API",
+      "status": "fail",
+      "duration": 2,
+      "message": "Categories API check failed",
+      "error": "fetch failed",
+      "timestamp": "2026-01-12T08:18:15.127Z"
+    },
+    {
+      "name": "Search API",
+      "category": "API",
+      "status": "fail",
+      "duration": 2,
+      "message": "Search API check failed",
+      "error": "fetch failed",
+      "timestamp": "2026-01-12T08:18:15.129Z"
+    },
+    {
+      "name": "Marketplace Page",
+      "category": "Pages",
+      "status": "fail",
+      "duration": 200,
+      "message": "Marketplace page check failed",
+      "error": "page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/marketplace\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/marketplace\", waiting until \"domcontentloaded\"\u001b[22m\n",
+      "timestamp": "2026-01-12T08:18:15.330Z"
+    },
+    {
+      "name": "Farms Page",
+      "category": "Pages",
+      "status": "fail",
+      "duration": 2146,
+      "message": "Farms page check failed",
+      "error": "page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/farms\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/farms\", waiting until \"domcontentloaded\"\u001b[22m\n",
+      "timestamp": "2026-01-12T08:18:17.476Z"
+    },
+    {
+      "name": "About Page",
+      "category": "Pages",
+      "status": "warn",
+      "duration": 7,
+      "message": "About page check failed",
+      "error": "fetch failed",
+      "timestamp": "2026-01-12T08:18:17.483Z"
+    },
+    {
+      "name": "Page Performance",
+      "category": "Performance",
+      "status": "fail",
+      "duration": 194,
+      "message": "Performance check failed",
+      "error": "page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/\", waiting until \"load\"\u001b[22m\n",
+      "timestamp": "2026-01-12T08:18:17.677Z"
+    },
+    {
+      "name": "Security Headers",
+      "category": "Security",
+      "status": "fail",
+      "duration": 4,
+      "message": "Security headers check failed",
+      "error": "fetch failed",
+      "timestamp": "2026-01-12T08:18:17.681Z"
+    },
+    {
+      "name": "SSL Certificate",
+      "category": "Security",
+      "status": "fail",
+      "duration": 0,
+      "message": "HTTPS not enabled",
+      "details": {
+        "https": false
+      },
+      "timestamp": "2026-01-12T08:18:17.681Z"
+    },
+    {
+      "name": "SEO Meta Tags",
+      "category": "SEO",
+      "status": "warn",
+      "duration": 2162,
+      "message": "SEO check partially failed",
+      "error": "page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/\", waiting until \"domcontentloaded\"\u001b[22m\n",
+      "timestamp": "2026-01-12T08:18:19.844Z"
+    },
+    {
+      "name": "Static Assets",
+      "category": "Performance",
+      "status": "warn",
+      "duration": 198,
+      "message": "Static assets check incomplete",
+      "error": "page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/\", waiting until \"networkidle\"\u001b[22m\n",
+      "timestamp": "2026-01-12T08:18:20.043Z"
+    },
+    {
+      "name": "Dashboard Route Protection",
+      "category": "Security",
+      "status": "warn",
+      "duration": 3,
+      "message": "Dashboard route check failed",
+      "error": "fetch failed",
+      "timestamp": "2026-01-12T08:18:20.047Z"
+    }
+  ],
+  "totalDuration": 7335,
+  "timestamp": "2026-01-12T08:18:20.048Z",
+  "successRate": 0,
+  "categories": {
+    "Core": {
+      "total": 3,
+      "passed": 0,
+      "failed": 3,
+      "warned": 0
+    },
+    "Authentication": {
+      "total": 2,
+      "passed": 0,
+      "failed": 2,
+      "warned": 0
+    },
+    "API": {
+      "total": 4,
+      "passed": 0,
+      "failed": 4,
+      "warned": 0
+    },
+    "Pages": {
+      "total": 3,
+      "passed": 0,
+      "failed": 2,
+      "warned": 1
+    },
+    "Performance": {
+      "total": 2,
+      "passed": 0,
+      "failed": 1,
+      "warned": 1
+    },
+    "Security": {
+      "total": 3,
+      "passed": 0,
+      "failed": 2,
+      "warned": 1
+    },
+    "SEO": {
+      "total": 1,
+      "passed": 0,
+      "failed": 0,
+      "warned": 1
+    }
+  },
+  "performance": {
+    "fastest": {
+      "name": "SSL Certificate",
+      "category": "Security",
+      "status": "fail",
+      "duration": 0,
+      "message": "HTTPS not enabled",
+      "details": {
+        "https": false
+      },
+      "timestamp": "2026-01-12T08:18:17.681Z"
+    },
+    "slowest": {
+      "name": "Homepage Load",
+      "category": "Core",
+      "status": "fail",
+      "duration": 2355,
+      "message": "Failed to load homepage",
+      "error": "page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/\", waiting until \"domcontentloaded\"\u001b[22m\n",
+      "timestamp": "2026-01-12T08:18:15.069Z"
+    },
+    "average": 406.8333333333333
+  }
+}

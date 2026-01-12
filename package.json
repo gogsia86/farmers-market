@@ -5,7 +5,7 @@
   "type": "module",
   "description": "Agricultural E-Commerce Platform - Next.js 16 + Prisma 7",
   "engines": {
-    "node": "20.x",
+    "node": ">=20.x",
     "npm": ">=10.0.0"
   },
   "scripts": {
@@ -62,6 +62,7 @@
     "bot:check:continuous": "tsx scripts/website-checker-bot.ts continuous",
     "bot:divine": "tsx scripts/bot-cli.ts divine",
     "bot:quick": "tsx scripts/bot-cli.ts quick",
+    "bot:production": "tsx scripts/production-health-check.ts",
     "test:security": "jest tests/security/security-scanner.test.ts --runInBand --detectOpenHandles",
     "///// DATABASE (PRISMA) /////": "",
     "db:migrate": "prisma migrate dev",
@@ -70,6 +71,8 @@
     "db:reset": "prisma db push --force-reset && npm run db:seed",
     "db:studio": "prisma studio",
     "db:validate": "prisma validate && prisma format --check",
+    "db:fix": "tsx scripts/fix-database-connection.ts",
+    "db:test": "tsx scripts/fix-database-connection.ts --test",
     "///// DOCKER (5 CORE COMMANDS - See docs/DOCKER.md for full reference) /////": "",
     "docker:build": "docker build -t farmers-market:latest -f docker/Dockerfile .",
     "docker:up": "docker-compose up -d",

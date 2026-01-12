@@ -172,7 +172,7 @@ async function handleTest(suite?: string, options: Record<string, any> = {}) {
 
   info(`Suite: ${suiteName}`);
   info(
-    `Base URL: ${options.baseUrl || process.env.BASE_URL || "http://localhost:3001"}`,
+    `Base URL: ${options.baseUrl || process.env.BASE_URL || "https://farmers-market-platform.vercel.app"}`,
   );
   info(`Headless: ${options.headless !== "false" ? "Yes" : "No"}`);
 
@@ -182,7 +182,9 @@ async function handleTest(suite?: string, options: Record<string, any> = {}) {
   const env = {
     ...process.env,
     BASE_URL:
-      options.baseUrl || process.env.BASE_URL || "http://localhost:3001",
+      options.baseUrl ||
+      process.env.BASE_URL ||
+      "https://farmers-market-platform.vercel.app",
     HEADLESS: options.headless !== "false" ? "true" : "false",
     BOT_MODE: "suite",
   };
@@ -252,7 +254,7 @@ async function handleMonitor(options: Record<string, any> = {}) {
   info(`Interval: ${interval} seconds`);
   info(`Alert Threshold: ${threshold}%`);
   info(
-    `Base URL: ${options.baseUrl || process.env.BASE_URL || "http://localhost:3001"}`,
+    `Base URL: ${options.baseUrl || process.env.BASE_URL || "https://farmers-market-platform.vercel.app"}`,
   );
 
   console.log("");
@@ -260,7 +262,9 @@ async function handleMonitor(options: Record<string, any> = {}) {
   const env = {
     ...process.env,
     BASE_URL:
-      options.baseUrl || process.env.BASE_URL || "http://localhost:3001",
+      options.baseUrl ||
+      process.env.BASE_URL ||
+      "https://farmers-market-platform.vercel.app",
     BOT_MODE: "continuous",
     BOT_INTERVAL: String(interval * 1000),
   };
@@ -423,7 +427,7 @@ function handleConfig(preset?: string) {
 
   console.log("Environment Variables:");
   console.log(
-    `  BASE_URL:          ${process.env.BASE_URL || "http://localhost:3001"}`,
+    `  BASE_URL:          ${process.env.BASE_URL || "https://farmers-market-platform.vercel.app"}`,
   );
   console.log(
     `  HEADLESS:          ${process.env.HEADLESS !== "false" ? "true" : "false"}`,
@@ -479,7 +483,7 @@ function handleHelp(command?: string) {
 
     console.log(colors.bright + "Global Options:" + colors.reset);
     console.log(
-      "  --baseUrl=URL        Base URL to test (default: http://localhost:3001)",
+      "  --baseUrl=URL        Base URL to test (default: https://farmers-market-platform.vercel.app)",
     );
     console.log("  --headless=false     Run browser in visible mode");
     console.log(

@@ -1,0 +1,32 @@
+{
+  "overall": "critical",
+  "checks": [
+    {
+      "name": "Database URL Configuration",
+      "status": "fail",
+      "message": "DATABASE_URL environment variable is not set",
+      "fix": "Set DATABASE_URL in your .env file or Vercel environment variables"
+    },
+    {
+      "name": "Vercel Environment",
+      "status": "pass",
+      "message": "Not running in Vercel (local development)",
+      "details": {
+        "environment": "local"
+      }
+    },
+    {
+      "name": "Prisma Schema File",
+      "status": "pass",
+      "message": "Schema valid with 91 models",
+      "details": {
+        "hasGenerator": true,
+        "hasDatasource": true,
+        "modelCount": 91
+      }
+    }
+  ],
+  "timestamp": "2026-01-12T08:29:21.976Z",
+  "environment": "production",
+  "fixes": []
+}

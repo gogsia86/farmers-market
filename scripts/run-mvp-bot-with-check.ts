@@ -12,7 +12,8 @@ import { promisify } from "util";
 
 const execAsync = promisify(exec);
 
-const BASE_URL = process.env.BASE_URL || "http://localhost:3001";
+const BASE_URL =
+  process.env.BASE_URL || "https://farmers-market-platform.vercel.app";
 const MAX_RETRIES = 30;
 const RETRY_DELAY = 2000; // 2 seconds
 
