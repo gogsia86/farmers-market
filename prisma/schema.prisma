@@ -263,6 +263,7 @@ model Farm {
   soilAnalyses           SoilAnalysis[]
   weatherData            WeatherData[]
   yieldPredictions       YieldPrediction[]
+  harvestRecords         HarvestRecord[]
 
   // Sprint 5: Settings & Configuration
   farmSettings FarmSettings?
@@ -361,6 +362,7 @@ model Crop {
   harvestSchedules      HarvestSchedule[]
   yieldPredictions      YieldPrediction[]
   marketData            CropMarketData[]
+  harvestRecords        HarvestRecord[]
 
   @@index([category])
   @@index([cropFamily])
@@ -431,10 +433,228 @@ model YieldPrediction {
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
 
+  harvestRecords        HarvestRecord[]
+
   @@index([cropId])
   @@index([farmId])
   @@index([plantingDate])
   @@map("yield_predictions")
+}
+
+// Harvest Record - Actual harvest tracking
+model HarvestRecord {
+  id                    String          @id @default(cuid())
+  farmId                String
+  farm                  Farm            @relation(fields: [farmId], references: [id], onDelete: Cascade)
+  cropId                String
+  crop                  Crop            @relation(fields: [cropId], references: [id], onDelete: Cascade)
+  scheduleId            String?
+  schedule              HarvestSchedule? @relation(fields: [scheduleId], references: [id])
+  predictionId          String?
+  prediction            YieldPrediction? @relation(fields: [predictionId], references: [id])
+
+  // Harvest Details
+  harvestDate           DateTime
+  fieldName             String          @db.VarChar(255)
+  fieldSize             Decimal?        @db.Decimal(10, 2)
+  fieldSizeUnit         String?         @db.VarChar(20)
+
+  // Yield Data
+  totalYield            Decimal         @db.Decimal(10, 2)
+  yieldUnit             String          @db.VarChar(20)
+  yieldPerArea          Decimal?        @db.Decimal(10, 2)
+  quality               HarvestQuality
+  gradeSplit            Json?           // { "Grade A": 60, "Grade B": 30, "Grade C": 10 }
+
+  // Labor & Economics
+  laborHours            Decimal?        @db.Decimal(6, 2)
+  laborCost             Decimal?        @db.Decimal(10, 2)
+  equipmentUsed         String[]
+  totalCost             Decimal?        @db.Decimal(10, 2)
+  marketValue           Decimal?        @db.Decimal(10, 2)
+
+  // Environmental Conditions at Harvest
+  temperature           Decimal?        @db.Decimal(4, 1)
+  humidity              Decimal?        @db.Decimal(3, 0)
+  rainfall7Days         Decimal?        @db.Decimal(5, 2)
+  lunarPhase            LunarPhase?
+  season                Season
+
+  // Plant Health
+  diseasePresent        Boolean         @default(false)
+  diseaseName           String?         @db.VarChar(255)
+  pestDamage            Boolean         @default(false)
+  pestName              String?         @db.VarChar(255)
+  plantHealthScore      Int?            // 0-100
+
+  // Soil Data
+  soilMoisture          Decimal?        @db.Decimal(3, 0)
+  soilPH                Decimal?        @db.Decimal(3, 1)
+  soilNitrogen          Decimal?        @db.Decimal(5, 2)
+  soilPhosphorus        Decimal?        @db.Decimal(5, 2)
+  soilPotassium         Decimal?        @db.Decimal(5, 2)
+
+  // Notes & Observations
+  notes                 String?         @db.Text
+  challenges            String[]
+  successes             String[]
+  lessonsLearned        String?         @db.Text
+
+  // Photos & Documentation
+  photos                String[]
+  documents             String[]
+
+  // Metadata
+  recordedBy            String?
+  verifiedBy            String?
+  verifiedAt            DateTime?
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime        @updatedAt
+
+  @@index([farmId])
+  @@index([cropId])
+  @@index([harvestDate])
+  @@index([quality])
+  @@index([season])
+  @@map("harvest_records")
+}
+
+// ML Training Data - Processed features for yield prediction
+model MLTrainingData {
+  id                    String   @id @default(cuid())
+  harvestRecordId       String   @unique
+
+  // Input Features (normalized 0-1)
+  // Weather Features
+  avgTemperature        Decimal  @db.Decimal(5, 4)
+  totalRainfall         Decimal  @db.Decimal(5, 4)
+  avgHumidity           Decimal  @db.Decimal(5, 4)
+  growingDegreeDays     Decimal  @db.Decimal(5, 4)
+  frostDays             Int      @default(0)
+
+  // Soil Features
+  soilQualityScore      Decimal  @db.Decimal(5, 4)
+  soilNitrogenLevel     Decimal  @db.Decimal(5, 4)
+  soilPhosphorusLevel   Decimal  @db.Decimal(5, 4)
+  soilPotassiumLevel    Decimal  @db.Decimal(5, 4)
+  soilPHLevel           Decimal  @db.Decimal(5, 4)
+  soilMoistureAvg       Decimal  @db.Decimal(5, 4)
+
+  // Biodynamic Features
+  lunarPhaseScore       Decimal  @db.Decimal(5, 4)
+  seasonalAlignment     Decimal  @db.Decimal(5, 4)
+  plantingTiming        Decimal  @db.Decimal(5, 4)
+
+  // Crop Features
+  cropType              String   @db.VarChar(100)
+  cropFamily            String   @db.VarChar(100)
+  daysToMaturity        Int
+  companionPlants       Int      @default(0)
+
+  // Farm Features
+  farmSize              Decimal  @db.Decimal(5, 4)
+  farmerExperience      Int      // years
+  organicCertified      Boolean
+  irrigationMethod      String   @db.VarChar(50)
+
+  // Target Variables
+  yieldPerArea          Decimal  @db.Decimal(10, 4)
+  qualityScore          Decimal  @db.Decimal(5, 4) // 0-1 normalized
+
+  // Metadata
+  trainingSetVersion    String   @db.VarChar(20)
+  usedInTraining        Boolean  @default(false)
+  validationSet         Boolean  @default(false)
+  outlier               Boolean  @default(false)
+
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@index([trainingSetVersion])
+  @@index([usedInTraining])
+  @@map("ml_training_data")
+}
+
+// ML Model Versions - Track deployed models
+model MLModel {
+  id                    String   @id @default(cuid())
+  modelName             String   @db.VarChar(100)
+  version               String   @db.VarChar(20)
+  algorithm             String   @db.VarChar(50)
+
+  // Training Metrics
+  trainingDataSize      Int
+  validationDataSize    Int
+  trainingAccuracy      Decimal  @db.Decimal(5, 4)
+  validationAccuracy    Decimal  @db.Decimal(5, 4)
+  meanAbsoluteError     Decimal  @db.Decimal(10, 4)
+  rootMeanSquareError   Decimal  @db.Decimal(10, 4)
+  r2Score               Decimal  @db.Decimal(5, 4)
+
+  // Hyperparameters
+  hyperparameters       Json
+
+  // Feature Importance
+  featureImportance     Json
+
+  // Model Storage
+  modelPath             String?  @db.VarChar(500)
+  modelSize             Int?     // bytes
+
+  // Status
+  status                MLModelStatus @default(TRAINING)
+  deployedAt            DateTime?
+  deprecatedAt          DateTime?
+
+  // Metadata
+  trainedBy             String?
+  notes                 String?  @db.Text
+
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  predictions           MLPrediction[]
+
+  @@unique([modelName, version])
+  @@index([status])
+  @@map("ml_models")
+}
+
+// ML Predictions - Track all predictions made
+model MLPrediction {
+  id                    String   @id @default(cuid())
+  modelId               String
+  model                 MLModel  @relation(fields: [modelId], references: [id])
+  farmId                String
+  cropId                String
+
+  // Input Features
+  inputFeatures         Json
+
+  // Prediction
+  predictedYield        Decimal  @db.Decimal(10, 2)
+  predictedQuality      HarvestQuality
+  confidence            Decimal  @db.Decimal(3, 2)
+  confidenceInterval    Json     // { "lower": X, "upper": Y }
+
+  // Actual Results (for validation)
+  actualYield           Decimal? @db.Decimal(10, 2)
+  actualQuality         HarvestQuality?
+  predictionError       Decimal? @db.Decimal(10, 2)
+
+  // Metadata
+  predictionDate        DateTime @default(now())
+  harvestDate           DateTime?
+  validated             Boolean  @default(false)
+  validatedAt           DateTime?
+
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@index([modelId])
+  @@index([farmId])
+  @@index([predictionDate])
+  @@map("ml_predictions")
 }
 
 model FarmTeamMember {
@@ -685,6 +905,7 @@ model HarvestSchedule {
   farm                 Farm            @relation(fields: [farmId], references: [id], onDelete: Cascade)
   product              Product?        @relation(fields: [productId], references: [id])
   crop                 Crop?           @relation(fields: [cropId], references: [id], onDelete: SetNull)
+  harvestRecords       HarvestRecord[]
 
   @@index([farmId])
   @@index([productId])
@@ -1811,6 +2032,15 @@ enum HarvestStatus {
   CANCELLED
 }
 
+enum MLModelStatus {
+  TRAINING
+  VALIDATING
+  READY
+  DEPLOYED
+  DEPRECATED
+  FAILED
+}
+
 enum InventoryStatus {
   IN_STOCK
   LOW_STOCK
@@ -2852,128 +3082,6 @@ enum TrendDirection {
 }
 
 // ============================================
-// PHASE 5: MACHINE LEARNING MODELS
-// ============================================
-
-model MLModel {
-  id String @id @default(cuid())
-
-  // Model Metadata
-  name        String        @unique @db.VarChar(100)
-  version     String        @db.VarChar(20)
-  type        MLModelType
-  description String?       @db.Text
-  status      MLModelStatus @default(TRAINING)
-
-  // Training Info
-  trainedAt     DateTime?
-  trainingJobId String?
-  accuracy      Decimal?  @db.Decimal(5, 4)
-  precision     Decimal?  @db.Decimal(5, 4)
-  recall        Decimal?  @db.Decimal(5, 4)
-  f1Score       Decimal?  @db.Decimal(5, 4)
-
-  // Model Configuration
-  hyperparameters Json?
-  features        Json
-  modelPath       String? @db.VarChar(500)
-  modelSize       Int? // in bytes
-
-  // Performance Metrics
-  inferenceTime    Int? // in milliseconds
-  predictionsCount Int      @default(0)
-  successRate      Decimal? @db.Decimal(5, 4)
-
-  // Metadata
-  createdBy String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // Relations
-  predictions  MLPrediction[]
-  trainingJobs MLTrainingJob[]
-
-  @@index([type])
-  @@index([status])
-  @@index([trainedAt])
-  @@map("ml_models")
-}
-
-model MLPrediction {
-  id String @id @default(cuid())
-
-  // Model Reference
-  modelId String
-  model   MLModel @relation(fields: [modelId], references: [id], onDelete: Cascade)
-
-  // Input/Output
-  input      Json
-  output     Json
-  confidence Decimal @db.Decimal(5, 4)
-
-  // Context
-  userId    String?
-  sessionId String?
-  context   Json?
-
-  // Performance
-  inferenceTime Int // in milliseconds
-  wasCorrect    Boolean?
-  feedback      String?  @db.Text
-
-  // Metadata
-  createdAt DateTime @default(now())
-
-  @@index([modelId])
-  @@index([userId])
-  @@index([createdAt])
-  @@map("ml_predictions")
-}
-
-model MLTrainingJob {
-  id String @id @default(cuid())
-
-  // Model Reference
-  modelId String
-  model   MLModel @relation(fields: [modelId], references: [id], onDelete: Cascade)
-
-  // Job Info
-  status      MLTrainingStatus @default(PENDING)
-  startedAt   DateTime?
-  completedAt DateTime?
-  duration    Int? // in seconds
-
-  // Training Data
-  datasetSize    Int
-  trainingSize   Int
-  validationSize Int
-  testSize       Int
-
-  // Results
-  finalAccuracy Decimal? @db.Decimal(5, 4)
-  finalLoss     Decimal? @db.Decimal(10, 6)
-  bestEpoch     Int?
-  totalEpochs   Int?
-
-  // Configuration
-  config Json?
-  logs   Json?
-
-  // Error Handling
-  error String? @db.Text
-
-  // Metadata
-  createdBy String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([modelId])
-  @@index([status])
-  @@index([createdAt])
-  @@map("ml_training_jobs")
-}
-
-// ============================================
 // PHASE 5: ML ENUMS
 // ============================================
 
@@ -2985,14 +3093,7 @@ enum MLModelType {
   SEASONALITY_DETECTION
   QUALITY_PREDICTION
   SENTIMENT_ANALYSIS
-}
-
-enum MLModelStatus {
-  TRAINING
-  READY
-  DEPLOYED
-  DEPRECATED
-  FAILED
+  YIELD_PREDICTION
 }
 
 enum MLTrainingStatus {
