@@ -3,9 +3,15 @@
 // 🌾 Domain: Offline-First Agricultural Experience
 // ⚡ Performance: Intelligent Caching with Quantum Strategies
 
+// Import IndexedDB utilities
+importScripts("/db-utils.js");
+
 const CACHE_NAME = "farmers-market-v1";
 const RUNTIME_CACHE = "farmers-market-runtime";
 const IMAGE_CACHE = "farmers-market-images";
+
+// Max retry attempts for failed orders
+const MAX_RETRY_ATTEMPTS = 5;
 
 // Critical assets to cache on install
 const PRECACHE_URLS = [
@@ -234,50 +240,234 @@ self.addEventListener("notificationclick", (event) => {
 // Helper function to sync offline orders
 async function syncOrders() {
   try {
-    // Get pending orders from IndexedDB or localStorage
-    const pendingOrders = await getPendingOrders();
+    // Get pending orders from IndexedDB
+    const pendingOrders = await self.dbUtils.getPendingOrders();
 
     if (pendingOrders.length === 0) {
+      console.log("[Service Worker] No pending orders to sync");
       return;
     }
+
+    console.log(
+      `[Service Worker] Syncing ${pendingOrders.length} pending orders`,
+    );
 
     // Attempt to sync each order
     const syncPromises = pendingOrders.map(async (order) => {
       try {
+        // Check if max retries exceeded
+        if (order.retryCount >= MAX_RETRY_ATTEMPTS) {
+          console.warn(
+            "[Service Worker] Max retries exceeded for order:",
+            order.id,
+          );
+          await self.dbUtils.updateOrderStatus(order.id, "failed");
+          return;
+        }
+
+        // Increment retry count
+        await self.dbUtils.incrementRetryCount(order.id);
+
+        // Prepare order data (remove internal fields)
+        const orderData = { ...order };
+        delete orderData.id;
+        delete orderData.timestamp;
+        delete orderData.status;
+        delete orderData.retryCount;
+        delete orderData.createdOffline;
+        delete orderData.lastRetry;
+        delete orderData.lastUpdated;
+
+        // Attempt to send order to server
         const response = await fetch("/api/orders", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(order),
+          body: JSON.stringify(orderData),
         });
 
         if (response.ok) {
-          // Remove synced order from pending queue
-          await removePendingOrder(order.id);
-          console.log("[Service Worker] Order synced:", order.id);
+          // Order synced successfully
+          await self.dbUtils.removePendingOrder(order.id);
+          console.log("[Service Worker] Order synced successfully:", order.id);
+
+          // Get the created order ID from response
+          const result = await response.json();
+
+          // Notify all clients about successful sync
+          const clients = await self.clients.matchAll();
+          clients.forEach((client) => {
+            client.postMessage({
+              type: "ORDER_SYNCED",
+              data: {
+                localOrderId: order.id,
+                serverOrderId: result.data?.id,
+                timestamp: Date.now(),
+              },
+            });
+          });
+        } else {
+          console.error(
+            "[Service Worker] Failed to sync order:",
+            response.status,
+          );
+
+          // If it's a permanent error (4xx), mark as failed
+          if (response.status >= 400 && response.status < 500) {
+            await self.dbUtils.updateOrderStatus(order.id, "failed");
+          }
         }
       } catch (error) {
         console.error("[Service Worker] Failed to sync order:", error);
+
+        // Network error - will retry on next sync
+        console.log(
+          "[Service Worker] Will retry order on next sync:",
+          order.id,
+        );
       }
     });
 
     await Promise.all(syncPromises);
+
+    // Get updated stats
+    const stats = await self.dbUtils.getDatabaseStats();
+    console.log(
+      "[Service Worker] Sync complete. Pending orders:",
+      stats.pendingOrders,
+    );
   } catch (error) {
     console.error("[Service Worker] Background sync failed:", error);
     throw error;
   }
 }
 
-// Helper functions for pending orders (placeholder - implement with IndexedDB)
+// Helper function to add order to offline queue
+async function queueOfflineOrder(orderData) {
+  try {
+    const orderId = await self.dbUtils.addPendingOrder(orderData);
+    console.log("[Service Worker] Order queued for offline sync:", orderId);
+
+    // Try to register background sync
+    if ("sync" in self.registration) {
+      await self.registration.sync.register("sync-orders");
+      console.log("[Service Worker] Background sync registered");
+    }
+
+    return orderId;
+  } catch (error) {
+    console.error("[Service Worker] Failed to queue order:", error);
+    throw error;
+  }
+}
+
+// Helper functions for pending orders (using IndexedDB)
 async function getPendingOrders() {
-  // TODO: Implement with IndexedDB
-  return [];
+  return await self.dbUtils.getPendingOrders();
 }
 
 async function removePendingOrder(orderId) {
-  // TODO: Implement with IndexedDB
-  console.log("[Service Worker] Removing order:", orderId);
+  return await self.dbUtils.removePendingOrder(orderId);
 }
 
+async function getPendingOrderCount() {
+  return await self.dbUtils.getPendingOrderCount();
+}
+
+// Message handler for communication with clients
+self.addEventListener("message", async (event) => {
+  console.log("[Service Worker] Message received:", event.data.type);
+
+  switch (event.data.type) {
+    case "QUEUE_ORDER":
+      try {
+        const orderId = await queueOfflineOrder(event.data.orderData);
+        event.ports[0]?.postMessage({
+          success: true,
+          orderId: orderId,
+        });
+      } catch (error) {
+        event.ports[0]?.postMessage({
+          success: false,
+          error: error.message,
+        });
+      }
+      break;
+
+    case "GET_PENDING_COUNT":
+      try {
+        const count = await getPendingOrderCount();
+        event.ports[0]?.postMessage({
+          success: true,
+          count: count,
+        });
+      } catch (error) {
+        event.ports[0]?.postMessage({
+          success: false,
+          error: error.message,
+        });
+      }
+      break;
+
+    case "GET_DB_STATS":
+      try {
+        const stats = await self.dbUtils.getDatabaseStats();
+        event.ports[0]?.postMessage({
+          success: true,
+          stats: stats,
+        });
+      } catch (error) {
+        event.ports[0]?.postMessage({
+          success: false,
+          error: error.message,
+        });
+      }
+      break;
+
+    case "CLEAR_FAILED_ORDERS":
+      try {
+        const pendingOrders = await self.dbUtils.getPendingOrders();
+        const failedOrders = pendingOrders.filter((o) => o.status === "failed");
+
+        for (const order of failedOrders) {
+          await self.dbUtils.removePendingOrder(order.id);
+        }
+
+        event.ports[0]?.postMessage({
+          success: true,
+          clearedCount: failedOrders.length,
+        });
+      } catch (error) {
+        event.ports[0]?.postMessage({
+          success: false,
+          error: error.message,
+        });
+      }
+      break;
+
+    case "SYNC_NOW":
+      try {
+        await syncOrders();
+        event.ports[0]?.postMessage({
+          success: true,
+        });
+      } catch (error) {
+        event.ports[0]?.postMessage({
+          success: false,
+          error: error.message,
+        });
+      }
+      break;
+  }
+});
+
+// Periodic cleanup of expired cache
+self.addEventListener("periodicsync", (event) => {
+  if (event.tag === "cleanup-expired-cache") {
+    event.waitUntil(self.dbUtils.clearExpiredCache());
+  }
+});
+
 console.log("[Service Worker] Loaded with agricultural consciousness 🌾");
+console.log("[Service Worker] IndexedDB offline queue ready 🗄️");
