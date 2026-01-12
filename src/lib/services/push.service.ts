@@ -10,15 +10,39 @@
 
 import { database } from "@/lib/database";
 import { SpanStatusCode, trace } from "@opentelemetry/api";
-import * as admin from "firebase-admin";
 
 import { logger } from "@/lib/monitoring/logger";
 
-import type { MulticastMessage } from "firebase-admin/messaging";
+// Conditional import for firebase-admin (optional dependency)
+let admin: any = null;
+let MulticastMessage: any = null;
+
+try {
+  // Only import if firebase-admin is installed
+  admin = require("firebase-admin");
+  const messaging = require("firebase-admin/messaging");
+  MulticastMessage = messaging.MulticastMessage;
+} catch (error) {
+  logger.warn("firebase-admin not installed - push notifications disabled");
+}
 
 // ============================================
 // TYPES & INTERFACES
 // ============================================
+
+// Type definition for MulticastMessage (from firebase-admin/messaging)
+export interface MulticastMessageType {
+  tokens: string[];
+  notification?: {
+    title?: string;
+    body?: string;
+    imageUrl?: string;
+  };
+  data?: Record<string, string>;
+  apns?: any;
+  android?: any;
+  webpush?: any;
+}
 
 export interface PushNotificationOptions {
   userId: string;
@@ -211,12 +235,22 @@ export const PUSH_TEMPLATES: Record<string, (params: any) => PushTemplate> = {
 // ============================================
 
 export class PushNotificationService {
-  private app: admin.app.App | null = null;
-  private messaging: admin.messaging.Messaging | null = null;
+  private app: any = null;
+  private messaging: any = null;
   private isConfigured = false;
   private initPromise: Promise<void> | null = null;
 
   constructor() {
+    // Check if firebase-admin is available
+    if (!admin) {
+      logger.warn(
+        "⚠️ Push notification service disabled - firebase-admin not installed. " +
+          "Run 'npm install firebase-admin' to enable push notifications.",
+      );
+      this.isConfigured = false;
+      this.initPromise = Promise.resolve();
+      return;
+    }
     this.initPromise = this.initialize();
   }
 
@@ -225,6 +259,12 @@ export class PushNotificationService {
    */
   private async initialize(): Promise<void> {
     try {
+      // Check if firebase-admin is available
+      if (!admin) {
+        this.isConfigured = false;
+        return;
+      }
+
       // Check if Firebase credentials are configured
       const projectId = process.env.FIREBASE_PROJECT_ID;
       const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(
@@ -329,7 +369,7 @@ export class PushNotificationService {
           }
 
           // Build multicast message
-          const message: MulticastMessage = {
+          const message: MulticastMessageType = {
             tokens: tokens.map((t: any) => t.token),
             notification: {
               title: options.title,
@@ -372,7 +412,7 @@ export class PushNotificationService {
           // Track failed tokens for cleanup
           const failedTokens: string[] = [];
           if (response.failureCount > 0) {
-            response.responses.forEach((resp, idx) => {
+            response.responses.forEach((resp: any, idx: number) => {
               if (!resp.success) {
                 const token = tokens[idx];
                 if (token) {
