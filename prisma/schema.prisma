@@ -198,6 +198,30 @@ model Farm {
   businessType           String?                @db.VarChar(50)
   yearEstablished        Int?
   farmSize               Decimal?               @db.Decimal(10, 2)
+
+  // Biodynamic & Agricultural Metadata
+  hardinessZone          Int?
+  soilType               String?
+  waterAvailability      String?
+  sunExposure            String?
+  equipmentAvailable     String[]
+  laborCapacityHours     Int?
+  budgetPerAcre          Decimal?               @db.Decimal(10, 2)
+
+  // Biodynamic Practices
+  isOrganic              Boolean                @default(false)
+  isBiodynamic           Boolean                @default(false)
+  followsLunarCalendar   Boolean                @default(false)
+  usesBiodynamicPreparations Boolean            @default(false)
+  practicesCropRotation  Boolean                @default(false)
+  maintainsBiodiversity  Boolean                @default(false)
+  compostsOnSite         Boolean                @default(false)
+  avoidsSyntheticChemicals Boolean              @default(false)
+  integratesLivestock    Boolean                @default(false)
+
+  // Crop History (for rotation planning)
+  previousCrops          Json?
+
   certificationsArray    String[]
   stripeAccountId        String?                @unique @db.VarChar(255)
   stripeOnboarded        Boolean                @default(false)
@@ -238,6 +262,7 @@ model Farm {
   favorites              Favorite[]
   soilAnalyses           SoilAnalysis[]
   weatherData            WeatherData[]
+  yieldPredictions       YieldPrediction[]
 
   // Sprint 5: Settings & Configuration
   farmSettings FarmSettings?
@@ -255,7 +280,161 @@ model Farm {
   @@index([stripeOnboarded])
   @@index([averageRating])
   @@index([totalRevenueUSD])
+  @@index([hardinessZone])
+  @@index([isOrganic])
+  @@index([isBiodynamic])
+  @@index([soilType])
   @@map("farms")
+}
+
+// Crop Database for Recommendations
+model Crop {
+  id                    String          @id @default(cuid())
+  name                  String          @db.VarChar(100)
+  scientificName        String?         @db.VarChar(200)
+  commonNames           String[]
+  category              ProductCategory
+  cropType              String          @db.VarChar(50) // ROOT, LEAFY, FRUIT, FLOWER, SEED
+  cropFamily            CropFamily
+
+  // Growing Requirements
+  hardinessZones        Int[]
+  soilPreferences       String[]        // SANDY, CLAY, LOAMY, etc.
+  waterRequirements     String          @db.VarChar(20) // LOW, MODERATE, HIGH
+  sunRequirements       String          @db.VarChar(20) // FULL_SUN, PARTIAL_SHADE, FULL_SHADE
+  phRange               Json?           // { min: 6.0, max: 7.0 }
+
+  // Growing Info
+  daysToMaturity        Json            // { min: 60, max: 80 }
+  plantingDepth         Decimal?        @db.Decimal(5, 2) // inches
+  spacing               Json?           // { rows: 24, plants: 12 } inches
+  growingSeasons        Season[]
+
+  // Yield & Economics
+  averageYieldPerAcre   Decimal         @db.Decimal(10, 2)
+  yieldUnit             String          @db.VarChar(20) // lbs, tons, bushels
+  marketPricePerLb      Decimal?        @db.Decimal(10, 2)
+  organicPremium        Decimal?        @default(1.3) @db.Decimal(3, 2)
+  inputCostPerAcre      Decimal         @db.Decimal(10, 2)
+  laborHoursPerAcre     Decimal         @db.Decimal(8, 2)
+
+  // Storage & Marketing
+  storageLife           Int?            // days
+  priceVolatility       Decimal?        @default(0.2) @db.Decimal(3, 2)
+  peakSeason            String?         @db.VarChar(50)
+
+  // Companion Planting
+  companionPlants       String[]        // IDs or names of companion crops
+  antagonistPlants      String[]        // IDs or names of incompatible crops
+
+  // Pests & Diseases
+  commonPests           String[]
+  commonDiseases        String[]
+
+  // Nutritional Value (per 100g)
+  nutritionalInfo       Json?
+
+  // Biodynamic Info
+  lunarPlantingPhases   String[]        // Preferred lunar phases for planting
+  biodynamicPreparations String[]       // Recommended preparations
+
+  // Images & Resources
+  imageUrl              String?         @db.VarChar(500)
+  thumbnailUrl          String?         @db.VarChar(500)
+
+  // SEO & Content
+  description           String?         @db.Text
+  growingTips           String?         @db.Text
+  harvestingTips        String?         @db.Text
+  storageTips           String?         @db.Text
+
+  // Status
+  isActive              Boolean         @default(true)
+  isFeatured            Boolean         @default(false)
+
+  // Metadata
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime        @updatedAt
+
+  // Relations
+  cropRotations         CropRotation[]
+  harvestSchedules      HarvestSchedule[]
+  yieldPredictions      YieldPrediction[]
+  marketData            CropMarketData[]
+
+  @@index([category])
+  @@index([cropFamily])
+  @@index([isActive])
+  @@index([isFeatured])
+  @@index([name])
+  @@map("crops")
+}
+
+// Market Data for Crops
+model CropMarketData {
+  id                    String   @id @default(cuid())
+  cropId                String
+  crop                  Crop     @relation(fields: [cropId], references: [id], onDelete: Cascade)
+
+  // Market Metrics
+  region                String   @db.VarChar(100)
+  averagePrice          Decimal  @db.Decimal(10, 2)
+  priceUnit             String   @db.VarChar(20)
+  demandIndex           Decimal  @db.Decimal(5, 2) // 0-100
+  supplyIndex           Decimal  @db.Decimal(5, 2) // 0-100
+  competitionLevel      String   @db.VarChar(20) // LOW, MODERATE, HIGH
+  trendDirection        String   @db.VarChar(20) // UP, STABLE, DOWN
+  seasonalPriceFactor   Decimal  @default(1.0) @db.Decimal(3, 2)
+
+  // Source & Date
+  source                String?  @db.VarChar(100)
+  dataDate              DateTime @default(now())
+
+  // Metadata
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@index([cropId])
+  @@index([region])
+  @@index([dataDate])
+  @@map("crop_market_data")
+}
+
+// Yield Predictions & Tracking
+model YieldPrediction {
+  id                    String   @id @default(cuid())
+  cropId                String
+  crop                  Crop     @relation(fields: [cropId], references: [id], onDelete: Cascade)
+  farmId                String
+  farm                  Farm     @relation(fields: [farmId], references: [id], onDelete: Cascade)
+
+  // Prediction
+  plantingDate          DateTime
+  predictedHarvestDate  DateTime
+  predictedYield        Decimal  @db.Decimal(10, 2)
+  yieldUnit             String   @db.VarChar(20)
+  confidence            Decimal  @db.Decimal(3, 2) // 0-1
+
+  // Prediction Factors
+  weatherScore          Decimal? @db.Decimal(3, 2)
+  soilScore             Decimal? @db.Decimal(3, 2)
+  biodynamicScore       Decimal? @db.Decimal(3, 2)
+  historicalScore       Decimal? @db.Decimal(3, 2)
+
+  // Actual Results (filled after harvest)
+  actualHarvestDate     DateTime?
+  actualYield           Decimal?  @db.Decimal(10, 2)
+  harvestQuality        HarvestQuality?
+  notes                 String?   @db.Text
+
+  // Metadata
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@index([cropId])
+  @@index([farmId])
+  @@index([plantingDate])
+  @@map("yield_predictions")
 }
 
 model FarmTeamMember {
@@ -441,6 +620,7 @@ model WeatherData {
 model CropRotation {
   id                  String     @id @default(cuid())
   farmId              String
+  cropId              String?
   fieldName           String     @db.VarChar(255)
   rotationCycle       Int
   currentYear         Int
@@ -460,9 +640,11 @@ model CropRotation {
   createdAt           DateTime   @default(now())
   updatedAt           DateTime   @updatedAt
   farm                Farm       @relation(fields: [farmId], references: [id], onDelete: Cascade)
+  crop                Crop?      @relation(fields: [cropId], references: [id], onDelete: SetNull)
 
   @@unique([farmId, fieldName])
   @@index([farmId])
+  @@index([cropId])
   @@index([currentCropFamily])
   @@map("crop_rotations")
 }
@@ -471,6 +653,7 @@ model HarvestSchedule {
   id                   String          @id @default(cuid())
   farmId               String
   productId            String?
+  cropId               String?
   cropName             String          @db.VarChar(255)
   cropVariety          String?         @db.VarChar(255)
   fieldName            String          @db.VarChar(255)
@@ -501,9 +684,11 @@ model HarvestSchedule {
   updatedAt            DateTime        @updatedAt
   farm                 Farm            @relation(fields: [farmId], references: [id], onDelete: Cascade)
   product              Product?        @relation(fields: [productId], references: [id])
+  crop                 Crop?           @relation(fields: [cropId], references: [id], onDelete: SetNull)
 
   @@index([farmId])
   @@index([productId])
+  @@index([cropId])
   @@index([status])
   @@index([expectedHarvestStart])
   @@index([seasonalAlignment])
@@ -1394,6 +1579,7 @@ enum ProductCategory {
   BAKED_GOODS
   PREPARED_FOODS
   FLOWERS
+  HERBS
   OTHER
 }
 
@@ -1595,15 +1781,17 @@ enum WeatherCondition {
 }
 
 enum CropFamily {
-  BRASSICAS
-  LEGUMES
-  NIGHTSHADES
-  CUCURBITS
-  ALLIUMS
-  GRASSES
-  UMBELLIFERS
-  LEAFY_GREENS
-  ROOT_VEGETABLES
+  // Botanical family names for scientific accuracy
+  ASTERACEAE      // Lettuce, Sunflower family
+  AMARANTHACEAE   // Spinach, Beet, Chard
+  BRASSICACEAE    // Kale, Broccoli, Cabbage, Radish (formerly BRASSICAS)
+  APIACEAE        // Carrot, Celery, Parsley (formerly UMBELLIFERS)
+  SOLANACEAE      // Tomato, Pepper, Eggplant, Potato (formerly NIGHTSHADES)
+  CUCURBITACEAE   // Cucumber, Squash, Melon (formerly CUCURBITS)
+  FABACEAE        // Beans, Peas, Lentils (formerly LEGUMES)
+  AMARYLLIDACEAE  // Onion, Garlic, Leek (formerly ALLIUMS)
+  LAMIACEAE       // Basil, Mint, Oregano, Sage
+  POACEAE         // Corn, Wheat, Rice (formerly GRASSES)
   OTHER
 }
 

@@ -2,7 +2,7 @@
  * 🌾 Crop Recommendations API
  *
  * Provides intelligent crop recommendations based on farm profile,
- * biodynamic principles, and market conditions.
+ * biodynamic principles, market conditions, and real-time weather.
  *
  * @route GET /api/v1/crops/recommendations
  */
@@ -12,6 +12,8 @@ import { database } from "@/lib/database";
 import { logger } from "@/lib/logger";
 import { biodynamicCalendar } from "@/lib/services/biodynamic-calendar.service";
 import { cropRecommendationEngine } from "@/lib/services/crop-recommendation.service";
+import type { WeatherForecast } from "@/lib/services/weather.service";
+import { weatherService } from "@/lib/services/weather.service";
 import type {
   CropRecommendationRequest,
   CropRecommendationResponse,
@@ -151,7 +153,48 @@ export async function GET(request: NextRequest) {
     // Get biodynamic context
     const biodynamicContext = biodynamicCalendar.getBiodynamicContext();
 
-    // Build response
+    // Get weather data and forecasts
+    const coordinates = {
+      lat: farmProfile.location.latitude,
+      lng: farmProfile.location.longitude,
+    };
+
+    let weatherForecast: WeatherForecast | null = null;
+    const weatherWarnings: string[] = [];
+
+    try {
+      weatherForecast = await weatherService.getForecast(coordinates, 7);
+
+      // Build weather warnings
+      if (weatherForecast.frostAlerts.length > 0) {
+        weatherForecast.frostAlerts.forEach((alert) => {
+          const dateStr = alert.date.toLocaleDateString();
+          weatherWarnings.push(
+            `${alert.severity.toUpperCase()} FROST WARNING: ${dateStr} - ${alert.recommendation}`,
+          );
+        });
+      }
+
+      if (weatherForecast.alerts.length > 0) {
+        weatherForecast.alerts.forEach((alert) => {
+          weatherWarnings.push(
+            `${alert.severity.toUpperCase()}: ${alert.headline}`,
+          );
+        });
+      }
+
+      // Check planting conditions
+      if (!weatherForecast.plantingScore.isOptimal) {
+        weatherWarnings.push(
+          `Planting Score: ${weatherForecast.plantingScore.score}/100 - ${weatherForecast.plantingScore.recommendation}`,
+        );
+      }
+    } catch (error) {
+      logger.warn("Failed to fetch weather data", { error });
+      // Continue without weather data
+    }
+
+    // Build response with weather integration
     const response: CropRecommendationResponse = {
       success: true,
       recommendations: limitedRecommendations,
@@ -160,6 +203,28 @@ export async function GET(request: NextRequest) {
         lunarPhase: biodynamicContext.lunarPhase,
         isOptimalPlanting: biodynamicContext.isOptimalPlanting,
       },
+      weatherContext: weatherForecast
+        ? {
+            current: {
+              temperature: weatherForecast.current.temperature,
+              humidity: weatherForecast.current.humidity,
+              conditions:
+                weatherForecast.current.conditions[0]?.description || "Unknown",
+              windSpeed: weatherForecast.current.windSpeed,
+            },
+            forecast: weatherForecast.daily.slice(0, 3).map((day) => ({
+              date: day.date,
+              temperatureMin: day.temperatureMin,
+              temperatureMax: day.temperatureMax,
+              precipitationChance: day.precipitationChance,
+              conditions: day.conditions[0]?.description || "Unknown",
+            })),
+            frostAlerts: weatherForecast.frostAlerts,
+            plantingScore: weatherForecast.plantingScore,
+            growingDegreeDays: weatherForecast.growingDegreeDays.slice(0, 7),
+            warnings: weatherWarnings,
+          }
+        : undefined,
       metadata: {
         requestDate: new Date(),
         farmProfile: {

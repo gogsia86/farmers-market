@@ -7,24 +7,46 @@
  * @module BiodynamicTypes
  */
 
-import type { CropType, LunarPhase, Season } from '@/lib/services/biodynamic-calendar.service';
 import type {
-    CropCategory,
-    CropProfile,
-    CropRecommendation,
-    FarmProfile,
-    FarmerPreferences,
-    MarketData,
-    SoilType,
-    SunLevel,
-    WaterLevel
-} from '@/lib/services/crop-recommendation.service';
+  CropType,
+  LunarPhase,
+  Season,
+} from "@/lib/services/biodynamic-calendar.service";
+import type {
+  CropCategory,
+  CropProfile,
+  CropRecommendation,
+  FarmProfile,
+  FarmerPreferences,
+  MarketData,
+  SoilType,
+  SunLevel,
+  WaterLevel,
+} from "@/lib/services/crop-recommendation.service";
 
 // Re-export for convenience
 export type {
-    CropCategory, CropProfile, CropRecommendation, CropType, FarmProfile,
-    FarmerPreferences, LunarPhase, MarketData, Season, SoilType, SunLevel, WaterLevel
+  CropCategory,
+  CropProfile,
+  CropRecommendation,
+  CropType,
+  FarmProfile,
+  FarmerPreferences,
+  LunarPhase,
+  MarketData,
+  Season,
+  SoilType,
+  SunLevel,
+  WaterLevel,
 };
+
+/**
+ * Geographic coordinates
+ */
+export interface Coordinates {
+  lat: number;
+  lng: number;
+}
 
 /**
  * Biodynamic farm certification details
@@ -35,7 +57,7 @@ export interface BiodynamicCertification {
   certificationDate?: Date;
   expirationDate?: Date;
   certificationNumber?: string;
-  verificationStatus: 'PENDING' | 'VERIFIED' | 'EXPIRED' | 'REVOKED';
+  verificationStatus: "PENDING" | "VERIFIED" | "EXPIRED" | "REVOKED";
 }
 
 /**
@@ -45,7 +67,7 @@ export interface BiodynamicPreparation {
   id: string;
   name: string;
   code: string; // e.g., "BD500", "BD501"
-  type: 'SPRAY' | 'COMPOST' | 'FIELD';
+  type: "SPRAY" | "COMPOST" | "FIELD";
   description: string;
   applicationMethod: string;
   frequency: string;
@@ -58,12 +80,12 @@ export interface BiodynamicPreparation {
 export interface SoilHealth {
   ph: number;
   organicMatter: number; // percentage
-  nitrogenLevel: 'LOW' | 'MODERATE' | 'HIGH';
-  phosphorusLevel: 'LOW' | 'MODERATE' | 'HIGH';
-  potassiumLevel: 'LOW' | 'MODERATE' | 'HIGH';
+  nitrogenLevel: "LOW" | "MODERATE" | "HIGH";
+  phosphorusLevel: "LOW" | "MODERATE" | "HIGH";
+  potassiumLevel: "LOW" | "MODERATE" | "HIGH";
   microbialActivity: number; // 0-100
   soilType: SoilType;
-  drainageQuality: 'POOR' | 'ADEQUATE' | 'EXCELLENT';
+  drainageQuality: "POOR" | "ADEQUATE" | "EXCELLENT";
   lastTested?: Date;
 }
 
@@ -142,7 +164,7 @@ export interface PlantingCalendarEntry {
   fieldLocation: string;
   quantityPlanned: number;
   unit: string;
-  status: 'PLANNED' | 'PLANTED' | 'GROWING' | 'HARVESTED' | 'FAILED';
+  status: "PLANNED" | "PLANTED" | "GROWING" | "HARVESTED" | "FAILED";
   notes?: string;
   biodynamicScore: number;
 }
@@ -158,7 +180,7 @@ export interface HarvestRecord {
   harvestDate: Date;
   quantityHarvested: number;
   unit: string;
-  quality: 'PREMIUM' | 'STANDARD' | 'SECONDS';
+  quality: "PREMIUM" | "STANDARD" | "SECONDS";
   lunarPhase: LunarPhase;
   weather: string;
   notes?: string;
@@ -175,12 +197,12 @@ export interface FarmWeatherForecast {
   temperature: {
     high: number;
     low: number;
-    unit: 'F' | 'C';
+    unit: "F" | "C";
   };
   precipitation: {
     chance: number; // percentage
     amount?: number;
-    unit: 'inches' | 'mm';
+    unit: "inches" | "mm";
   };
   conditions: string;
   windSpeed: number;
@@ -200,9 +222,9 @@ export interface PestDiseaseReport {
   cropId?: string;
   fieldLocation: string;
   reportDate: Date;
-  type: 'PEST' | 'DISEASE' | 'WEED';
+  type: "PEST" | "DISEASE" | "WEED";
   identification: string;
-  severity: 'LOW' | 'MODERATE' | 'HIGH' | 'CRITICAL';
+  severity: "LOW" | "MODERATE" | "HIGH" | "CRITICAL";
   affectedArea: string;
   treatment?: string;
   treatmentDate?: Date;
@@ -233,7 +255,7 @@ export interface MarketPriceHistory {
   date: Date;
   price: number;
   unit: string;
-  marketType: 'FARMERS_MARKET' | 'WHOLESALE' | 'RETAIL' | 'ORGANIC';
+  marketType: "FARMERS_MARKET" | "WHOLESALE" | "RETAIL" | "ORGANIC";
   location: string;
   source: string;
 }
@@ -261,7 +283,13 @@ export interface FarmConsciousness {
  */
 export interface AgriculturalWisdom {
   id: string;
-  category: 'PLANTING' | 'HARVEST' | 'PEST_MANAGEMENT' | 'SOIL' | 'WEATHER' | 'GENERAL';
+  category:
+    | "PLANTING"
+    | "HARVEST"
+    | "PEST_MANAGEMENT"
+    | "SOIL"
+    | "WEATHER"
+    | "GENERAL";
   season?: Season;
   lunarPhase?: LunarPhase;
   wisdom: string;
@@ -278,7 +306,13 @@ export interface AgriculturalWisdom {
 export interface BiodynamicCalendarEvent {
   id: string;
   date: Date;
-  type: 'PLANTING' | 'HARVEST' | 'PREPARATION' | 'REST' | 'CULTIVATION' | 'LUNAR';
+  type:
+    | "PLANTING"
+    | "HARVEST"
+    | "PREPARATION"
+    | "REST"
+    | "CULTIVATION"
+    | "LUNAR";
   title: string;
   description: string;
   lunarPhase: LunarPhase;
@@ -286,7 +320,7 @@ export interface BiodynamicCalendarEvent {
   recommendedCrops?: string[];
   recommendedActivities?: string[];
   significance: string;
-  priority: 'LOW' | 'MEDIUM' | 'HIGH';
+  priority: "LOW" | "MEDIUM" | "HIGH";
 }
 
 /**
@@ -354,7 +388,7 @@ export interface FarmAnalytics {
   };
   trends: {
     metric: string;
-    direction: 'UP' | 'DOWN' | 'STABLE';
+    direction: "UP" | "DOWN" | "STABLE";
     change: number; // percentage
   }[];
 }
@@ -386,9 +420,9 @@ export interface CropPerformanceMetrics {
     salesRate: number; // percentage sold
   };
   growingConditions: {
-    weather: 'EXCELLENT' | 'GOOD' | 'FAIR' | 'POOR';
+    weather: "EXCELLENT" | "GOOD" | "FAIR" | "POOR";
     soilHealth: number;
-    pestPressure: 'LOW' | 'MODERATE' | 'HIGH';
+    pestPressure: "LOW" | "MODERATE" | "HIGH";
   };
   lessonsLearned: string[];
   recommendations: string[];
@@ -462,7 +496,7 @@ export interface SeasonalPlan {
     resourceRisks: string[];
     mitigationStrategies: string[];
   };
-  status: 'DRAFT' | 'APPROVED' | 'IN_PROGRESS' | 'COMPLETED';
+  status: "DRAFT" | "APPROVED" | "IN_PROGRESS" | "COMPLETED";
   createdAt: Date;
   updatedAt: Date;
 }
@@ -493,12 +527,18 @@ export interface PreparationApplication {
 export interface EducationalResource {
   id: string;
   title: string;
-  category: 'BIODYNAMIC' | 'ORGANIC' | 'PERMACULTURE' | 'PEST_MANAGEMENT' | 'SOIL' | 'MARKETING';
-  type: 'ARTICLE' | 'VIDEO' | 'GUIDE' | 'COURSE' | 'WEBINAR';
+  category:
+    | "BIODYNAMIC"
+    | "ORGANIC"
+    | "PERMACULTURE"
+    | "PEST_MANAGEMENT"
+    | "SOIL"
+    | "MARKETING";
+  type: "ARTICLE" | "VIDEO" | "GUIDE" | "COURSE" | "WEBINAR";
   description: string;
   content?: string;
   url?: string;
-  difficulty: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
+  difficulty: "BEGINNER" | "INTERMEDIATE" | "ADVANCED";
   duration?: number; // minutes
   tags: string[];
   author: string;
@@ -527,6 +567,47 @@ export interface CropRecommendationResponse {
     season: Season;
     lunarPhase: LunarPhase;
     isOptimalPlanting: boolean;
+  };
+  weatherContext?: {
+    current: {
+      temperature: number;
+      humidity: number;
+      conditions: string;
+      windSpeed: number;
+    };
+    forecast: Array<{
+      date: Date;
+      temperatureMin: number;
+      temperatureMax: number;
+      precipitationChance: number;
+      conditions: string;
+    }>;
+    frostAlerts: Array<{
+      date: Date;
+      temperatureMin: number;
+      severity: "light" | "moderate" | "hard";
+      confidence: number;
+      recommendation: string;
+    }>;
+    plantingScore: {
+      date: Date;
+      score: number;
+      factors: {
+        temperature: { value: number; score: number; ideal: string };
+        soilMoisture: { value: number; score: number; ideal: string };
+        precipitation: { value: number; score: number; ideal: string };
+        windSpeed: { value: number; score: number; ideal: string };
+      };
+      recommendation: string;
+      isOptimal: boolean;
+    };
+    growingDegreeDays: Array<{
+      date: Date;
+      gdd: number;
+      cumulativeGdd: number;
+      baseTemperature: number;
+    }>;
+    warnings: string[];
   };
   metadata: {
     requestDate: Date;
