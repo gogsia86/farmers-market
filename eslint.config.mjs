@@ -1,8 +1,8 @@
-import { dirname } from "path";
-import { fileURLToPath } from "url";
 import js from "@eslint/js";
 import tseslint from "@typescript-eslint/eslint-plugin";
 import tsparser from "@typescript-eslint/parser";
+import { dirname } from "path";
+import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -121,6 +121,7 @@ const eslintConfig = [
       "**/*.test.{js,jsx,ts,tsx}",
       "**/*.spec.{js,jsx,ts,tsx}",
       "**/jest.setup.js",
+      "**/jest.setup.cjs",
       "**/__tests__/**/*.{js,jsx,ts,tsx}",
       "**/__mocks__/**/*.{js,jsx,ts,tsx}",
     ],
