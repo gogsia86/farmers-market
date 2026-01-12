@@ -4,6 +4,7 @@
 
 import { BaseService } from "@/lib/services/base.service";
 import type { ServiceResponse } from "@/lib/types/service-response";
+import { expect } from "@jest/globals";
 
 export interface ServiceTestConfig<TEntity = any> {
   ServiceClass: new (...args: any[]) => BaseService;

@@ -18,7 +18,7 @@ import {
   type ContextForNextChat,
   type SummaryResult,
 } from "./chat-summary.service";
-import type { ChatMessage, ChatProvider } from "@prisma/client";
+import type { ChatMessage, ChatProvider, ChatRole } from "@prisma/client";
 
 const tracer = trace.getTracer("ollama-ai");
 
@@ -401,7 +401,7 @@ export class OllamaClient {
     if (dbThreadId) {
       await chatSummaryService.addMessage({
         threadId: dbThreadId,
-        role: message.role.toUpperCase() as "SYSTEM" | "USER" | "ASSISTANT",
+        role: message.role.toUpperCase() as ChatRole,
         content: message.content,
         tokens: metadata?.tokens,
         model: this.model,

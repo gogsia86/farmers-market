@@ -173,7 +173,7 @@
   // Navigation & Hover
   "editor.stickyScroll.enabled": true,
   "editor.stickyScroll.maxLineCount": 5,
-  "editor.hover.enabled": true,
+  "editor.hover.enabled": "on",
   "editor.hover.sticky": true,
   "editor.hover.delay": 300,
 

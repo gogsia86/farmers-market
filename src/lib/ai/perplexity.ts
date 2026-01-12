@@ -27,7 +27,7 @@ import {
   type ContextForNextChat,
   type SummaryResult,
 } from "./chat-summary.service";
-import type { ChatMessage, ChatProvider } from "@prisma/client";
+import type { ChatMessage, ChatProvider, ChatRole } from "@prisma/client";
 
 // Create tracer for this module
 const tracer = trace.getTracer("perplexity-ai-agent", "1.0.0");
@@ -388,7 +388,7 @@ export class PerplexityAI {
     if (dbThreadId) {
       await chatSummaryService.addMessage({
         threadId: dbThreadId,
-        role: message.role.toUpperCase() as "SYSTEM" | "USER" | "ASSISTANT",
+        role: message.role.toUpperCase() as ChatRole,
         content: message.content,
         tokens: metadata?.tokens,
         model: "llama-3.1-sonar-large-128k-online",
