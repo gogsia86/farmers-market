@@ -342,8 +342,8 @@
 # 1. Quick Health Check (10s)
 npm run bot:check
 
-# 2. Workflow Monitor (3s)
-npx tsx scripts/workflow-monitor.ts
+# 2. Website Health Monitor (3s)
+npm run bot -- test health
 
 # 3. Full MVP Validation (2-3 minutes)
 TEST_USER_PASSWORD="Admin123!" npm run bot:mvp

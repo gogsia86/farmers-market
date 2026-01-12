@@ -117,10 +117,10 @@ This document presents the results of running all three automated monitoring and
 
 ---
 
-## 2️⃣ Workflow Monitor Bot
+## 2️⃣ Website Checker Bot
 
 **Purpose:** Continuous health monitoring of critical platform endpoints
-**Script:** `npx tsx scripts/workflow-monitor.ts`
+**Script:** `npx tsx scripts/website-checker-bot.ts`
 **Duration:** 2.609 seconds
 **Timestamp:** 2026-01-08T00:40:30.618Z
 
@@ -661,11 +661,11 @@ All critical pages warmed up successfully:
 ### Running Individual Bots
 
 ```bash
-# 1. Enhanced Website Checker (Quick health check)
+# 1. Website Checker Bot (Quick health check)
 npm run bot:check
 
-# 2. Workflow Monitor (Continuous monitoring - runs once)
-npx tsx scripts/workflow-monitor.ts
+# 2. Website Health Monitor (Continuous monitoring - runs once)
+npx tsx scripts/website-checker-bot.ts
 
 # 3. MVP Validation Bot (Full E2E tests)
 TEST_USER_PASSWORD="Admin123!" npm run bot:mvp:only

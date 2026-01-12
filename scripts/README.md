@@ -218,7 +218,6 @@ scripts\git\git-amend-commit.ps1                 # PowerShell
 - `check-farm-schema.ts` - Farm schema validation
 - `cleanup-check.js` - Cleanup verification
 - `e2e-test.js` - E2E test runner
-- `enhanced-website-checker.ts` - Website health checker
 - `mvp-validation-bot.ts` - MVP validation automation
 - `performance-validation.mjs` - Performance validation
 - `test-agent-framework.ts` - Agent framework testing
@@ -259,7 +258,6 @@ scripts\git\git-amend-commit.ps1                 # PowerShell
 - `diagnose-api-issue.ts` - API diagnostics
 - `slack-notify.ts` - Slack notification utility
 - `website-checker-bot.ts` - Website monitoring bot
-- `workflow-monitor.ts` - Workflow monitoring
 
 #### Server & Application
 
@@ -405,10 +403,7 @@ node scripts/measure-phase2-performance.mjs
 # Validate performance
 node scripts/performance-validation.mjs
 
-# Start workflow monitor
-tsx scripts/workflow-monitor.ts all
-
-# Website checker
+# Website checker bot
 tsx scripts/website-checker-bot.ts
 ```
 

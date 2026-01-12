@@ -5,9 +5,20 @@
  *
  * Leverages local GPU acceleration on RTX 2070 Max-Q
  * Optimized for agricultural domain knowledge
+ *
+ * Enhanced with:
+ * - Conversation summary generation
+ * - Context persistence and injection
+ * - Thread management with database integration
  */
 
 import { trace, SpanStatusCode } from "@opentelemetry/api";
+import {
+  chatSummaryService,
+  type ContextForNextChat,
+  type SummaryResult,
+} from "./chat-summary.service";
+import type { ChatMessage, ChatProvider } from "@prisma/client";
 
 const tracer = trace.getTracer("ollama-ai");
 
@@ -96,11 +107,14 @@ export class OllamaClient {
   private baseUrl: string;
   private model: string;
   private conversationHistory: Map<string, OllamaMessage[]>;
+  private persistedThreads: Map<string, string>; // Maps local threadId to database threadId
+  private readonly provider: ChatProvider = "OLLAMA";
 
   constructor(baseUrl = "http://localhost:11434", model = "deepseek-r1:7b") {
     this.baseUrl = baseUrl;
     this.model = model;
     this.conversationHistory = new Map();
+    this.persistedThreads = new Map();
   }
 
   /**
@@ -337,6 +351,382 @@ export class OllamaClient {
    */
   clearThread(threadId: string): void {
     this.conversationHistory.delete(threadId);
+    this.persistedThreads.delete(threadId);
+  }
+
+  // ==========================================================================
+  // SUMMARY GENERATION & CONTEXT INJECTION
+  // ==========================================================================
+
+  /**
+   * Create a persisted thread that saves to database
+   */
+  async createPersistedThread(options: {
+    userId?: string;
+    farmId?: string;
+    title?: string;
+  }): Promise<string> {
+    const thread = await chatSummaryService.createThread({
+      userId: options.userId,
+      farmId: options.farmId,
+      title: options.title,
+      provider: this.provider,
+      model: this.model,
+    });
+
+    // Create local thread and map to persisted
+    const localThreadId = `local_${thread.id}`;
+    this.conversationHistory.set(localThreadId, []);
+    this.persistedThreads.set(localThreadId, thread.id);
+
+    return localThreadId;
+  }
+
+  /**
+   * Add message to persisted thread (saves to database)
+   */
+  async addToPersistedThread(
+    threadId: string,
+    message: OllamaMessage,
+    metadata?: {
+      tokens?: number;
+      confidence?: number;
+    },
+  ): Promise<void> {
+    // Add to local history
+    this.addToThread(threadId, message);
+
+    // Persist to database if this is a persisted thread
+    const dbThreadId = this.persistedThreads.get(threadId);
+    if (dbThreadId) {
+      await chatSummaryService.addMessage({
+        threadId: dbThreadId,
+        role: message.role.toUpperCase() as "SYSTEM" | "USER" | "ASSISTANT",
+        content: message.content,
+        tokens: metadata?.tokens,
+        model: this.model,
+        confidence: metadata?.confidence,
+      });
+    }
+  }
+
+  /**
+   * Chat with automatic persistence
+   */
+  async chatWithPersistence(
+    threadId: string,
+    userMessage: string,
+    options: OllamaGenerateOptions = {},
+  ): Promise<OllamaChatResponse> {
+    // Add user message to persisted thread
+    await this.addToPersistedThread(threadId, {
+      role: "user",
+      content: userMessage,
+    });
+
+    // Get full history for context
+    const history = this.getThreadHistory(threadId);
+
+    // Make the chat request
+    const response = await this.chat(history, options);
+
+    // Add assistant response to persisted thread
+    await this.addToPersistedThread(
+      threadId,
+      {
+        role: "assistant",
+        content: response.message.content,
+      },
+      {
+        tokens: response.eval_count,
+      },
+    );
+
+    return response;
+  }
+
+  /**
+   * Generate a summary of the conversation thread
+   */
+  async generateThreadSummary(
+    threadId: string,
+    options?: { force?: boolean },
+  ): Promise<string> {
+    const dbThreadId = this.persistedThreads.get(threadId);
+
+    if (!dbThreadId) {
+      // For non-persisted threads, generate summary from local history
+      const history = this.getThreadHistory(threadId);
+      if (history.length === 0) {
+        throw new Error("No messages to summarize");
+      }
+      return this.generateLocalSummary(history);
+    }
+
+    // Generate summary using the service with AI-powered summarization
+    const summary = await chatSummaryService.generateSummary({
+      threadId: dbThreadId,
+      force: options?.force,
+      summarizer: async (messages) => this.aiSummarizer(messages),
+    });
+
+    return summary.summary;
+  }
+
+  /**
+   * AI-powered summarizer using Ollama
+   */
+  private async aiSummarizer(messages: ChatMessage[]): Promise<SummaryResult> {
+    const conversationText = messages
+      .map((m) => `${m.role}: ${m.content}`)
+      .join("\n\n");
+
+    const summarizationPrompt = `You are a conversation summarizer for an agricultural platform.
+Analyze the following conversation and provide:
+1. A concise summary (2-3 paragraphs)
+2. Key topics discussed (as a comma-separated list)
+3. Key entities mentioned (farms, products, locations)
+4. The user's main intent or goal
+
+Conversation:
+${conversationText}
+
+Respond in this exact format:
+SUMMARY:
+[Your summary here]
+
+KEY_TOPICS:
+[topic1, topic2, topic3]
+
+KEY_ENTITIES:
+farms: [farm names]
+products: [product names]
+locations: [location names]
+
+USER_INTENT:
+[The user's main goal or question]`;
+
+    try {
+      const response = await this.generate(summarizationPrompt, {
+        temperature: 0.3, // Lower temperature for more focused summaries
+        num_predict: 1024,
+      });
+
+      return this.parseSummaryResponse(response);
+    } catch (error) {
+      // Fallback to basic summary if AI summarization fails
+      return this.basicSummaryFallback(messages);
+    }
+  }
+
+  /**
+   * Parse the AI summary response into structured format
+   */
+  private parseSummaryResponse(response: string): SummaryResult {
+    const sections = {
+      summary: "",
+      keyTopics: [] as string[],
+      keyEntities: {} as Record<string, string[]>,
+      userIntent: "",
+    };
+
+    // Extract SUMMARY section
+    const summaryMatch = response.match(
+      /SUMMARY:\s*([\s\S]*?)(?=KEY_TOPICS:|$)/i,
+    );
+    if (summaryMatch) {
+      sections.summary = summaryMatch[1].trim();
+    }
+
+    // Extract KEY_TOPICS section
+    const topicsMatch = response.match(
+      /KEY_TOPICS:\s*([\s\S]*?)(?=KEY_ENTITIES:|$)/i,
+    );
+    if (topicsMatch) {
+      sections.keyTopics = topicsMatch[1]
+        .split(",")
+        .map((t) => t.trim())
+        .filter((t) => t.length > 0);
+    }
+
+    // Extract KEY_ENTITIES section
+    const entitiesMatch = response.match(
+      /KEY_ENTITIES:\s*([\s\S]*?)(?=USER_INTENT:|$)/i,
+    );
+    if (entitiesMatch) {
+      const entityLines = entitiesMatch[1].split("\n");
+      for (const line of entityLines) {
+        const [key, values] = line.split(":").map((s) => s.trim());
+        if (key && values) {
+          const cleanKey = key.toLowerCase().replace(/[^a-z]/g, "");
+          sections.keyEntities[cleanKey] = values
+            .replace(/[[\]]/g, "")
+            .split(",")
+            .map((v) => v.trim())
+            .filter((v) => v.length > 0);
+        }
+      }
+    }
+
+    // Extract USER_INTENT section
+    const intentMatch = response.match(/USER_INTENT:\s*([\s\S]*?)$/i);
+    if (intentMatch) {
+      sections.userIntent = intentMatch[1].trim();
+    }
+
+    return {
+      summary: sections.summary || "Conversation summary not available.",
+      keyTopics: sections.keyTopics,
+      keyEntities: sections.keyEntities,
+      userIntent: sections.userIntent || undefined,
+      confidence: sections.summary ? 0.85 : 0.5,
+    };
+  }
+
+  /**
+   * Basic fallback summary when AI summarization fails
+   */
+  private basicSummaryFallback(messages: ChatMessage[]): SummaryResult {
+    const userMessages = messages.filter((m) => m.role === "USER");
+    const assistantMessages = messages.filter((m) => m.role === "ASSISTANT");
+
+    const summary =
+      `Conversation with ${messages.length} messages. ` +
+      `User asked ${userMessages.length} questions. ` +
+      `Last topic: ${userMessages[userMessages.length - 1]?.content.slice(0, 100) || "N/A"}`;
+
+    return {
+      summary,
+      keyTopics: [],
+      keyEntities: {},
+      userIntent: userMessages[userMessages.length - 1]?.content.slice(0, 200),
+      confidence: 0.5,
+    };
+  }
+
+  /**
+   * Generate summary from local (non-persisted) history
+   */
+  private async generateLocalSummary(
+    history: OllamaMessage[],
+  ): Promise<string> {
+    const conversationText = history
+      .map((m) => `${m.role}: ${m.content}`)
+      .join("\n\n");
+
+    const prompt = `Summarize this conversation in 2-3 paragraphs, highlighting key topics and the user's main questions:
+
+${conversationText}`;
+
+    return await this.generate(prompt, {
+      temperature: 0.3,
+      num_predict: 512,
+    });
+  }
+
+  /**
+   * Get context from previous conversations for a user
+   */
+  async getContextForNextChat(
+    userId: string,
+    farmId?: string,
+  ): Promise<ContextForNextChat | null> {
+    return await chatSummaryService.getContextForNextChat(userId, {
+      provider: this.provider,
+      farmId,
+    });
+  }
+
+  /**
+   * Start a new chat with context from previous conversations
+   */
+  async startChatWithContext(options: {
+    userId: string;
+    farmId?: string;
+    title?: string;
+    systemPrompt?: string;
+  }): Promise<{
+    threadId: string;
+    contextualSystemPrompt: string;
+    previousContext: ContextForNextChat | null;
+  }> {
+    // Get context from previous conversations
+    const previousContext = await this.getContextForNextChat(
+      options.userId,
+      options.farmId,
+    );
+
+    // Create the persisted thread
+    const threadId = await this.createPersistedThread({
+      userId: options.userId,
+      farmId: options.farmId,
+      title: options.title,
+    });
+
+    // Build contextual system prompt
+    const basePrompt = options.systemPrompt || this.getDefaultSystemPrompt();
+    const contextualSystemPrompt =
+      chatSummaryService.buildContextualSystemPrompt(
+        basePrompt,
+        previousContext,
+      );
+
+    // Add system message to thread
+    await this.addToPersistedThread(threadId, {
+      role: "system",
+      content: contextualSystemPrompt,
+    });
+
+    return {
+      threadId,
+      contextualSystemPrompt,
+      previousContext,
+    };
+  }
+
+  /**
+   * Get the default system prompt for agricultural AI
+   */
+  private getDefaultSystemPrompt(): string {
+    return `You are an expert agricultural AI assistant for a farmers market platform.
+You help farmers with:
+- Crop planning and rotation
+- Sustainable farming practices
+- Market pricing and product listings
+- Order management and logistics
+- Weather and seasonal considerations
+- Biodynamic and organic farming methods
+
+Be helpful, accurate, and focused on agricultural domain knowledge.
+Provide practical, actionable advice based on the user's context.`;
+  }
+
+  /**
+   * Close a persisted thread and generate final summary
+   */
+  async closePersistedThread(threadId: string): Promise<string | null> {
+    const dbThreadId = this.persistedThreads.get(threadId);
+
+    if (!dbThreadId) {
+      this.clearThread(threadId);
+      return null;
+    }
+
+    // Generate final summary
+    let summary: string | null = null;
+    try {
+      summary = await this.generateThreadSummary(threadId, { force: true });
+    } catch {
+      // Summary generation failed, but still close the thread
+    }
+
+    // Close the thread in database
+    await chatSummaryService.closeThread(dbThreadId);
+
+    // Clear local state
+    this.clearThread(threadId);
+
+    return summary;
   }
 }
 

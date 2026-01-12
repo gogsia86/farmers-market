@@ -333,8 +333,8 @@ jobs:
       - name: 🔍 Run monitoring checks
         run: |
           # Check if monitoring script exists
-          if [ -f "scripts/workflow-monitor.ts" ]; then
-            npx tsx scripts/workflow-monitor.ts --mode critical
+          if [ -f "scripts/website-checker-bot.ts" ]; then
+            npx tsx scripts/website-checker-bot.ts
           else
             echo "⚠️ Monitoring script not found, skipping..."
           fi

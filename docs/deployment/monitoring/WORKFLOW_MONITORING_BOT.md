@@ -948,8 +948,8 @@ CMD ["npm", "run", "monitor:start"]
 
 ```bash
 # Build and run
-docker build -f Dockerfile.monitoring -t workflow-monitor .
-docker run -e SLACK_WEBHOOK_URL=$SLACK_WEBHOOK_URL workflow-monitor
+docker build -f Dockerfile.monitoring -t website-checker .
+docker run -e SLACK_WEBHOOK_URL=$SLACK_WEBHOOK_URL website-checker
 ```
 
 ---
@@ -1048,7 +1048,7 @@ Enable verbose logging:
 DEBUG=* npm run monitor:health
 
 # Or use node debug flag
-node --inspect scripts/workflow-monitor.ts health
+node --inspect scripts/website-checker-bot.ts
 ```
 
 ---

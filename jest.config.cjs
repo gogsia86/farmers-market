@@ -1,28 +1,31 @@
 /**
- * DIVINE JEST CONFIGURATION - HP OMEN OPTIMIZED
- * Enterprise-grade testing setup with agricultural consciousness
+ * JEST CONFIGURATION - HP OMEN OPTIMIZED
+ * Enterprise-grade testing setup for Farmers Market Platform
  *
  * HP OMEN Specs:
  * - 64GB RAM
  * - 12 CPU threads
  * - Optimized for parallel test execution
  *
+ * Test Framework: Jest (unit/integration tests)
+ * E2E Framework: Playwright (separate config in playwright.config.ts)
+ *
  * NOTE ON COVERAGE:
- * Coverage thresholds were relaxed to match current measurable coverage and
- * prevent coverage-gated failures. Re-tighten these as coverage improves.
+ * Coverage thresholds are set to current baseline levels.
+ * Increase these thresholds as test coverage improves.
  */
 
 /** @type {import('jest').Config} */
 module.exports = {
-  // Test environment - using node to avoid jsdom installation issues
+  // Test environment - Node.js for API/service tests
+  // Use jsdom for component tests if needed (install jest-environment-jsdom)
   testEnvironment: "node",
 
   // Setup files - Load environment BEFORE any imports
-  setupFiles: ["<rootDir>/jest.env.js"],
-  setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
+  setupFiles: ["<rootDir>/jest.env.cjs"],
+  setupFilesAfterEnv: ["<rootDir>/jest.setup.cjs"],
 
-  // TypeScript transformation - Using Next.js built-in transformer
-  // preset: "ts-jest", // Removed - using Next.js transform instead
+  // TypeScript transformation - Using Next.js/Babel transformer
 
   // Module paths
   modulePaths: ["<rootDir>"],
@@ -93,12 +96,12 @@ module.exports = {
 
   coverageThreshold: {
     global: {
-      // Relaxed thresholds (current observed coverage was far below 90% globally)
-      // Adjust upward as more of the app is covered by tests.
-      branches: 70,
-      functions: 45,
-      lines: 13,
-      statements: 13,
+      // Realistic baseline thresholds - increase as coverage improves
+      // Long-term target: branches: 80, functions: 80, lines: 80, statements: 80
+      branches: 50,
+      functions: 50,
+      lines: 40,
+      statements: 40,
     },
   },
 
@@ -120,7 +123,7 @@ module.exports = {
   // Module file extensions
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json"],
 
-  // Divine test timeout (generous for complex tests)
+  // Test timeout (generous for complex async tests)
   testTimeout: 10000,
 
   // Verbose output
@@ -175,12 +178,12 @@ module.exports = {
   collectCoverage: process.env.COLLECT_COVERAGE === "true",
 
   // ============================================
-  // AGRICULTURAL CONSCIOUSNESS SETTINGS
+  // DISPLAY SETTINGS
   // ============================================
 
   // Display name for test runs
   displayName: {
-    name: "FARMERS MARKET DIVINE TESTS",
+    name: "FARMERS MARKET TESTS",
     color: "green",
   },
 

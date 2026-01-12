@@ -100,7 +100,7 @@ npm run bot:critical
 npm run bot:health
 
 # List all monitored endpoints
-npx tsx scripts/workflow-monitor.ts list
+npm run bot -- list
 
 # Custom URL
 BASE_URL=https://staging.app npm run bot:run
@@ -179,9 +179,9 @@ BOT_RETRIES=3              # Retry failed checks 3x
 
 ### Configuration Files
 
-- `scripts/workflow-monitor.ts` - Monitor bot config
+- `scripts/bot-cli.ts` - Main CLI entry point
 - `scripts/mvp-validation-bot.ts` - MVP bot config
-- `scripts/enhanced-website-checker.ts` - Checker config
+- `scripts/website-checker-bot.ts` - Health checker config
 - `.github/workflows/divine-workflow-bot.yml` - CI/CD config
 
 ---
@@ -355,9 +355,9 @@ Coverage: 95.3%
 
 ### Scripts
 
-- `scripts/workflow-monitor.ts`
+- `scripts/bot-cli.ts`
 - `scripts/mvp-validation-bot.ts`
-- `scripts/enhanced-website-checker.ts`
+- `scripts/website-checker-bot.ts`
 
 ### GitHub
 

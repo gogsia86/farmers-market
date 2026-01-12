@@ -7,7 +7,7 @@
     "lib": [
       "ES2022", // Modern JavaScript features
       "DOM", // DOM types for browser APIs
-      "DOM.Iterable" // Iterable DOM collections
+      "DOM.Iterable", // Iterable DOM collections
     ],
     "module": "ESNext", // Use ESNext module system
     "moduleResolution": "bundler", // Next.js 15 bundler resolution (correct for App Router)
@@ -41,13 +41,11 @@
     // ========================================================================
     // EMIT
     // ========================================================================
-    "declaration": true, // Generate .d.ts files
-    "declarationMap": true, // Generate source maps for .d.ts files
-    "sourceMap": true, // Generate source maps
-    "outDir": "./dist", // Output directory
+    // Note: declaration/declarationMap/outDir removed - noEmit:true means no files are emitted
+    // Next.js handles all compilation and output
+    "sourceMap": true, // Generate source maps (used by Next.js internally)
     "removeComments": false, // Keep comments in output
     "noEmit": true, // Don't emit files (Next.js handles compilation)
-    "noEmitOnError": true, // Don't emit if there are errors
     // ========================================================================
     // INTEROP CONSTRAINTS
     // ========================================================================
@@ -60,7 +58,7 @@
     // ========================================================================
     "typeRoots": [
       "./node_modules/@types", // Only look in @types packages
-      "./src/types" // And our custom types
+      "./src/types", // And our custom types
     ],
     "types": ["node"], // Include node types for global declarations
     // ========================================================================
@@ -80,7 +78,7 @@
       "@/config/*": ["./src/config/*"],
       "@/services/*": ["./src/services/*"],
       "@/repositories/*": ["./src/repositories/*"],
-      "@/controllers/*": ["./src/controllers/*"]
+      "@/controllers/*": ["./src/controllers/*"],
     },
     // ========================================================================
     // NEXT.JS SPECIFIC
@@ -89,9 +87,9 @@
     "tsBuildInfoFile": "./.next/tsconfig.tsbuildinfo", // Store build info
     "plugins": [
       {
-        "name": "next"
-      }
-    ]
+        "name": "next",
+      },
+    ],
   },
   // ==========================================================================
   // INCLUDE/EXCLUDE
@@ -106,7 +104,7 @@
     "**/*.cts", // CommonJS TypeScript files
     ".next/dev/types/**/*.ts",
     "**/*.d.ts", // Include all declaration files
-    "jest.setup.js" // Include Jest setup for global types
+    "jest.setup.js", // Include Jest setup for global types
   ],
   "exclude": [
     "node_modules", // Exclude dependencies
@@ -141,6 +139,6 @@
     "**/*.md", // Exclude all markdown files (contain code examples)
     "COMPREHENSIVE_CODE_REVIEW.md", // Exclude code review documentation
     "prisma/seed-*.ts", // Exclude seed files (use Prisma types differently)
-    "sentry.*.config.ts" // Exclude Sentry config files (external types)
-  ]
+    "sentry.*.config.ts", // Exclude Sentry config files (external types)
+  ],
 }

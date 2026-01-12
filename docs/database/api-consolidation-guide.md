@@ -393,7 +393,6 @@ find src/ -type f -name "*.tsx" -o -name "*.ts" | xargs sed -i 's|@/components/A
    - [ ] `docs/README.md` - Update documentation hub
 
 3. **Monitoring Scripts**
-   - [ ] `scripts/enhanced-website-checker.ts` - Update route paths
    - [ ] `scripts/website-checker-bot.ts` - Update route paths
 
 4. **Migration Documentation**

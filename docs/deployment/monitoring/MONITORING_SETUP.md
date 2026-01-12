@@ -303,7 +303,7 @@ pm2 status
 npm run monitor:daemon:logs
 
 # View logs in real-time
-pm2 logs workflow-monitor-daemon --lines 100
+pm2 logs website-checker-daemon --lines 100
 
 # Monitor resource usage
 pm2 monit
@@ -323,28 +323,28 @@ pm2 startup
 
 ```bash
 # Copy service file
-sudo cp deployment/systemd/workflow-monitor.service /etc/systemd/system/
+sudo cp deployment/systemd/website-checker.service /etc/systemd/system/
 
 # Reload systemd
 sudo systemctl daemon-reload
 
 # Enable service (start on boot)
-sudo systemctl enable workflow-monitor
+sudo systemctl enable website-checker
 
 # Start service
-sudo systemctl start workflow-monitor
+sudo systemctl start website-checker
 
 # Check status
-sudo systemctl status workflow-monitor
+sudo systemctl status website-checker
 
 # View logs
-sudo journalctl -u workflow-monitor -f
+sudo journalctl -u website-checker -f
 
 # Stop service
-sudo systemctl stop workflow-monitor
+sudo systemctl stop website-checker
 
 # Restart service
-sudo systemctl restart workflow-monitor
+sudo systemctl restart website-checker
 ```
 
 ### Docker Deployment
@@ -355,7 +355,7 @@ docker build -t farmers-market-monitor .
 
 # Run container
 docker run -d \
-  --name workflow-monitor \
+  --name website-checker \
   --env-file .env \
   --restart unless-stopped \
   farmers-market-monitor npm run monitor:daemon
@@ -753,7 +753,7 @@ curl -X POST -H 'Content-type: application/json' \
 npm run test:notifications
 
 # Check logs for errors
-pm2 logs workflow-monitor-daemon --err
+pm2 logs website-checker-daemon --err
 ```
 
 **Discord notifications not arriving:**
@@ -770,13 +770,13 @@ npm run test:notifications
 
 ```bash
 # Check PM2 memory limits
-pm2 describe workflow-monitor-daemon
+pm2 describe website-checker-daemon
 
 # Increase memory limit in ecosystem.config.js
 max_memory_restart: "2G"  // Increase from 1G
 
 # Restart daemon
-pm2 restart workflow-monitor-daemon
+pm2 restart website-checker-daemon
 ```
 
 #### 4. Workflows Failing
@@ -1009,10 +1009,10 @@ Set up meta-monitoring:
 
 ```bash
 # Monitor daemon health
-*/5 * * * * pgrep -f monitor-daemon || pm2 restart workflow-monitor-daemon
+*/5 * * * * pgrep -f monitor-daemon || pm2 restart website-checker-daemon
 
 # Alert if daemon is down
-*/10 * * * * systemctl is-active workflow-monitor || send-alert "Daemon down"
+*/10 * * * * systemctl is-active website-checker || send-alert "Daemon down"
 ```
 
 ### 6. Graceful Degradation

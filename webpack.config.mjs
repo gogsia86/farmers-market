@@ -6,7 +6,7 @@
  * Phase 2, Task 3: Configuration Simplification
  *
  * @module webpack.config
- * @version 1.0.0
+ * @version 1.1.0
  * @agricultural-consciousness ACTIVE
  */
 
@@ -108,29 +108,24 @@ export const externalsConfig = {
 };
 
 /**
- * Get optimized Terser configuration
+ * Get Terser options configuration
  * Preserves function names and handles __name correctly
  *
  * @param {boolean} dropConsole - Whether to drop console statements
- * @returns {Object} TerserPlugin configuration
+ * @returns {Object} Terser options object
  */
-export function getTerserConfig(dropConsole = false) {
-  // Dynamic import for TerserPlugin
-  const TerserPlugin = require("terser-webpack-plugin");
-
-  return new TerserPlugin({
-    terserOptions: {
-      compress: {
-        drop_console: dropConsole,
-      },
-      mangle: {
-        keep_fnames: true, // Preserve function names
-        reserved: ["__name"], // Explicitly protect __name
-      },
-      keep_fnames: true,
-      keep_classnames: true,
+export function getTerserOptions(dropConsole = false) {
+  return {
+    compress: {
+      drop_console: dropConsole,
     },
-  });
+    mangle: {
+      keep_fnames: true, // Preserve function names
+      reserved: ["__name"], // Explicitly protect __name
+    },
+    keep_fnames: true,
+    keep_classnames: true,
+  };
 }
 
 /**
@@ -205,18 +200,16 @@ export function configureWebpack(config, { dev, isServer }) {
   config.optimization.minimize = !dev;
 
   // Production optimizations (client-side only)
-  if (!dev) {
-    // Configure Terser for production
-    const dropConsole = process.env.NODE_ENV === "production";
-    config.optimization.minimizer = [getTerserConfig(dropConsole)];
+  if (!dev && !isServer) {
+    // Apply split chunks and optimization configuration
+    config.optimization = {
+      ...config.optimization,
+      ...getOptimizationConfig(),
+    };
 
-    // Apply split chunks configuration (client-side only)
-    if (!isServer) {
-      config.optimization = {
-        ...config.optimization,
-        ...getOptimizationConfig(),
-      };
-    }
+    // Note: Next.js handles TerserPlugin internally with SWC minifier
+    // Custom Terser options can be set via next.config.mjs compiler options
+    // We only configure split chunks here for optimal bundle splitting
   }
 
   // Server-side externals (exclude Bull queue from build)

@@ -77,6 +77,9 @@ model User {
   pushNotificationLogs  PushNotificationLog[]
   deviceTokens          DeviceToken[]
 
+  // AI Chat & Conversations
+  chatThreads           ChatThread[]
+
   @@index([email])
   @@index([role, status])
   @@index([createdAt])
@@ -238,6 +241,9 @@ model Farm {
 
   // Sprint 5: Settings & Configuration
   farmSettings FarmSettings?
+
+  // AI Chat & Conversations
+  chatThreads  ChatThread[]
 
   @@index([ownerId])
   @@index([slug])
@@ -3182,4 +3188,122 @@ model DeviceToken {
   @@index([isActive])
   @@index([token])
   @@map("device_tokens")
+}
+
+// =============================================================================
+// AI CHAT & CONVERSATION MODELS
+// =============================================================================
+
+// Chat Thread - Tracks AI conversation sessions
+model ChatThread {
+  id        String   @id @default(cuid())
+  userId    String?
+  farmId    String?
+
+  // Thread metadata
+  title     String?  @db.VarChar(255)
+  provider  ChatProvider @default(OLLAMA)
+  model     String?  @db.VarChar(100)
+
+  // Status tracking
+  isActive  Boolean  @default(true)
+  messageCount Int   @default(0)
+
+  // Timestamps
+  lastActivityAt DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  farm      Farm?    @relation(fields: [farmId], references: [id], onDelete: SetNull)
+  messages  ChatMessage[]
+  summaries ChatSummary[]
+
+  @@index([userId])
+  @@index([farmId])
+  @@index([provider])
+  @@index([isActive])
+  @@index([lastActivityAt])
+  @@index([createdAt])
+  @@map("chat_threads")
+}
+
+// Chat Message - Individual messages in a conversation
+model ChatMessage {
+  id        String   @id @default(cuid())
+  threadId  String
+
+  // Message content
+  role      ChatRole
+  content   String   @db.Text
+
+  // Metadata
+  tokens    Int?     // Token count for this message
+  model     String?  @db.VarChar(100)
+
+  // For assistant messages
+  confidence Float?
+  citations  Json?   // Array of citation URLs
+
+  // Timestamps
+  createdAt DateTime @default(now())
+
+  // Relations
+  thread    ChatThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+
+  @@index([threadId])
+  @@index([role])
+  @@index([createdAt])
+  @@map("chat_messages")
+}
+
+// Chat Summary - Condensed conversation context for continuity
+model ChatSummary {
+  id        String   @id @default(cuid())
+  threadId  String
+
+  // Summary content
+  summary   String   @db.Text
+
+  // Context for next chat
+  keyTopics Json?    // Array of key topics discussed
+  keyEntities Json?  // Important entities (farms, products, etc.)
+  userIntent String? @db.VarChar(500) // Last understood user intent
+
+  // Metrics
+  messagesCovered Int @default(0) // Number of messages summarized
+  tokensCondensed Int? // Original token count before summarization
+  summaryTokens   Int? // Token count of summary
+
+  // Quality metrics
+  confidence Float?  // Confidence score of summary
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  expiresAt DateTime? // Optional expiry for summary relevance
+
+  // Relations
+  thread    ChatThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+
+  @@index([threadId])
+  @@index([createdAt])
+  @@index([expiresAt])
+  @@map("chat_summaries")
+}
+
+// Chat Provider enum
+enum ChatProvider {
+  OLLAMA
+  PERPLEXITY
+  OPENAI
+  ANTHROPIC
+}
+
+// Chat Role enum
+enum ChatRole {
+  SYSTEM
+  USER
+  ASSISTANT
+  FUNCTION
 }

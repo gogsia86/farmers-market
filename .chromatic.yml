@@ -1,0 +1,104 @@
+# 🎨 Chromatic Visual Regression Testing Configuration
+# Farmers Market Platform - Automated Visual Testing
+# Version: 1.0.0
+
+# Project configuration
+projectId: ${CHROMATIC_PROJECT_TOKEN}
+
+# Build settings
+buildScriptName: "build-storybook"
+storybookBuildDir: "storybook-static"
+
+# Automation settings
+autoAcceptChanges: false # Require manual approval for changes
+exitOnceUploaded: true # Exit after upload (good for CI)
+exitZeroOnChanges: false # Fail CI if visual changes detected
+
+# Snapshot settings
+ignoreLastBuildOnBranch: "main" # Don't compare against last build on main
+
+# Performance settings
+zip: true # Compress uploads
+uploadMetadata: true
+
+# CI/CD integration
+onlyChanged: true # Only test changed stories (faster)
+skip: "dependabot/**" # Skip dependabot branches
+
+# Turbo Snap (speeds up testing)
+externals:
+  - "public/**"
+  - ".next/**"
+  - "node_modules/**"
+
+# Branch patterns
+branchName: ${GITHUB_REF_NAME} # Auto-detect branch in CI
+
+# Thresholds
+diffThreshold: 0.05 # 5% pixel difference threshold
+antiAliasThreshold: 0.1 # Anti-aliasing tolerance
+
+# Viewports to test
+viewports:
+  - width: 320
+    height: 568
+    name: "Mobile Portrait (iPhone SE)"
+  - width: 375
+    height: 812
+    name: "Mobile Large (iPhone 12)"
+  - width: 768
+    height: 1024
+    name: "Tablet Portrait (iPad)"
+  - width: 1024
+    height: 768
+    name: "Tablet Landscape"
+  - width: 1280
+    height: 720
+    name: "Desktop Small"
+  - width: 1920
+    height: 1080
+    name: "Desktop Large"
+
+# Browser support
+browsers:
+  - chrome
+  # Uncomment for multi-browser testing (requires paid plan)
+  # - firefox
+  # - safari
+  # - edge
+
+# Timeouts
+captureTimeout: 30000 # 30 seconds per snapshot
+requestTimeout: 60000 # 60 seconds for network requests
+
+# Debug options (set in CI environment)
+debug: ${CHROMATIC_DEBUG:-false}
+diagnostics: ${CHROMATIC_DIAGNOSTICS:-false}
+
+# Ignore patterns (files that shouldn't trigger visual tests)
+ignorePatterns:
+  - "**/*.md"
+  - "**/*.test.ts"
+  - "**/*.spec.ts"
+  - "**/.*"
+  - "package.json"
+  - "package-lock.json"
+
+# Parallel testing
+parallel: true
+parallelism: 4 # Number of parallel test runners
+
+# Storybook-specific settings
+storybookUrl: "http://localhost:6006" # For local testing
+
+# Notifications (configure in Chromatic dashboard)
+# notifications:
+#   email: true
+#   slack: true
+#   github: true
+
+# Tags for organization
+tags:
+  - "farmers-market"
+  - "agricultural-platform"
+  - "divine-patterns"

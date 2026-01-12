@@ -676,15 +676,13 @@ tsx scripts/verify-db.ts
 
 ```bash
 # Website health monitor
-tsx scripts/monitoring/enhanced-website-monitor.ts
+npm run bot -- test health
 
 # Deployment health check
 tsx scripts/deployment-health-monitor.ts --full
 
-# Workflow monitoring
-tsx scripts/workflow-monitor.ts all
-tsx scripts/workflow-monitor.ts critical
-tsx scripts/workflow-monitor.ts health
+# Website checker bot
+npx tsx scripts/website-checker-bot.ts
 ```
 
 ### OpenAPI Documentation
