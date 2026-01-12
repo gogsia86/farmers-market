@@ -5,7 +5,6 @@
 
 import { CartItemCard } from "@/components/features/cart/cart-item-card";
 
-import type { CartItem, Product } from "@prisma/client";
 import { CartSummary } from "@/components/features/cart/cart-summary";
 import { Button } from "@/components/ui/button";
 import { Card, CardBody } from "@/components/ui/card";
@@ -126,7 +125,10 @@ export default function CartPage() {
         <Card className="mx-auto max-w-2xl">
           <CardBody className="flex flex-col items-center justify-center py-16">
             <div className="mb-6 rounded-full bg-gray-100 p-6">
-              <ShoppingCart className="h-16 w-16 text-gray-400" />
+              <ShoppingCart
+                className="h-16 w-16 text-gray-500"
+                aria-hidden="true"
+              />
             </div>
 
             <h2 className="mb-2 text-2xl font-semibold text-gray-900">
@@ -141,7 +143,7 @@ export default function CartPage() {
             <div className="flex gap-3">
               <Link href={`/login?callbackUrl=/cart`}>
                 <Button size="lg" className="bg-green-600 hover:bg-green-700">
-                  <LogIn className="mr-2 h-4 w-4" />
+                  <LogIn className="mr-2 h-4 w-4" aria-hidden="true" />
                   Sign In
                 </Button>
               </Link>
@@ -190,7 +192,10 @@ export default function CartPage() {
         <Card className="mx-auto max-w-2xl">
           <CardBody className="flex flex-col items-center justify-center py-16">
             <div className="mb-6 rounded-full bg-gray-100 p-6">
-              <ShoppingBag className="h-16 w-16 text-gray-400" />
+              <ShoppingBag
+                className="h-16 w-16 text-gray-500"
+                aria-hidden="true"
+              />
             </div>
 
             <h2 className="mb-2 text-2xl font-semibold text-gray-900">

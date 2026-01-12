@@ -45,9 +45,13 @@ export function generateCSP(options: CSPOptions = {}): string {
       ...(nonce ? [`'nonce-${nonce}'`] : []),
       ...(enableUnsafeEval ? ["'unsafe-eval'"] : []),
       ...(enableUnsafeInline ? ["'unsafe-inline'"] : []),
+      "blob:", // Allow blob URLs for Stripe workers
       // Trusted CDNs
       "https://cdn.jsdelivr.net",
       "https://unpkg.com",
+      // Payment processing
+      "https://js.stripe.com",
+      "https://www.googletagmanager.com",
     ],
 
     // Styles - allow inline for Tailwind and styled-components
@@ -80,6 +84,9 @@ export function generateCSP(options: CSPOptions = {}): string {
       "https://*.vercel-insights.com", // Analytics
       "https://*.microsoft.com", // Azure services
       "https://nominatim.openstreetmap.org", // Geocoding
+      // Stripe API
+      "https://api.stripe.com",
+      "https://*.stripe.com",
       ...(process.env.NODE_ENV === "development"
         ? ["ws://localhost:*", "wss://localhost:*"]
         : []),
@@ -89,7 +96,10 @@ export function generateCSP(options: CSPOptions = {}): string {
     "frame-src": [
       "'self'",
       "https://www.google.com", // Google Maps
-      "https://checkout.stripe.com", // Stripe payment
+      // Stripe payment frames
+      "https://js.stripe.com",
+      "https://hooks.stripe.com",
+      "https://checkout.stripe.com",
     ],
 
     // Workers

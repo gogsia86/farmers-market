@@ -29,17 +29,17 @@
  *   npm run inspect:website -- --quick   # Quick scan
  */
 
-import 'dotenv/config';
-import { existsSync, mkdirSync, writeFileSync } from 'fs';
-import { join } from 'path';
-import { Browser, BrowserContext, chromium, Page } from 'playwright';
+import "dotenv/config";
+import { existsSync, mkdirSync, writeFileSync } from "fs";
+import { join } from "path";
+import { Browser, BrowserContext, chromium, Page } from "playwright";
 
 // ============================================================================
 // CONFIGURATION
 // ============================================================================
 
 const CONFIG = {
-  baseUrl: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3001',
+  baseUrl: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001",
   timeout: 30000,
   navigationTimeout: 60000,
   headless: true,
@@ -47,35 +47,35 @@ const CONFIG = {
   mobileViewport: { width: 375, height: 812 },
   slowMo: 0,
   screenshots: true,
-  screenshotDir: './inspection-reports/screenshots',
-  reportDir: './inspection-reports',
+  screenshotDir: "./inspection-reports/screenshots",
+  reportDir: "./inspection-reports",
 
   // Test credentials (from .env.test)
   testUsers: {
     customer: {
-      email: process.env.TEST_CUSTOMER_EMAIL || 'customer@test.com',
-      password: process.env.TEST_CUSTOMER_PASSWORD || 'Test123!@#',
+      email: process.env.TEST_CUSTOMER_EMAIL || "customer@test.com",
+      password: process.env.TEST_CUSTOMER_PASSWORD || "Test123!@#",
     },
     farmer: {
-      email: process.env.TEST_FARMER_EMAIL || 'farmer@test.com',
-      password: process.env.TEST_FARMER_PASSWORD || 'Test123!@#',
+      email: process.env.TEST_FARMER_EMAIL || "farmer@test.com",
+      password: process.env.TEST_FARMER_PASSWORD || "Test123!@#",
     },
     admin: {
-      email: process.env.TEST_ADMIN_EMAIL || 'admin@test.com',
-      password: process.env.TEST_ADMIN_PASSWORD || 'Test123!@#',
+      email: process.env.TEST_ADMIN_EMAIL || "admin@test.com",
+      password: process.env.TEST_ADMIN_PASSWORD || "Test123!@#",
     },
   },
 
   colors: {
-    reset: '\x1b[0m',
-    bright: '\x1b[1m',
-    dim: '\x1b[2m',
-    green: '\x1b[32m',
-    red: '\x1b[31m',
-    yellow: '\x1b[33m',
-    blue: '\x1b[34m',
-    magenta: '\x1b[35m',
-    cyan: '\x1b[36m',
+    reset: "\x1b[0m",
+    bright: "\x1b[1m",
+    dim: "\x1b[2m",
+    green: "\x1b[32m",
+    red: "\x1b[31m",
+    yellow: "\x1b[33m",
+    blue: "\x1b[34m",
+    magenta: "\x1b[35m",
+    cyan: "\x1b[36m",
   },
 };
 
@@ -87,15 +87,22 @@ interface PageCheck {
   path: string;
   name: string;
   requiresAuth: boolean;
-  userRole?: 'customer' | 'farmer' | 'admin';
-  category: 'public' | 'customer' | 'farmer' | 'admin' | 'auth' | 'legal' | 'api';
+  userRole?: "customer" | "farmer" | "admin";
+  category:
+    | "public"
+    | "customer"
+    | "farmer"
+    | "admin"
+    | "auth"
+    | "legal"
+    | "api";
   critical: boolean;
 }
 
 interface InspectionResult {
   path: string;
   name: string;
-  status: 'success' | 'error' | 'warning' | 'missing';
+  status: "success" | "error" | "warning" | "missing";
   statusCode?: number;
   loadTime: number;
   errors: string[];
@@ -135,75 +142,334 @@ interface InspectionReport {
 
 const SITEMAP: PageCheck[] = [
   // ==================== PUBLIC PAGES ====================
-  { path: '/', name: 'Homepage', requiresAuth: false, category: 'public', critical: true },
-  { path: '/about', name: 'About Us', requiresAuth: false, category: 'public', critical: false },
-  { path: '/contact', name: 'Contact', requiresAuth: false, category: 'public', critical: false },
-  { path: '/faq', name: 'FAQ', requiresAuth: false, category: 'public', critical: false },
-  { path: '/how-it-works', name: 'How It Works', requiresAuth: false, category: 'public', critical: false },
-  { path: '/shipping', name: 'Shipping Info', requiresAuth: false, category: 'public', critical: false },
+  {
+    path: "/",
+    name: "Homepage",
+    requiresAuth: false,
+    category: "public",
+    critical: true,
+  },
+  {
+    path: "/about",
+    name: "About Us",
+    requiresAuth: false,
+    category: "public",
+    critical: false,
+  },
+  {
+    path: "/contact",
+    name: "Contact",
+    requiresAuth: false,
+    category: "public",
+    critical: false,
+  },
+  {
+    path: "/faq",
+    name: "FAQ",
+    requiresAuth: false,
+    category: "public",
+    critical: false,
+  },
+  {
+    path: "/how-it-works",
+    name: "How It Works",
+    requiresAuth: false,
+    category: "public",
+    critical: false,
+  },
+  {
+    path: "/shipping",
+    name: "Shipping Info",
+    requiresAuth: false,
+    category: "public",
+    critical: false,
+  },
 
   // Marketplace (Public)
-  { path: '/marketplace', name: 'Marketplace', requiresAuth: false, category: 'public', critical: true },
-  { path: '/products', name: 'Products', requiresAuth: false, category: 'public', critical: true },
+  {
+    path: "/marketplace",
+    name: "Marketplace",
+    requiresAuth: false,
+    category: "public",
+    critical: true,
+  },
+  {
+    path: "/products",
+    name: "Products",
+    requiresAuth: false,
+    category: "public",
+    critical: true,
+  },
 
   // Farms (Public)
-  { path: '/farms', name: 'Farm Directory', requiresAuth: false, category: 'public', critical: true },
+  {
+    path: "/farms",
+    name: "Farm Directory",
+    requiresAuth: false,
+    category: "public",
+    critical: true,
+  },
 
   // ==================== AUTHENTICATION PAGES ====================
-  { path: '/login', name: 'Login', requiresAuth: false, category: 'auth', critical: true },
-  { path: '/register', name: 'Register', requiresAuth: false, category: 'auth', critical: true },
-  { path: '/register-farm', name: 'Farmer Registration', requiresAuth: false, category: 'auth', critical: true },
-  { path: '/signup', name: 'Signup', requiresAuth: false, category: 'auth', critical: true },
-  { path: '/forgot-password', name: 'Forgot Password', requiresAuth: false, category: 'auth', critical: true },
+  {
+    path: "/login",
+    name: "Login",
+    requiresAuth: false,
+    category: "auth",
+    critical: true,
+  },
+  {
+    path: "/register",
+    name: "Register",
+    requiresAuth: false,
+    category: "auth",
+    critical: true,
+  },
+  {
+    path: "/register-farm",
+    name: "Farmer Registration",
+    requiresAuth: false,
+    category: "auth",
+    critical: true,
+  },
+  {
+    path: "/signup",
+    name: "Signup",
+    requiresAuth: false,
+    category: "auth",
+    critical: true,
+  },
+  {
+    path: "/forgot-password",
+    name: "Forgot Password",
+    requiresAuth: false,
+    category: "auth",
+    critical: true,
+  },
 
   // ==================== CUSTOMER PORTAL ====================
-  { path: '/customer/dashboard', name: 'Customer Dashboard', requiresAuth: true, userRole: 'customer', category: 'customer', critical: true },
-  { path: '/customer/marketplace', name: 'Customer Marketplace', requiresAuth: true, userRole: 'customer', category: 'customer', critical: true },
-  { path: '/customer/farms', name: 'Customer Farms', requiresAuth: true, userRole: 'customer', category: 'customer', critical: true },
-  { path: '/customer/cart', name: 'Shopping Cart', requiresAuth: true, userRole: 'customer', category: 'customer', critical: true },
-  { path: '/customer/orders', name: 'Customer Orders', requiresAuth: true, userRole: 'customer', category: 'customer', critical: true },
-  { path: '/customer/favorites', name: 'Favorites', requiresAuth: true, userRole: 'customer', category: 'customer', critical: false },
-  { path: '/customer/settings', name: 'Customer Settings', requiresAuth: true, userRole: 'customer', category: 'customer', critical: false },
-  { path: '/checkout', name: 'Checkout', requiresAuth: true, userRole: 'customer', category: 'customer', critical: true },
+  {
+    path: "/customer/dashboard",
+    name: "Customer Dashboard",
+    requiresAuth: true,
+    userRole: "customer",
+    category: "customer",
+    critical: true,
+  },
+  {
+    path: "/customer/marketplace",
+    name: "Customer Marketplace",
+    requiresAuth: true,
+    userRole: "customer",
+    category: "customer",
+    critical: true,
+  },
+  {
+    path: "/customer/farms",
+    name: "Customer Farms",
+    requiresAuth: true,
+    userRole: "customer",
+    category: "customer",
+    critical: true,
+  },
+  {
+    path: "/customer/cart",
+    name: "Shopping Cart",
+    requiresAuth: true,
+    userRole: "customer",
+    category: "customer",
+    critical: true,
+  },
+  {
+    path: "/customer/orders",
+    name: "Customer Orders",
+    requiresAuth: true,
+    userRole: "customer",
+    category: "customer",
+    critical: true,
+  },
+  {
+    path: "/customer/favorites",
+    name: "Favorites",
+    requiresAuth: true,
+    userRole: "customer",
+    category: "customer",
+    critical: false,
+  },
+  {
+    path: "/customer/settings",
+    name: "Customer Settings",
+    requiresAuth: true,
+    userRole: "customer",
+    category: "customer",
+    critical: false,
+  },
+  {
+    path: "/checkout",
+    name: "Checkout",
+    requiresAuth: true,
+    userRole: "customer",
+    category: "customer",
+    critical: true,
+  },
 
   // ==================== FARMER PORTAL ====================
-  { path: '/farmer/dashboard', name: 'Farmer Dashboard', requiresAuth: true, userRole: 'farmer', category: 'farmer', critical: true },
-  { path: '/farmer/farms', name: 'Farmer Farms', requiresAuth: true, userRole: 'farmer', category: 'farmer', critical: true },
-  { path: '/farmer/products', name: 'Farmer Products', requiresAuth: true, userRole: 'farmer', category: 'farmer', critical: true },
-  { path: '/farmer/orders', name: 'Farmer Orders', requiresAuth: true, userRole: 'farmer', category: 'farmer', critical: true },
-  { path: '/farmer/dashboard/analytics', name: 'Farmer Analytics', requiresAuth: true, userRole: 'farmer', category: 'farmer', critical: true },
-  { path: '/farmer/dashboard/finances', name: 'Farmer Finances', requiresAuth: true, userRole: 'farmer', category: 'farmer', critical: false },
-  { path: '/farmer/dashboard/recommendations', name: 'Farmer Recommendations', requiresAuth: true, userRole: 'farmer', category: 'farmer', critical: false },
+  {
+    path: "/farmer/dashboard",
+    name: "Farmer Dashboard",
+    requiresAuth: true,
+    userRole: "farmer",
+    category: "farmer",
+    critical: true,
+  },
+  {
+    path: "/farmer/farms",
+    name: "Farmer Farms",
+    requiresAuth: true,
+    userRole: "farmer",
+    category: "farmer",
+    critical: true,
+  },
+  {
+    path: "/farmer/products",
+    name: "Farmer Products",
+    requiresAuth: true,
+    userRole: "farmer",
+    category: "farmer",
+    critical: true,
+  },
+  {
+    path: "/farmer/orders",
+    name: "Farmer Orders",
+    requiresAuth: true,
+    userRole: "farmer",
+    category: "farmer",
+    critical: true,
+  },
+  {
+    path: "/farmer/dashboard/analytics",
+    name: "Farmer Analytics",
+    requiresAuth: true,
+    userRole: "farmer",
+    category: "farmer",
+    critical: true,
+  },
+  {
+    path: "/farmer/dashboard/finances",
+    name: "Farmer Finances",
+    requiresAuth: true,
+    userRole: "farmer",
+    category: "farmer",
+    critical: false,
+  },
+  {
+    path: "/farmer/dashboard/recommendations",
+    name: "Farmer Recommendations",
+    requiresAuth: true,
+    userRole: "farmer",
+    category: "farmer",
+    critical: false,
+  },
 
   // ==================== ADMIN PORTAL ====================
-  { path: '/admin', name: 'Admin Dashboard', requiresAuth: true, userRole: 'admin', category: 'admin', critical: true },
-  { path: '/admin/users', name: 'Admin Users', requiresAuth: true, userRole: 'admin', category: 'admin', critical: true },
-  { path: '/admin/farms', name: 'Admin Farms', requiresAuth: true, userRole: 'admin', category: 'admin', critical: true },
-  { path: '/admin/products', name: 'Admin Products', requiresAuth: true, userRole: 'admin', category: 'admin', critical: true },
-  { path: '/admin/orders', name: 'Admin Orders', requiresAuth: true, userRole: 'admin', category: 'admin', critical: true },
-  { path: '/admin/reports', name: 'Admin Reports', requiresAuth: true, userRole: 'admin', category: 'admin', critical: false },
-  { path: '/admin/settings', name: 'Admin Settings', requiresAuth: true, userRole: 'admin', category: 'admin', critical: false },
+  {
+    path: "/admin",
+    name: "Admin Dashboard",
+    requiresAuth: true,
+    userRole: "admin",
+    category: "admin",
+    critical: true,
+  },
+  {
+    path: "/admin/users",
+    name: "Admin Users",
+    requiresAuth: true,
+    userRole: "admin",
+    category: "admin",
+    critical: true,
+  },
+  {
+    path: "/admin/farms",
+    name: "Admin Farms",
+    requiresAuth: true,
+    userRole: "admin",
+    category: "admin",
+    critical: true,
+  },
+  {
+    path: "/admin/products",
+    name: "Admin Products",
+    requiresAuth: true,
+    userRole: "admin",
+    category: "admin",
+    critical: true,
+  },
+  {
+    path: "/admin/orders",
+    name: "Admin Orders",
+    requiresAuth: true,
+    userRole: "admin",
+    category: "admin",
+    critical: true,
+  },
+  {
+    path: "/admin/reports",
+    name: "Admin Reports",
+    requiresAuth: true,
+    userRole: "admin",
+    category: "admin",
+    critical: false,
+  },
+  {
+    path: "/admin/settings",
+    name: "Admin Settings",
+    requiresAuth: true,
+    userRole: "admin",
+    category: "admin",
+    critical: false,
+  },
 
   // ==================== LEGAL PAGES ====================
-  { path: '/legal/terms', name: 'Terms of Service', requiresAuth: false, category: 'legal', critical: false },
-  { path: '/legal/privacy', name: 'Privacy Policy', requiresAuth: false, category: 'legal', critical: false },
+  {
+    path: "/legal/terms",
+    name: "Terms of Service",
+    requiresAuth: false,
+    category: "legal",
+    critical: false,
+  },
+  {
+    path: "/legal/privacy",
+    name: "Privacy Policy",
+    requiresAuth: false,
+    category: "legal",
+    critical: false,
+  },
 
   // ==================== API DOCUMENTATION ====================
-  { path: '/api-docs', name: 'API Documentation', requiresAuth: false, category: 'api', critical: false },
+  {
+    path: "/api-docs",
+    name: "API Documentation",
+    requiresAuth: false,
+    category: "api",
+    critical: false,
+  },
 ];
 
 // ============================================================================
 // UTILITY FUNCTIONS
 // ============================================================================
 
-function log(message: string, level: 'info' | 'success' | 'error' | 'warn' | 'debug' = 'info') {
+function log(
+  message: string,
+  level: "info" | "success" | "error" | "warn" | "debug" = "info",
+) {
   const c = CONFIG.colors;
   const icons = {
-    info: 'ℹ️',
-    success: '✅',
-    error: '❌',
-    warn: '⚠️',
-    debug: '🔍',
+    info: "ℹ️",
+    success: "✅",
+    error: "❌",
+    warn: "⚠️",
+    debug: "🔍",
   };
   const colors = {
     info: c.blue,
@@ -213,15 +479,17 @@ function log(message: string, level: 'info' | 'success' | 'error' | 'warn' | 'de
     debug: c.magenta,
   };
 
-  const timestamp = new Date().toISOString().split('T')[1].split('.')[0];
-  console.log(`${c.dim}[${timestamp}]${c.reset} ${icons[level]} ${colors[level]}${message}${c.reset}`);
+  const timestamp = new Date().toISOString().split("T")[1].split(".")[0];
+  console.log(
+    `${c.dim}[${timestamp}]${c.reset} ${icons[level]} ${colors[level]}${message}${c.reset}`,
+  );
 }
 
 function logSection(title: string) {
   const c = CONFIG.colors;
-  console.log('\n' + '═'.repeat(80));
+  console.log("\n" + "═".repeat(80));
   console.log(`${c.bright}${c.cyan}  ${title}${c.reset}`);
-  console.log('═'.repeat(80));
+  console.log("═".repeat(80));
 }
 
 function ensureDirectoryExists(dir: string) {
@@ -248,9 +516,9 @@ class WebsiteInspector {
 
   // Initialize browser and context
   async initialize() {
-    logSection('🚀 INITIALIZING COMPREHENSIVE WEBSITE INSPECTOR');
-    log(`Base URL: ${CONFIG.baseUrl}`, 'info');
-    log(`Headless Mode: ${CONFIG.headless}`, 'info');
+    logSection("🚀 INITIALIZING COMPREHENSIVE WEBSITE INSPECTOR");
+    log(`Base URL: ${CONFIG.baseUrl}`, "info");
+    log(`Headless Mode: ${CONFIG.headless}`, "info");
 
     this.browser = await chromium.launch({
       headless: CONFIG.headless,
@@ -259,56 +527,64 @@ class WebsiteInspector {
 
     this.context = await this.browser.newContext({
       viewport: CONFIG.viewport,
-      userAgent: 'Farmers-Market-Inspector-Bot/2.0',
+      userAgent: "Farmers-Market-Inspector-Bot/2.0",
       ignoreHTTPSErrors: true,
     });
 
     // Enable console and error logging
-    this.context.on('console', (msg) => {
-      if (msg.type() === 'error') {
-        log(`Console Error: ${msg.text()}`, 'error');
+    this.context.on("console", (msg) => {
+      if (msg.type() === "error") {
+        log(`Console Error: ${msg.text()}`, "error");
       }
     });
 
     this.page = await this.context.newPage();
 
     // Listen for page errors
-    this.page.on('pageerror', (error) => {
-      log(`Page Error: ${error.message}`, 'error');
+    this.page.on("pageerror", (error) => {
+      log(`Page Error: ${error.message}`, "error");
     });
 
-    log('Browser initialized successfully', 'success');
+    log("Browser initialized successfully", "success");
   }
 
   // Authenticate user based on role
-  async authenticate(role: 'customer' | 'farmer' | 'admin') {
-    log(`Authenticating as ${role}...`, 'info');
+  async authenticate(role: "customer" | "farmer" | "admin") {
+    log(`Authenticating as ${role}...`, "info");
 
     try {
       const credentials = CONFIG.testUsers[role];
 
       // Go to login page
       await this.page!.goto(`${CONFIG.baseUrl}/login`, {
-        waitUntil: 'networkidle',
+        waitUntil: "networkidle",
         timeout: CONFIG.navigationTimeout,
       });
 
       // Fill login form
-      await this.page!.fill('input[name="email"], input[type="email"]', credentials.email);
-      await this.page!.fill('input[name="password"], input[type="password"]', credentials.password);
+      await this.page!.fill(
+        'input[name="email"], input[type="email"]',
+        credentials.email,
+      );
+      await this.page!.fill(
+        'input[name="password"], input[type="password"]',
+        credentials.password,
+      );
 
       // Submit form
-      await this.page!.click('button[type="submit"], button:has-text("Login"), button:has-text("Sign In")');
+      await this.page!.click(
+        'button[type="submit"], button:has-text("Login"), button:has-text("Sign In")',
+      );
 
       // Wait for navigation
-      await this.page!.waitForURL((url) => !url.pathname.includes('/login'), {
+      await this.page!.waitForURL((url) => !url.pathname.includes("/login"), {
         timeout: CONFIG.timeout,
       });
 
-      log(`Authenticated as ${role} successfully`, 'success');
+      log(`Authenticated as ${role} successfully`, "success");
       return true;
     } catch (error) {
-      log(`Authentication failed for ${role}: ${error}`, 'error');
+      log(`Authentication failed for ${role}: ${error}`, "error");
       return false;
     }
   }
@@ -319,7 +595,7 @@ class WebsiteInspector {
     const result: InspectionResult = {
       path: pageCheck.path,
       name: pageCheck.name,
-      status: 'success',
+      status: "success",
       loadTime: 0,
       errors: [],
       warnings: [],
@@ -331,34 +607,39 @@ class WebsiteInspector {
       timestamp: new Date(),
     };
 
-    log(`Inspecting: ${pageCheck.name} (${pageCheck.path})`, 'debug');
+    log(`Inspecting: ${pageCheck.name} (${pageCheck.path})`, "debug");
 
     try {
       // Navigate to page
-      const response = await this.page!.goto(`${CONFIG.baseUrl}${pageCheck.path}`, {
-        waitUntil: 'domcontentloaded',
-        timeout: CONFIG.navigationTimeout,
-      });
+      const response = await this.page!.goto(
+        `${CONFIG.baseUrl}${pageCheck.path}`,
+        {
+          waitUntil: "domcontentloaded",
+          timeout: CONFIG.navigationTimeout,
+        },
+      );
 
       result.statusCode = response?.status();
       result.loadTime = Date.now() - startTime;
 
       // Check HTTP status
       if (!response || response.status() >= 400) {
-        result.status = 'error';
-        result.errors.push(`HTTP ${response?.status() || 'No response'}`);
+        result.status = "error";
+        result.errors.push(`HTTP ${response?.status() || "No response"}`);
 
         if (response?.status() === 404) {
-          result.status = 'missing';
-          result.errors.push('Page not found (404)');
+          result.status = "missing";
+          result.errors.push("Page not found (404)");
         }
 
         return result;
       }
 
       // Wait for page to be interactive
-      await this.page!.waitForLoadState('networkidle', { timeout: CONFIG.timeout }).catch(() => {
-        result.warnings.push('Page did not reach networkidle state');
+      await this.page!.waitForLoadState("networkidle", {
+        timeout: CONFIG.timeout,
+      }).catch(() => {
+        result.warnings.push("Page did not reach networkidle state");
       });
 
       // Check for critical page elements
@@ -380,7 +661,7 @@ class WebsiteInspector {
       if (CONFIG.screenshots) {
         const screenshotPath = join(
           CONFIG.screenshotDir,
-          `${pageCheck.category}-${pageCheck.path.replace(/\//g, '-')}.png`
+          `${pageCheck.category}-${pageCheck.path.replace(/\//g, "-")}.png`,
         );
         await this.page!.screenshot({ path: screenshotPath, fullPage: false });
         result.screenshot = screenshotPath;
@@ -388,19 +669,26 @@ class WebsiteInspector {
 
       // Determine final status
       if (result.errors.length > 0) {
-        result.status = 'error';
+        result.status = "error";
       } else if (result.warnings.length > 0) {
-        result.status = 'warning';
+        result.status = "warning";
       }
 
-      log(`✓ ${pageCheck.name}: ${result.status.toUpperCase()} (${result.loadTime}ms)`,
-          result.status === 'success' ? 'success' : result.status === 'warning' ? 'warn' : 'error');
-
+      log(
+        `✓ ${pageCheck.name}: ${result.status.toUpperCase()} (${result.loadTime}ms)`,
+        result.status === "success"
+          ? "success"
+          : result.status === "warning"
+            ? "warn"
+            : "error",
+      );
     } catch (error) {
-      result.status = 'error';
+      result.status = "error";
       result.loadTime = Date.now() - startTime;
-      result.errors.push(error instanceof Error ? error.message : 'Unknown error');
-      log(`✗ ${pageCheck.name}: ERROR - ${result.errors[0]}`, 'error');
+      result.errors.push(
+        error instanceof Error ? error.message : "Unknown error",
+      );
+      log(`✗ ${pageCheck.name}: ERROR - ${result.errors[0]}`, "error");
     }
 
     return result;
@@ -409,20 +697,37 @@ class WebsiteInspector {
   // Check for expected page elements
   async checkPageElements(result: InspectionResult, pageCheck: PageCheck) {
     const expectedElements: { [key: string]: string[] } = {
-      public: ['header', 'footer', 'main', 'nav'],
-      customer: ['header', 'footer', 'main', 'nav'],
-      farmer: ['header', 'main', 'nav', '[data-testid*="dashboard"], [class*="dashboard"]'],
-      admin: ['header', 'main', 'nav', '[data-testid*="admin"], [class*="admin"]'],
-      auth: ['form', 'input[type="email"]', 'input[type="password"]', 'button[type="submit"]'],
-      legal: ['main', 'article, section'],
-      api: ['main'],
+      public: ["header", "footer", "main", "nav"],
+      customer: ["header", "footer", "main", "nav"],
+      farmer: [
+        "header",
+        "main",
+        "nav",
+        '[data-testid*="dashboard"], [class*="dashboard"]',
+      ],
+      admin: [
+        "header",
+        "main",
+        "nav",
+        '[data-testid*="admin"], [class*="admin"]',
+      ],
+      auth: [
+        "form",
+        'input[type="email"]',
+        'input[type="password"]',
+        'button[type="submit"]',
+      ],
+      legal: ["main", "article, section"],
+      api: ["main"],
     };
 
-    const elements = expectedElements[pageCheck.category] || ['main'];
+    const elements = expectedElements[pageCheck.category] || ["main"];
 
     for (const selector of elements) {
       try {
-        const exists = await this.page!.locator(selector).first().isVisible({ timeout: 5000 });
+        const exists = await this.page!.locator(selector)
+          .first()
+          .isVisible({ timeout: 5000 });
         if (!exists) {
           result.missingElements.push(selector);
           result.warnings.push(`Missing expected element: ${selector}`);
@@ -437,7 +742,7 @@ class WebsiteInspector {
     const errorSelectors = [
       '[class*="error"]',
       '[data-testid*="error"]',
-      '.error-message',
+      ".error-message",
       '[role="alert"]',
     ];
 
@@ -446,9 +751,9 @@ class WebsiteInspector {
         const errorElements = await this.page!.locator(selector).all();
         if (errorElements.length > 0) {
           const errorTexts = await Promise.all(
-            errorElements.map(el => el.textContent().catch(() => ''))
+            errorElements.map((el) => el.textContent().catch(() => "")),
           );
-          errorTexts.forEach(text => {
+          errorTexts.forEach((text) => {
             if (text && text.trim()) {
               result.errors.push(`Error on page: ${text.trim()}`);
             }
@@ -463,25 +768,33 @@ class WebsiteInspector {
   // Check for broken links
   async checkBrokenLinks(result: InspectionResult) {
     try {
-      const links = await this.page!.locator('a[href]').all();
+      const links = await this.page!.locator("a[href]").all();
       const checkedUrls = new Set<string>();
 
-      for (const link of links.slice(0, 20)) { // Limit to first 20 links
+      for (const link of links.slice(0, 20)) {
+        // Limit to first 20 links
         try {
-          const href = await link.getAttribute('href');
-          if (!href || href.startsWith('#') || href.startsWith('javascript:') || checkedUrls.has(href)) {
+          const href = await link.getAttribute("href");
+          if (
+            !href ||
+            href.startsWith("#") ||
+            href.startsWith("javascript:") ||
+            checkedUrls.has(href)
+          ) {
             continue;
           }
 
           checkedUrls.add(href);
 
           // Only check internal links
-          if (href.startsWith('/') || href.startsWith(CONFIG.baseUrl)) {
-            const fullUrl = href.startsWith('/') ? `${CONFIG.baseUrl}${href}` : href;
+          if (href.startsWith("/") || href.startsWith(CONFIG.baseUrl)) {
+            const fullUrl = href.startsWith("/")
+              ? `${CONFIG.baseUrl}${href}`
+              : href;
 
             // Use HEAD request for faster checking
             try {
-              const response = await fetch(fullUrl, { method: 'HEAD' });
+              const response = await fetch(fullUrl, { method: "HEAD" });
               if (response.status >= 400) {
                 result.brokenLinks.push(`${href} (${response.status})`);
                 result.warnings.push(`Broken link: ${href}`);
@@ -506,34 +819,36 @@ class WebsiteInspector {
       // Check title
       const title = await this.page!.title();
       if (!title || title.length < 10) {
-        result.seoIssues.push('Missing or too short page title');
+        result.seoIssues.push("Missing or too short page title");
       } else if (title.length > 60) {
-        result.seoIssues.push('Page title too long (> 60 characters)');
+        result.seoIssues.push("Page title too long (> 60 characters)");
       }
 
       // Check meta description
-      const metaDescription = await this.page!.locator('meta[name="description"]').getAttribute('content');
+      const metaDescription = await this.page!.locator(
+        'meta[name="description"]',
+      ).getAttribute("content");
       if (!metaDescription) {
-        result.seoIssues.push('Missing meta description');
+        result.seoIssues.push("Missing meta description");
       } else if (metaDescription.length < 50) {
-        result.seoIssues.push('Meta description too short (< 50 characters)');
+        result.seoIssues.push("Meta description too short (< 50 characters)");
       } else if (metaDescription.length > 160) {
-        result.seoIssues.push('Meta description too long (> 160 characters)');
+        result.seoIssues.push("Meta description too long (> 160 characters)");
       }
 
       // Check h1
-      const h1Count = await this.page!.locator('h1').count();
+      const h1Count = await this.page!.locator("h1").count();
       if (h1Count === 0) {
-        result.seoIssues.push('Missing H1 heading');
+        result.seoIssues.push("Missing H1 heading");
       } else if (h1Count > 1) {
-        result.seoIssues.push('Multiple H1 headings found');
+        result.seoIssues.push("Multiple H1 headings found");
       }
 
       // Check images without alt text
-      const images = await this.page!.locator('img').all();
+      const images = await this.page!.locator("img").all();
       let imagesWithoutAlt = 0;
       for (const img of images) {
-        const alt = await img.getAttribute('alt');
+        const alt = await img.getAttribute("alt");
         if (!alt) imagesWithoutAlt++;
       }
       if (imagesWithoutAlt > 0) {
@@ -552,33 +867,38 @@ class WebsiteInspector {
   async checkAccessibility(result: InspectionResult) {
     try {
       // Check for aria-labels on buttons without text
-      const buttons = await this.page!.locator('button').all();
+      const buttons = await this.page!.locator("button").all();
       for (const button of buttons) {
         const text = await button.textContent();
-        const ariaLabel = await button.getAttribute('aria-label');
+        const ariaLabel = await button.getAttribute("aria-label");
         if (!text?.trim() && !ariaLabel) {
-          result.a11yIssues.push('Button without text or aria-label');
+          result.a11yIssues.push("Button without text or aria-label");
         }
       }
 
       // Check for form labels
-      const inputs = await this.page!.locator('input[type="text"], input[type="email"], input[type="password"]').all();
+      const inputs = await this.page!.locator(
+        'input[type="text"], input[type="email"], input[type="password"]',
+      ).all();
       for (const input of inputs) {
-        const id = await input.getAttribute('id');
-        const ariaLabel = await input.getAttribute('aria-label');
-        const hasLabel = id ? await this.page!.locator(`label[for="${id}"]`).count() > 0 : false;
+        const id = await input.getAttribute("id");
+        const ariaLabel = await input.getAttribute("aria-label");
+        const hasLabel = id
+          ? (await this.page!.locator(`label[for="${id}"]`).count()) > 0
+          : false;
 
         if (!hasLabel && !ariaLabel) {
-          result.a11yIssues.push('Input without associated label');
+          result.a11yIssues.push("Input without associated label");
         }
       }
 
       // Check color contrast (basic check)
       const hasLowContrast = await this.page!.evaluate(() => {
-        const elements = document.querySelectorAll('*');
+        const elements = document.querySelectorAll("*");
         let lowContrastFound = false;
 
-        for (const el of Array.from(elements).slice(0, 100)) { // Check first 100 elements
+        for (const el of Array.from(elements).slice(0, 100)) {
+          // Check first 100 elements
           const style = window.getComputedStyle(el as Element);
           const bgColor = style.backgroundColor;
           const color = style.color;
@@ -594,11 +914,13 @@ class WebsiteInspector {
       });
 
       if (hasLowContrast) {
-        result.a11yIssues.push('Potential low contrast issues detected');
+        result.a11yIssues.push("Potential low contrast issues detected");
       }
 
       if (result.a11yIssues.length > 0) {
-        result.warnings.push(`Accessibility issues detected: ${result.a11yIssues.length}`);
+        result.warnings.push(
+          `Accessibility issues detected: ${result.a11yIssues.length}`,
+        );
       }
     } catch (error) {
       result.warnings.push(`Could not check accessibility: ${error}`);
@@ -609,12 +931,15 @@ class WebsiteInspector {
   async getPerformanceMetrics(result: InspectionResult) {
     try {
       const metrics = await this.page!.evaluate(() => {
-        const perf = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
-        const paint = performance.getEntriesByType('paint');
+        const perf = performance.getEntriesByType(
+          "navigation",
+        )[0] as PerformanceNavigationTiming;
+        const paint = performance.getEntriesByType("paint");
 
         return {
           ttfb: perf?.responseStart - perf?.requestStart,
-          fcp: paint.find(p => p.name === 'first-contentful-paint')?.startTime,
+          fcp: paint.find((p) => p.name === "first-contentful-paint")
+            ?.startTime,
           domComplete: perf?.domComplete,
           loadComplete: perf?.loadEventEnd,
         };
@@ -638,33 +963,43 @@ class WebsiteInspector {
   }
 
   // Run full inspection
-  async runInspection(options: {
-    portal?: 'all' | 'public' | 'customer' | 'farmer' | 'admin',
-    quick?: boolean
-  } = {}) {
-    logSection('🔍 STARTING COMPREHENSIVE WEBSITE INSPECTION');
+  async runInspection(
+    options: {
+      portal?: "all" | "public" | "customer" | "farmer" | "admin";
+      quick?: boolean;
+    } = {},
+  ) {
+    logSection("🔍 STARTING COMPREHENSIVE WEBSITE INSPECTION");
 
-    const { portal = 'all', quick = false } = options;
+    const { portal = "all", quick = false } = options;
     let pagesToCheck = SITEMAP;
 
     // Filter pages based on portal
-    if (portal !== 'all') {
-      pagesToCheck = SITEMAP.filter(p => p.category === portal || p.category === 'public');
+    if (portal !== "all") {
+      pagesToCheck = SITEMAP.filter(
+        (p) => p.category === portal || p.category === "public",
+      );
     }
 
     // Quick mode: only check critical pages
     if (quick) {
-      pagesToCheck = pagesToCheck.filter(p => p.critical);
-      log('Quick mode: checking critical pages only', 'info');
+      pagesToCheck = pagesToCheck.filter((p) => p.critical);
+      log("Quick mode: checking critical pages only", "info");
     }
 
-    log(`Total pages to inspect: ${pagesToCheck.length}`, 'info');
+    log(`Total pages to inspect: ${pagesToCheck.length}`, "info");
 
     // Group pages by authentication requirement
-    const publicPages = pagesToCheck.filter(p => !p.requiresAuth);
-    const customerPages = pagesToCheck.filter(p => p.requiresAuth && p.userRole === 'customer');
-    const farmerPages = pagesToCheck.filter(p => p.requiresAuth && p.userRole === 'farmer');
-    const adminPages = pagesToCheck.filter(p => p.requiresAuth && p.userRole === 'admin');
+    const publicPages = pagesToCheck.filter((p) => !p.requiresAuth);
+    const customerPages = pagesToCheck.filter(
+      (p) => p.requiresAuth && p.userRole === "customer",
+    );
+    const farmerPages = pagesToCheck.filter(
+      (p) => p.requiresAuth && p.userRole === "farmer",
+    );
+    const adminPages = pagesToCheck.filter(
+      (p) => p.requiresAuth && p.userRole === "admin",
+    );
 
     // Inspect public pages
     logSection(`📄 PUBLIC PAGES (${publicPages.length})`);
@@ -674,9 +1009,12 @@ class WebsiteInspector {
     }
 
     // Inspect customer pages
-    if (customerPages.length > 0 && (portal === 'all' || portal === 'customer')) {
+    if (
+      customerPages.length > 0 &&
+      (portal === "all" || portal === "customer")
+    ) {
       logSection(`👤 CUSTOMER PORTAL PAGES (${customerPages.length})`);
-      const authenticated = await this.authenticate('customer');
+      const authenticated = await this.authenticate("customer");
 
       if (authenticated) {
         for (const page of customerPages) {
@@ -684,14 +1022,14 @@ class WebsiteInspector {
           this.results.push(result);
         }
       } else {
-        log('Skipping customer pages - authentication failed', 'warn');
-        customerPages.forEach(page => {
+        log("Skipping customer pages - authentication failed", "warn");
+        customerPages.forEach((page) => {
           this.results.push({
             path: page.path,
             name: page.name,
-            status: 'error',
+            status: "error",
             loadTime: 0,
-            errors: ['Authentication failed'],
+            errors: ["Authentication failed"],
             warnings: [],
             missingElements: [],
             brokenLinks: [],
@@ -705,16 +1043,18 @@ class WebsiteInspector {
 
       // Logout
       try {
-        await this.page!.goto(`${CONFIG.baseUrl}/api/auth/signout`, { waitUntil: 'networkidle' });
+        await this.page!.goto(`${CONFIG.baseUrl}/api/auth/signout`, {
+          waitUntil: "networkidle",
+        });
       } catch {
         // Ignore logout errors
       }
     }
 
     // Inspect farmer pages
-    if (farmerPages.length > 0 && (portal === 'all' || portal === 'farmer')) {
+    if (farmerPages.length > 0 && (portal === "all" || portal === "farmer")) {
       logSection(`🌾 FARMER PORTAL PAGES (${farmerPages.length})`);
-      const authenticated = await this.authenticate('farmer');
+      const authenticated = await this.authenticate("farmer");
 
       if (authenticated) {
         for (const page of farmerPages) {
@@ -722,14 +1062,14 @@ class WebsiteInspector {
           this.results.push(result);
         }
       } else {
-        log('Skipping farmer pages - authentication failed', 'warn');
-        farmerPages.forEach(page => {
+        log("Skipping farmer pages - authentication failed", "warn");
+        farmerPages.forEach((page) => {
           this.results.push({
             path: page.path,
             name: page.name,
-            status: 'error',
+            status: "error",
             loadTime: 0,
-            errors: ['Authentication failed'],
+            errors: ["Authentication failed"],
             warnings: [],
             missingElements: [],
             brokenLinks: [],
@@ -743,16 +1083,18 @@ class WebsiteInspector {
 
       // Logout
       try {
-        await this.page!.goto(`${CONFIG.baseUrl}/api/auth/signout`, { waitUntil: 'networkidle' });
+        await this.page!.goto(`${CONFIG.baseUrl}/api/auth/signout`, {
+          waitUntil: "networkidle",
+        });
       } catch {
         // Ignore logout errors
       }
     }
 
     // Inspect admin pages
-    if (adminPages.length > 0 && (portal === 'all' || portal === 'admin')) {
+    if (adminPages.length > 0 && (portal === "all" || portal === "admin")) {
       logSection(`👨‍💼 ADMIN PORTAL PAGES (${adminPages.length})`);
-      const authenticated = await this.authenticate('admin');
+      const authenticated = await this.authenticate("admin");
 
       if (authenticated) {
         for (const page of adminPages) {
@@ -760,14 +1102,14 @@ class WebsiteInspector {
           this.results.push(result);
         }
       } else {
-        log('Skipping admin pages - authentication failed', 'warn');
-        adminPages.forEach(page => {
+        log("Skipping admin pages - authentication failed", "warn");
+        adminPages.forEach((page) => {
           this.results.push({
             path: page.path,
             name: page.name,
-            status: 'error',
+            status: "error",
             loadTime: 0,
-            errors: ['Authentication failed'],
+            errors: ["Authentication failed"],
             warnings: [],
             missingElements: [],
             brokenLinks: [],
@@ -784,32 +1126,42 @@ class WebsiteInspector {
   // Generate comprehensive report
   generateReport(): InspectionReport {
     const totalDuration = Date.now() - this.startTime.getTime();
-    const successful = this.results.filter(r => r.status === 'success').length;
-    const errors = this.results.filter(r => r.status === 'error').length;
-    const warnings = this.results.filter(r => r.status === 'warning').length;
-    const missing = this.results.filter(r => r.status === 'missing').length;
+    const successful = this.results.filter(
+      (r) => r.status === "success",
+    ).length;
+    const errors = this.results.filter((r) => r.status === "error").length;
+    const warnings = this.results.filter((r) => r.status === "warning").length;
+    const missing = this.results.filter((r) => r.status === "missing").length;
 
     const criticalIssues: string[] = [];
     const recommendations: string[] = [];
 
     // Identify critical issues
-    this.results.forEach(result => {
-      if (result.status === 'error' || result.status === 'missing') {
-        const page = SITEMAP.find(p => p.path === result.path);
+    this.results.forEach((result) => {
+      if (result.status === "error" || result.status === "missing") {
+        const page = SITEMAP.find((p) => p.path === result.path);
         if (page?.critical) {
-          criticalIssues.push(`CRITICAL: ${result.name} (${result.path}) - ${result.errors.join(', ')}`);
+          criticalIssues.push(
+            `CRITICAL: ${result.name} (${result.path}) - ${result.errors.join(", ")}`,
+          );
         }
       }
 
       // Collect recommendations
       if (result.seoIssues.length > 0) {
-        recommendations.push(`${result.name}: Fix SEO issues (${result.seoIssues.length})`);
+        recommendations.push(
+          `${result.name}: Fix SEO issues (${result.seoIssues.length})`,
+        );
       }
       if (result.a11yIssues.length > 0) {
-        recommendations.push(`${result.name}: Fix accessibility issues (${result.a11yIssues.length})`);
+        recommendations.push(
+          `${result.name}: Fix accessibility issues (${result.a11yIssues.length})`,
+        );
       }
       if (result.brokenLinks.length > 0) {
-        recommendations.push(`${result.name}: Fix broken links (${result.brokenLinks.length})`);
+        recommendations.push(
+          `${result.name}: Fix broken links (${result.brokenLinks.length})`,
+        );
       }
     });
 
@@ -831,20 +1183,32 @@ class WebsiteInspector {
 
   // Print report to console
   printReport(report: InspectionReport) {
-    logSection('📊 INSPECTION REPORT SUMMARY');
+    logSection("📊 INSPECTION REPORT SUMMARY");
 
     const c = CONFIG.colors;
     console.log(`\n${c.bright}Overall Status:${c.reset}`);
     console.log(`  Total Pages:     ${report.summary.totalPages}`);
-    console.log(`  ${c.green}✅ Successful:   ${report.summary.successful}${c.reset}`);
-    console.log(`  ${c.yellow}⚠️  Warnings:     ${report.summary.warnings}${c.reset}`);
-    console.log(`  ${c.red}❌ Errors:       ${report.summary.errors}${c.reset}`);
-    console.log(`  ${c.red}🔍 Missing:      ${report.summary.missing}${c.reset}`);
-    console.log(`  Total Duration: ${(report.summary.totalDuration / 1000).toFixed(2)}s`);
+    console.log(
+      `  ${c.green}✅ Successful:   ${report.summary.successful}${c.reset}`,
+    );
+    console.log(
+      `  ${c.yellow}⚠️  Warnings:     ${report.summary.warnings}${c.reset}`,
+    );
+    console.log(
+      `  ${c.red}❌ Errors:       ${report.summary.errors}${c.reset}`,
+    );
+    console.log(
+      `  ${c.red}🔍 Missing:      ${report.summary.missing}${c.reset}`,
+    );
+    console.log(
+      `  Total Duration: ${(report.summary.totalDuration / 1000).toFixed(2)}s`,
+    );
 
     // Critical issues
     if (report.criticalIssues.length > 0) {
-      console.log(`\n${c.bright}${c.red}🚨 CRITICAL ISSUES (${report.criticalIssues.length}):${c.reset}`);
+      console.log(
+        `\n${c.bright}${c.red}🚨 CRITICAL ISSUES (${report.criticalIssues.length}):${c.reset}`,
+      );
       report.criticalIssues.forEach((issue, i) => {
         console.log(`  ${i + 1}. ${issue}`);
       });
@@ -854,49 +1218,65 @@ class WebsiteInspector {
 
     // Top recommendations
     if (report.recommendations.length > 0) {
-      console.log(`\n${c.bright}💡 TOP RECOMMENDATIONS (${Math.min(10, report.recommendations.length)}):${c.reset}`);
+      console.log(
+        `\n${c.bright}💡 TOP RECOMMENDATIONS (${Math.min(10, report.recommendations.length)}):${c.reset}`,
+      );
       report.recommendations.slice(0, 10).forEach((rec, i) => {
         console.log(`  ${i + 1}. ${rec}`);
       });
     }
 
     // Category breakdown
-    const categories = ['public', 'customer', 'farmer', 'admin', 'auth', 'legal', 'api'];
+    const categories = [
+      "public",
+      "customer",
+      "farmer",
+      "admin",
+      "auth",
+      "legal",
+      "api",
+    ];
     console.log(`\n${c.bright}📂 BREAKDOWN BY CATEGORY:${c.reset}`);
 
-    categories.forEach(category => {
-      const categoryResults = report.results.filter(r => {
-        const page = SITEMAP.find(p => p.path === r.path);
+    categories.forEach((category) => {
+      const categoryResults = report.results.filter((r) => {
+        const page = SITEMAP.find((p) => p.path === r.path);
         return page?.category === category;
       });
 
       if (categoryResults.length > 0) {
-        const success = categoryResults.filter(r => r.status === 'success').length;
+        const success = categoryResults.filter(
+          (r) => r.status === "success",
+        ).length;
         const total = categoryResults.length;
         const percentage = ((success / total) * 100).toFixed(1);
 
-        console.log(`  ${category.toUpperCase().padEnd(10)} ${success}/${total} (${percentage}%)`);
+        console.log(
+          `  ${category.toUpperCase().padEnd(10)} ${success}/${total} (${percentage}%)`,
+        );
       }
     });
 
     // Detailed errors
-    const errorResults = report.results.filter(r => r.status === 'error' || r.status === 'missing');
+    const errorResults = report.results.filter(
+      (r) => r.status === "error" || r.status === "missing",
+    );
     if (errorResults.length > 0) {
       console.log(`\n${c.bright}${c.red}❌ DETAILED ERRORS:${c.reset}`);
-      errorResults.forEach(result => {
+      errorResults.forEach((result) => {
         console.log(`\n  ${result.name} (${result.path})`);
-        console.log(`  Status Code: ${result.statusCode || 'N/A'}`);
-        result.errors.forEach(error => {
+        console.log(`  Status Code: ${result.statusCode || "N/A"}`);
+        result.errors.forEach((error) => {
           console.log(`    - ${error}`);
         });
       });
     }
 
     // Performance issues
-    const slowPages = report.results.filter(r => r.loadTime > 3000);
+    const slowPages = report.results.filter((r) => r.loadTime > 3000);
     if (slowPages.length > 0) {
       console.log(`\n${c.bright}⏱️  SLOW PAGES (>${3}s):${c.reset}`);
-      slowPages.forEach(page => {
+      slowPages.forEach((page) => {
         console.log(`  ${page.name}: ${(page.loadTime / 1000).toFixed(2)}s`);
       });
     }
@@ -904,24 +1284,27 @@ class WebsiteInspector {
 
   // Save report to file
   saveReport(report: InspectionReport) {
-    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
     const filename = `inspection-report-${timestamp}.json`;
     const filepath = join(CONFIG.reportDir, filename);
 
     writeFileSync(filepath, JSON.stringify(report, null, 2));
-    log(`Report saved to: ${filepath}`, 'success');
+    log(`Report saved to: ${filepath}`, "success");
 
     // Also save a simplified HTML report
     const htmlFilename = `inspection-report-${timestamp}.html`;
     const htmlFilepath = join(CONFIG.reportDir, htmlFilename);
     const htmlReport = this.generateHTMLReport(report);
     writeFileSync(htmlFilepath, htmlReport);
-    log(`HTML report saved to: ${htmlFilepath}`, 'success');
+    log(`HTML report saved to: ${htmlFilepath}`, "success");
   }
 
   // Generate HTML report
   generateHTMLReport(report: InspectionReport): string {
-    const successRate = ((report.summary.successful / report.summary.totalPages) * 100).toFixed(1);
+    const successRate = (
+      (report.summary.successful / report.summary.totalPages) *
+      100
+    ).toFixed(1);
 
     return `
 <!DOCTYPE html>
@@ -1044,23 +1427,34 @@ class WebsiteInspector {
     </div>
   </div>
 
-  ${report.criticalIssues.length > 0 ? `
+  ${
+    report.criticalIssues.length > 0
+      ? `
   <div class="critical-issues">
     <h2>🚨 Critical Issues (${report.criticalIssues.length})</h2>
     <ul>
-      ${report.criticalIssues.map(issue => `<li>${issue}</li>`).join('')}
+      ${report.criticalIssues.map((issue) => `<li>${issue}</li>`).join("")}
     </ul>
   </div>
-  ` : '<div class="card"><p style="color: #10b981; font-weight: bold;">✅ No critical issues found!</p></div>'}
+  `
+      : '<div class="card"><p style="color: #10b981; font-weight: bold;">✅ No critical issues found!</p></div>'
+  }
 
-  ${report.recommendations.length > 0 ? `
+  ${
+    report.recommendations.length > 0
+      ? `
   <div class="recommendations">
     <h2>💡 Recommendations (${report.recommendations.length})</h2>
     <ul>
-      ${report.recommendations.slice(0, 20).map(rec => `<li>${rec}</li>`).join('')}
+      ${report.recommendations
+        .slice(0, 20)
+        .map((rec) => `<li>${rec}</li>`)
+        .join("")}
     </ul>
   </div>
-  ` : ''}
+  `
+      : ""
+  }
 
   <div class="card">
     <h2>📄 Detailed Results</h2>
@@ -1076,7 +1470,9 @@ class WebsiteInspector {
           </tr>
         </thead>
         <tbody>
-          ${report.results.map(result => `
+          ${report.results
+            .map(
+              (result) => `
             <tr>
               <td><strong>${result.name}</strong></td>
               <td><code>${result.path}</code></td>
@@ -1087,12 +1483,14 @@ class WebsiteInspector {
               </td>
               <td>${result.loadTime}ms</td>
               <td>
-                ${result.errors.length > 0 ? `<span class="error">❌ ${result.errors.length}</span>` : ''}
-                ${result.warnings.length > 0 ? `<span class="warning">⚠️ ${result.warnings.length}</span>` : ''}
-                ${result.errors.length === 0 && result.warnings.length === 0 ? '<span class="success">✅</span>' : ''}
+                ${result.errors.length > 0 ? `<span class="error">❌ ${result.errors.length}</span>` : ""}
+                ${result.warnings.length > 0 ? `<span class="warning">⚠️ ${result.warnings.length}</span>` : ""}
+                ${result.errors.length === 0 && result.warnings.length === 0 ? '<span class="success">✅</span>' : ""}
               </td>
             </tr>
-          `).join('')}
+          `,
+            )
+            .join("")}
         </tbody>
       </table>
     </div>
@@ -1112,7 +1510,7 @@ class WebsiteInspector {
     if (this.page) await this.page.close();
     if (this.context) await this.context.close();
     if (this.browser) await this.browser.close();
-    log('Cleanup completed', 'success');
+    log("Cleanup completed", "success");
   }
 }
 
@@ -1122,11 +1520,16 @@ class WebsiteInspector {
 
 async function main() {
   const args = process.argv.slice(2);
-  const portal = args.includes('--portal')
-    ? args[args.indexOf('--portal') + 1] as 'all' | 'public' | 'customer' | 'farmer' | 'admin'
-    : 'all';
-  const quick = args.includes('--quick');
-  const help = args.includes('--help') || args.includes('-h');
+  const portal = args.includes("--portal")
+    ? (args[args.indexOf("--portal") + 1] as
+        | "all"
+        | "public"
+        | "customer"
+        | "farmer"
+        | "admin")
+    : "all";
+  const quick = args.includes("--quick");
+  const help = args.includes("--help") || args.includes("-h");
 
   if (help) {
     console.log(`
@@ -1160,19 +1563,18 @@ Examples:
     inspector.printReport(report);
     inspector.saveReport(report);
 
-    logSection('✅ INSPECTION COMPLETE');
+    logSection("✅ INSPECTION COMPLETE");
 
     // Exit with appropriate code
     if (report.summary.errors > 0 || report.criticalIssues.length > 0) {
-      log('Inspection completed with errors', 'error');
+      log("Inspection completed with errors", "error");
       process.exit(1);
     } else {
-      log('Inspection completed successfully!', 'success');
+      log("Inspection completed successfully!", "success");
       process.exit(0);
     }
-
   } catch (error) {
-    log(`Fatal error: ${error}`, 'error');
+    log(`Fatal error: ${error}`, "error");
     console.error(error);
     process.exit(1);
   } finally {
@@ -1181,9 +1583,6 @@ Examples:
 }
 
 // Run if executed directly
-if (require.main === module) {
-  main();
-}
+main();
 
 export { InspectionReport, InspectionResult, WebsiteInspector };
-

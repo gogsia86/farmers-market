@@ -210,7 +210,10 @@ export default async function OrdersPage({ searchParams }: PageProps) {
         {/* Orders List */}
         {orders.length === 0 ? (
           <div className="rounded-lg bg-white p-12 text-center shadow">
-            <Package className="mx-auto h-12 w-12 text-gray-400" />
+            <Package
+              className="mx-auto h-12 w-12 text-gray-500"
+              aria-hidden="true"
+            />
             <h3 className="mt-4 text-lg font-semibold text-gray-900">
               No orders found
             </h3>
@@ -284,7 +287,10 @@ export default async function OrdersPage({ searchParams }: PageProps) {
                             {formatCurrency(Number(order.total))}
                           </p>
                         </div>
-                        <ChevronRight className="h-5 w-5 text-gray-400" />
+                        <ChevronRight
+                          className="h-5 w-5 text-gray-500"
+                          aria-hidden="true"
+                        />
                       </div>
                     </div>
 

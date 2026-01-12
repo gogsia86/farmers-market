@@ -213,7 +213,9 @@ export function RegisterForm({
               />
             </svg>
           </div>
-          <h2 className="text-3xl font-bold text-gray-900">Create Account</h2>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Create Your Account
+          </h1>
           <p className="text-gray-600 mt-2">Join our agricultural community</p>
         </div>
 
@@ -300,11 +302,12 @@ export function RegisterForm({
                     className={`w-8 h-8 ${
                       formData.role === "CONSUMER"
                         ? "text-green-600"
-                        : "text-gray-400"
+                        : "text-gray-500"
                     }`}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
+                    aria-hidden="true"
                   >
                     <path
                       strokeLinecap="round"
@@ -323,7 +326,7 @@ export function RegisterForm({
                 >
                   Customer
                 </span>
-                <p className="text-xs text-gray-500 mt-1 pointer-events-none">
+                <p className="text-xs text-gray-600 mt-1 pointer-events-none">
                   Buy fresh produce
                 </p>
               </button>
@@ -346,11 +349,12 @@ export function RegisterForm({
                     className={`w-8 h-8 ${
                       formData.role === "FARMER"
                         ? "text-green-600"
-                        : "text-gray-400"
+                        : "text-gray-500"
                     }`}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
+                    aria-hidden="true"
                   >
                     <path
                       strokeLinecap="round"
@@ -369,7 +373,7 @@ export function RegisterForm({
                 >
                   Farmer
                 </span>
-                <p className="text-xs text-gray-500 mt-1 pointer-events-none">
+                <p className="text-xs text-gray-600 mt-1 pointer-events-none">
                   Sell your products
                 </p>
               </button>
@@ -400,7 +404,7 @@ export function RegisterForm({
               placeholder="John Doe"
               autoComplete="name"
             />
-            <p className="mt-1 text-xs text-gray-500">
+            <p className="mt-1 text-xs text-gray-600">
               Enter your full name (first and last)
             </p>
           </div>

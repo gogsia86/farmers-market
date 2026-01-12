@@ -33,7 +33,7 @@ export default defineConfig({
   // Migration configuration
   migrations: {
     path: "prisma/migrations",
-    seed: "tsx prisma/seed-basic.ts",
+    seed: "tsx prisma/seed-sibenik-croatia.ts",
   },
 
   // Database datasource configuration

@@ -305,7 +305,7 @@ export default async function MarketplacePage() {
       {/* Hero Section */}
       <div className="text-center mb-12">
         <h1 className="text-4xl md:text-5xl font-bold mb-4">
-          🌾 Farmers Market Platform
+          Fresh Local Produce Marketplace
         </h1>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-6">
           Discover fresh, locally-grown produce directly from farmers in your
@@ -402,9 +402,9 @@ export default async function MarketplacePage() {
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Marketplace | Farmers Market Platform",
+  title: "Fresh Local Produce | Farmers Market",
   description:
-    "Discover fresh, locally-grown produce directly from farmers in your area",
+    "Browse and buy fresh, locally-grown produce from verified farmers in your area. Support local agriculture and enjoy farm-fresh products delivered to your door.",
 };
 
 // Metadata is already defined at top with revalidate

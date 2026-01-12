@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
-  title: "Register as Farmer | Farmers Market Platform",
-  description: "Join as a farmer and start selling your products",
+  title: "Register Your Farm | Farmers Market",
+  description:
+    "Join our platform to sell your fresh produce directly to local customers. Create your farm profile and start selling today.",
 };
 
 /**

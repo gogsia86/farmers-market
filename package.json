@@ -66,6 +66,7 @@
     "test:security": "jest tests/security/security-scanner.test.ts --runInBand --detectOpenHandles",
     "///// TEST USERS MANAGEMENT /////": "",
     "test:users:create": "tsx scripts/create-test-users.ts",
+    "test:users:production": "tsx scripts/create-production-test-users.ts",
     "///// COMPREHENSIVE WEBSITE INSPECTION /////": "",
     "inspect:website": "tsx scripts/comprehensive-website-inspector.ts",
     "inspect:website:quick": "tsx scripts/comprehensive-website-inspector.ts -- --quick",

@@ -4,9 +4,9 @@ import Link from "next/link";
 import { Suspense } from "react";
 
 export const metadata: Metadata = {
-  title: "Register | Farmers Market Platform",
+  title: "Register | Farmers Market",
   description:
-    "Create your Farmers Market account - Join our agricultural community",
+    "Create your Farmers Market account to buy fresh local produce or sell your farm products. Join our agricultural community today.",
 };
 
 // Force dynamic rendering to prevent static optimization issues

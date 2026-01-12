@@ -229,8 +229,9 @@ export default async function OrderDetailsPage({ params }: PageProps) {
                                 "h-5 w-5",
                                 isCompleted
                                   ? "text-green-600"
-                                  : "text-gray-400",
+                                  : "text-gray-500",
                               )}
+                              aria-hidden="true"
                             />
                           </div>
                           <div className="ml-4 flex-1">
@@ -307,7 +308,10 @@ export default async function OrderDetailsPage({ params }: PageProps) {
                         />
                       ) : (
                         <div className="flex h-20 w-20 items-center justify-center rounded-lg bg-gray-100">
-                          <Package className="h-10 w-10 text-gray-400" />
+                          <Package
+                            className="h-10 w-10 text-gray-500"
+                            aria-hidden="true"
+                          />
                         </div>
                       )}
                     </Link>
@@ -462,7 +466,10 @@ export default async function OrderDetailsPage({ params }: PageProps) {
                 </Link>
                 <div className="mt-4 space-y-3">
                   <div className="flex items-start">
-                    <MapPin className="mr-3 mt-0.5 h-5 w-5 flex-shrink-0 text-gray-400" />
+                    <MapPin
+                      className="mr-3 mt-0.5 h-5 w-5 flex-shrink-0 text-gray-500"
+                      aria-hidden="true"
+                    />
                     <div className="text-sm text-gray-600">
                       <p>{order.farm.address}</p>
                       <p>
@@ -472,7 +479,10 @@ export default async function OrderDetailsPage({ params }: PageProps) {
                     </div>
                   </div>
                   <div className="flex items-start">
-                    <Phone className="mr-3 mt-0.5 h-5 w-5 flex-shrink-0 text-gray-400" />
+                    <Phone
+                      className="mr-3 mt-0.5 h-5 w-5 flex-shrink-0 text-gray-500"
+                      aria-hidden="true"
+                    />
                     <a
                       href={`tel:${order.farm.phone}`}
                       className="text-sm text-gray-600 hover:text-green-600"
@@ -481,7 +491,10 @@ export default async function OrderDetailsPage({ params }: PageProps) {
                     </a>
                   </div>
                   <div className="flex items-start">
-                    <Mail className="mr-3 mt-0.5 h-5 w-5 flex-shrink-0 text-gray-400" />
+                    <Mail
+                      className="mr-3 mt-0.5 h-5 w-5 flex-shrink-0 text-gray-500"
+                      aria-hidden="true"
+                    />
                     <a
                       href={`mailto:${order.farm.email}`}
                       className="text-sm text-gray-600 hover:text-green-600"

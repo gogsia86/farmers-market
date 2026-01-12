@@ -352,9 +352,12 @@ export default function AdminUsersPage() {
           <form onSubmit={handleSearch} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="md:col-span-2">
-                <Label htmlFor="search">Search</Label>
+                <Label htmlFor="search">Search Users</Label>
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Search
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-600"
+                    aria-hidden="true"
+                  />
                   <Input
                     id="search"
                     type="text"
@@ -362,6 +365,7 @@ export default function AdminUsersPage() {
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     className="pl-10"
+                    aria-label="Search users by name or email"
                   />
                 </div>
               </div>
@@ -404,8 +408,12 @@ export default function AdminUsersPage() {
               </div>
             </div>
 
-            <Button type="submit" className="w-full md:w-auto">
-              <Search className="h-4 w-4 mr-2" />
+            <Button
+              type="submit"
+              className="w-full md:w-auto"
+              aria-label="Submit search"
+            >
+              <Search className="h-4 w-4 mr-2" aria-hidden="true" />
               Search
             </Button>
           </form>

@@ -201,10 +201,11 @@ export default async function CustomerDashboardPage() {
             {orders.length === 0 ? (
               <div className="text-center py-12">
                 <svg
-                  className="mx-auto h-12 w-12 text-gray-400"
+                  className="mx-auto h-12 w-12 text-gray-500"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
+                  aria-hidden="true"
                 >
                   <path
                     strokeLinecap="round"
@@ -277,10 +278,11 @@ export default async function CustomerDashboardPage() {
                           </p>
                         </div>
                         <svg
-                          className="w-5 h-5 text-gray-400 group-hover:text-green-600 ml-4"
+                          className="w-5 h-5 text-gray-500 group-hover:text-green-600 ml-4"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
+                          aria-hidden="true"
                         >
                           <path
                             strokeLinecap="round"
@@ -315,10 +317,11 @@ export default async function CustomerDashboardPage() {
             {favorites.length === 0 ? (
               <div className="text-center py-12">
                 <svg
-                  className="mx-auto h-12 w-12 text-gray-400"
+                  className="mx-auto h-12 w-12 text-gray-500"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
+                  aria-hidden="true"
                 >
                   <path
                     strokeLinecap="round"

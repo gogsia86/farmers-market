@@ -171,7 +171,10 @@ export default async function OrderConfirmationPage({ params }: PageProps) {
                       />
                     ) : (
                       <div className="flex h-16 w-16 items-center justify-center rounded-lg bg-gray-100">
-                        <Package className="h-8 w-8 text-gray-400" />
+                        <Package
+                          className="h-8 w-8 text-gray-500"
+                          aria-hidden="true"
+                        />
                       </div>
                     )}
                     <div>
@@ -239,7 +242,10 @@ export default async function OrderConfirmationPage({ params }: PageProps) {
             </h3>
             <div className="space-y-3">
               <div className="flex items-start">
-                <MapPin className="mr-3 mt-1 h-5 w-5 flex-shrink-0 text-gray-400" />
+                <MapPin
+                  className="mr-3 mt-1 h-5 w-5 flex-shrink-0 text-gray-500"
+                  aria-hidden="true"
+                />
                 <div>
                   <p className="text-sm font-medium text-gray-900">Location</p>
                   <p className="text-sm text-gray-600">
@@ -248,14 +254,20 @@ export default async function OrderConfirmationPage({ params }: PageProps) {
                 </div>
               </div>
               <div className="flex items-start">
-                <Phone className="mr-3 mt-1 h-5 w-5 flex-shrink-0 text-gray-400" />
+                <Phone
+                  className="mr-3 mt-1 h-5 w-5 flex-shrink-0 text-gray-500"
+                  aria-hidden="true"
+                />
                 <div>
                   <p className="text-sm font-medium text-gray-900">Phone</p>
                   <p className="text-sm text-gray-600">{order.farm.phone}</p>
                 </div>
               </div>
               <div className="flex items-start">
-                <Mail className="mr-3 mt-1 h-5 w-5 flex-shrink-0 text-gray-400" />
+                <Mail
+                  className="mr-3 mt-1 h-5 w-5 flex-shrink-0 text-gray-500"
+                  aria-hidden="true"
+                />
                 <div>
                   <p className="text-sm font-medium text-gray-900">Email</p>
                   <p className="text-sm text-gray-600">{order.farm.email}</p>

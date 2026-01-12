@@ -207,13 +207,13 @@ export default function AdminFarmsPage() {
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
           <div className="bg-white rounded-lg shadow p-6">
-            <div className="text-sm font-medium text-gray-500">Total Farms</div>
+            <div className="text-sm font-medium text-gray-700">Total Farms</div>
             <div className="text-2xl font-bold text-gray-900 mt-2">
               {farms.length}
             </div>
           </div>
           <div className="bg-white rounded-lg shadow p-6">
-            <div className="text-sm font-medium text-gray-500">
+            <div className="text-sm font-medium text-gray-700">
               Pending Review
             </div>
             <div className="text-2xl font-bold text-yellow-600 mt-2">
@@ -221,13 +221,13 @@ export default function AdminFarmsPage() {
             </div>
           </div>
           <div className="bg-white rounded-lg shadow p-6">
-            <div className="text-sm font-medium text-gray-500">Verified</div>
+            <div className="text-sm font-medium text-gray-700">Verified</div>
             <div className="text-2xl font-bold text-green-600 mt-2">
               {farms.filter((f) => f.verificationStatus === "VERIFIED").length}
             </div>
           </div>
           <div className="bg-white rounded-lg shadow p-6">
-            <div className="text-sm font-medium text-gray-500">Rejected</div>
+            <div className="text-sm font-medium text-gray-700">Rejected</div>
             <div className="text-2xl font-bold text-red-600 mt-2">
               {farms.filter((f) => f.verificationStatus === "REJECTED").length}
             </div>
@@ -258,12 +258,17 @@ export default function AdminFarmsPage() {
 
             {/* Search */}
             <div className="flex-1">
+              <label htmlFor="farm-search" className="sr-only">
+                Search farms by name, email, or owner
+              </label>
               <input
+                id="farm-search"
                 type="text"
                 placeholder="Search farms by name, email, or owner..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                aria-label="Search farms"
               />
             </div>
           </div>
@@ -276,6 +281,7 @@ export default function AdminFarmsPage() {
             <button
               onClick={fetchFarms}
               className="text-red-600 hover:text-red-700 font-medium mt-2"
+              aria-label="Retry loading farms"
             >
               Try Again
             </button>
@@ -294,10 +300,11 @@ export default function AdminFarmsPage() {
         {!isLoading && filteredFarms.length === 0 && (
           <div className="bg-white rounded-lg shadow p-12 text-center">
             <svg
-              className="mx-auto h-12 w-12 text-gray-400 mb-4"
+              className="mx-auto h-12 w-12 text-gray-500 mb-4"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
+              aria-hidden="true"
             >
               <path
                 strokeLinecap="round"
@@ -421,7 +428,7 @@ export default function AdminFarmsPage() {
                       )}
 
                       {/* Timestamps */}
-                      <div className="flex gap-4 text-xs text-gray-400 mt-3">
+                      <div className="flex gap-4 text-xs text-gray-600 mt-3">
                         <span>
                           Created:{" "}
                           {new Date(farm.createdAt).toLocaleDateString()}

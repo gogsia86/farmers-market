@@ -20,6 +20,8 @@ export interface RedisCacheConfig {
   keyPrefix: string;
   maxRetries: number;
   retryStrategy?: (times: number) => number;
+  tls?: boolean;
+  username?: string;
 }
 
 export interface CacheOptions {
@@ -74,9 +76,21 @@ class RedisQuantumClient {
         host: this.config.host,
         port: this.config.port,
         password: this.config.password,
+        username: this.config.username,
         db: this.config.db || 0,
         retryStrategy:
           this.config.retryStrategy || ((times) => Math.min(times * 100, 3000)),
+        tls: this.config.tls
+          ? {
+              rejectUnauthorized: false, // Allow self-signed certificates for Redis Cloud
+              servername: this.config.host,
+            }
+          : undefined,
+        enableOfflineQueue: true,
+        enableReadyCheck: true,
+        maxRetriesPerRequest: 3,
+        lazyConnect: false,
+        showFriendlyErrorStack: process.env.NODE_ENV === "development",
       });
 
       this.client.on("error", (error) => {
@@ -368,9 +382,11 @@ export function getRedisCache(): RedisCacheService {
       host: process.env.REDIS_HOST || "localhost",
       port: Number.parseInt(process.env.REDIS_PORT || "6379", 10),
       password: process.env.REDIS_PASSWORD,
+      username: process.env.REDIS_USERNAME || "default",
       db: Number.parseInt(process.env.REDIS_DB || "0", 10),
       keyPrefix: process.env.REDIS_KEY_PREFIX || "fm:",
       maxRetries: 3,
+      tls: process.env.REDIS_TLS_ENABLED === "true",
     };
 
     redisInstance = new RedisCacheService(config);

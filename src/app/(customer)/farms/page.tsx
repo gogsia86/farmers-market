@@ -50,8 +50,9 @@ type FarmListingItem = Pick<
 };
 
 export const metadata: Metadata = {
-  title: "Browse Farms | Farmers Market Platform",
-  description: "Discover local farms and their fresh, organic produce",
+  title: "Local Farms | Farmers Market",
+  description:
+    "Discover local farms near you and their fresh, organic produce. Support sustainable agriculture and buy directly from farmers.",
 };
 
 // ============================================================================
@@ -175,12 +176,13 @@ export default async function FarmsPage() {
 
                     {/* Location */}
                     {(farm.city || farm.state) && (
-                      <div className="mb-3 flex items-center text-sm text-gray-500">
+                      <div className="mb-3 flex items-center text-sm text-gray-600">
                         <svg
                           className="mr-1 h-4 w-4"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
+                          aria-hidden="true"
                         >
                           <path
                             strokeLinecap="round"
@@ -212,7 +214,7 @@ export default async function FarmsPage() {
 
                     {/* Product Count */}
                     {farm._count?.products !== undefined && (
-                      <div className="mb-3 text-sm text-gray-600">
+                      <div className="mb-3 text-sm text-gray-700">
                         {farm._count.products} product
                         {farm._count.products !== 1 ? "s" : ""} available
                       </div>

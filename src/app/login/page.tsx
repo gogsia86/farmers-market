@@ -3,8 +3,9 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 
 export const metadata: Metadata = {
-  title: "Login | Farmers Market Platform",
-  description: "Sign in to your Farmers Market account",
+  title: "Login | Farmers Market",
+  description:
+    "Sign in to your account to access fresh local produce, manage orders, and connect with local farmers.",
 };
 
 // Loading fallback component

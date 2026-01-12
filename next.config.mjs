@@ -1,6 +1,5 @@
-import { withSentryConfig } from "@sentry/nextjs";
-import { fileURLToPath } from "url";
 import bundleAnalyzer from "@next/bundle-analyzer";
+import { withSentryConfig } from "@sentry/nextjs";
 
 // Bundle analyzer for performance optimization
 const withBundleAnalyzer = bundleAnalyzer({
@@ -202,7 +201,8 @@ const nextConfig = {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://js.stripe.com https://www.googletagmanager.com",
+              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://js.stripe.com https://www.googletagmanager.com blob:",
+              "worker-src 'self' blob:",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "img-src 'self' data: blob: https: http://localhost:*",
               "font-src 'self' data: https://fonts.gstatic.com",
