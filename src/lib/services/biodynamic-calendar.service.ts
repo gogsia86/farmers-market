@@ -8,29 +8,29 @@
  */
 
 export enum Season {
-  SPRING = 'SPRING',
-  SUMMER = 'SUMMER',
-  FALL = 'FALL',
-  WINTER = 'WINTER'
+  SPRING = "SPRING",
+  SUMMER = "SUMMER",
+  FALL = "FALL",
+  WINTER = "WINTER",
 }
 
 export enum LunarPhase {
-  NEW_MOON = 'NEW_MOON',
-  WAXING_CRESCENT = 'WAXING_CRESCENT',
-  FIRST_QUARTER = 'FIRST_QUARTER',
-  WAXING_GIBBOUS = 'WAXING_GIBBOUS',
-  FULL_MOON = 'FULL_MOON',
-  WANING_GIBBOUS = 'WANING_GIBBOUS',
-  LAST_QUARTER = 'LAST_QUARTER',
-  WANING_CRESCENT = 'WANING_CRESCENT'
+  NEW_MOON = "NEW_MOON",
+  WAXING_CRESCENT = "WAXING_CRESCENT",
+  FIRST_QUARTER = "FIRST_QUARTER",
+  WAXING_GIBBOUS = "WAXING_GIBBOUS",
+  FULL_MOON = "FULL_MOON",
+  WANING_GIBBOUS = "WANING_GIBBOUS",
+  LAST_QUARTER = "LAST_QUARTER",
+  WANING_CRESCENT = "WANING_CRESCENT",
 }
 
 export enum CropType {
-  ROOT = 'ROOT',
-  LEAFY = 'LEAFY',
-  FRUIT = 'FRUIT',
-  FLOWER = 'FLOWER',
-  SEED = 'SEED'
+  ROOT = "ROOT",
+  LEAFY = "LEAFY",
+  FRUIT = "FRUIT",
+  FLOWER = "FLOWER",
+  SEED = "SEED",
 }
 
 export interface BiodynamicContext {
@@ -51,10 +51,10 @@ export interface PlantingWindow {
 
 // Agricultural operations by season
 const SEASONAL_OPERATIONS: Record<Season, string[]> = {
-  [Season.SPRING]: ['PLANT', 'PREPARE_SOIL', 'FERTILIZE', 'PRUNE'],
-  [Season.SUMMER]: ['WATER', 'WEED', 'MONITOR', 'HARVEST_EARLY'],
-  [Season.FALL]: ['HARVEST', 'PRESERVE', 'COMPOST', 'PREPARE_WINTER'],
-  [Season.WINTER]: ['REST', 'PLAN', 'REPAIR', 'INDOOR_GROWING']
+  [Season.SPRING]: ["PLANT", "PREPARE_SOIL", "FERTILIZE", "PRUNE"],
+  [Season.SUMMER]: ["WATER", "WEED", "MONITOR", "HARVEST_EARLY"],
+  [Season.FALL]: ["HARVEST", "PRESERVE", "COMPOST", "PREPARE_WINTER"],
+  [Season.WINTER]: ["REST", "PLAN", "REPAIR", "INDOOR_GROWING"],
 };
 
 // Optimal lunar phases for different crop types (biodynamic principles)
@@ -62,25 +62,16 @@ const OPTIMAL_PHASES_BY_CROP: Record<CropType, LunarPhase[]> = {
   [CropType.ROOT]: [
     LunarPhase.WANING_GIBBOUS,
     LunarPhase.LAST_QUARTER,
-    LunarPhase.WANING_CRESCENT
+    LunarPhase.WANING_CRESCENT,
   ],
   [CropType.LEAFY]: [
     LunarPhase.WAXING_CRESCENT,
     LunarPhase.FIRST_QUARTER,
-    LunarPhase.WAXING_GIBBOUS
+    LunarPhase.WAXING_GIBBOUS,
   ],
-  [CropType.FRUIT]: [
-    LunarPhase.FULL_MOON,
-    LunarPhase.WAXING_GIBBOUS
-  ],
-  [CropType.FLOWER]: [
-    LunarPhase.FIRST_QUARTER,
-    LunarPhase.WAXING_GIBBOUS
-  ],
-  [CropType.SEED]: [
-    LunarPhase.FULL_MOON,
-    LunarPhase.WANING_GIBBOUS
-  ]
+  [CropType.FRUIT]: [LunarPhase.FULL_MOON, LunarPhase.WAXING_GIBBOUS],
+  [CropType.FLOWER]: [LunarPhase.FIRST_QUARTER, LunarPhase.WAXING_GIBBOUS],
+  [CropType.SEED]: [LunarPhase.FULL_MOON, LunarPhase.WANING_GIBBOUS],
 };
 
 /**
@@ -113,7 +104,7 @@ export class BiodynamicCalendarService {
     // Simplified lunar age calculation
     const c = Math.floor(year / 100);
     const e = c - Math.floor(c / 4) - 8;
-    const g = ((year % 19) * 11) + 24;
+    const g = (year % 19) * 11 + 24;
     const h = (g - e) % 30;
     const i = h + Math.floor(month / 2.0) + day - 4;
 
@@ -155,7 +146,7 @@ export class BiodynamicCalendarService {
     const isOptimalPlanting = [
       LunarPhase.WAXING_CRESCENT,
       LunarPhase.FIRST_QUARTER,
-      LunarPhase.WAXING_GIBBOUS
+      LunarPhase.WAXING_GIBBOUS,
     ].includes(lunarPhase);
 
     return {
@@ -163,7 +154,7 @@ export class BiodynamicCalendarService {
       lunarPhase,
       lunarAge,
       isOptimalPlanting,
-      optimalOperations
+      optimalOperations,
     };
   }
 
@@ -173,7 +164,7 @@ export class BiodynamicCalendarService {
   getOptimalPlantingDays(
     cropType: CropType,
     daysAhead: number = 14,
-    startDate: Date = new Date()
+    startDate: Date = new Date(),
   ): PlantingWindow[] {
     const windows: PlantingWindow[] = [];
     const optimalPhases = OPTIMAL_PHASES_BY_CROP[cropType];
@@ -211,7 +202,7 @@ export class BiodynamicCalendarService {
           end: windowEnd,
           lunarPhase,
           score,
-          reason
+          reason,
         });
 
         // Skip ahead to avoid duplicate windows
@@ -228,7 +219,7 @@ export class BiodynamicCalendarService {
   private calculatePlantingScore(
     cropType: CropType,
     lunarPhase: LunarPhase,
-    windowSpan: number
+    windowSpan: number,
   ): number {
     let score = 60; // Base score
 
@@ -251,24 +242,30 @@ export class BiodynamicCalendarService {
   /**
    * Get explanation for planting recommendation
    */
-  private getPlantingReason(cropType: CropType, lunarPhase: LunarPhase): string {
+  private getPlantingReason(
+    cropType: CropType,
+    lunarPhase: LunarPhase,
+  ): string {
     const phaseDescriptions: Record<LunarPhase, string> = {
-      [LunarPhase.NEW_MOON]: 'New moon - ideal for rest and planning',
-      [LunarPhase.WAXING_CRESCENT]: 'Waxing crescent - increasing energy, good for leafy growth',
-      [LunarPhase.FIRST_QUARTER]: 'First quarter - strong growth phase',
-      [LunarPhase.WAXING_GIBBOUS]: 'Waxing gibbous - peak growing energy',
-      [LunarPhase.FULL_MOON]: 'Full moon - maximum energy, excellent for fruiting crops',
-      [LunarPhase.WANING_GIBBOUS]: 'Waning gibbous - energy moving downward, good for roots',
-      [LunarPhase.LAST_QUARTER]: 'Last quarter - focus on root development',
-      [LunarPhase.WANING_CRESCENT]: 'Waning crescent - deep root growth phase'
+      [LunarPhase.NEW_MOON]: "New moon - ideal for rest and planning",
+      [LunarPhase.WAXING_CRESCENT]:
+        "Waxing crescent - increasing energy, good for leafy growth",
+      [LunarPhase.FIRST_QUARTER]: "First quarter - strong growth phase",
+      [LunarPhase.WAXING_GIBBOUS]: "Waxing gibbous - peak growing energy",
+      [LunarPhase.FULL_MOON]:
+        "Full moon - maximum energy, excellent for fruiting crops",
+      [LunarPhase.WANING_GIBBOUS]:
+        "Waning gibbous - energy moving downward, good for roots",
+      [LunarPhase.LAST_QUARTER]: "Last quarter - focus on root development",
+      [LunarPhase.WANING_CRESCENT]: "Waning crescent - deep root growth phase",
     };
 
     const cropDescriptions: Record<CropType, string> = {
-      [CropType.ROOT]: 'Root crops benefit from downward energy flow',
-      [CropType.LEAFY]: 'Leafy greens thrive with increasing lunar energy',
-      [CropType.FRUIT]: 'Fruit crops develop best near full moon',
-      [CropType.FLOWER]: 'Flowers bloom beautifully with waxing energy',
-      [CropType.SEED]: 'Seed crops benefit from strong lunar energy'
+      [CropType.ROOT]: "Root crops benefit from downward energy flow",
+      [CropType.LEAFY]: "Leafy greens thrive with increasing lunar energy",
+      [CropType.FRUIT]: "Fruit crops develop best near full moon",
+      [CropType.FLOWER]: "Flowers bloom beautifully with waxing energy",
+      [CropType.SEED]: "Seed crops benefit from strong lunar energy",
     };
 
     return `${phaseDescriptions[lunarPhase]}. ${cropDescriptions[cropType]}.`;
@@ -288,7 +285,7 @@ export class BiodynamicCalendarService {
    */
   getNextOptimalPlantingDate(
     cropType: CropType,
-    startDate: Date = new Date()
+    startDate: Date = new Date(),
   ): Date | null {
     const windows = this.getOptimalPlantingDays(cropType, 30, startDate);
     return windows.length > 0 ? windows[0]!.start : null;
@@ -333,14 +330,14 @@ export class BiodynamicCalendarService {
    */
   getLunarPhaseEmoji(phase: LunarPhase): string {
     const emojis: Record<LunarPhase, string> = {
-      [LunarPhase.NEW_MOON]: '🌑',
-      [LunarPhase.WAXING_CRESCENT]: '🌒',
-      [LunarPhase.FIRST_QUARTER]: '🌓',
-      [LunarPhase.WAXING_GIBBOUS]: '🌔',
-      [LunarPhase.FULL_MOON]: '🌕',
-      [LunarPhase.WANING_GIBBOUS]: '🌖',
-      [LunarPhase.LAST_QUARTER]: '🌗',
-      [LunarPhase.WANING_CRESCENT]: '🌘'
+      [LunarPhase.NEW_MOON]: "🌑",
+      [LunarPhase.WAXING_CRESCENT]: "🌒",
+      [LunarPhase.FIRST_QUARTER]: "🌓",
+      [LunarPhase.WAXING_GIBBOUS]: "🌔",
+      [LunarPhase.FULL_MOON]: "🌕",
+      [LunarPhase.WANING_GIBBOUS]: "🌖",
+      [LunarPhase.LAST_QUARTER]: "🌗",
+      [LunarPhase.WANING_CRESCENT]: "🌘",
     };
 
     return emojis[phase];
@@ -351,10 +348,10 @@ export class BiodynamicCalendarService {
    */
   getSeasonEmoji(season: Season): string {
     const emojis: Record<Season, string> = {
-      [Season.SPRING]: '🌱',
-      [Season.SUMMER]: '☀️',
-      [Season.FALL]: '🍂',
-      [Season.WINTER]: '❄️'
+      [Season.SPRING]: "🌱",
+      [Season.SUMMER]: "☀️",
+      [Season.FALL]: "🍂",
+      [Season.WINTER]: "❄️",
     };
 
     return emojis[season];

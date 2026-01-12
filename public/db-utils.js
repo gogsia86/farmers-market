@@ -6,12 +6,12 @@
 /**
  * IndexedDB Configuration
  */
-const DB_NAME = 'farmers-market-offline';
+const DB_NAME = "farmers-market-offline";
 const DB_VERSION = 1;
 const STORES = {
-  PENDING_ORDERS: 'pendingOrders',
-  FAILED_REQUESTS: 'failedRequests',
-  CACHED_DATA: 'cachedData'
+  PENDING_ORDERS: "pendingOrders",
+  FAILED_REQUESTS: "failedRequests",
+  CACHED_DATA: "cachedData",
 };
 
 /**
@@ -23,7 +23,7 @@ function openDatabase() {
     const request = indexedDB.open(DB_NAME, DB_VERSION);
 
     request.onerror = () => {
-      console.error('[IndexedDB] Failed to open database:', request.error);
+      console.error("[IndexedDB] Failed to open database:", request.error);
       reject(request.error);
     };
 
@@ -37,40 +37,40 @@ function openDatabase() {
       // Create pending orders store
       if (!db.objectStoreNames.contains(STORES.PENDING_ORDERS)) {
         const ordersStore = db.createObjectStore(STORES.PENDING_ORDERS, {
-          keyPath: 'id',
-          autoIncrement: true
+          keyPath: "id",
+          autoIncrement: true,
         });
 
         // Create indexes for efficient querying
-        ordersStore.createIndex('timestamp', 'timestamp', { unique: false });
-        ordersStore.createIndex('status', 'status', { unique: false });
-        ordersStore.createIndex('customerId', 'customerId', { unique: false });
+        ordersStore.createIndex("timestamp", "timestamp", { unique: false });
+        ordersStore.createIndex("status", "status", { unique: false });
+        ordersStore.createIndex("customerId", "customerId", { unique: false });
 
-        console.log('[IndexedDB] Created pending orders store');
+        console.log("[IndexedDB] Created pending orders store");
       }
 
       // Create failed requests store
       if (!db.objectStoreNames.contains(STORES.FAILED_REQUESTS)) {
         const requestsStore = db.createObjectStore(STORES.FAILED_REQUESTS, {
-          keyPath: 'id',
-          autoIncrement: true
+          keyPath: "id",
+          autoIncrement: true,
         });
 
-        requestsStore.createIndex('timestamp', 'timestamp', { unique: false });
-        requestsStore.createIndex('url', 'url', { unique: false });
+        requestsStore.createIndex("timestamp", "timestamp", { unique: false });
+        requestsStore.createIndex("url", "url", { unique: false });
 
-        console.log('[IndexedDB] Created failed requests store');
+        console.log("[IndexedDB] Created failed requests store");
       }
 
       // Create cached data store (for offline access)
       if (!db.objectStoreNames.contains(STORES.CACHED_DATA)) {
         const cacheStore = db.createObjectStore(STORES.CACHED_DATA, {
-          keyPath: 'key'
+          keyPath: "key",
         });
 
-        cacheStore.createIndex('expiry', 'expiry', { unique: false });
+        cacheStore.createIndex("expiry", "expiry", { unique: false });
 
-        console.log('[IndexedDB] Created cached data store');
+        console.log("[IndexedDB] Created cached data store");
       }
     };
   });
@@ -89,26 +89,26 @@ async function addPendingOrder(orderData) {
   const db = await openDatabase();
 
   return new Promise((resolve, reject) => {
-    const transaction = db.transaction([STORES.PENDING_ORDERS], 'readwrite');
+    const transaction = db.transaction([STORES.PENDING_ORDERS], "readwrite");
     const store = transaction.objectStore(STORES.PENDING_ORDERS);
 
     const order = {
       ...orderData,
       timestamp: Date.now(),
-      status: 'pending',
+      status: "pending",
       retryCount: 0,
-      createdOffline: true
+      createdOffline: true,
     };
 
     const request = store.add(order);
 
     request.onsuccess = () => {
-      console.log('[IndexedDB] Order added to queue:', request.result);
+      console.log("[IndexedDB] Order added to queue:", request.result);
       resolve(request.result);
     };
 
     request.onerror = () => {
-      console.error('[IndexedDB] Failed to add order:', request.error);
+      console.error("[IndexedDB] Failed to add order:", request.error);
       reject(request.error);
     };
 
@@ -126,19 +126,22 @@ async function getPendingOrders() {
   const db = await openDatabase();
 
   return new Promise((resolve, reject) => {
-    const transaction = db.transaction([STORES.PENDING_ORDERS], 'readonly');
+    const transaction = db.transaction([STORES.PENDING_ORDERS], "readonly");
     const store = transaction.objectStore(STORES.PENDING_ORDERS);
-    const index = store.index('status');
+    const index = store.index("status");
 
-    const request = index.getAll('pending');
+    const request = index.getAll("pending");
 
     request.onsuccess = () => {
-      console.log('[IndexedDB] Retrieved pending orders:', request.result.length);
+      console.log(
+        "[IndexedDB] Retrieved pending orders:",
+        request.result.length,
+      );
       resolve(request.result);
     };
 
     request.onerror = () => {
-      console.error('[IndexedDB] Failed to get orders:', request.error);
+      console.error("[IndexedDB] Failed to get orders:", request.error);
       reject(request.error);
     };
 
@@ -157,7 +160,7 @@ async function getPendingOrderById(orderId) {
   const db = await openDatabase();
 
   return new Promise((resolve, reject) => {
-    const transaction = db.transaction([STORES.PENDING_ORDERS], 'readonly');
+    const transaction = db.transaction([STORES.PENDING_ORDERS], "readonly");
     const store = transaction.objectStore(STORES.PENDING_ORDERS);
 
     const request = store.get(orderId);
@@ -167,7 +170,7 @@ async function getPendingOrderById(orderId) {
     };
 
     request.onerror = () => {
-      console.error('[IndexedDB] Failed to get order:', request.error);
+      console.error("[IndexedDB] Failed to get order:", request.error);
       reject(request.error);
     };
 
@@ -187,7 +190,7 @@ async function updateOrderStatus(orderId, status) {
   const db = await openDatabase();
 
   return new Promise((resolve, reject) => {
-    const transaction = db.transaction([STORES.PENDING_ORDERS], 'readwrite');
+    const transaction = db.transaction([STORES.PENDING_ORDERS], "readwrite");
     const store = transaction.objectStore(STORES.PENDING_ORDERS);
 
     const getRequest = store.get(orderId);
@@ -196,7 +199,7 @@ async function updateOrderStatus(orderId, status) {
       const order = getRequest.result;
 
       if (!order) {
-        reject(new Error('Order not found'));
+        reject(new Error("Order not found"));
         return;
       }
 
@@ -206,18 +209,21 @@ async function updateOrderStatus(orderId, status) {
       const updateRequest = store.put(order);
 
       updateRequest.onsuccess = () => {
-        console.log('[IndexedDB] Order status updated:', orderId, status);
+        console.log("[IndexedDB] Order status updated:", orderId, status);
         resolve();
       };
 
       updateRequest.onerror = () => {
-        console.error('[IndexedDB] Failed to update order:', updateRequest.error);
+        console.error(
+          "[IndexedDB] Failed to update order:",
+          updateRequest.error,
+        );
         reject(updateRequest.error);
       };
     };
 
     getRequest.onerror = () => {
-      console.error('[IndexedDB] Failed to get order:', getRequest.error);
+      console.error("[IndexedDB] Failed to get order:", getRequest.error);
       reject(getRequest.error);
     };
 
@@ -236,7 +242,7 @@ async function incrementRetryCount(orderId) {
   const db = await openDatabase();
 
   return new Promise((resolve, reject) => {
-    const transaction = db.transaction([STORES.PENDING_ORDERS], 'readwrite');
+    const transaction = db.transaction([STORES.PENDING_ORDERS], "readwrite");
     const store = transaction.objectStore(STORES.PENDING_ORDERS);
 
     const getRequest = store.get(orderId);
@@ -245,7 +251,7 @@ async function incrementRetryCount(orderId) {
       const order = getRequest.result;
 
       if (!order) {
-        reject(new Error('Order not found'));
+        reject(new Error("Order not found"));
         return;
       }
 
@@ -255,7 +261,11 @@ async function incrementRetryCount(orderId) {
       const updateRequest = store.put(order);
 
       updateRequest.onsuccess = () => {
-        console.log('[IndexedDB] Retry count incremented:', orderId, order.retryCount);
+        console.log(
+          "[IndexedDB] Retry count incremented:",
+          orderId,
+          order.retryCount,
+        );
         resolve(order.retryCount);
       };
 
@@ -283,18 +293,18 @@ async function removePendingOrder(orderId) {
   const db = await openDatabase();
 
   return new Promise((resolve, reject) => {
-    const transaction = db.transaction([STORES.PENDING_ORDERS], 'readwrite');
+    const transaction = db.transaction([STORES.PENDING_ORDERS], "readwrite");
     const store = transaction.objectStore(STORES.PENDING_ORDERS);
 
     const request = store.delete(orderId);
 
     request.onsuccess = () => {
-      console.log('[IndexedDB] Order removed from queue:', orderId);
+      console.log("[IndexedDB] Order removed from queue:", orderId);
       resolve();
     };
 
     request.onerror = () => {
-      console.error('[IndexedDB] Failed to remove order:', request.error);
+      console.error("[IndexedDB] Failed to remove order:", request.error);
       reject(request.error);
     };
 
@@ -312,18 +322,18 @@ async function clearAllPendingOrders() {
   const db = await openDatabase();
 
   return new Promise((resolve, reject) => {
-    const transaction = db.transaction([STORES.PENDING_ORDERS], 'readwrite');
+    const transaction = db.transaction([STORES.PENDING_ORDERS], "readwrite");
     const store = transaction.objectStore(STORES.PENDING_ORDERS);
 
     const request = store.clear();
 
     request.onsuccess = () => {
-      console.log('[IndexedDB] All pending orders cleared');
+      console.log("[IndexedDB] All pending orders cleared");
       resolve();
     };
 
     request.onerror = () => {
-      console.error('[IndexedDB] Failed to clear orders:', request.error);
+      console.error("[IndexedDB] Failed to clear orders:", request.error);
       reject(request.error);
     };
 
@@ -341,11 +351,11 @@ async function getPendingOrderCount() {
   const db = await openDatabase();
 
   return new Promise((resolve, reject) => {
-    const transaction = db.transaction([STORES.PENDING_ORDERS], 'readonly');
+    const transaction = db.transaction([STORES.PENDING_ORDERS], "readonly");
     const store = transaction.objectStore(STORES.PENDING_ORDERS);
-    const index = store.index('status');
+    const index = store.index("status");
 
-    const request = index.count('pending');
+    const request = index.count("pending");
 
     request.onsuccess = () => {
       resolve(request.result);
@@ -374,19 +384,19 @@ async function saveFailedRequest(requestData) {
   const db = await openDatabase();
 
   return new Promise((resolve, reject) => {
-    const transaction = db.transaction([STORES.FAILED_REQUESTS], 'readwrite');
+    const transaction = db.transaction([STORES.FAILED_REQUESTS], "readwrite");
     const store = transaction.objectStore(STORES.FAILED_REQUESTS);
 
     const request = {
       ...requestData,
       timestamp: Date.now(),
-      retryCount: 0
+      retryCount: 0,
     };
 
     const addRequest = store.add(request);
 
     addRequest.onsuccess = () => {
-      console.log('[IndexedDB] Failed request saved:', addRequest.result);
+      console.log("[IndexedDB] Failed request saved:", addRequest.result);
       resolve(addRequest.result);
     };
 
@@ -408,7 +418,7 @@ async function getFailedRequests() {
   const db = await openDatabase();
 
   return new Promise((resolve, reject) => {
-    const transaction = db.transaction([STORES.FAILED_REQUESTS], 'readonly');
+    const transaction = db.transaction([STORES.FAILED_REQUESTS], "readonly");
     const store = transaction.objectStore(STORES.FAILED_REQUESTS);
 
     const request = store.getAll();
@@ -436,7 +446,7 @@ async function removeFailedRequest(requestId) {
   const db = await openDatabase();
 
   return new Promise((resolve, reject) => {
-    const transaction = db.transaction([STORES.FAILED_REQUESTS], 'readwrite');
+    const transaction = db.transaction([STORES.FAILED_REQUESTS], "readwrite");
     const store = transaction.objectStore(STORES.FAILED_REQUESTS);
 
     const request = store.delete(requestId);
@@ -470,14 +480,14 @@ async function setCachedData(key, data, ttl = 3600000) {
   const db = await openDatabase();
 
   return new Promise((resolve, reject) => {
-    const transaction = db.transaction([STORES.CACHED_DATA], 'readwrite');
+    const transaction = db.transaction([STORES.CACHED_DATA], "readwrite");
     const store = transaction.objectStore(STORES.CACHED_DATA);
 
     const cacheEntry = {
       key,
       data,
       timestamp: Date.now(),
-      expiry: Date.now() + ttl
+      expiry: Date.now() + ttl,
     };
 
     const request = store.put(cacheEntry);
@@ -505,7 +515,7 @@ async function getCachedData(key) {
   const db = await openDatabase();
 
   return new Promise((resolve, reject) => {
-    const transaction = db.transaction([STORES.CACHED_DATA], 'readonly');
+    const transaction = db.transaction([STORES.CACHED_DATA], "readonly");
     const store = transaction.objectStore(STORES.CACHED_DATA);
 
     const request = store.get(key);
@@ -521,7 +531,10 @@ async function getCachedData(key) {
       // Check if expired
       if (entry.expiry < Date.now()) {
         // Remove expired entry
-        const deleteTransaction = db.transaction([STORES.CACHED_DATA], 'readwrite');
+        const deleteTransaction = db.transaction(
+          [STORES.CACHED_DATA],
+          "readwrite",
+        );
         const deleteStore = deleteTransaction.objectStore(STORES.CACHED_DATA);
         deleteStore.delete(key);
 
@@ -550,9 +563,9 @@ async function clearExpiredCache() {
   const db = await openDatabase();
 
   return new Promise((resolve, reject) => {
-    const transaction = db.transaction([STORES.CACHED_DATA], 'readwrite');
+    const transaction = db.transaction([STORES.CACHED_DATA], "readwrite");
     const store = transaction.objectStore(STORES.CACHED_DATA);
-    const index = store.index('expiry');
+    const index = store.index("expiry");
 
     const now = Date.now();
     const range = IDBKeyRange.upperBound(now);
@@ -568,7 +581,7 @@ async function clearExpiredCache() {
         count++;
         cursor.continue();
       } else {
-        console.log('[IndexedDB] Cleared expired cache entries:', count);
+        console.log("[IndexedDB] Cleared expired cache entries:", count);
         resolve(count);
       }
     };
@@ -598,7 +611,7 @@ async function getDatabaseStats() {
     const stats = {
       pendingOrders: 0,
       failedRequests: 0,
-      cachedEntries: 0
+      cachedEntries: 0,
     };
 
     let completed = 0;
@@ -613,7 +626,7 @@ async function getDatabaseStats() {
     };
 
     // Count pending orders
-    const ordersTx = db.transaction([STORES.PENDING_ORDERS], 'readonly');
+    const ordersTx = db.transaction([STORES.PENDING_ORDERS], "readonly");
     const ordersStore = ordersTx.objectStore(STORES.PENDING_ORDERS);
     const ordersCount = ordersStore.count();
     ordersCount.onsuccess = () => {
@@ -623,7 +636,7 @@ async function getDatabaseStats() {
     ordersCount.onerror = reject;
 
     // Count failed requests
-    const requestsTx = db.transaction([STORES.FAILED_REQUESTS], 'readonly');
+    const requestsTx = db.transaction([STORES.FAILED_REQUESTS], "readonly");
     const requestsStore = requestsTx.objectStore(STORES.FAILED_REQUESTS);
     const requestsCount = requestsStore.count();
     requestsCount.onsuccess = () => {
@@ -633,7 +646,7 @@ async function getDatabaseStats() {
     requestsCount.onerror = reject;
 
     // Count cached entries
-    const cacheTx = db.transaction([STORES.CACHED_DATA], 'readonly');
+    const cacheTx = db.transaction([STORES.CACHED_DATA], "readonly");
     const cacheStore = cacheTx.objectStore(STORES.CACHED_DATA);
     const cacheCount = cacheStore.count();
     cacheCount.onsuccess = () => {
@@ -653,23 +666,29 @@ async function clearAllData() {
     const deleteRequest = indexedDB.deleteDatabase(DB_NAME);
 
     deleteRequest.onsuccess = () => {
-      console.log('[IndexedDB] Database deleted successfully');
+      console.log("[IndexedDB] Database deleted successfully");
       resolve();
     };
 
     deleteRequest.onerror = () => {
-      console.error('[IndexedDB] Failed to delete database:', deleteRequest.error);
+      console.error(
+        "[IndexedDB] Failed to delete database:",
+        deleteRequest.error,
+      );
       reject(deleteRequest.error);
     };
 
     deleteRequest.onblocked = () => {
-      console.warn('[IndexedDB] Database deletion blocked');
+      console.warn("[IndexedDB] Database deletion blocked");
     };
   });
 }
 
 // Export functions (for Service Worker use)
-if (typeof self !== 'undefined' && self.constructor.name === 'ServiceWorkerGlobalScope') {
+if (
+  typeof self !== "undefined" &&
+  self.constructor.name === "ServiceWorkerGlobalScope"
+) {
   // Service Worker context
   self.dbUtils = {
     // Pending Orders
@@ -695,14 +714,14 @@ if (typeof self !== 'undefined' && self.constructor.name === 'ServiceWorkerGloba
     // Utilities
     getDatabaseStats,
     clearAllData,
-    openDatabase
+    openDatabase,
   };
 
-  console.log('[IndexedDB] Database utilities loaded in Service Worker 🗄️');
+  console.log("[IndexedDB] Database utilities loaded in Service Worker 🗄️");
 }
 
 // For testing in regular browser context
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   window.dbUtils = {
     addPendingOrder,
     getPendingOrders,
@@ -720,8 +739,8 @@ if (typeof window !== 'undefined') {
     clearExpiredCache,
     getDatabaseStats,
     clearAllData,
-    openDatabase
+    openDatabase,
   };
 
-  console.log('[IndexedDB] Database utilities loaded in browser context 🗄️');
+  console.log("[IndexedDB] Database utilities loaded in browser context 🗄️");
 }

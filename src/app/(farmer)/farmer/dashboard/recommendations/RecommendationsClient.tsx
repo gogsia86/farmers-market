@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 /**
  * 🌾 Recommendations Client Component
@@ -7,8 +7,8 @@
  * weather data, biodynamic calendar, and personalized scoring.
  */
 
-import type { CropRecommendationResponse } from '@/types/biodynamic.types';
-import { useEffect, useState } from 'react';
+import type { CropRecommendationResponse } from "@/types/biodynamic.types";
+import { useEffect, useState } from "react";
 
 interface Farm {
   id: string;
@@ -32,16 +32,19 @@ interface Props {
   userId: string;
 }
 
-type PreferenceType = 'profit' | 'sustainability' | 'balanced';
+type PreferenceType = "profit" | "sustainability" | "balanced";
 
 export default function RecommendationsClient({ farms, userId }: Props) {
-  const [selectedFarmId, setSelectedFarmId] = useState<string>(farms[0]?.id || '');
-  const [preferenceType, setPreferenceType] = useState<PreferenceType>('balanced');
+  const [selectedFarmId, setSelectedFarmId] = useState<string>(
+    farms[0]?.id || "",
+  );
+  const [preferenceType, setPreferenceType] =
+    useState<PreferenceType>("balanced");
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<CropRecommendationResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const selectedFarm = farms.find(f => f.id === selectedFarmId);
+  const selectedFarm = farms.find((f) => f.id === selectedFarmId);
 
   // Load recommendations
   const loadRecommendations = async () => {
@@ -53,32 +56,34 @@ export default function RecommendationsClient({ farms, userId }: Props) {
     try {
       const params = new URLSearchParams({
         farmId: selectedFarmId,
-        maxRecommendations: '10',
+        maxRecommendations: "10",
       });
 
       // Set preferences based on type
-      if (preferenceType === 'profit') {
-        params.set('prioritizeProfit', 'true');
-        params.set('prioritizeSustainability', 'false');
-      } else if (preferenceType === 'sustainability') {
-        params.set('prioritizeProfit', 'false');
-        params.set('prioritizeSustainability', 'true');
+      if (preferenceType === "profit") {
+        params.set("prioritizeProfit", "true");
+        params.set("prioritizeSustainability", "false");
+      } else if (preferenceType === "sustainability") {
+        params.set("prioritizeProfit", "false");
+        params.set("prioritizeSustainability", "true");
       } else {
-        params.set('prioritizeProfit', 'false');
-        params.set('prioritizeSustainability', 'false');
+        params.set("prioritizeProfit", "false");
+        params.set("prioritizeSustainability", "false");
       }
 
       const response = await fetch(`/api/v1/crops/recommendations?${params}`);
       const result = await response.json();
 
       if (!response.ok || !result.success) {
-        throw new Error(result.error?.message || 'Failed to load recommendations');
+        throw new Error(
+          result.error?.message || "Failed to load recommendations",
+        );
       }
 
       setData(result);
     } catch (err) {
-      console.error('Failed to load recommendations:', err);
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      console.error("Failed to load recommendations:", err);
+      setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setLoading(false);
     }
@@ -112,9 +117,11 @@ export default function RecommendationsClient({ farms, userId }: Props) {
             </select>
             {selectedFarm && (
               <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                {selectedFarm.farmSize ? `${selectedFarm.farmSize} acres` : 'Size not specified'} •{' '}
-                {selectedFarm.isOrganic ? '🌱 Organic' : ''}{' '}
-                {selectedFarm.isBiodynamic ? '🌙 Biodynamic' : ''}
+                {selectedFarm.farmSize
+                  ? `${selectedFarm.farmSize} acres`
+                  : "Size not specified"}{" "}
+                • {selectedFarm.isOrganic ? "🌱 Organic" : ""}{" "}
+                {selectedFarm.isBiodynamic ? "🌙 Biodynamic" : ""}
               </div>
             )}
           </div>
@@ -126,31 +133,31 @@ export default function RecommendationsClient({ farms, userId }: Props) {
             </label>
             <div className="grid grid-cols-3 gap-2">
               <button
-                onClick={() => setPreferenceType('profit')}
+                onClick={() => setPreferenceType("profit")}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  preferenceType === 'profit'
-                    ? 'bg-green-600 text-white'
-                    : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600'
+                  preferenceType === "profit"
+                    ? "bg-green-600 text-white"
+                    : "bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600"
                 }`}
               >
                 💰 Profit
               </button>
               <button
-                onClick={() => setPreferenceType('balanced')}
+                onClick={() => setPreferenceType("balanced")}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  preferenceType === 'balanced'
-                    ? 'bg-green-600 text-white'
-                    : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600'
+                  preferenceType === "balanced"
+                    ? "bg-green-600 text-white"
+                    : "bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600"
                 }`}
               >
                 ⚖️ Balanced
               </button>
               <button
-                onClick={() => setPreferenceType('sustainability')}
+                onClick={() => setPreferenceType("sustainability")}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  preferenceType === 'sustainability'
-                    ? 'bg-green-600 text-white'
-                    : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600'
+                  preferenceType === "sustainability"
+                    ? "bg-green-600 text-white"
+                    : "bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600"
                 }`}
               >
                 🌱 Sustainability
@@ -186,7 +193,9 @@ export default function RecommendationsClient({ farms, userId }: Props) {
         <div className="flex items-center justify-center py-20">
           <div className="text-center">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-green-500 border-t-transparent mb-4"></div>
-            <p className="text-gray-600 dark:text-gray-400">Analyzing farm conditions...</p>
+            <p className="text-gray-600 dark:text-gray-400">
+              Analyzing farm conditions...
+            </p>
           </div>
         </div>
       )}
@@ -212,8 +221,12 @@ export default function RecommendationsClient({ farms, userId }: Props) {
                     {data.weatherContext.current.conditions}
                   </div>
                   <div className="mt-2 grid grid-cols-2 gap-2 text-sm">
-                    <div>💧 {data.weatherContext.current.humidity}% humidity</div>
-                    <div>💨 {Math.round(data.weatherContext.current.windSpeed)} mph</div>
+                    <div>
+                      💧 {data.weatherContext.current.humidity}% humidity
+                    </div>
+                    <div>
+                      💨 {Math.round(data.weatherContext.current.windSpeed)} mph
+                    </div>
                   </div>
                 </div>
 
@@ -221,22 +234,30 @@ export default function RecommendationsClient({ farms, userId }: Props) {
                 <div className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-4 mb-4">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm font-medium">Planting Score</span>
-                    <span className={`text-2xl font-bold ${
-                      data.weatherContext.plantingScore.score >= 70 ? 'text-green-600' :
-                      data.weatherContext.plantingScore.score >= 50 ? 'text-yellow-600' :
-                      'text-red-600'
-                    }`}>
+                    <span
+                      className={`text-2xl font-bold ${
+                        data.weatherContext.plantingScore.score >= 70
+                          ? "text-green-600"
+                          : data.weatherContext.plantingScore.score >= 50
+                            ? "text-yellow-600"
+                            : "text-red-600"
+                      }`}
+                    >
                       {data.weatherContext.plantingScore.score}/100
                     </span>
                   </div>
                   <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mb-2">
                     <div
                       className={`h-2 rounded-full transition-all ${
-                        data.weatherContext.plantingScore.score >= 70 ? 'bg-green-500' :
-                        data.weatherContext.plantingScore.score >= 50 ? 'bg-yellow-500' :
-                        'bg-red-500'
+                        data.weatherContext.plantingScore.score >= 70
+                          ? "bg-green-500"
+                          : data.weatherContext.plantingScore.score >= 50
+                            ? "bg-yellow-500"
+                            : "bg-red-500"
                       }`}
-                      style={{ width: `${data.weatherContext.plantingScore.score}%` }}
+                      style={{
+                        width: `${data.weatherContext.plantingScore.score}%`,
+                      }}
                     ></div>
                   </div>
                   <p className="text-xs text-gray-600 dark:text-gray-400">
@@ -251,8 +272,13 @@ export default function RecommendationsClient({ farms, userId }: Props) {
                       ❄️ Frost Alerts
                     </div>
                     {data.weatherContext.frostAlerts.map((alert, idx) => (
-                      <div key={idx} className="text-sm text-red-700 dark:text-red-300 mb-1">
-                        {new Date(alert.date).toLocaleDateString()} - {alert.severity.toUpperCase()} ({Math.round(alert.temperatureMin)}°F)
+                      <div
+                        key={idx}
+                        className="text-sm text-red-700 dark:text-red-300 mb-1"
+                      >
+                        {new Date(alert.date).toLocaleDateString()} -{" "}
+                        {alert.severity.toUpperCase()} (
+                        {Math.round(alert.temperatureMin)}°F)
                       </div>
                     ))}
                   </div>
@@ -263,12 +289,18 @@ export default function RecommendationsClient({ farms, userId }: Props) {
                   <div className="text-sm font-medium mb-2">3-Day Forecast</div>
                   <div className="grid grid-cols-3 gap-2">
                     {data.weatherContext.forecast.map((day, idx) => (
-                      <div key={idx} className="bg-white/50 dark:bg-gray-800/50 rounded p-2 text-center">
+                      <div
+                        key={idx}
+                        className="bg-white/50 dark:bg-gray-800/50 rounded p-2 text-center"
+                      >
                         <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">
-                          {new Date(day.date).toLocaleDateString('en-US', { weekday: 'short' })}
+                          {new Date(day.date).toLocaleDateString("en-US", {
+                            weekday: "short",
+                          })}
                         </div>
                         <div className="text-sm font-semibold">
-                          {Math.round(day.temperatureMax)}°/{Math.round(day.temperatureMin)}°
+                          {Math.round(day.temperatureMax)}°/
+                          {Math.round(day.temperatureMin)}°
                         </div>
                         <div className="text-xs text-gray-500 dark:text-gray-400">
                           {Math.round(day.precipitationChance)}% 💧
@@ -289,7 +321,9 @@ export default function RecommendationsClient({ farms, userId }: Props) {
               <div className="space-y-4">
                 {/* Season */}
                 <div className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-4">
-                  <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Current Season</div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                    Current Season
+                  </div>
                   <div className="text-2xl font-bold capitalize">
                     {data.biodynamicContext.season.toLowerCase()}
                   </div>
@@ -297,32 +331,42 @@ export default function RecommendationsClient({ farms, userId }: Props) {
 
                 {/* Lunar Phase */}
                 <div className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-4">
-                  <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Lunar Phase</div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                    Lunar Phase
+                  </div>
                   <div className="text-xl font-semibold capitalize mb-2">
-                    {data.biodynamicContext.lunarPhase.toLowerCase().replace(/_/g, ' ')}
+                    {data.biodynamicContext.lunarPhase
+                      .toLowerCase()
+                      .replace(/_/g, " ")}
                   </div>
                   <div className="text-sm">
-                    {getLunarPhaseEmoji(data.biodynamicContext.lunarPhase)} {getLunarPhaseDescription(data.biodynamicContext.lunarPhase)}
+                    {getLunarPhaseEmoji(data.biodynamicContext.lunarPhase)}{" "}
+                    {getLunarPhaseDescription(
+                      data.biodynamicContext.lunarPhase,
+                    )}
                   </div>
                 </div>
 
                 {/* Optimal Planting */}
-                <div className={`rounded-lg p-4 ${
-                  data.biodynamicContext.isOptimalPlanting
-                    ? 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800'
-                    : 'bg-gray-50 dark:bg-gray-800/50'
-                }`}>
+                <div
+                  className={`rounded-lg p-4 ${
+                    data.biodynamicContext.isOptimalPlanting
+                      ? "bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800"
+                      : "bg-gray-50 dark:bg-gray-800/50"
+                  }`}
+                >
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Optimal Planting Time</span>
+                    <span className="text-sm font-medium">
+                      Optimal Planting Time
+                    </span>
                     <span className="text-2xl">
-                      {data.biodynamicContext.isOptimalPlanting ? '✅' : '⏳'}
+                      {data.biodynamicContext.isOptimalPlanting ? "✅" : "⏳"}
                     </span>
                   </div>
                   <p className="text-xs mt-1 text-gray-600 dark:text-gray-400">
                     {data.biodynamicContext.isOptimalPlanting
-                      ? 'Excellent time for planting according to biodynamic principles'
-                      : 'Consider waiting for more favorable lunar conditions'
-                    }
+                      ? "Excellent time for planting according to biodynamic principles"
+                      : "Consider waiting for more favorable lunar conditions"}
                   </p>
                 </div>
               </div>
@@ -330,20 +374,24 @@ export default function RecommendationsClient({ farms, userId }: Props) {
           </div>
 
           {/* Weather Warnings */}
-          {data.weatherContext?.warnings && data.weatherContext.warnings.length > 0 && (
-            <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
-              <h3 className="font-semibold text-yellow-800 dark:text-yellow-200 mb-2 flex items-center">
-                ⚠️ Weather Warnings
-              </h3>
-              <ul className="space-y-1">
-                {data.weatherContext.warnings.map((warning, idx) => (
-                  <li key={idx} className="text-sm text-yellow-700 dark:text-yellow-300">
-                    • {warning}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+          {data.weatherContext?.warnings &&
+            data.weatherContext.warnings.length > 0 && (
+              <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+                <h3 className="font-semibold text-yellow-800 dark:text-yellow-200 mb-2 flex items-center">
+                  ⚠️ Weather Warnings
+                </h3>
+                <ul className="space-y-1">
+                  {data.weatherContext.warnings.map((warning, idx) => (
+                    <li
+                      key={idx}
+                      className="text-sm text-yellow-700 dark:text-yellow-300"
+                    >
+                      • {warning}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
           {/* Crop Recommendations */}
           <div>
@@ -377,10 +425,14 @@ export default function RecommendationsClient({ farms, userId }: Props) {
                         </p>
                       </div>
                       <div className="text-right">
-                        <div className={`text-3xl font-bold ${getScoreColor(rec.overallScore)}`}>
+                        <div
+                          className={`text-3xl font-bold ${getScoreColor(rec.overallScore)}`}
+                        >
                           {rec.overallScore}
                         </div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400">Overall Score</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400">
+                          Overall Score
+                        </div>
                       </div>
                     </div>
 
@@ -411,9 +463,17 @@ export default function RecommendationsClient({ farms, userId }: Props) {
                     {/* Planting Window */}
                     {rec.plantingWindow && (
                       <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3 mb-4">
-                        <div className="text-sm font-medium mb-1">📅 Planting Window</div>
+                        <div className="text-sm font-medium mb-1">
+                          📅 Planting Window
+                        </div>
                         <div className="text-sm text-gray-700 dark:text-gray-300">
-                          {new Date(rec.plantingWindow.start).toLocaleDateString()} - {new Date(rec.plantingWindow.end).toLocaleDateString()}
+                          {new Date(
+                            rec.plantingWindow.start,
+                          ).toLocaleDateString()}{" "}
+                          -{" "}
+                          {new Date(
+                            rec.plantingWindow.end,
+                          ).toLocaleDateString()}
                           {rec.plantingWindow.optimal && (
                             <span className="ml-2 text-green-600 dark:text-green-400 font-medium">
                               ✨ Optimal
@@ -427,17 +487,23 @@ export default function RecommendationsClient({ farms, userId }: Props) {
                     <div className="grid grid-cols-2 gap-3 mb-4">
                       {rec.expectedYield && (
                         <div className="bg-gray-50 dark:bg-gray-700/50 rounded p-3">
-                          <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Expected Yield</div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+                            Expected Yield
+                          </div>
                           <div className="font-semibold">
-                            {rec.expectedYield.min} - {rec.expectedYield.max} {rec.expectedYield.unit}
+                            {rec.expectedYield.min} - {rec.expectedYield.max}{" "}
+                            {rec.expectedYield.unit}
                           </div>
                         </div>
                       )}
                       {rec.expectedRevenue && (
                         <div className="bg-gray-50 dark:bg-gray-700/50 rounded p-3">
-                          <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Expected Revenue</div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+                            Expected Revenue
+                          </div>
                           <div className="font-semibold text-green-600 dark:text-green-400">
-                            ${rec.expectedRevenue.min.toLocaleString()} - ${rec.expectedRevenue.max.toLocaleString()}
+                            ${rec.expectedRevenue.min.toLocaleString()} - $
+                            {rec.expectedRevenue.max.toLocaleString()}
                           </div>
                         </div>
                       )}
@@ -520,13 +586,19 @@ export default function RecommendationsClient({ farms, userId }: Props) {
 
 // Helper Components
 
-function ScoreCard({ label, score, icon }: { label: string; score: number; icon: string }) {
+function ScoreCard({
+  label,
+  score,
+  icon,
+}: {
+  label: string;
+  score: number;
+  icon: string;
+}) {
   return (
     <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3 text-center">
       <div className="text-2xl mb-1">{icon}</div>
-      <div className={`text-xl font-bold ${getScoreColor(score)}`}>
-        {score}
-      </div>
+      <div className={`text-xl font-bold ${getScoreColor(score)}`}>{score}</div>
       <div className="text-xs text-gray-500 dark:text-gray-400">{label}</div>
     </div>
   );
@@ -535,36 +607,36 @@ function ScoreCard({ label, score, icon }: { label: string; score: number; icon:
 // Helper Functions
 
 function getScoreColor(score: number): string {
-  if (score >= 80) return 'text-green-600 dark:text-green-400';
-  if (score >= 60) return 'text-yellow-600 dark:text-yellow-400';
-  if (score >= 40) return 'text-orange-600 dark:text-orange-400';
-  return 'text-red-600 dark:text-red-400';
+  if (score >= 80) return "text-green-600 dark:text-green-400";
+  if (score >= 60) return "text-yellow-600 dark:text-yellow-400";
+  if (score >= 40) return "text-orange-600 dark:text-orange-400";
+  return "text-red-600 dark:text-red-400";
 }
 
 function getLunarPhaseEmoji(phase: string): string {
   const map: Record<string, string> = {
-    NEW_MOON: '🌑',
-    WAXING_CRESCENT: '🌒',
-    FIRST_QUARTER: '🌓',
-    WAXING_GIBBOUS: '🌔',
-    FULL_MOON: '🌕',
-    WANING_GIBBOUS: '🌖',
-    LAST_QUARTER: '🌗',
-    WANING_CRESCENT: '🌘',
+    NEW_MOON: "🌑",
+    WAXING_CRESCENT: "🌒",
+    FIRST_QUARTER: "🌓",
+    WAXING_GIBBOUS: "🌔",
+    FULL_MOON: "🌕",
+    WANING_GIBBOUS: "🌖",
+    LAST_QUARTER: "🌗",
+    WANING_CRESCENT: "🌘",
   };
-  return map[phase] || '🌙';
+  return map[phase] || "🌙";
 }
 
 function getLunarPhaseDescription(phase: string): string {
   const map: Record<string, string> = {
-    NEW_MOON: 'Best for planning and rest',
-    WAXING_CRESCENT: 'Good for leafy greens',
-    FIRST_QUARTER: 'Ideal for fruiting crops',
-    WAXING_GIBBOUS: 'Excellent for flowers and fruits',
-    FULL_MOON: 'Peak energy for transplanting',
-    WANING_GIBBOUS: 'Perfect for root crops',
-    LAST_QUARTER: 'Great for root vegetables',
-    WANING_CRESCENT: 'Time for cultivation and weeding',
+    NEW_MOON: "Best for planning and rest",
+    WAXING_CRESCENT: "Good for leafy greens",
+    FIRST_QUARTER: "Ideal for fruiting crops",
+    WAXING_GIBBOUS: "Excellent for flowers and fruits",
+    FULL_MOON: "Peak energy for transplanting",
+    WANING_GIBBOUS: "Perfect for root crops",
+    LAST_QUARTER: "Great for root vegetables",
+    WANING_CRESCENT: "Time for cultivation and weeding",
   };
-  return map[phase] || '';
+  return map[phase] || "";
 }

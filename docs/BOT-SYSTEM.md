@@ -24,13 +24,13 @@
 
 The Farmers Market Platform uses a **Unified Bot Framework** for automated testing, monitoring, and analysis. This system provides:
 
-| Feature | Description |
-|---------|-------------|
-| **🎯 MVP Validation** | Complete feature verification for production readiness |
-| **🤖 Automation Testing** | User journey automation (farmers, customers, admins) |
-| **🔍 Health Monitoring** | Continuous endpoint and flow validation |
-| **📊 Analysis** | Performance, SEO, accessibility, and structure analysis |
-| **📈 Reporting** | JSON, Markdown, and Console reports |
+| Feature                   | Description                                             |
+| ------------------------- | ------------------------------------------------------- |
+| **🎯 MVP Validation**     | Complete feature verification for production readiness  |
+| **🤖 Automation Testing** | User journey automation (farmers, customers, admins)    |
+| **🔍 Health Monitoring**  | Continuous endpoint and flow validation                 |
+| **📊 Analysis**           | Performance, SEO, accessibility, and structure analysis |
+| **📈 Reporting**          | JSON, Markdown, and Console reports                     |
 
 ---
 
@@ -131,6 +131,7 @@ src/lib/
 ### 🤖 Bot Descriptions
 
 #### 1. **bot-cli.ts** - Unified CLI Interface
+
 The main entry point for all bot operations.
 
 **Commands:**
@@ -145,6 +146,7 @@ The main entry point for all bot operations.
 | `server` | Start server + tests | `bot server mvp` |
 
 #### 2. **mvp-validation-bot.ts** - MVP Feature Validation
+
 Validates ALL MVP requirements for production readiness:
 
 - ✅ Farmers can register and get approved
@@ -159,6 +161,7 @@ Validates ALL MVP requirements for production readiness:
 - ✅ All critical security measures in place
 
 #### 3. **mvp-automation-bot.ts** - User Journey Automation
+
 Tests complete user flows:
 
 - 🛒 **Customer Flow**: Browse → Search → Cart → Checkout
@@ -167,6 +170,7 @@ Tests complete user flows:
 - 🔌 **API Flow**: Endpoint health checks
 
 #### 4. **website-checker-bot.ts** - Health Monitoring
+
 Continuous monitoring and validation:
 
 - 🏥 Health check endpoints
@@ -183,22 +187,23 @@ The bot system includes **10 analysis modules**:
 
 ### 📊 Module Overview
 
-| # | Module | Checks |
-|---|--------|--------|
-| 1 | ⚡ **Performance** | Load time, FCP, LCP, resource metrics |
-| 2 | 🏗️ **Structure** | Navigation, headings, sections, layout |
-| 3 | 🚜 **Farmer Features** | Dashboard, forms, product management, authentication |
-| 4 | 🛒 **Customer Features** | Search, products, cart, filters, checkout |
-| 5 | 📦 **Product Pages** | Details, pricing, images, descriptions, availability |
-| 6 | 🔍 **SEO** | Meta tags, H1s, structured data, OG tags, robots |
-| 7 | ♿ **Accessibility** | Alt text, labels, heading hierarchy, ARIA |
-| 8 | 🔌 **API Health** | Endpoint status, response times, error rates |
-| 9 | 📱 **Responsiveness** | Mobile, tablet, desktop viewport tests |
-| 10 | 📋 **Forms** | Count, fields, validation, submission |
+| #   | Module                   | Checks                                               |
+| --- | ------------------------ | ---------------------------------------------------- |
+| 1   | ⚡ **Performance**       | Load time, FCP, LCP, resource metrics                |
+| 2   | 🏗️ **Structure**         | Navigation, headings, sections, layout               |
+| 3   | 🚜 **Farmer Features**   | Dashboard, forms, product management, authentication |
+| 4   | 🛒 **Customer Features** | Search, products, cart, filters, checkout            |
+| 5   | 📦 **Product Pages**     | Details, pricing, images, descriptions, availability |
+| 6   | 🔍 **SEO**               | Meta tags, H1s, structured data, OG tags, robots     |
+| 7   | ♿ **Accessibility**     | Alt text, labels, heading hierarchy, ARIA            |
+| 8   | 🔌 **API Health**        | Endpoint status, response times, error rates         |
+| 9   | 📱 **Responsiveness**    | Mobile, tablet, desktop viewport tests               |
+| 10  | 📋 **Forms**             | Count, fields, validation, submission                |
 
 ### 📈 Output Formats
 
 **Console Output:**
+
 ```
 📊 Analyzing Performance...
 ✅ Load time: 1234ms
@@ -213,6 +218,7 @@ The bot system includes **10 analysis modules**:
 ```
 
 **JSON Report:**
+
 ```json
 {
   "timestamp": "2025-01-15T10:30:00.000Z",
@@ -371,39 +377,39 @@ on:
   push:
     branches: [main, develop]
   schedule:
-    - cron: '0 */6 * * *'  # Every 6 hours
+    - cron: "0 */6 * * *" # Every 6 hours
 
 jobs:
   bot-tests:
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
-      
+          node-version: "20"
+          cache: "npm"
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Install Playwright
         run: npx playwright install chromium
-      
+
       - name: Seed database
         run: npm run bot -- seed
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      
+
       - name: Run bot tests
         run: npm run bot -- test mvp
         env:
           BASE_URL: https://farmers-market-platform.vercel.app
           TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
           HEADLESS: true
-      
+
       - name: Upload reports
         uses: actions/upload-artifact@v3
         if: always()
@@ -440,6 +446,7 @@ curl -X POST \
 ### Common Issues
 
 #### 1. Server Not Running
+
 ```bash
 ❌ ERROR: Server not responding at http://localhost:3001
 
@@ -451,6 +458,7 @@ npm run bot -- server mvp
 ```
 
 #### 2. Missing Test Password
+
 ```bash
 ❌ ERROR: TEST_USER_PASSWORD environment variable is required
 
@@ -460,6 +468,7 @@ export TEST_USER_PASSWORD="YourPassword123!"
 ```
 
 #### 3. Browser Not Found
+
 ```bash
 ❌ ERROR: Executable doesn't exist at chromium-xxx
 
@@ -468,6 +477,7 @@ npx playwright install chromium
 ```
 
 #### 4. Timeout Errors
+
 ```bash
 ⚠️ Test timed out after 60000ms
 
@@ -476,6 +486,7 @@ npm run bot -- test mvp --timeout=120000
 ```
 
 #### 5. Database Connection Failed
+
 ```bash
 ❌ ERROR: Can't reach database server
 
@@ -515,24 +526,28 @@ mvp-validation-screenshots/  # MVP test screenshots
 ## 🎯 Best Practices
 
 ### 1. Before Deployment
+
 ```bash
 # Run full MVP validation
 npm run bot -- test mvp
 ```
 
 ### 2. After Deployment
+
 ```bash
 # Quick health check
 npm run bot -- test health --baseUrl=https://your-production-url.com
 ```
 
 ### 3. Continuous Monitoring
+
 ```bash
 # Start monitoring daemon
 npm run bot -- monitor --interval=300
 ```
 
 ### 4. Debug Failed Tests
+
 ```bash
 # Run specific test with debugging
 npm run bot -- test auth --headless=false --slowMo=500

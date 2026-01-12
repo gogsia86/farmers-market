@@ -163,8 +163,7 @@ const log = {
     console.log(`${colors.green}✓${colors.reset} ${msg}`),
   error: (msg: string) => console.log(`${colors.red}✗${colors.reset} ${msg}`),
   info: (msg: string) => console.log(`${colors.blue}ℹ${colors.reset} ${msg}`),
-  warn: (msg: string) =>
-    console.log(`${colors.yellow}⚠${colors.reset} ${msg}`),
+  warn: (msg: string) => console.log(`${colors.yellow}⚠${colors.reset} ${msg}`),
   step: (msg: string) => console.log(`${colors.cyan}→${colors.reset} ${msg}`),
   header: (msg: string) =>
     console.log(
@@ -231,7 +230,9 @@ class VisualRegressionTester {
   }
 
   async runTests(): Promise<void> {
-    log.step(`Testing ${PAGES_TO_TEST.length} pages across ${CONFIG.viewports.length} viewports...\n`);
+    log.step(
+      `Testing ${PAGES_TO_TEST.length} pages across ${CONFIG.viewports.length} viewports...\n`,
+    );
 
     for (const viewport of CONFIG.viewports) {
       log.info(
@@ -265,13 +266,10 @@ class VisualRegressionTester {
 
     try {
       // Navigate to page
-      const response = await page.goto(
-        `${CONFIG.baseUrl}${pageToTest.path}`,
-        {
-          waitUntil: "domcontentloaded",
-          timeout: 30000,
-        },
-      );
+      const response = await page.goto(`${CONFIG.baseUrl}${pageToTest.path}`, {
+        waitUntil: "domcontentloaded",
+        timeout: 30000,
+      });
 
       if (!response || !response.ok()) {
         throw new Error(`Page failed to load: ${response?.status()}`);
@@ -353,7 +351,9 @@ class VisualRegressionTester {
       }
     } catch (error) {
       log.error(`  ✗ Error: ${pageToTest.name}`);
-      console.error(`     ${error instanceof Error ? error.message : String(error)}`);
+      console.error(
+        `     ${error instanceof Error ? error.message : String(error)}`,
+      );
 
       this.results.push({
         page: pageToTest.name,
@@ -471,7 +471,9 @@ class VisualRegressionTester {
 
     // Print failed tests
     if (failed > 0) {
-      console.log(`\n${colors.red}${colors.bright}Failed Tests:${colors.reset}`);
+      console.log(
+        `\n${colors.red}${colors.bright}Failed Tests:${colors.reset}`,
+      );
       this.results
         .filter((r) => r.status === "failed")
         .forEach((result) => {

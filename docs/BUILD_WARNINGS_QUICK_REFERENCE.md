@@ -1,16 +1,17 @@
 # ⚡ Build Warnings Quick Reference
+
 **Farmers Market Platform - Instant Lookup Guide**
 
 ---
 
 ## 🚦 TL;DR
 
-| Warning Type | Count | Severity | Action Required |
-|--------------|-------|----------|-----------------|
-| Missing Source Maps | 1,400+ | ℹ️ INFO | ❌ None |
-| Node Version Mismatch | 2 | ⚠️ LOW | ✅ Fixed |
-| NPM Config Messages | 2 | ℹ️ INFO | ❌ None |
-| **TOTAL** | **~1,404** | **✅ SAFE** | **All Handled** |
+| Warning Type          | Count      | Severity    | Action Required |
+| --------------------- | ---------- | ----------- | --------------- |
+| Missing Source Maps   | 1,400+     | ℹ️ INFO     | ❌ None         |
+| Node Version Mismatch | 2          | ⚠️ LOW      | ✅ Fixed        |
+| NPM Config Messages   | 2          | ℹ️ INFO     | ❌ None         |
+| **TOTAL**             | **~1,404** | **✅ SAFE** | **All Handled** |
 
 **BUILD STATUS:** ✅ **SUCCESS** - All warnings are expected and safe to ignore
 
@@ -25,24 +26,26 @@
 (Could not auto-detect referenced sourcemap for ~/*_client-reference-manifest.js)
 ```
 
-| Property | Value |
-|----------|-------|
-| **Count** | 1,400+ occurrences |
-| **Files Affected** | `*_client-reference-manifest.js` |
-| **Cause** | Next.js App Router auto-generated files |
-| **Impact** | ❌ NONE - Cosmetic only |
-| **Action** | ❌ NO ACTION NEEDED |
-| **Can Be Ignored?** | ✅ YES - Completely safe |
-| **Will It Break Prod?** | ❌ NO |
-| **Should I Fix It?** | ❌ NO - Expected behavior |
+| Property                | Value                                   |
+| ----------------------- | --------------------------------------- |
+| **Count**               | 1,400+ occurrences                      |
+| **Files Affected**      | `*_client-reference-manifest.js`        |
+| **Cause**               | Next.js App Router auto-generated files |
+| **Impact**              | ❌ NONE - Cosmetic only                 |
+| **Action**              | ❌ NO ACTION NEEDED                     |
+| **Can Be Ignored?**     | ✅ YES - Completely safe                |
+| **Will It Break Prod?** | ❌ NO                                   |
+| **Should I Fix It?**    | ❌ NO - Expected behavior               |
 
 **Why This Happens:**
+
 - Next.js generates manifest files to track Server/Client component boundaries
 - These are JSON-like metadata files, not source code
 - They don't need source maps for debugging
 - Sentry tries to find source maps for ALL .js files (even non-code files)
 
 **One-Line Fix (Optional Suppression):**
+
 ```javascript
 // next.config.mjs - Add to Sentry config
 silent: true, ignore: ['*_client-reference-manifest.js']
@@ -57,16 +60,17 @@ silent: true, ignore: ['*_client-reference-manifest.js']
 the Node.js Version defined in your Project Settings ("24.x") will not apply
 ```
 
-| Property | Value |
-|----------|-------|
-| **Count** | 2 occurrences |
-| **Cause** | package.json vs Vercel settings mismatch |
-| **Impact** | ⚠️ MINOR - Config inconsistency |
-| **Action** | ✅ FIXED |
-| **Resolution** | Updated to `"node": ">=20.x"` |
-| **Will It Break Prod?** | ❌ NO |
+| Property                | Value                                    |
+| ----------------------- | ---------------------------------------- |
+| **Count**               | 2 occurrences                            |
+| **Cause**               | package.json vs Vercel settings mismatch |
+| **Impact**              | ⚠️ MINOR - Config inconsistency          |
+| **Action**              | ✅ FIXED                                 |
+| **Resolution**          | Updated to `"node": ">=20.x"`            |
+| **Will It Break Prod?** | ❌ NO                                    |
 
 **What Was Done:**
+
 ```json
 // Before
 "engines": { "node": "20.x" }
@@ -85,13 +89,13 @@ the Node.js Version defined in your Project Settings ("24.x") will not apply
 ⚠️ npm warn config optional Use `--omit=optional` to exclude optional dependencies
 ```
 
-| Property | Value |
-|----------|-------|
-| **Count** | 2 occurrences |
-| **Cause** | NPM informational message |
-| **Impact** | ❌ NONE - Informational only |
-| **Action** | ❌ NO ACTION NEEDED |
-| **Can Be Ignored?** | ✅ YES - Safe to ignore |
+| Property            | Value                        |
+| ------------------- | ---------------------------- |
+| **Count**           | 2 occurrences                |
+| **Cause**           | NPM informational message    |
+| **Impact**          | ❌ NONE - Informational only |
+| **Action**          | ❌ NO ACTION NEEDED          |
+| **Can Be Ignored?** | ✅ YES - Safe to ignore      |
 
 **Explanation:** This is just NPM reminding you about available flags. All dependencies installed correctly.
 
@@ -167,14 +171,14 @@ the Node.js Version defined in your Project Settings ("24.x") will not apply
 
 ### ❌ These Are NOT in Our Build (Good!)
 
-| Error Type | What It Looks Like | Severity |
-|------------|-------------------|----------|
-| Build Failure | `Error: Build failed` | 🔴 CRITICAL |
-| Type Errors | `TS2322: Type 'X' is not assignable` | 🔴 CRITICAL |
-| Module Not Found | `Cannot find module 'X'` | 🔴 CRITICAL |
-| Prisma Errors | `Prisma generate failed` | 🔴 CRITICAL |
-| Deployment Failed | `Error: Deployment failed` | 🔴 CRITICAL |
-| Runtime Errors | `ReferenceError`, `TypeError` | 🔴 CRITICAL |
+| Error Type        | What It Looks Like                   | Severity    |
+| ----------------- | ------------------------------------ | ----------- |
+| Build Failure     | `Error: Build failed`                | 🔴 CRITICAL |
+| Type Errors       | `TS2322: Type 'X' is not assignable` | 🔴 CRITICAL |
+| Module Not Found  | `Cannot find module 'X'`             | 🔴 CRITICAL |
+| Prisma Errors     | `Prisma generate failed`             | 🔴 CRITICAL |
+| Deployment Failed | `Error: Deployment failed`           | 🔴 CRITICAL |
+| Runtime Errors    | `ReferenceError`, `TypeError`        | 🔴 CRITICAL |
 
 **Current Status:** ✅ **NONE OF THE ABOVE** - All clear!
 
@@ -208,11 +212,11 @@ the Node.js Version defined in your Project Settings ("24.x") will not apply
 
 ### When You Need More Info
 
-| Document | Purpose | When to Read |
-|----------|---------|--------------|
-| [BUILD_WARNINGS_EXPLAINED.md](./BUILD_WARNINGS_EXPLAINED.md) | Detailed explanations | Deep dive into warnings |
-| [BUILD_ANALYSIS_SUMMARY.md](./BUILD_ANALYSIS_SUMMARY.md) | Complete analysis | Full build report |
-| This Document | Quick reference | Quick lookup while building |
+| Document                                                     | Purpose               | When to Read                |
+| ------------------------------------------------------------ | --------------------- | --------------------------- |
+| [BUILD_WARNINGS_EXPLAINED.md](./BUILD_WARNINGS_EXPLAINED.md) | Detailed explanations | Deep dive into warnings     |
+| [BUILD_ANALYSIS_SUMMARY.md](./BUILD_ANALYSIS_SUMMARY.md)     | Complete analysis     | Full build report           |
+| This Document                                                | Quick reference       | Quick lookup while building |
 
 ### External Resources
 
@@ -247,16 +251,16 @@ A: No. These warnings don't affect runtime performance at all. Your app is optim
 
 ### What's Normal vs What's Not
 
-| Scenario | Normal? | Your Build |
-|----------|---------|------------|
-| 1,000+ source map warnings | ✅ YES (Next.js 16) | ✅ Expected |
-| Build completes in 2 min | ✅ YES (Optimal) | ✅ Achieved |
-| Node version warnings | ✅ YES (Config mismatch) | ✅ Fixed |
-| Zero errors | ✅ YES (Ideal) | ✅ Achieved |
-| All routes deployed | ✅ YES (Success) | ✅ Achieved |
-| Type errors | ❌ NO (Problem) | ✅ None |
-| Build failures | ❌ NO (Problem) | ✅ None |
-| Deployment errors | ❌ NO (Problem) | ✅ None |
+| Scenario                   | Normal?                  | Your Build  |
+| -------------------------- | ------------------------ | ----------- |
+| 1,000+ source map warnings | ✅ YES (Next.js 16)      | ✅ Expected |
+| Build completes in 2 min   | ✅ YES (Optimal)         | ✅ Achieved |
+| Node version warnings      | ✅ YES (Config mismatch) | ✅ Fixed    |
+| Zero errors                | ✅ YES (Ideal)           | ✅ Achieved |
+| All routes deployed        | ✅ YES (Success)         | ✅ Achieved |
+| Type errors                | ❌ NO (Problem)          | ✅ None     |
+| Build failures             | ❌ NO (Problem)          | ✅ None     |
+| Deployment errors          | ❌ NO (Problem)          | ✅ None     |
 
 **Your Build Score:** 10/10 🏆
 

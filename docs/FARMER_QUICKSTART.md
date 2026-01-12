@@ -1,4 +1,5 @@
 # 🌾 Farmer's Quick Start Guide
+
 ## Biodynamic Recommendations & Smart Planting
 
 Welcome to your intelligent farming companion! This guide will help you get the most out of our biodynamic recommendations system.
@@ -38,6 +39,7 @@ Welcome to your intelligent farming companion! This guide will help you get the 
 **Navigate to**: `/dashboard/recommendations`
 
 **Or call the API**:
+
 ```bash
 GET /api/v1/crops/recommendations
 Headers:
@@ -56,15 +58,18 @@ Query Parameters:
 Each recommended crop includes **four key scores** (0-100):
 
 #### 1. 💰 Profitability Score
+
 **What it measures**: Potential revenue, profit margin, labor efficiency
 
 **High Score (80+)**:
+
 - Strong market prices
 - Good yield potential
 - Low labor requirements
 - Stable pricing
 
 **How to improve**:
+
 - Consider organic certification (30-60% premium)
 - Invest in efficient equipment
 - Focus on high-value crops
@@ -72,15 +77,18 @@ Each recommended crop includes **four key scores** (0-100):
 ---
 
 #### 2. 🌱 Sustainability Score
+
 **What it measures**: Environmental impact, resource efficiency
 
 **High Score (80+)**:
+
 - Low water requirements
 - Minimal chemical inputs
 - Supports biodiversity
 - Good for soil health
 
 **How to improve**:
+
 - Practice crop rotation
 - Add companion plants
 - Use biodynamic preparations
@@ -89,15 +97,18 @@ Each recommended crop includes **four key scores** (0-100):
 ---
 
 #### 3. 📊 Market Demand Score
+
 **What it measures**: Consumer demand, competition, price trends
 
 **High Score (80+)**:
+
 - Strong local demand
 - Favorable price trends
 - Low competition
 - Good seasonal timing
 
 **How to use**:
+
 - Plant when demand is high
 - Target underserved markets
 - Consider value-added products
@@ -105,9 +116,11 @@ Each recommended crop includes **four key scores** (0-100):
 ---
 
 #### 4. ✅ Suitability Score
+
 **What it measures**: How well the crop fits YOUR farm
 
 **High Score (80+)**:
+
 - Perfect hardiness zone match
 - Ideal soil type
 - Water needs match availability
@@ -125,38 +138,43 @@ Each recommended crop includes **four key scores** (0-100):
 **Navigate to**: `/dashboard/calendar`
 
 **Or call the API**:
+
 ```bash
 GET /api/v1/biodynamic/calendar?action=current
 ```
 
 ### Understanding Lunar Phases
 
-| Phase | Best For | Avoid |
-|-------|----------|-------|
-| 🌑 **New Moon** | Rest, planning | Heavy planting |
-| 🌒 **Waxing Crescent** | Leafy greens, annual flowers | Root crops |
-| 🌓 **First Quarter** | Fruiting crops, grains | Root crops |
-| 🌔 **Waxing Gibbous** | Fruiting crops, flowers | Root crops |
-| 🌕 **Full Moon** | Transplanting, harvesting | Pruning |
-| 🌖 **Waning Gibbous** | Root crops, bulbs, perennials | Leafy greens |
-| 🌗 **Last Quarter** | Root crops, pruning | Leafy greens |
-| 🌘 **Waning Crescent** | Cultivating, weeding, pest control | Planting |
+| Phase                  | Best For                           | Avoid          |
+| ---------------------- | ---------------------------------- | -------------- |
+| 🌑 **New Moon**        | Rest, planning                     | Heavy planting |
+| 🌒 **Waxing Crescent** | Leafy greens, annual flowers       | Root crops     |
+| 🌓 **First Quarter**   | Fruiting crops, grains             | Root crops     |
+| 🌔 **Waxing Gibbous**  | Fruiting crops, flowers            | Root crops     |
+| 🌕 **Full Moon**       | Transplanting, harvesting          | Pruning        |
+| 🌖 **Waning Gibbous**  | Root crops, bulbs, perennials      | Leafy greens   |
+| 🌗 **Last Quarter**    | Root crops, pruning                | Leafy greens   |
+| 🌘 **Waning Crescent** | Cultivating, weeding, pest control | Planting       |
 
 ### Crop Type by Lunar Phase
 
 #### 🌱 LEAFY CROPS (Lettuce, Spinach, Kale)
+
 **Best**: Waxing Moon (🌒🌓🌔)  
 **Why**: Energy rising into above-ground growth
 
 #### 🥕 ROOT CROPS (Carrots, Beets, Potatoes)
+
 **Best**: Waning Moon (🌖🌗🌘)  
 **Why**: Energy descending into roots
 
 #### 🍅 FRUIT CROPS (Tomatoes, Peppers, Cucumbers)
+
 **Best**: First Quarter to Full Moon (🌓🌔🌕)  
 **Why**: Maximum growth energy for fruiting
 
 #### 🌻 FLOWER CROPS (Broccoli, Cauliflower, Artichokes)
+
 **Best**: First Quarter (🌓)  
 **Why**: Balanced energy for flower development
 
@@ -167,6 +185,7 @@ GET /api/v1/biodynamic/calendar?action=current
 ### Frost Alerts
 
 **Automatic notifications for**:
+
 - **Light Frost** (29-32°F): Cover tender plants
 - **Moderate Frost** (25-28°F): Protect all tender plants, harvest sensitive crops
 - **Hard Frost** (<25°F): Severe damage likely, harvest immediately
@@ -178,15 +197,18 @@ GET /api/v1/biodynamic/calendar?action=current
 **What it is**: Heat accumulation for crop development
 
 **How to use**:
+
 ```
 GDD = (Max Temp + Min Temp) / 2 - Base Temp (usually 50°F)
 ```
 
 **Example**:
+
 - High of 75°F, low of 55°F
 - GDD = (75 + 55) / 2 - 50 = 15 GDD
 
 **Tracking**:
+
 - Corn needs ~2700 GDD to maturity
 - Tomatoes need ~1500 GDD
 - Check cumulative GDD in weather dashboard
@@ -194,6 +216,7 @@ GDD = (Max Temp + Min Temp) / 2 - Base Temp (usually 50°F)
 ### Planting Weather Score
 
 **Optimal planting conditions** (Score 70+):
+
 - ✅ Temperature: 60-75°F
 - ✅ Soil moisture: Moderate (not too wet/dry)
 - ✅ Precipitation: <10% chance today
@@ -208,11 +231,13 @@ GDD = (Max Temp + Min Temp) / 2 - Base Temp (usually 50°F)
 ### 🌸 Spring (March-May)
 
 **Priority Crops**:
+
 - Early: Peas, Lettuce, Spinach, Radishes
 - Mid: Carrots, Beets, Onions, Broccoli
 - Late: Tomatoes, Peppers, Cucumbers, Beans
 
 **Biodynamic Focus**:
+
 - BD500 (soil spray) on waning moon
 - Plant annuals on waxing moon
 - Watch for late frosts
@@ -224,11 +249,13 @@ GDD = (Max Temp + Min Temp) / 2 - Base Temp (usually 50°F)
 ### ☀️ Summer (June-August)
 
 **Priority Crops**:
+
 - Heat lovers: Tomatoes, Peppers, Eggplant
 - Quick succession: Beans, Zucchini, Cucumbers
 - Continuous harvest: Basil, Lettuce, Herbs
 
 **Biodynamic Focus**:
+
 - BD501 (light spray) early morning
 - Harvest on descending moon
 - Mulch to retain moisture
@@ -240,11 +267,13 @@ GDD = (Max Temp + Min Temp) / 2 - Base Temp (usually 50°F)
 ### 🍂 Fall (September-November)
 
 **Priority Crops**:
+
 - Cool season: Kale, Spinach, Lettuce
 - Storage: Carrots, Beets, Cabbage, Winter Squash
 - Overwintering: Garlic, Onion sets
 
 **Biodynamic Focus**:
+
 - Plant root crops on waning moon
 - Harvest above-ground crops before first frost
 - Compost additions
@@ -256,6 +285,7 @@ GDD = (Max Temp + Min Temp) / 2 - Base Temp (usually 50°F)
 ### ❄️ Winter (December-February)
 
 **Priority Activities**:
+
 - Planning next season
 - Equipment maintenance
 - Seed ordering
@@ -263,6 +293,7 @@ GDD = (Max Temp + Min Temp) / 2 - Base Temp (usually 50°F)
 - Indoor seed starting (late winter)
 
 **Biodynamic Focus**:
+
 - Compost turning
 - Preparation making
 - Calendar planning
@@ -297,6 +328,7 @@ The system learns from your actual results:
 ## 🌟 Pro Tips
 
 ### Maximizing Profitability
+
 1. **Organic Premium**: Organic certification can increase prices 30-60%
 2. **Direct Marketing**: Farmers markets often 2-3x wholesale prices
 3. **Value-Added**: Consider jams, pickles, dried herbs for storage crops
@@ -304,6 +336,7 @@ The system learns from your actual results:
 5. **Succession Planting**: Plant small amounts every 2 weeks for continuous harvest
 
 ### Sustainability Best Practices
+
 1. **Crop Rotation**: Never plant same family in same spot 2 years running
 2. **Cover Crops**: Winter rye, clover, vetch improve soil
 3. **Companion Planting**: Follow recommendations to reduce pests naturally
@@ -311,6 +344,7 @@ The system learns from your actual results:
 5. **Biodiversity**: Plant flowers, maintain hedgerows, welcome beneficials
 
 ### Time-Saving Strategies
+
 1. **Use Mulch**: Reduces weeding 80%, conserves water
 2. **Drip Irrigation**: Saves water, reduces disease, saves time
 3. **Succession Planning**: Stagger planting/harvest to spread workload
@@ -322,20 +356,25 @@ The system learns from your actual results:
 ## 🆘 Troubleshooting
 
 ### "Low Suitability Scores for Everything"
+
 **Problem**: Your farm conditions may not be entered correctly
-**Solution**: 
+**Solution**:
+
 1. Double-check hardiness zone
 2. Verify soil type (get soil test if unsure)
 3. Update water availability based on irrigation
 4. Adjust sun exposure by field/plot
 
 ### "Weather Data Not Loading"
+
 **Problem**: API key may not be configured
 **Solution**: Contact support or use manual weather input
 
 ### "Recommendations Seem Off"
+
 **Problem**: Algorithm may need more context
 **Solution**:
+
 1. Complete all optional profile fields
 2. Indicate your specific goals (profit vs sustainability)
 3. Update previous crop history
@@ -346,17 +385,20 @@ The system learns from your actual results:
 ## 📞 Support & Resources
 
 ### In-Platform Help
+
 - **Dashboard Help**: Click (?) icons for context
 - **Crop Details**: Click any crop for growing guide
 - **Video Tutorials**: `/help/videos`
 
 ### External Resources
+
 - **Biodynamic Association**: [biodynamics.com](https://www.biodynamics.com/)
 - **USDA Planting Guides**: [usda.gov](https://www.usda.gov/)
 - **Extension Services**: Contact your local cooperative extension
 - **Companion Planting**: [almanac.com/companion-planting](https://www.almanac.com/companion-planting-guide)
 
 ### Community
+
 - **Farmer Forums**: `/community`
 - **Success Stories**: `/stories`
 - **Knowledge Base**: `/kb`
@@ -366,6 +408,7 @@ The system learns from your actual results:
 ## 🎓 Learning Path
 
 ### Beginner (First Season)
+
 1. ✅ Complete farm profile
 2. ✅ Try 3-5 recommended crops
 3. ✅ Follow basic lunar calendar
@@ -373,6 +416,7 @@ The system learns from your actual results:
 5. ✅ Learn from results
 
 ### Intermediate (Year 2-3)
+
 1. ✅ Expand to 10+ crops
 2. ✅ Implement crop rotation plan
 3. ✅ Use all biodynamic preparations
@@ -380,6 +424,7 @@ The system learns from your actual results:
 5. ✅ Share knowledge with community
 
 ### Advanced (Year 4+)
+
 1. ✅ Customize recommendations based on experience
 2. ✅ Optimize for profit or sustainability
 3. ✅ Mentor other farmers
@@ -392,20 +437,21 @@ The system learns from your actual results:
 
 **Track these to measure improvement**:
 
-| Metric | Year 1 | Year 2 | Year 3 |
-|--------|--------|--------|--------|
-| Revenue per Acre | $ | $ | $ |
-| Crop Diversity | # varieties | # varieties | # varieties |
-| Soil Health Score | 0-100 | 0-100 | 0-100 |
-| Customer Retention | % | % | % |
-| Labor Efficiency | hrs/acre | hrs/acre | hrs/acre |
-| Waste Reduction | % | % | % |
+| Metric             | Year 1      | Year 2      | Year 3      |
+| ------------------ | ----------- | ----------- | ----------- |
+| Revenue per Acre   | $           | $           | $           |
+| Crop Diversity     | # varieties | # varieties | # varieties |
+| Soil Health Score  | 0-100       | 0-100       | 0-100       |
+| Customer Retention | %           | %           | %           |
+| Labor Efficiency   | hrs/acre    | hrs/acre    | hrs/acre    |
+| Waste Reduction    | %           | %           | %           |
 
 ---
 
 ## 📝 Quick Checklist
 
 ### Weekly
+
 - [ ] Check weather forecast
 - [ ] Review frost alerts
 - [ ] Check planting windows opening
@@ -413,6 +459,7 @@ The system learns from your actual results:
 - [ ] Review upcoming tasks
 
 ### Monthly
+
 - [ ] Update crop rotation plan
 - [ ] Review market prices
 - [ ] Check soil moisture
@@ -420,6 +467,7 @@ The system learns from your actual results:
 - [ ] Order seeds for next month
 
 ### Seasonal
+
 - [ ] Review season performance
 - [ ] Plan next season crops
 - [ ] Update equipment list
@@ -441,7 +489,7 @@ The system learns from your actual results:
 
 ---
 
-*"The best time to plant a tree was 20 years ago. The second best time is now."* 🌳
+_"The best time to plant a tree was 20 years ago. The second best time is now."_ 🌳
 
 **Happy farming! 🌾**
 

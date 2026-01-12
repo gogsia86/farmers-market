@@ -28,7 +28,9 @@ const CONFIG = {
   appDir: "./src/app",
   dryRun: process.argv.includes("--dry-run") || process.argv.includes("-d"),
   verbose: process.argv.includes("--verbose") || process.argv.includes("-v"),
-  customPath: process.argv.find((arg) => arg.startsWith("--path="))?.split("=")[1],
+  customPath: process.argv
+    .find((arg) => arg.startsWith("--path="))
+    ?.split("=")[1],
 };
 
 // ============================================================================
@@ -48,7 +50,8 @@ const colors = {
 };
 
 const log = {
-  success: (msg: string) => console.log(`${colors.green}✓${colors.reset} ${msg}`),
+  success: (msg: string) =>
+    console.log(`${colors.green}✓${colors.reset} ${msg}`),
   error: (msg: string) => console.log(`${colors.red}✗${colors.reset} ${msg}`),
   info: (msg: string) => console.log(`${colors.blue}ℹ${colors.reset} ${msg}`),
   warn: (msg: string) => console.log(`${colors.yellow}⚠${colors.reset} ${msg}`),
@@ -56,7 +59,7 @@ const log = {
   detail: (msg: string) => console.log(`  ${colors.gray}${msg}${colors.reset}`),
   header: (msg: string) =>
     console.log(
-      `\n${colors.bright}${colors.magenta}${"=".repeat(60)}${colors.reset}\n${colors.bright}${msg}${colors.reset}\n${colors.magenta}${"=".repeat(60)}${colors.reset}\n`
+      `\n${colors.bright}${colors.magenta}${"=".repeat(60)}${colors.reset}\n${colors.bright}${msg}${colors.reset}\n${colors.magenta}${"=".repeat(60)}${colors.reset}\n`,
     ),
 };
 
@@ -156,17 +159,20 @@ const ELEMENT_PATTERNS = [
 
   // Content elements
   {
-    pattern: /<div\s+className="[^"]*card[^"]*"([^>]*?)(?:data-testid="([^"]*)")?([^>]*?)>/gi,
+    pattern:
+      /<div\s+className="[^"]*card[^"]*"([^>]*?)(?:data-testid="([^"]*)")?([^>]*?)>/gi,
     type: "card",
     priority: 3,
   },
   {
-    pattern: /<div\s+className="[^"]*modal[^"]*"([^>]*?)(?:data-testid="([^"]*)")?([^>]*?)>/gi,
+    pattern:
+      /<div\s+className="[^"]*modal[^"]*"([^>]*?)(?:data-testid="([^"]*)")?([^>]*?)>/gi,
     type: "modal",
     priority: 3,
   },
   {
-    pattern: /<div\s+className="[^"]*dialog[^"]*"([^>]*?)(?:data-testid="([^"]*)")?([^>]*?)>/gi,
+    pattern:
+      /<div\s+className="[^"]*dialog[^"]*"([^>]*?)(?:data-testid="([^"]*)")?([^>]*?)>/gi,
     type: "dialog",
     priority: 3,
   },
@@ -200,9 +206,10 @@ function getComponentName(filePath: string): string {
 function generateTestId(
   componentName: string,
   elementType: string,
-  context?: string
+  context?: string,
 ): string {
-  const namingFn = NAMING_CONVENTIONS[elementType] || NAMING_CONVENTIONS.default;
+  const namingFn =
+    NAMING_CONVENTIONS[elementType] || NAMING_CONVENTIONS.default;
   const baseName = context || componentName;
   return namingFn(baseName);
 }
@@ -236,7 +243,9 @@ function extractContext(element: string): string | null {
     const classes = classMatch[1].split(/\s+/);
     // Look for semantic class names
     const semantic = classes.find((c) =>
-      /^(submit|cancel|primary|secondary|close|open|save|delete|edit|create)/.test(c)
+      /^(submit|cancel|primary|secondary|close|open|save|delete|edit|create)/.test(
+        c,
+      ),
     );
     if (semantic) return semantic;
   }
@@ -289,21 +298,23 @@ function processFile(filePath: string): MigrationResult {
         const context = extractContext(fullMatch);
 
         // Generate testid
-        const testId = generateTestId(componentName, type, context || undefined);
+        const testId = generateTestId(
+          componentName,
+          type,
+          context || undefined,
+        );
 
         // Add testid to element
         const updatedElement = fullMatch.replace(
           /^(<\w+)(\s+)/,
-          `$1 data-testid="${testId}"$2`
+          `$1 data-testid="${testId}"$2`,
         );
 
         // Replace in content
         content = content.replace(fullMatch, updatedElement);
 
         result.elementsUpdated++;
-        result.changes.push(
-          `Added data-testid="${testId}" to ${type} element`
-        );
+        result.changes.push(`Added data-testid="${testId}" to ${type} element`);
       }
     }
 
@@ -593,7 +604,7 @@ async function main() {
     if (result.elementsUpdated > 0) {
       totalElementsUpdated += result.elementsUpdated;
       log.success(
-        `${relativePath}: ${result.elementsUpdated} element(s) updated`
+        `${relativePath}: ${result.elementsUpdated} element(s) updated`,
       );
 
       if (CONFIG.verbose && result.changes.length > 0) {
@@ -627,15 +638,15 @@ async function main() {
   console.log(`Total Files Processed: ${results.length}`);
   console.log(`${colors.green}Files Updated: ${filesUpdated}${colors.reset}`);
   console.log(
-    `${colors.blue}Total Elements Updated: ${totalElementsUpdated}${colors.reset}`
+    `${colors.blue}Total Elements Updated: ${totalElementsUpdated}${colors.reset}`,
   );
   console.log(
-    `${colors.red}Files with Errors: ${filesWithErrors}${colors.reset}`
+    `${colors.red}Files with Errors: ${filesWithErrors}${colors.reset}`,
   );
 
   if (CONFIG.dryRun) {
     log.warn(
-      "\n⚠️  This was a DRY RUN. Run without --dry-run to apply changes."
+      "\n⚠️  This was a DRY RUN. Run without --dry-run to apply changes.",
     );
   } else {
     log.success("\n✅ Migration complete!");

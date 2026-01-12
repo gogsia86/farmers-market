@@ -150,7 +150,7 @@ export class TestDashboardAPI {
     // Sort by timestamp (newest first)
     runs.sort(
       (a, b) =>
-        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
     );
 
     return limit ? runs.slice(0, limit) : runs;
@@ -176,7 +176,7 @@ export class TestDashboardAPI {
    */
   static async getRunsByType(
     type: TestRun["type"],
-    limit?: number
+    limit?: number,
   ): Promise<TestRun[]> {
     const allRuns = await this.getAllRuns();
     const filtered = allRuns.filter((r) => r.type === type);
@@ -188,7 +188,7 @@ export class TestDashboardAPI {
    */
   static async getRunsByStatus(
     status: TestRun["status"],
-    limit?: number
+    limit?: number,
   ): Promise<TestRun[]> {
     const allRuns = await this.getAllRuns();
     const filtered = allRuns.filter((r) => r.status === status);
@@ -203,16 +203,20 @@ export class TestDashboardAPI {
     const allRuns = await this.getAllRuns();
 
     const lastRun = runs[0] || null;
-    const totalTests = allRuns.reduce((sum, r) => sum + r.summary.totalTests, 0);
+    const totalTests = allRuns.reduce(
+      (sum, r) => sum + r.summary.totalTests,
+      0,
+    );
     const totalPassed = allRuns.reduce((sum, r) => sum + r.summary.passed, 0);
     const totalDuration = allRuns.reduce((sum, r) => sum + r.duration, 0);
     const criticalFailures = allRuns.filter(
-      (r) => r.status === "failed" && r.summary.passRate < 50
+      (r) => r.status === "failed" && r.summary.passRate < 50,
     ).length;
 
     const overallPassRate =
       totalTests > 0 ? (totalPassed / totalTests) * 100 : 0;
-    const averageDuration = allRuns.length > 0 ? totalDuration / allRuns.length : 0;
+    const averageDuration =
+      allRuns.length > 0 ? totalDuration / allRuns.length : 0;
 
     // Determine current status
     let currentStatus: DashboardStats["currentStatus"] = "healthy";
@@ -259,14 +263,14 @@ export class TestDashboardAPI {
 
     // Filter runs in period
     const runsInPeriod = allRuns.filter(
-      (r) => new Date(r.timestamp) >= startDate
+      (r) => new Date(r.timestamp) >= startDate,
     );
 
     // Calculate metrics
     const totalRuns = runsInPeriod.length;
     const totalPassRate = runsInPeriod.reduce(
       (sum, r) => sum + r.summary.passRate,
-      0
+      0,
     );
     const totalDuration = runsInPeriod.reduce((sum, r) => sum + r.duration, 0);
     const averagePassRate = totalRuns > 0 ? totalPassRate / totalRuns : 0;
@@ -310,7 +314,7 @@ export class TestDashboardAPI {
       // Search in test names
       if (
         run.suites.some((s) =>
-          s.results.some((r) => r.testName.toLowerCase().includes(lowerQuery))
+          s.results.some((r) => r.testName.toLowerCase().includes(lowerQuery)),
         )
       )
         return true;
@@ -433,9 +437,12 @@ export class TestDashboardAPI {
 
   private static buildTrendData(
     runs: TestRun[],
-    period: TestMetrics["period"]
+    period: TestMetrics["period"],
   ): TestMetrics["trendData"] {
-    const trendMap = new Map<string, { runs: number; passRate: number; duration: number }>();
+    const trendMap = new Map<
+      string,
+      { runs: number; passRate: number; duration: number }
+    >();
 
     for (const run of runs) {
       const date = new Date(run.timestamp).toISOString().split("T")[0];
@@ -495,11 +502,18 @@ export class TestDashboardAPI {
     }
 
     // Sort by failure rate descending
-    return flakyTests.sort((a, b) => b.failureRate - a.failureRate).slice(0, 10);
+    return flakyTests
+      .sort((a, b) => b.failureRate - a.failureRate)
+      .slice(0, 10);
   }
 
-  private static findSlowestTests(runs: TestRun[]): TestMetrics["slowestTests"] {
-    const testStats = new Map<string, { totalDuration: number; count: number }>();
+  private static findSlowestTests(
+    runs: TestRun[],
+  ): TestMetrics["slowestTests"] {
+    const testStats = new Map<
+      string,
+      { totalDuration: number; count: number }
+    >();
 
     for (const run of runs) {
       for (const suite of run.suites) {
@@ -530,7 +544,9 @@ export class TestDashboardAPI {
     }
 
     // Sort by average duration descending
-    return slowestTests.sort((a, b) => b.averageDuration - a.averageDuration).slice(0, 10);
+    return slowestTests
+      .sort((a, b) => b.averageDuration - a.averageDuration)
+      .slice(0, 10);
   }
 
   private static generateIdFromPath(filePath: string): string {

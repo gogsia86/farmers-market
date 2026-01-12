@@ -33,10 +33,10 @@ const CONFIG = {
     cyan: "\x1b[36m",
   },
   thresholds: {
-    fast: 100,      // < 100ms is excellent
-    good: 500,      // < 500ms is good
+    fast: 100, // < 100ms is excellent
+    good: 500, // < 500ms is good
     acceptable: 1000, // < 1s is acceptable
-    slow: 3000,     // > 3s is slow
+    slow: 3000, // > 3s is slow
   },
 };
 
@@ -100,10 +100,16 @@ function logResult(result: DiagnosticResult) {
 
   if (result.duration !== undefined) {
     const perfIcon =
-      result.duration < CONFIG.thresholds.fast ? "🚀" :
-      result.duration < CONFIG.thresholds.good ? "✓" :
-      result.duration < CONFIG.thresholds.acceptable ? "⏱️" : "🐌";
-    console.log(`   ${c.dim}└─ Duration: ${result.duration}ms ${perfIcon}${c.reset}`);
+      result.duration < CONFIG.thresholds.fast
+        ? "🚀"
+        : result.duration < CONFIG.thresholds.good
+          ? "✓"
+          : result.duration < CONFIG.thresholds.acceptable
+            ? "⏱️"
+            : "🐌";
+    console.log(
+      `   ${c.dim}└─ Duration: ${result.duration}ms ${perfIcon}${c.reset}`,
+    );
   }
 
   if (result.fix) {
@@ -142,8 +148,11 @@ async function checkDatabaseURL(): Promise<DiagnosticResult> {
     };
 
     // Check if it's a Vercel Postgres URL
-    const isVercelPostgres = url.hostname.includes("postgres.vercel-storage.com");
-    const isLocalhost = url.hostname === "localhost" || url.hostname === "127.0.0.1";
+    const isVercelPostgres = url.hostname.includes(
+      "postgres.vercel-storage.com",
+    );
+    const isLocalhost =
+      url.hostname === "localhost" || url.hostname === "127.0.0.1";
 
     if (isVercelPostgres) {
       details.provider = "Vercel Postgres";
@@ -186,17 +195,23 @@ async function testRawConnection(): Promise<DiagnosticResult> {
     });
 
     // Test query
-    const result = await pool.query("SELECT NOW() as current_time, version() as pg_version");
+    const result = await pool.query(
+      "SELECT NOW() as current_time, version() as pg_version",
+    );
     const duration = Date.now() - start;
 
     const row = result.rows[0];
-    const version = row.pg_version.split(" ")[0] + " " + row.pg_version.split(" ")[1];
+    const version =
+      row.pg_version.split(" ")[0] + " " + row.pg_version.split(" ")[1];
 
     await pool.end();
 
     const status =
-      duration < CONFIG.thresholds.acceptable ? "pass" :
-      duration < CONFIG.thresholds.slow ? "warn" : "fail";
+      duration < CONFIG.thresholds.acceptable
+        ? "pass"
+        : duration < CONFIG.thresholds.slow
+          ? "warn"
+          : "fail";
 
     return {
       name: "Raw PostgreSQL Connection",
@@ -241,8 +256,11 @@ async function testPrismaConnection(): Promise<DiagnosticResult> {
     await prisma.$disconnect();
 
     const status =
-      duration < CONFIG.thresholds.acceptable ? "pass" :
-      duration < CONFIG.thresholds.slow ? "warn" : "fail";
+      duration < CONFIG.thresholds.acceptable
+        ? "pass"
+        : duration < CONFIG.thresholds.slow
+          ? "warn"
+          : "fail";
 
     return {
       name: "Prisma Client Connection",
@@ -350,8 +368,11 @@ async function testQueryPerformance(): Promise<DiagnosticResult> {
     await prisma.$disconnect();
 
     const status =
-      avgDuration < CONFIG.thresholds.good ? "pass" :
-      avgDuration < CONFIG.thresholds.acceptable ? "warn" : "fail";
+      avgDuration < CONFIG.thresholds.good
+        ? "pass"
+        : avgDuration < CONFIG.thresholds.acceptable
+          ? "warn"
+          : "fail";
 
     return {
       name: "Query Performance",
@@ -402,9 +423,9 @@ async function checkDatabaseTables(): Promise<DiagnosticResult> {
     }
 
     // Check for critical tables
-    const tableNames = tables.map(t => t.tablename.toLowerCase());
+    const tableNames = tables.map((t) => t.tablename.toLowerCase());
     const criticalTables = ["user", "farm", "product"];
-    const missingTables = criticalTables.filter(t => !tableNames.includes(t));
+    const missingTables = criticalTables.filter((t) => !tableNames.includes(t));
 
     if (missingTables.length > 0) {
       return {
@@ -464,11 +485,15 @@ async function checkConnectionPool(): Promise<DiagnosticResult> {
     await pool.end();
 
     const stats = result.rows[0];
-    const utilizationPercent = (stats.total_connections / stats.max_connections) * 100;
+    const utilizationPercent =
+      (stats.total_connections / stats.max_connections) * 100;
 
     const status =
-      utilizationPercent < 50 ? "pass" :
-      utilizationPercent < 80 ? "warn" : "fail";
+      utilizationPercent < 50
+        ? "pass"
+        : utilizationPercent < 80
+          ? "warn"
+          : "fail";
 
     return {
       name: "Connection Pool Health",
@@ -532,7 +557,7 @@ async function applyFixes(checks: DiagnosticResult[]): Promise<string[]> {
 
   logSection("🔧 Applying Automatic Fixes");
 
-  const failedChecks = checks.filter(c => c.status === "fail");
+  const failedChecks = checks.filter((c) => c.status === "fail");
 
   if (failedChecks.length === 0) {
     log("✅ No automatic fixes needed", "green");
@@ -592,8 +617,8 @@ async function runDiagnostics(): Promise<HealthReport> {
   }
 
   // Determine overall health
-  const failCount = checks.filter(c => c.status === "fail").length;
-  const warnCount = checks.filter(c => c.status === "warn").length;
+  const failCount = checks.filter((c) => c.status === "fail").length;
+  const warnCount = checks.filter((c) => c.status === "warn").length;
 
   let overall: "healthy" | "degraded" | "critical";
   if (failCount === 0 && warnCount === 0) {
@@ -643,18 +668,18 @@ function printSummary(report: HealthReport) {
 
   log(
     `${statusIcons[report.overall]} Overall Status: ${c[statusColors[report.overall]]}${report.overall.toUpperCase()}${c.reset}`,
-    "bright"
+    "bright",
   );
 
-  const passCount = report.checks.filter(c => c.status === "pass").length;
-  const warnCount = report.checks.filter(c => c.status === "warn").length;
-  const failCount = report.checks.filter(c => c.status === "fail").length;
+  const passCount = report.checks.filter((c) => c.status === "pass").length;
+  const warnCount = report.checks.filter((c) => c.status === "warn").length;
+  const failCount = report.checks.filter((c) => c.status === "fail").length;
 
   console.log(`\n${"─".repeat(80)}`);
   log(
     `${c.green}✅ Passed: ${passCount}${c.reset}  ` +
-    `${c.yellow}⚠️  Warnings: ${warnCount}${c.reset}  ` +
-    `${c.red}❌ Failed: ${failCount}${c.reset}`
+      `${c.yellow}⚠️  Warnings: ${warnCount}${c.reset}  ` +
+      `${c.red}❌ Failed: ${failCount}${c.reset}`,
   );
   console.log(`${"─".repeat(80)}\n`);
 
@@ -662,8 +687,8 @@ function printSummary(report: HealthReport) {
   if (failCount > 0) {
     log("❌ Failed Checks:", "red");
     report.checks
-      .filter(c => c.status === "fail")
-      .forEach(check => {
+      .filter((c) => c.status === "fail")
+      .forEach((check) => {
         console.log(`  • ${check.name}: ${check.message}`);
         if (check.fix) {
           console.log(`    ${c.yellow}Fix: ${check.fix}${c.reset}`);
@@ -676,8 +701,8 @@ function printSummary(report: HealthReport) {
   if (warnCount > 0) {
     log("⚠️  Warnings:", "yellow");
     report.checks
-      .filter(c => c.status === "warn")
-      .forEach(check => {
+      .filter((c) => c.status === "warn")
+      .forEach((check) => {
         console.log(`  • ${check.name}: ${check.message}`);
       });
     console.log();
@@ -697,7 +722,9 @@ function printSummary(report: HealthReport) {
 
     if (warnCount > 0) {
       log("2. Address Warnings:", "yellow");
-      const warnings = report.checks.filter(c => c.status === "warn" && c.fix);
+      const warnings = report.checks.filter(
+        (c) => c.status === "warn" && c.fix,
+      );
       warnings.forEach((check, i) => {
         console.log(`   ${i + 1}. ${check.fix}`);
       });
@@ -705,8 +732,12 @@ function printSummary(report: HealthReport) {
     }
 
     log("3. Verify in Vercel:", "cyan");
-    console.log("   • Go to: https://vercel.com/your-project/settings/environment-variables");
-    console.log("   • Check DATABASE_URL is set for Production, Preview, and Development");
+    console.log(
+      "   • Go to: https://vercel.com/your-project/settings/environment-variables",
+    );
+    console.log(
+      "   • Check DATABASE_URL is set for Production, Preview, and Development",
+    );
     console.log("   • Redeploy after updating environment variables");
     console.log();
 
@@ -763,4 +794,3 @@ async function main() {
 main();
 
 export { runDiagnostics, type DiagnosticResult, type HealthReport };
-

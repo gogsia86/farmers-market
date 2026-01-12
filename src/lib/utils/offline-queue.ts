@@ -7,14 +7,14 @@
  * Check if Service Worker is supported
  */
 export function isServiceWorkerSupported(): boolean {
-  return 'serviceWorker' in navigator;
+  return "serviceWorker" in navigator;
 }
 
 /**
  * Check if IndexedDB is supported
  */
 export function isIndexedDBSupported(): boolean {
-  return 'indexedDB' in window;
+  return "indexedDB" in window;
 }
 
 /**
@@ -39,14 +39,11 @@ async function getServiceWorker(): Promise<ServiceWorker | null> {
 /**
  * Send message to Service Worker and wait for response
  */
-async function sendMessageToSW(
-  type: string,
-  data?: any
-): Promise<any> {
+async function sendMessageToSW(type: string, data?: any): Promise<any> {
   const sw = await getServiceWorker();
 
   if (!sw) {
-    throw new Error('Service Worker not available');
+    throw new Error("Service Worker not available");
   }
 
   return new Promise((resolve, reject) => {
@@ -56,18 +53,15 @@ async function sendMessageToSW(
       if (event.data.success) {
         resolve(event.data);
       } else {
-        reject(new Error(event.data.error || 'Unknown error'));
+        reject(new Error(event.data.error || "Unknown error"));
       }
     };
 
-    sw.postMessage(
-      { type, ...data },
-      [messageChannel.port2]
-    );
+    sw.postMessage({ type, ...data }, [messageChannel.port2]);
 
     // Timeout after 5 seconds
     setTimeout(() => {
-      reject(new Error('Service Worker response timeout'));
+      reject(new Error("Service Worker response timeout"));
     }, 5000);
   });
 }
@@ -88,7 +82,7 @@ export interface QueuedOrder {
   shippingAddress?: any;
   paymentMethod?: string;
   timestamp?: number;
-  status?: 'pending' | 'syncing' | 'synced' | 'failed';
+  status?: "pending" | "syncing" | "synced" | "failed";
   retryCount?: number;
 }
 
@@ -104,22 +98,22 @@ export interface OfflineQueueStats {
  * @returns Promise with local order ID
  */
 export async function queueOfflineOrder(
-  orderData: Omit<QueuedOrder, 'id' | 'timestamp' | 'status' | 'retryCount'>
+  orderData: Omit<QueuedOrder, "id" | "timestamp" | "status" | "retryCount">,
 ): Promise<number> {
   if (!isServiceWorkerSupported()) {
-    throw new Error('Service Worker not supported');
+    throw new Error("Service Worker not supported");
   }
 
   if (!isOffline()) {
-    console.warn('Device is online - consider using direct API call');
+    console.warn("Device is online - consider using direct API call");
   }
 
   try {
-    const response = await sendMessageToSW('QUEUE_ORDER', { orderData });
-    console.log('✅ Order queued for offline sync:', response.orderId);
+    const response = await sendMessageToSW("QUEUE_ORDER", { orderData });
+    console.log("✅ Order queued for offline sync:", response.orderId);
     return response.orderId;
   } catch (error) {
-    console.error('❌ Failed to queue order:', error);
+    console.error("❌ Failed to queue order:", error);
     throw error;
   }
 }
@@ -134,10 +128,10 @@ export async function getPendingOrderCount(): Promise<number> {
   }
 
   try {
-    const response = await sendMessageToSW('GET_PENDING_COUNT');
+    const response = await sendMessageToSW("GET_PENDING_COUNT");
     return response.count;
   } catch (error) {
-    console.error('Failed to get pending order count:', error);
+    console.error("Failed to get pending order count:", error);
     return 0;
   }
 }
@@ -151,19 +145,19 @@ export async function getOfflineQueueStats(): Promise<OfflineQueueStats> {
     return {
       pendingOrders: 0,
       failedRequests: 0,
-      cachedEntries: 0
+      cachedEntries: 0,
     };
   }
 
   try {
-    const response = await sendMessageToSW('GET_DB_STATS');
+    const response = await sendMessageToSW("GET_DB_STATS");
     return response.stats;
   } catch (error) {
-    console.error('Failed to get queue stats:', error);
+    console.error("Failed to get queue stats:", error);
     return {
       pendingOrders: 0,
       failedRequests: 0,
-      cachedEntries: 0
+      cachedEntries: 0,
     };
   }
 }
@@ -178,11 +172,11 @@ export async function clearFailedOrders(): Promise<number> {
   }
 
   try {
-    const response = await sendMessageToSW('CLEAR_FAILED_ORDERS');
+    const response = await sendMessageToSW("CLEAR_FAILED_ORDERS");
     console.log(`🧹 Cleared ${response.clearedCount} failed orders`);
     return response.clearedCount;
   } catch (error) {
-    console.error('Failed to clear failed orders:', error);
+    console.error("Failed to clear failed orders:", error);
     return 0;
   }
 }
@@ -193,14 +187,14 @@ export async function clearFailedOrders(): Promise<number> {
  */
 export async function syncPendingOrders(): Promise<void> {
   if (!isServiceWorkerSupported()) {
-    throw new Error('Service Worker not supported');
+    throw new Error("Service Worker not supported");
   }
 
   try {
-    await sendMessageToSW('SYNC_NOW');
-    console.log('✅ Manual sync triggered successfully');
+    await sendMessageToSW("SYNC_NOW");
+    console.log("✅ Manual sync triggered successfully");
   } catch (error) {
-    console.error('❌ Failed to trigger sync:', error);
+    console.error("❌ Failed to trigger sync:", error);
     throw error;
   }
 }
@@ -228,16 +222,16 @@ export function onOrderSynced(callback: OrderSyncCallback): () => void {
   }
 
   const handler = (event: MessageEvent) => {
-    if (event.data && event.data.type === 'ORDER_SYNCED') {
+    if (event.data && event.data.type === "ORDER_SYNCED") {
       callback(event.data.data);
     }
   };
 
-  navigator.serviceWorker.addEventListener('message', handler);
+  navigator.serviceWorker.addEventListener("message", handler);
 
   // Return cleanup function
   return () => {
-    navigator.serviceWorker.removeEventListener('message', handler);
+    navigator.serviceWorker.removeEventListener("message", handler);
   };
 }
 
@@ -246,9 +240,11 @@ export function onOrderSynced(callback: OrderSyncCallback): () => void {
  * @param callback - Function to call when status changes
  * @returns Cleanup function
  */
-export function onOnlineStatusChange(callback: OnlineStatusCallback): () => void {
+export function onOnlineStatusChange(
+  callback: OnlineStatusCallback,
+): () => void {
   const onlineHandler = () => {
-    console.log('🌐 Device is online');
+    console.log("🌐 Device is online");
     callback(true);
 
     // Trigger sync when coming back online
@@ -258,17 +254,17 @@ export function onOnlineStatusChange(callback: OnlineStatusCallback): () => void
   };
 
   const offlineHandler = () => {
-    console.log('📴 Device is offline');
+    console.log("📴 Device is offline");
     callback(false);
   };
 
-  window.addEventListener('online', onlineHandler);
-  window.addEventListener('offline', offlineHandler);
+  window.addEventListener("online", onlineHandler);
+  window.addEventListener("offline", offlineHandler);
 
   // Return cleanup function
   return () => {
-    window.removeEventListener('online', onlineHandler);
-    window.removeEventListener('offline', offlineHandler);
+    window.removeEventListener("online", onlineHandler);
+    window.removeEventListener("offline", offlineHandler);
   };
 }
 
@@ -288,7 +284,7 @@ export function onOnlineStatusChange(callback: OnlineStatusCallback): () => void
  * } = useOfflineQueue();
  */
 export function useOfflineQueue() {
-  if (typeof window === 'undefined') {
+  if (typeof window === "undefined") {
     return {
       isOnline: true,
       pendingCount: 0,
@@ -333,16 +329,16 @@ export function shouldQueueOffline(force: boolean = false): boolean {
  */
 export async function getOfflineQueueStatus(): Promise<string> {
   if (!isServiceWorkerSupported()) {
-    return 'Offline mode not available';
+    return "Offline mode not available";
   }
 
   const stats = await getOfflineQueueStats();
 
   if (stats.pendingOrders === 0) {
-    return 'All orders synced ✅';
+    return "All orders synced ✅";
   }
 
-  return `${stats.pendingOrders} order${stats.pendingOrders > 1 ? 's' : ''} pending sync`;
+  return `${stats.pendingOrders} order${stats.pendingOrders > 1 ? "s" : ""} pending sync`;
 }
 
 /**
@@ -363,10 +359,10 @@ export class OfflineQueueError extends Error {
   constructor(
     message: string,
     public code: string,
-    public originalError?: Error
+    public originalError?: Error,
   ) {
     super(message);
-    this.name = 'OfflineQueueError';
+    this.name = "OfflineQueueError";
   }
 }
 
@@ -376,7 +372,7 @@ export class OfflineQueueError extends Error {
  */
 export async function handleOrderSubmission(
   orderData: any,
-  submitToAPI: (data: any) => Promise<any>
+  submitToAPI: (data: any) => Promise<any>,
 ): Promise<{
   success: boolean;
   orderId?: string | number;
@@ -390,10 +386,10 @@ export async function handleOrderSubmission(
       return {
         success: true,
         orderId: result.id,
-        queuedOffline: false
+        queuedOffline: false,
       };
     } catch (error) {
-      console.warn('Online order submission failed, queueing offline:', error);
+      console.warn("Online order submission failed, queueing offline:", error);
     }
   }
 
@@ -403,13 +399,13 @@ export async function handleOrderSubmission(
     return {
       success: true,
       orderId: localOrderId,
-      queuedOffline: true
+      queuedOffline: true,
     };
   } catch (error) {
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to queue order',
-      queuedOffline: false
+      error: error instanceof Error ? error.message : "Failed to queue order",
+      queuedOffline: false,
     };
   }
 }
@@ -427,19 +423,21 @@ export function initOfflineQueue(): () => void {
 
   // Listen for order sync events
   const cleanupSyncListener = onOrderSynced((event) => {
-    console.log('✅ Order synced:', event);
+    console.log("✅ Order synced:", event);
 
     // Dispatch custom event for app-wide handling
-    window.dispatchEvent(new CustomEvent('orderSynced', { detail: event }));
+    window.dispatchEvent(new CustomEvent("orderSynced", { detail: event }));
   });
   cleanupFunctions.push(cleanupSyncListener);
 
   // Listen for online/offline status
   const cleanupStatusListener = onOnlineStatusChange((isOnline) => {
     // Dispatch custom event
-    window.dispatchEvent(new CustomEvent('onlineStatusChange', {
-      detail: { isOnline }
-    }));
+    window.dispatchEvent(
+      new CustomEvent("onlineStatusChange", {
+        detail: { isOnline },
+      }),
+    );
   });
   cleanupFunctions.push(cleanupStatusListener);
 
@@ -450,9 +448,11 @@ export function initOfflineQueue(): () => void {
       console.log(`📦 ${count} order(s) pending sync`);
 
       // Dispatch event
-      window.dispatchEvent(new CustomEvent('pendingOrdersUpdate', {
-        detail: { count }
-      }));
+      window.dispatchEvent(
+        new CustomEvent("pendingOrdersUpdate", {
+          detail: { count },
+        }),
+      );
     }
   }, 30000);
 
@@ -460,8 +460,8 @@ export function initOfflineQueue(): () => void {
 
   // Return cleanup function
   return () => {
-    cleanupFunctions.forEach(cleanup => cleanup());
+    cleanupFunctions.forEach((cleanup) => cleanup());
   };
 }
 
-console.log('📴 Offline queue utilities loaded 🌾');
+console.log("📴 Offline queue utilities loaded 🌾");

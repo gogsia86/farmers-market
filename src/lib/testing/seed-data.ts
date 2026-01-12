@@ -66,7 +66,7 @@ export const TEST_IDS = {
  */
 export function generateTestEmail(
   prefix: string = "test",
-  domain: string = "farmersmarket.test"
+  domain: string = "farmersmarket.test",
 ): string {
   const timestamp = Date.now();
   const random = Math.random().toString(36).substring(7);
@@ -89,7 +89,9 @@ export const UserFactory = {
   /**
    * Create customer user data
    */
-  customer(overrides?: Partial<Prisma.UserCreateInput>): Prisma.UserCreateInput {
+  customer(
+    overrides?: Partial<Prisma.UserCreateInput>,
+  ): Prisma.UserCreateInput {
     return {
       email: generateTestEmail("customer"),
       name: "Test Customer",
@@ -133,7 +135,7 @@ export const UserFactory = {
    */
   batch(
     count: number,
-    type: "customer" | "farmer" | "admin" = "customer"
+    type: "customer" | "farmer" | "admin" = "customer",
   ): Prisma.UserCreateInput[] {
     return Array.from({ length: count }, (_, i) => {
       const factory = this[type];
@@ -154,7 +156,7 @@ export const FarmFactory = {
    */
   create(
     ownerId: string,
-    overrides?: Partial<Prisma.FarmCreateInput>
+    overrides?: Partial<Prisma.FarmCreateInput>,
   ): Prisma.FarmCreateInput {
     const timestamp = Date.now();
     return {
@@ -226,7 +228,7 @@ export const ProductFactory = {
    */
   create(
     farmId: string,
-    overrides?: Partial<Prisma.ProductCreateInput>
+    overrides?: Partial<Prisma.ProductCreateInput>,
   ): Prisma.ProductCreateInput {
     const timestamp = Date.now();
     return {
@@ -302,9 +304,12 @@ export const OrderFactory = {
    */
   create(
     customerId: string,
-    items: Array<{ productId: string; quantity: number; price: number }>
+    items: Array<{ productId: string; quantity: number; price: number }>,
   ): Prisma.OrderCreateInput {
-    const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const subtotal = items.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0,
+    );
     const tax = subtotal * 0.08;
     const total = subtotal + tax;
 
@@ -330,7 +335,7 @@ export const OrderFactory = {
    */
   completed(
     customerId: string,
-    items: Array<{ productId: string; quantity: number; price: number }>
+    items: Array<{ productId: string; quantity: number; price: number }>,
   ): Prisma.OrderCreateInput {
     const order = this.create(customerId, items);
     return {
@@ -351,7 +356,7 @@ export const ReviewFactory = {
   create(
     userId: string,
     farmId: string,
-    overrides?: Partial<Prisma.ReviewCreateInput>
+    overrides?: Partial<Prisma.ReviewCreateInput>,
   ): Prisma.ReviewCreateInput {
     return {
       user: { connect: { id: userId } },
@@ -370,7 +375,7 @@ export const ReviewFactory = {
   batch(
     userIds: string[],
     farmId: string,
-    count: number = 5
+    count: number = 5,
   ): Prisma.ReviewCreateInput[] {
     const ratings = [5, 4, 5, 3, 4];
     const comments = [
@@ -424,7 +429,7 @@ export async function cleanTestData(verbose: boolean = false): Promise<void> {
  * Seed essential test data
  */
 export async function seedEssentialData(
-  options: SeedOptions = {}
+  options: SeedOptions = {},
 ): Promise<SeedResult> {
   const startTime = Date.now();
   const errors: string[] = [];
@@ -503,7 +508,7 @@ export async function seedEssentialData(
  * Seed comprehensive test data
  */
 export async function seedComprehensiveData(
-  options: SeedOptions = {}
+  options: SeedOptions = {},
 ): Promise<SeedResult> {
   const startTime = Date.now();
   const errors: string[] = [];
@@ -517,7 +522,10 @@ export async function seedComprehensiveData(
     if (options.verbose) console.log("🌱 Seeding comprehensive test data...");
 
     // Seed essential data first
-    const essentialResult = await seedEssentialData({ ...options, clean: false });
+    const essentialResult = await seedEssentialData({
+      ...options,
+      clean: false,
+    });
     Object.assign(counts, essentialResult.counts);
 
     // Create additional users

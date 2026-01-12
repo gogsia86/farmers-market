@@ -1,4 +1,4 @@
-import type { Coordinates } from '@/types/biodynamic.types';
+import type { Coordinates } from "@/types/biodynamic.types";
 
 /**
  * Weather Service
@@ -65,7 +65,7 @@ export interface WeatherAlert {
   event: string;
   headline: string;
   description: string;
-  severity: 'minor' | 'moderate' | 'severe' | 'extreme';
+  severity: "minor" | "moderate" | "severe" | "extreme";
   start: Date;
   end: Date;
   areas: string[];
@@ -74,7 +74,7 @@ export interface WeatherAlert {
 export interface FrostAlert {
   date: Date;
   temperatureMin: number;
-  severity: 'light' | 'moderate' | 'hard'; // 29-32°F, 25-28°F, <25°F
+  severity: "light" | "moderate" | "hard"; // 29-32°F, 25-28°F, <25°F
   confidence: number; // 0-1
   recommendation: string;
 }
@@ -116,22 +116,27 @@ export interface WeatherForecast {
 
 class WeatherService {
   private apiKey: string;
-  private baseUrl = 'https://api.openweathermap.org/data/3.0';
+  private baseUrl = "https://api.openweathermap.org/data/3.0";
   private cacheMap = new Map<string, { data: any; expiry: number }>();
   private cacheDuration = 30 * 60 * 1000; // 30 minutes
 
   constructor() {
-    this.apiKey = process.env.OPENWEATHER_API_KEY || '';
+    this.apiKey = process.env.OPENWEATHER_API_KEY || "";
 
-    if (!this.apiKey && process.env.NODE_ENV === 'production') {
-      console.warn('OpenWeatherMap API key not configured. Weather features will be limited.');
+    if (!this.apiKey && process.env.NODE_ENV === "production") {
+      console.warn(
+        "OpenWeatherMap API key not configured. Weather features will be limited.",
+      );
     }
   }
 
   /**
    * Get comprehensive weather forecast for a location
    */
-  async getForecast(coordinates: Coordinates, days: number = 7): Promise<WeatherForecast> {
+  async getForecast(
+    coordinates: Coordinates,
+    days: number = 7,
+  ): Promise<WeatherForecast> {
     const cacheKey = `forecast:${coordinates.lat},${coordinates.lng}:${days}`;
 
     // Check cache
@@ -148,7 +153,7 @@ class WeatherService {
 
       // Call OneCall API 3.0 (includes current, daily, alerts)
       const response = await fetch(
-        `${this.baseUrl}/onecall?lat=${coordinates.lat}&lon=${coordinates.lng}&exclude=minutely,hourly&units=imperial&appid=${this.apiKey}`
+        `${this.baseUrl}/onecall?lat=${coordinates.lat}&lon=${coordinates.lng}&exclude=minutely,hourly&units=imperial&appid=${this.apiKey}`,
       );
 
       if (!response.ok) {
@@ -160,14 +165,18 @@ class WeatherService {
       // Transform to our format
       const forecast: WeatherForecast = {
         location: {
-          name: '', // Will be populated by reverse geocoding if needed
+          name: "", // Will be populated by reverse geocoding if needed
           latitude: coordinates.lat,
           longitude: coordinates.lng,
-          timezone: data.timezone || 'America/New_York',
+          timezone: data.timezone || "America/New_York",
         },
         current: this.transformCurrentWeather(data.current),
-        daily: data.daily.slice(0, days).map((day: any) => this.transformDailyForecast(day)),
-        alerts: (data.alerts || []).map((alert: any) => this.transformAlert(alert)),
+        daily: data.daily
+          .slice(0, days)
+          .map((day: any) => this.transformDailyForecast(day)),
+        alerts: (data.alerts || []).map((alert: any) =>
+          this.transformAlert(alert),
+        ),
         frostAlerts: this.detectFrostAlerts(data.daily.slice(0, days)),
         growingDegreeDays: this.calculateGDD(data.daily.slice(0, days)),
         plantingScore: this.calculatePlantingScore(data.current, data.daily[0]),
@@ -178,7 +187,7 @@ class WeatherService {
 
       return forecast;
     } catch (error) {
-      console.error('Failed to fetch weather data:', error);
+      console.error("Failed to fetch weather data:", error);
       // Fallback to mock data
       return this.getMockForecast(coordinates, days);
     }
@@ -195,7 +204,10 @@ class WeatherService {
   /**
    * Check for upcoming frost events
    */
-  async checkFrostRisk(coordinates: Coordinates, days: number = 7): Promise<FrostAlert[]> {
+  async checkFrostRisk(
+    coordinates: Coordinates,
+    days: number = 7,
+  ): Promise<FrostAlert[]> {
     const forecast = await this.getForecast(coordinates, days);
     return forecast.frostAlerts;
   }
@@ -208,10 +220,10 @@ class WeatherService {
   async getGrowingDegreeDays(
     coordinates: Coordinates,
     baseTemperature: number = 50,
-    days: number = 7
+    days: number = 7,
   ): Promise<GrowingDegreeDays[]> {
     const forecast = await this.getForecast(coordinates, days);
-    return forecast.growingDegreeDays.map(gdd => ({
+    return forecast.growingDegreeDays.map((gdd) => ({
       ...gdd,
       baseTemperature,
     }));
@@ -220,7 +232,9 @@ class WeatherService {
   /**
    * Get optimal planting weather score
    */
-  async getPlantingScore(coordinates: Coordinates): Promise<PlantingWeatherScore> {
+  async getPlantingScore(
+    coordinates: Coordinates,
+  ): Promise<PlantingWeatherScore> {
     const forecast = await this.getForecast(coordinates, 1);
     return forecast.plantingScore;
   }
@@ -230,7 +244,7 @@ class WeatherService {
    */
   async isOptimalPlantingWeather(
     coordinates: Coordinates,
-    cropType: 'COOL_SEASON' | 'WARM_SEASON' | 'ALL_SEASON' = 'ALL_SEASON'
+    cropType: "COOL_SEASON" | "WARM_SEASON" | "ALL_SEASON" = "ALL_SEASON",
   ): Promise<{ optimal: boolean; score: number; reason: string }> {
     const score = await this.getPlantingScore(coordinates);
 
@@ -250,13 +264,18 @@ class WeatherService {
 
     const optimal = tempOk && soilOk && precipOk && windOk && score.score >= 70;
 
-    let reason = '';
-    if (!tempOk) reason = `Temperature ${temp}°F outside optimal range ${range.min}-${range.max}°F`;
-    else if (!soilOk) reason = 'Soil conditions not ideal';
-    else if (!precipOk) reason = score.factors.precipitation.value > 0.5 ? 'Too wet for planting' : 'Too dry for planting';
-    else if (!windOk) reason = 'Wind too strong for planting';
-    else if (score.score < 70) reason = 'Overall conditions suboptimal';
-    else reason = 'Excellent conditions for planting';
+    let reason = "";
+    if (!tempOk)
+      reason = `Temperature ${temp}°F outside optimal range ${range.min}-${range.max}°F`;
+    else if (!soilOk) reason = "Soil conditions not ideal";
+    else if (!precipOk)
+      reason =
+        score.factors.precipitation.value > 0.5
+          ? "Too wet for planting"
+          : "Too dry for planting";
+    else if (!windOk) reason = "Wind too strong for planting";
+    else if (score.score < 70) reason = "Overall conditions suboptimal";
+    else reason = "Excellent conditions for planting";
 
     return { optimal, score: score.score, reason };
   }
@@ -306,18 +325,18 @@ class WeatherService {
   }
 
   private transformAlert(data: any): WeatherAlert {
-    const severityMap: Record<string, WeatherAlert['severity']> = {
-      minor: 'minor',
-      moderate: 'moderate',
-      severe: 'severe',
-      extreme: 'extreme',
+    const severityMap: Record<string, WeatherAlert["severity"]> = {
+      minor: "minor",
+      moderate: "moderate",
+      severe: "severe",
+      extreme: "extreme",
     };
 
     return {
       event: data.event,
       headline: data.headline || data.event,
       description: data.description,
-      severity: severityMap[data.severity] || 'moderate',
+      severity: severityMap[data.severity] || "moderate",
       start: new Date(data.start * 1000),
       end: new Date(data.end * 1000),
       areas: data.tags || [],
@@ -331,15 +350,15 @@ class WeatherService {
       const minTemp = day.temp.min;
 
       if (minTemp <= 32) {
-        let severity: FrostAlert['severity'];
-        if (minTemp >= 29) severity = 'light';
-        else if (minTemp >= 25) severity = 'moderate';
-        else severity = 'hard';
+        let severity: FrostAlert["severity"];
+        if (minTemp >= 29) severity = "light";
+        else if (minTemp >= 25) severity = "moderate";
+        else severity = "hard";
 
         const recommendations = {
-          light: 'Cover tender plants. Most hardy plants will survive.',
-          moderate: 'Protect all tender plants. Harvest sensitive crops.',
-          hard: 'Severe damage likely to most plants. Harvest all remaining crops.',
+          light: "Cover tender plants. Most hardy plants will survive.",
+          moderate: "Protect all tender plants. Harvest sensitive crops.",
+          hard: "Severe damage likely to most plants. Harvest all remaining crops.",
         };
 
         alerts.push({
@@ -355,7 +374,10 @@ class WeatherService {
     return alerts;
   }
 
-  private calculateGDD(dailyForecasts: any[], baseTemp: number = 50): GrowingDegreeDays[] {
+  private calculateGDD(
+    dailyForecasts: any[],
+    baseTemp: number = 50,
+  ): GrowingDegreeDays[] {
     let cumulative = 0;
     const result: GrowingDegreeDays[] = [];
 
@@ -379,7 +401,10 @@ class WeatherService {
     return result;
   }
 
-  private calculatePlantingScore(current: any, forecast: any): PlantingWeatherScore {
+  private calculatePlantingScore(
+    current: any,
+    forecast: any,
+  ): PlantingWeatherScore {
     const temp = current.temp;
     const humidity = current.humidity;
     const windSpeed = current.wind_speed;
@@ -394,8 +419,10 @@ class WeatherService {
 
     // Soil moisture score (based on recent precipitation and humidity)
     let soilScore = 70; // Assume moderate
-    if (humidity > 80 || precipAmount > 0.5) soilScore = 40; // Too wet
-    else if (humidity < 40) soilScore = 50; // Too dry
+    if (humidity > 80 || precipAmount > 0.5)
+      soilScore = 40; // Too wet
+    else if (humidity < 40)
+      soilScore = 50; // Too dry
     else if (humidity >= 50 && humidity <= 70) soilScore = 90; // Ideal
 
     // Precipitation score (ideal: no rain today, light rain yesterday)
@@ -413,17 +440,19 @@ class WeatherService {
     // Overall score (weighted average)
     const overallScore = Math.round(
       tempScore * 0.35 +
-      soilScore * 0.25 +
-      precipScore * 0.25 +
-      windScore * 0.15
+        soilScore * 0.25 +
+        precipScore * 0.25 +
+        windScore * 0.15,
     );
 
-    let recommendation = '';
-    if (overallScore >= 80) recommendation = 'Excellent planting conditions';
-    else if (overallScore >= 70) recommendation = 'Good planting conditions';
-    else if (overallScore >= 60) recommendation = 'Fair planting conditions, monitor weather';
-    else if (overallScore >= 50) recommendation = 'Marginal conditions, consider waiting';
-    else recommendation = 'Poor planting conditions, wait for better weather';
+    let recommendation = "";
+    if (overallScore >= 80) recommendation = "Excellent planting conditions";
+    else if (overallScore >= 70) recommendation = "Good planting conditions";
+    else if (overallScore >= 60)
+      recommendation = "Fair planting conditions, monitor weather";
+    else if (overallScore >= 50)
+      recommendation = "Marginal conditions, consider waiting";
+    else recommendation = "Poor planting conditions, wait for better weather";
 
     return {
       date: new Date(current.dt * 1000),
@@ -432,22 +461,22 @@ class WeatherService {
         temperature: {
           value: temp,
           score: tempScore,
-          ideal: '60-75°F',
+          ideal: "60-75°F",
         },
         soilMoisture: {
           value: humidity,
           score: soilScore,
-          ideal: '50-70% humidity',
+          ideal: "50-70% humidity",
         },
         precipitation: {
           value: precipChance,
           score: precipScore,
-          ideal: '< 10% chance',
+          ideal: "< 10% chance",
         },
         windSpeed: {
           value: windSpeed,
           score: windScore,
-          ideal: '< 10 mph',
+          ideal: "< 10 mph",
         },
       },
       recommendation,
@@ -455,7 +484,10 @@ class WeatherService {
     };
   }
 
-  private getMockForecast(coordinates: Coordinates, days: number): WeatherForecast {
+  private getMockForecast(
+    coordinates: Coordinates,
+    days: number,
+  ): WeatherForecast {
     const now = new Date();
     const current: CurrentWeather = {
       temperature: 68,
@@ -467,7 +499,9 @@ class WeatherService {
       cloudCover: 20,
       uvIndex: 5,
       visibility: 10,
-      conditions: [{ id: 800, main: 'Clear', description: 'clear sky', icon: '01d' }],
+      conditions: [
+        { id: 800, main: "Clear", description: "clear sky", icon: "01d" },
+      ],
       sunrise: new Date(now.setHours(6, 30, 0, 0)),
       sunset: new Date(now.setHours(19, 45, 0, 0)),
       timestamp: new Date(),
@@ -494,7 +528,9 @@ class WeatherService {
         precipitationChance: Math.random() * 30,
         precipitationAmount: 0,
         uvIndex: 4 + Math.random() * 4,
-        conditions: [{ id: 800, main: 'Clear', description: 'clear sky', icon: '01d' }],
+        conditions: [
+          { id: 800, main: "Clear", description: "clear sky", icon: "01d" },
+        ],
         sunrise: new Date(date.setHours(6, 30, 0, 0)),
         sunset: new Date(date.setHours(19, 45, 0, 0)),
       };
@@ -502,29 +538,31 @@ class WeatherService {
 
     return {
       location: {
-        name: 'Mock Location',
+        name: "Mock Location",
         latitude: coordinates.lat,
         longitude: coordinates.lng,
-        timezone: 'America/New_York',
+        timezone: "America/New_York",
       },
       current,
       daily,
       alerts: [],
       frostAlerts: [],
-      growingDegreeDays: this.calculateGDD(daily.map((d, i) => ({
-        dt: Math.floor(d.date.getTime() / 1000),
-        temp: { max: d.temperatureMax, min: d.temperatureMin },
-      }))),
+      growingDegreeDays: this.calculateGDD(
+        daily.map((d, i) => ({
+          dt: Math.floor(d.date.getTime() / 1000),
+          temp: { max: d.temperatureMax, min: d.temperatureMin },
+        })),
+      ),
       plantingScore: {
         date: new Date(),
         score: 85,
         factors: {
-          temperature: { value: 68, score: 90, ideal: '60-75°F' },
-          soilMoisture: { value: 60, score: 85, ideal: '50-70% humidity' },
-          precipitation: { value: 10, score: 80, ideal: '< 10% chance' },
-          windSpeed: { value: 8, score: 85, ideal: '< 10 mph' },
+          temperature: { value: 68, score: 90, ideal: "60-75°F" },
+          soilMoisture: { value: 60, score: 85, ideal: "50-70% humidity" },
+          precipitation: { value: 10, score: 80, ideal: "< 10% chance" },
+          windSpeed: { value: 8, score: 85, ideal: "< 10 mph" },
         },
-        recommendation: 'Excellent planting conditions',
+        recommendation: "Excellent planting conditions",
         isOptimal: true,
       },
     };

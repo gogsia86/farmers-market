@@ -16,6 +16,7 @@ npm install firebase-admin
 ```
 
 **Package Details:**
+
 - **Name:** firebase-admin
 - **Version:** 13.6.0
 - **Type:** Production dependency
@@ -68,6 +69,7 @@ export class PushNotificationService {
 ## ✅ Verification
 
 ### TypeScript Compilation
+
 ```bash
 $ npm run type-check
 ✅ No errors in push.service.ts
@@ -75,12 +77,14 @@ $ npm run type-check
 ```
 
 ### ESLint Check
+
 ```bash
 $ npm run lint
 ✅ 0 errors, 0 warnings
 ```
 
 ### Package Verification
+
 ```bash
 $ npm list firebase-admin
 farmers-market@1.1.0
@@ -158,6 +162,7 @@ FIREBASE_CLIENT_EMAIL=your-service-account@your-project.iam.gserviceaccount.com
    - Download the JSON file
 
 3. **Extract Credentials**
+
    ```json
    {
      "project_id": "YOUR_PROJECT_ID",
@@ -187,9 +192,9 @@ await pushNotificationService.sendPushNotification({
   body: "Your order #12345 has been confirmed",
   data: {
     orderId: "12345",
-    type: "order_confirmation"
+    type: "order_confirmation",
   },
-  priority: "high"
+  priority: "high",
 });
 ```
 
@@ -201,8 +206,8 @@ await pushNotificationService.sendTemplatePush({
   userId: "user_123",
   template: "ORDER_CONFIRMED",
   variables: {
-    orderNumber: "12345"
-  }
+    orderNumber: "12345",
+  },
 });
 ```
 
@@ -213,7 +218,7 @@ await pushNotificationService.sendTemplatePush({
 await pushNotificationService.registerDeviceToken({
   token: "device-fcm-token-here",
   platform: "ios", // or "android" or "web"
-  userId: "user_123"
+  userId: "user_123",
 });
 ```
 
@@ -225,7 +230,7 @@ const results = await pushNotificationService.broadcastPush({
   userIds: ["user_1", "user_2", "user_3"],
   title: "New Seasonal Products!",
   body: "Check out our fresh spring harvest",
-  data: { type: "promotion" }
+  data: { type: "promotion" },
 });
 ```
 
@@ -235,7 +240,7 @@ const results = await pushNotificationService.broadcastPush({
 // Subscribe user to a topic
 await pushNotificationService.subscribeToTopic({
   userId: "user_123",
-  topic: "new-products"
+  topic: "new-products",
 });
 
 // Send to all subscribers of a topic
@@ -243,8 +248,8 @@ await admin.messaging().send({
   topic: "new-products",
   notification: {
     title: "New Products Available!",
-    body: "Fresh organic tomatoes just arrived"
-  }
+    body: "Fresh organic tomatoes just arrived",
+  },
 });
 ```
 
@@ -270,12 +275,14 @@ console.log("Service status:", status);
 ### Initialization
 
 The service initializes automatically when imported:
+
 - ✅ Checks for Firebase credentials
 - ✅ Initializes Firebase Admin SDK
 - ✅ Sets up FCM messaging
 - ✅ Logs initialization status
 
 If credentials are missing, the service will:
+
 - ⚠️ Log a warning (not an error)
 - ✅ Continue to function (simulated mode)
 - 📝 Log all "sent" notifications (for testing)
@@ -331,22 +338,22 @@ model PushNotificationLog {
 
 The service includes pre-built notification templates:
 
-| Template | Use Case | Variables |
-|----------|----------|-----------|
-| `ORDER_CONFIRMED` | Order placed | orderNumber |
-| `ORDER_READY` | Ready for pickup | orderNumber, farmName |
-| `ORDER_CANCELLED` | Order cancelled | orderNumber |
-| `NEW_MESSAGE` | New chat message | sender, messagePreview |
-| `NEW_REVIEW` | Review received | rating, reviewerName |
-| `LOW_STOCK_ALERT` | Inventory warning | productName, currentStock |
-| `PAYMENT_FAILED` | Payment issue | orderNumber |
-| `PAYMENT_RECEIVED` | Payment success | orderNumber, amount |
-| `DELIVERY_UPDATE` | Status change | orderNumber, status |
-| `FARM_APPROVED` | Farm verified | farmName |
-| `FARM_REJECTED` | Farm denied | farmName, reason |
-| `PRICE_DROP` | Price reduction | productName, oldPrice, newPrice |
-| `SEASONAL_PRODUCT` | New arrivals | productName, farmName |
-| `WELCOME` | New user | userName |
+| Template           | Use Case          | Variables                       |
+| ------------------ | ----------------- | ------------------------------- |
+| `ORDER_CONFIRMED`  | Order placed      | orderNumber                     |
+| `ORDER_READY`      | Ready for pickup  | orderNumber, farmName           |
+| `ORDER_CANCELLED`  | Order cancelled   | orderNumber                     |
+| `NEW_MESSAGE`      | New chat message  | sender, messagePreview          |
+| `NEW_REVIEW`       | Review received   | rating, reviewerName            |
+| `LOW_STOCK_ALERT`  | Inventory warning | productName, currentStock       |
+| `PAYMENT_FAILED`   | Payment issue     | orderNumber                     |
+| `PAYMENT_RECEIVED` | Payment success   | orderNumber, amount             |
+| `DELIVERY_UPDATE`  | Status change     | orderNumber, status             |
+| `FARM_APPROVED`    | Farm verified     | farmName                        |
+| `FARM_REJECTED`    | Farm denied       | farmName, reason                |
+| `PRICE_DROP`       | Price reduction   | productName, oldPrice, newPrice |
+| `SEASONAL_PRODUCT` | New arrivals      | productName, farmName           |
+| `WELCOME`          | New user          | userName                        |
 
 ---
 
@@ -363,14 +370,14 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   const { userId, title, body, data } = await request.json();
-  
+
   const result = await pushNotificationService.sendPushNotification({
     userId,
     title,
     body,
-    data
+    data,
   });
-  
+
   return NextResponse.json(result);
 }
 ```
@@ -389,23 +396,23 @@ export function PushNotificationSetup() {
     async function registerForPush() {
       if ("Notification" in window) {
         const permission = await Notification.requestPermission();
-        
+
         if (permission === "granted") {
           const messaging = getMessaging();
           const token = await getToken(messaging);
-          
+
           // Register token with backend
           await fetch("/api/notifications/register", {
             method: "POST",
-            body: JSON.stringify({ token, platform: "web" })
+            body: JSON.stringify({ token, platform: "web" }),
           });
         }
       }
     }
-    
+
     registerForPush();
   }, []);
-  
+
   return null;
 }
 ```
@@ -422,6 +429,7 @@ export function PushNotificationSetup() {
    - ✅ Use Vercel's environment variable manager
 
 2. **Validate User Permissions**
+
    ```typescript
    // Check if user can receive notifications
    const canSend = await checkUserNotificationPermissions(userId);
@@ -431,6 +439,7 @@ export function PushNotificationSetup() {
    ```
 
 3. **Rate Limiting**
+
    ```typescript
    // Prevent notification spam
    const canSendNow = await checkNotificationRateLimit(userId);
@@ -463,7 +472,7 @@ logger.info("Push notification sent", {
   title,
   successCount,
   failureCount,
-  notificationId
+  notificationId,
 });
 ```
 
@@ -476,13 +485,13 @@ Query notification history:
 const logs = await database.pushNotificationLog.findMany({
   where: { userId },
   orderBy: { sentAt: "desc" },
-  take: 50
+  take: 50,
 });
 
 // Get success rate
 const stats = await database.pushNotificationLog.aggregate({
   where: { userId },
-  _avg: { successCount: true, failureCount: true }
+  _avg: { successCount: true, failureCount: true },
 });
 ```
 
@@ -496,7 +505,7 @@ span.setAttributes({
   "push.user_id": userId,
   "push.title": title,
   "push.success_count": successCount,
-  "push.failure_count": failureCount
+  "push.failure_count": failureCount,
 });
 ```
 
@@ -507,27 +516,35 @@ span.setAttributes({
 ### Common Issues
 
 #### 1. Service Not Initialized
+
 ```
 ⚠️ Push notification service not configured
 ```
+
 **Solution:** Set Firebase environment variables
 
 #### 2. Invalid Token
+
 ```
 Error: messaging/invalid-registration-token
 ```
+
 **Solution:** Token is expired or invalid. Service automatically removes it.
 
 #### 3. No Device Tokens
+
 ```
 ⚠️ No device tokens found for user
 ```
+
 **Solution:** User hasn't registered any devices. Prompt for notification permission.
 
 #### 4. Quota Exceeded
+
 ```
 Error: messaging/quota-exceeded
 ```
+
 **Solution:** Firebase free tier limit reached. Upgrade plan.
 
 ### Debug Mode
@@ -547,13 +564,13 @@ if (process.env.NODE_ENV === "development") {
 
 ### Production Build
 
-| Aspect | Impact |
-|--------|--------|
-| **Dependencies Added** | firebase-admin |
-| **Size Impact** | ~50MB (server-side only) |
-| **Client Bundle** | No impact (0 bytes) |
-| **Build Time** | +2-3 seconds |
-| **Runtime Performance** | Negligible |
+| Aspect                  | Impact                   |
+| ----------------------- | ------------------------ |
+| **Dependencies Added**  | firebase-admin           |
+| **Size Impact**         | ~50MB (server-side only) |
+| **Client Bundle**       | No impact (0 bytes)      |
+| **Build Time**          | +2-3 seconds             |
+| **Runtime Performance** | Negligible               |
 
 **Note:** firebase-admin is a server-side dependency and does NOT increase client bundle size.
 
@@ -584,6 +601,7 @@ if (process.env.NODE_ENV === "development") {
 ## 🎯 Next Steps
 
 ### Immediate
+
 - [x] Install firebase-admin
 - [x] Update imports in push.service.ts
 - [x] Verify TypeScript compilation
@@ -591,6 +609,7 @@ if (process.env.NODE_ENV === "development") {
 - [ ] Set Firebase environment variables
 
 ### Short-Term
+
 - [ ] Configure Firebase project
 - [ ] Set up FCM in Firebase Console
 - [ ] Add client-side Firebase SDK
@@ -598,6 +617,7 @@ if (process.env.NODE_ENV === "development") {
 - [ ] Test push notifications end-to-end
 
 ### Long-Term
+
 - [ ] Add notification preferences UI
 - [ ] Implement topic subscriptions
 - [ ] Add notification history page
@@ -609,16 +629,19 @@ if (process.env.NODE_ENV === "development") {
 ## 📚 Resources
 
 ### Documentation
+
 - [Firebase Admin SDK](https://firebase.google.com/docs/admin/setup)
 - [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging)
 - [FCM Architecture](https://firebase.google.com/docs/cloud-messaging/fcm-architecture)
 
 ### Implementation Guides
+
 - [Send Push from Server](https://firebase.google.com/docs/cloud-messaging/send-message)
 - [Device Token Management](https://firebase.google.com/docs/cloud-messaging/manage-tokens)
 - [Topic Messaging](https://firebase.google.com/docs/cloud-messaging/android/topic-messaging)
 
 ### Testing
+
 - [FCM Testing](https://firebase.google.com/docs/cloud-messaging/test)
 - [Notification Composer](https://console.firebase.google.com/project/_/notification)
 
@@ -627,6 +650,7 @@ if (process.env.NODE_ENV === "development") {
 ## ✨ Summary
 
 **What Changed:**
+
 - ✅ Installed firebase-admin@13.6.0
 - ✅ Updated push.service.ts with proper imports
 - ✅ Restored full TypeScript type safety
@@ -634,6 +658,7 @@ if (process.env.NODE_ENV === "development") {
 - ✅ All tests passing
 
 **Impact:**
+
 - ✅ Push notifications fully functional
 - ✅ Production-ready service
 - ✅ Zero client bundle impact
@@ -651,4 +676,4 @@ if (process.env.NODE_ENV === "development") {
 
 ---
 
-*Push notifications are now ready to use. Configure Firebase credentials to start sending notifications.*
+_Push notifications are now ready to use. Configure Firebase credentials to start sending notifications._

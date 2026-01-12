@@ -5,14 +5,14 @@
 // 🌾 Domain: Agricultural E-Commerce Offline-First
 
 import {
-    clearFailedOrders,
-    getOfflineQueueStats,
-    getPendingOrderCount,
-    isOffline,
-    onOnlineStatusChange,
-    onOrderSynced,
-    syncPendingOrders,
-    type OfflineQueueStats,
+  clearFailedOrders,
+  getOfflineQueueStats,
+  getPendingOrderCount,
+  isOffline,
+  onOnlineStatusChange,
+  onOrderSynced,
+  syncPendingOrders,
+  type OfflineQueueStats,
 } from "@/lib/utils/offline-queue";
 import { useEffect, useState } from "react";
 
@@ -156,9 +156,7 @@ export function OfflineQueueStatus({
   }
 
   return (
-    <div
-      className={`rounded-lg border bg-white p-4 shadow-sm ${className}`}
-    >
+    <div className={`rounded-lg border bg-white p-4 shadow-sm ${className}`}>
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">

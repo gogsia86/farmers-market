@@ -23,7 +23,7 @@ enum CropFamily {
   FABACEAE        // Beans, Peas, Legumes
   AMARYLLIDACEAE  // Onion, Garlic, Leek
   LAMIACEAE       // Basil, Mint, Oregano
-  
+
   // Keep existing
   BRASSICAS
   LEGUMES
@@ -107,11 +107,13 @@ npx prisma studio
 ### 5. Configure Weather API
 
 Get a free API key from OpenWeatherMap:
+
 1. Visit: https://openweathermap.org/api/one-call-3
 2. Sign up (free tier: 1,000 calls/day)
 3. Copy your API key
 
 Add to `.env.local`:
+
 ```env
 OPENWEATHER_API_KEY=your_api_key_here
 ```
@@ -147,6 +149,7 @@ npm run dev
 ### Manual Testing
 
 1. **Navigate to Recommendations Page**
+
    ```
    Login as farmer → Dashboard → Recommendations
    ```
@@ -189,6 +192,7 @@ npm run dev
 **Error**: `Property 'isOrganic' does not exist on type Farm`
 
 **Fix**: Make sure migration ran successfully. Check:
+
 ```bash
 npx prisma studio
 # Verify 'farms' table has new columns
@@ -199,6 +203,7 @@ npx prisma studio
 ### Issue: Weather Data Not Loading
 
 **Possible Causes**:
+
 1. **No API key**: Add `OPENWEATHER_API_KEY` to `.env.local`
 2. **API quota exceeded**: Check console for 429 errors
 3. **Network issue**: Check console for fetch errors
@@ -210,6 +215,7 @@ npx prisma studio
 ### Issue: No Crops in Recommendations
 
 **Check**:
+
 ```bash
 # Verify crops were seeded
 npx prisma studio
@@ -224,6 +230,7 @@ npx ts-node prisma/seeds/seed-crops.ts
 ### Issue: Recommendations API Returns 500
 
 **Debug**:
+
 1. Check server logs in terminal
 2. Verify database connection
 3. Check farm has required metadata
@@ -234,11 +241,13 @@ npx ts-node prisma/seeds/seed-crops.ts
 ## 📚 Documentation
 
 ### For Development
+
 - **Implementation Progress**: `docs/IMPLEMENTATION_PROGRESS.md`
 - **Biodynamic Scoring**: `docs/BIODYNAMIC_SCORING.md`
 - **Completion Summary**: `docs/COMPLETION_SUMMARY.md`
 
 ### For Farmers
+
 - **Quick Start Guide**: `docs/FARMER_QUICKSTART.md`
 - **API Documentation**: Check `/api-docs` endpoint
 
@@ -340,7 +349,7 @@ curl https://your-domain.com/api/v1/crops/recommendations?farmId=FARM_ID
 
 3. **Testing Lunar Phases**: Calculation is automatic based on current date
 
-4. **Testing Preferences**: 
+4. **Testing Preferences**:
    - Profit mode: Prioritizes high-value crops
    - Sustainability mode: Prioritizes low-impact crops
    - Balanced mode: Weights all factors equally

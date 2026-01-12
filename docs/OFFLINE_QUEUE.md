@@ -114,19 +114,19 @@ Initialize the queue monitoring system:
 
 ```typescript
 // src/app/layout.tsx or pages/_app.tsx
-import { initOfflineQueue } from '@/lib/utils/offline-queue';
+import { initOfflineQueue } from "@/lib/utils/offline-queue";
 
 useEffect(() => {
   // Initialize offline queue monitoring
   const cleanup = initOfflineQueue();
 
   // Listen for custom events
-  window.addEventListener('orderSynced', (event: any) => {
-    console.log('✅ Order synced:', event.detail);
+  window.addEventListener("orderSynced", (event: any) => {
+    console.log("✅ Order synced:", event.detail);
     // Show notification to user
   });
 
-  window.addEventListener('pendingOrdersUpdate', (event: any) => {
+  window.addEventListener("pendingOrdersUpdate", (event: any) => {
     console.log(`📦 ${event.detail.count} orders pending`);
   });
 
@@ -141,7 +141,7 @@ useEffect(() => {
 ### Example 1: Queue Order When Offline
 
 ```typescript
-import { queueOfflineOrder, isOffline } from '@/lib/utils/offline-queue';
+import { queueOfflineOrder, isOffline } from "@/lib/utils/offline-queue";
 
 async function handleCheckout(orderData: any) {
   // Check if offline
@@ -151,21 +151,21 @@ async function handleCheckout(orderData: any) {
         customerId: orderData.customerId,
         items: orderData.items,
         total: orderData.total,
-        shippingAddress: orderData.shippingAddress
+        shippingAddress: orderData.shippingAddress,
       });
 
       alert(`Order queued! ID: ${localOrderId}\nWill sync when online.`);
       return localOrderId;
     } catch (error) {
-      console.error('Failed to queue order:', error);
-      alert('Failed to save order offline. Please try again.');
+      console.error("Failed to queue order:", error);
+      alert("Failed to save order offline. Please try again.");
     }
   } else {
     // Normal online checkout
-    const response = await fetch('/api/orders', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(orderData)
+    const response = await fetch("/api/orders", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(orderData),
     });
 
     return await response.json();
@@ -176,23 +176,20 @@ async function handleCheckout(orderData: any) {
 ### Example 2: Smart Order Submission (Auto-Queue)
 
 ```typescript
-import { handleOrderSubmission } from '@/lib/utils/offline-queue';
+import { handleOrderSubmission } from "@/lib/utils/offline-queue";
 
 async function submitOrder(orderData: any) {
-  const result = await handleOrderSubmission(
-    orderData,
-    async (data) => {
-      // Your API call
-      const response = await fetch('/api/orders', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      });
+  const result = await handleOrderSubmission(orderData, async (data) => {
+    // Your API call
+    const response = await fetch("/api/orders", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
 
-      if (!response.ok) throw new Error('API error');
-      return await response.json();
-    }
-  );
+    if (!response.ok) throw new Error("API error");
+    return await response.json();
+  });
 
   if (result.success) {
     if (result.queuedOffline) {
@@ -317,9 +314,11 @@ export function OrderDashboard() {
 ### Client-Side Utilities (`src/lib/utils/offline-queue.ts`)
 
 #### `queueOfflineOrder(orderData)`
+
 Queue an order for offline processing.
 
 **Parameters:**
+
 - `orderData` (Object): Order data to queue
   - `customerId` (string): Customer ID
   - `items` (Array): Order items
@@ -330,22 +329,25 @@ Queue an order for offline processing.
 **Returns:** `Promise<number>` - Local order ID
 
 **Example:**
+
 ```typescript
 const localId = await queueOfflineOrder({
-  customerId: 'user_123',
-  items: [{ productId: 'prod_1', quantity: 2, price: 10.00 }],
-  total: 20.00
+  customerId: "user_123",
+  items: [{ productId: "prod_1", quantity: 2, price: 10.0 }],
+  total: 20.0,
 });
 ```
 
 ---
 
 #### `getPendingOrderCount()`
+
 Get count of pending orders in queue.
 
 **Returns:** `Promise<number>` - Count of pending orders
 
 **Example:**
+
 ```typescript
 const count = await getPendingOrderCount();
 console.log(`${count} orders pending`);
@@ -354,49 +356,56 @@ console.log(`${count} orders pending`);
 ---
 
 #### `getOfflineQueueStats()`
+
 Get detailed offline queue statistics.
 
 **Returns:** `Promise<OfflineQueueStats>`
+
 ```typescript
 {
-  pendingOrders: number;    // Orders waiting to sync
-  failedRequests: number;   // Failed sync attempts
-  cachedEntries: number;    // Cached data entries
+  pendingOrders: number; // Orders waiting to sync
+  failedRequests: number; // Failed sync attempts
+  cachedEntries: number; // Cached data entries
 }
 ```
 
 **Example:**
+
 ```typescript
 const stats = await getOfflineQueueStats();
-console.log('Pending:', stats.pendingOrders);
-console.log('Failed:', stats.failedRequests);
+console.log("Pending:", stats.pendingOrders);
+console.log("Failed:", stats.failedRequests);
 ```
 
 ---
 
 #### `syncPendingOrders()`
+
 Manually trigger synchronization of pending orders.
 
 **Returns:** `Promise<void>`
 
 **Example:**
+
 ```typescript
 try {
   await syncPendingOrders();
-  console.log('✅ Sync complete');
+  console.log("✅ Sync complete");
 } catch (error) {
-  console.error('❌ Sync failed:', error);
+  console.error("❌ Sync failed:", error);
 }
 ```
 
 ---
 
 #### `clearFailedOrders()`
+
 Clear all failed orders from queue.
 
 **Returns:** `Promise<number>` - Count of cleared orders
 
 **Example:**
+
 ```typescript
 const cleared = await clearFailedOrders();
 console.log(`Cleared ${cleared} failed orders`);
@@ -405,23 +414,27 @@ console.log(`Cleared ${cleared} failed orders`);
 ---
 
 #### `isOffline()`
+
 Check if device is currently offline.
 
 **Returns:** `boolean`
 
 **Example:**
+
 ```typescript
 if (isOffline()) {
-  console.log('📴 Device is offline');
+  console.log("📴 Device is offline");
 }
 ```
 
 ---
 
 #### `onOrderSynced(callback)`
+
 Listen for order sync events.
 
 **Parameters:**
+
 - `callback` (Function): Callback function
   - `event` (Object): Sync event data
     - `localOrderId` (number): Local order ID
@@ -431,6 +444,7 @@ Listen for order sync events.
 **Returns:** `Function` - Cleanup function
 
 **Example:**
+
 ```typescript
 const cleanup = onOrderSynced((event) => {
   console.log(`Order ${event.localOrderId} synced as ${event.serverOrderId}`);
@@ -442,31 +456,37 @@ const cleanup = onOrderSynced((event) => {
 ---
 
 #### `onOnlineStatusChange(callback)`
+
 Listen for online/offline status changes.
 
 **Parameters:**
+
 - `callback` (Function): Callback function
   - `isOnline` (boolean): Online status
 
 **Returns:** `Function` - Cleanup function
 
 **Example:**
+
 ```typescript
 const cleanup = onOnlineStatusChange((isOnline) => {
-  console.log(isOnline ? '🌐 Online' : '📴 Offline');
+  console.log(isOnline ? "🌐 Online" : "📴 Offline");
 });
 ```
 
 ---
 
 #### `handleOrderSubmission(orderData, submitToAPI)`
+
 Smart order submission with automatic offline queueing.
 
 **Parameters:**
+
 - `orderData` (Object): Order data
 - `submitToAPI` (Function): Function to submit to API
 
 **Returns:** `Promise<Object>`
+
 ```typescript
 {
   success: boolean;
@@ -477,17 +497,15 @@ Smart order submission with automatic offline queueing.
 ```
 
 **Example:**
+
 ```typescript
-const result = await handleOrderSubmission(
-  orderData,
-  async (data) => {
-    const res = await fetch('/api/orders', {
-      method: 'POST',
-      body: JSON.stringify(data)
-    });
-    return await res.json();
-  }
-);
+const result = await handleOrderSubmission(orderData, async (data) => {
+  const res = await fetch("/api/orders", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+  return await res.json();
+});
 ```
 
 ---
@@ -497,47 +515,55 @@ const result = await handleOrderSubmission(
 The Service Worker listens for these message types:
 
 #### `QUEUE_ORDER`
+
 Queue an order in IndexedDB.
 
 **Message:**
+
 ```javascript
 navigator.serviceWorker.controller.postMessage({
-  type: 'QUEUE_ORDER',
-  orderData: { /* order data */ }
+  type: "QUEUE_ORDER",
+  orderData: {
+    /* order data */
+  },
 });
 ```
 
 ---
 
 #### `GET_PENDING_COUNT`
+
 Get count of pending orders.
 
 **Message:**
+
 ```javascript
 const channel = new MessageChannel();
 channel.port1.onmessage = (event) => {
-  console.log('Pending count:', event.data.count);
+  console.log("Pending count:", event.data.count);
 };
 
-navigator.serviceWorker.controller.postMessage(
-  { type: 'GET_PENDING_COUNT' },
-  [channel.port2]
-);
+navigator.serviceWorker.controller.postMessage({ type: "GET_PENDING_COUNT" }, [
+  channel.port2,
+]);
 ```
 
 ---
 
 #### `GET_DB_STATS`
+
 Get database statistics.
 
 ---
 
 #### `CLEAR_FAILED_ORDERS`
+
 Clear failed orders from queue.
 
 ---
 
 #### `SYNC_NOW`
+
 Manually trigger sync.
 
 ---
@@ -547,6 +573,7 @@ Manually trigger sync.
 ### Manual Testing
 
 1. **Test Offline Queueing:**
+
    ```bash
    # Open DevTools → Network tab → Enable "Offline"
    # Place an order
@@ -554,6 +581,7 @@ Manually trigger sync.
    ```
 
 2. **Test Background Sync:**
+
    ```bash
    # With orders queued, go back online
    # Check: Orders should sync automatically
@@ -572,14 +600,17 @@ Manually trigger sync.
 
 ```typescript
 // tests/offline-queue.test.ts
-import { queueOfflineOrder, getPendingOrderCount } from '@/lib/utils/offline-queue';
+import {
+  queueOfflineOrder,
+  getPendingOrderCount,
+} from "@/lib/utils/offline-queue";
 
-describe('Offline Queue', () => {
-  it('should queue order when offline', async () => {
+describe("Offline Queue", () => {
+  it("should queue order when offline", async () => {
     const orderId = await queueOfflineOrder({
-      customerId: 'test_user',
-      items: [{ productId: 'prod_1', quantity: 1, price: 10 }],
-      total: 10
+      customerId: "test_user",
+      items: [{ productId: "prod_1", quantity: 1, price: 10 }],
+      total: 10,
     });
 
     expect(orderId).toBeGreaterThan(0);
@@ -614,8 +645,8 @@ await queueOfflineOrder({
 
 // ❌ BAD - Never store sensitive data
 await queueOfflineOrder({
-  creditCard: '4242424242424242', // ❌ NEVER DO THIS
-  cvv: '123', // ❌ NEVER DO THIS
+  creditCard: "4242424242424242", // ❌ NEVER DO THIS
+  cvv: "123", // ❌ NEVER DO THIS
 });
 ```
 
@@ -626,32 +657,32 @@ await queueOfflineOrder({
 ### Track Offline Usage
 
 ```typescript
-import { getOfflineQueueStats } from '@/lib/utils/offline-queue';
+import { getOfflineQueueStats } from "@/lib/utils/offline-queue";
 
 // Send analytics
 const stats = await getOfflineQueueStats();
 
-analytics.track('offline_queue_stats', {
+analytics.track("offline_queue_stats", {
   pendingOrders: stats.pendingOrders,
   failedRequests: stats.failedRequests,
-  timestamp: Date.now()
+  timestamp: Date.now(),
 });
 ```
 
 ### Monitor Sync Success Rate
 
 ```typescript
-import { onOrderSynced } from '@/lib/utils/offline-queue';
+import { onOrderSynced } from "@/lib/utils/offline-queue";
 
 let syncedCount = 0;
 let failedCount = 0;
 
 onOrderSynced((event) => {
   syncedCount++;
-  analytics.track('order_synced', {
+  analytics.track("order_synced", {
     localOrderId: event.localOrderId,
     serverOrderId: event.serverOrderId,
-    successRate: syncedCount / (syncedCount + failedCount)
+    successRate: syncedCount / (syncedCount + failedCount),
   });
 });
 ```
@@ -663,11 +694,12 @@ onOrderSynced((event) => {
 ### Issue: Orders Not Syncing
 
 **Solution:**
+
 ```typescript
 // Check Service Worker status
-if ('serviceWorker' in navigator) {
+if ("serviceWorker" in navigator) {
   const registration = await navigator.serviceWorker.getRegistration();
-  console.log('SW State:', registration?.active?.state);
+  console.log("SW State:", registration?.active?.state);
 
   // Manually trigger sync
   await syncPendingOrders();
@@ -677,22 +709,24 @@ if ('serviceWorker' in navigator) {
 ### Issue: IndexedDB Quota Exceeded
 
 **Solution:**
+
 ```typescript
 // Clear old cached data
-import { clearExpiredCache } from '@/lib/utils/offline-queue';
+import { clearExpiredCache } from "@/lib/utils/offline-queue";
 
 await clearExpiredCache();
 
 // Check storage usage
 const estimate = await navigator.storage.estimate();
-console.log('Storage used:', estimate.usage / estimate.quota);
+console.log("Storage used:", estimate.usage / estimate.quota);
 ```
 
 ### Issue: Failed Orders Stuck
 
 **Solution:**
+
 ```typescript
-import { clearFailedOrders } from '@/lib/utils/offline-queue';
+import { clearFailedOrders } from "@/lib/utils/offline-queue";
 
 // Clear failed orders after manual review
 const cleared = await clearFailedOrders();
@@ -731,6 +765,7 @@ No special environment variables needed. The offline queue works entirely client
 ## 🎯 Summary
 
 The Offline Queue System provides:
+
 - ✅ **Zero data loss** for orders placed offline
 - ✅ **Automatic synchronization** when online
 - ✅ **User-friendly feedback** with React components
@@ -742,6 +777,7 @@ The Offline Queue System provides:
 ---
 
 **Questions?** Check the code comments in:
+
 - `public/db-utils.js` - IndexedDB utilities
 - `public/sw.js` - Service Worker logic
 - `src/lib/utils/offline-queue.ts` - Client utilities

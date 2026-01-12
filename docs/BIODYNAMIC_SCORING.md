@@ -82,7 +82,10 @@ const windows = biodynamicCalendar.getOptimalPlantingDays(CropType.LEAFY, 14);
 // Returns array of planting windows with scores and reasons
 
 // Check if date is optimal for planting
-const isOptimal = biodynamicCalendar.isOptimalPlantingDate(CropType.ROOT, new Date());
+const isOptimal = biodynamicCalendar.isOptimalPlantingDate(
+  CropType.ROOT,
+  new Date(),
+);
 // Returns boolean
 
 // Calculate biodynamic alignment score
@@ -93,23 +96,23 @@ const score = biodynamicCalendar.calculateBiodynamicScore({
   maintainsBiodiversity: true,
   compostOnSite: true,
   avoidsChemicals: true,
-  integratesLivestock: false
+  integratesLivestock: false,
 });
 // Returns: 90 (out of 100)
 ```
 
 #### Lunar Phase Mapping
 
-| Phase | Days | Best For | Energy Flow |
-|-------|------|----------|-------------|
-| New Moon | 0-1.8 | Rest, planning | Dormant |
-| Waxing Crescent | 1.8-5.5 | Leafy crops | Increasing |
-| First Quarter | 5.5-9.2 | Leafy greens, flowers | Strong growth |
-| Waxing Gibbous | 9.2-12.9 | Fruit crops | Peak energy |
-| Full Moon | 12.9-16.6 | Fruiting, flowering | Maximum |
-| Waning Gibbous | 16.6-20.3 | Root crops, seeds | Descending |
-| Last Quarter | 20.3-24.0 | Root vegetables | Deep growth |
-| Waning Crescent | 24.0-29.5 | Root development | Resting |
+| Phase           | Days      | Best For              | Energy Flow   |
+| --------------- | --------- | --------------------- | ------------- |
+| New Moon        | 0-1.8     | Rest, planning        | Dormant       |
+| Waxing Crescent | 1.8-5.5   | Leafy crops           | Increasing    |
+| First Quarter   | 5.5-9.2   | Leafy greens, flowers | Strong growth |
+| Waxing Gibbous  | 9.2-12.9  | Fruit crops           | Peak energy   |
+| Full Moon       | 12.9-16.6 | Fruiting, flowering   | Maximum       |
+| Waning Gibbous  | 16.6-20.3 | Root crops, seeds     | Descending    |
+| Last Quarter    | 20.3-24.0 | Root vegetables       | Deep growth   |
+| Waning Crescent | 24.0-29.5 | Root development      | Resting       |
 
 ### 2. Crop Recommendation Engine
 
@@ -132,7 +135,7 @@ Provides intelligent crop recommendations with comprehensive scoring.
 const recommendations = await cropRecommendationEngine.getRecommendations(
   farmProfile,
   preferences,
-  marketDataMap
+  marketDataMap,
 );
 // Returns ranked array of CropRecommendation objects
 ```
@@ -147,41 +150,54 @@ const recommendations = await cropRecommendationEngine.getRecommendations(
 
 #### Factors
 
-| Factor | Weight | Calculation |
-|--------|--------|-------------|
-| **Revenue Potential** | 30% | `baseYield * marketPrice * organicMultiplier` |
-| **Cost Efficiency** | 25% | `(revenue - costs) / revenue` |
-| **Labor Efficiency** | 20% | `revenue / laborHours` |
-| **Price Stability** | 15% | `1 - priceVolatility` |
-| **Storage Value** | 10% | Based on storage life (days) |
+| Factor                | Weight | Calculation                                   |
+| --------------------- | ------ | --------------------------------------------- |
+| **Revenue Potential** | 30%    | `baseYield * marketPrice * organicMultiplier` |
+| **Cost Efficiency**   | 25%    | `(revenue - costs) / revenue`                 |
+| **Labor Efficiency**  | 20%    | `revenue / laborHours`                        |
+| **Price Stability**   | 15%    | `1 - priceVolatility`                         |
+| **Storage Value**     | 10%    | Based on storage life (days)                  |
 
 #### Score Ranges
 
 ```typescript
 // Revenue Potential (0-30 points)
-if (potentialRevenue > 10000) score += 30;        // $10k+/acre
-else if (potentialRevenue > 5000) score += 25;     // $5k-10k/acre
-else if (potentialRevenue > 2500) score += 20;     // $2.5k-5k/acre
-else score += 15;                                   // <$2.5k/acre
+if (potentialRevenue > 10000)
+  score += 30; // $10k+/acre
+else if (potentialRevenue > 5000)
+  score += 25; // $5k-10k/acre
+else if (potentialRevenue > 2500)
+  score += 20; // $2.5k-5k/acre
+else score += 15; // <$2.5k/acre
 
 // Profit Margin (0-25 points)
-if (profitMargin > 0.7) score += 25;              // 70%+ margin
-else if (profitMargin > 0.5) score += 20;          // 50-70% margin
-else if (profitMargin > 0.3) score += 15;          // 30-50% margin
-else if (profitMargin > 0.1) score += 10;          // 10-30% margin
-else score += 5;                                    // <10% margin
+if (profitMargin > 0.7)
+  score += 25; // 70%+ margin
+else if (profitMargin > 0.5)
+  score += 20; // 50-70% margin
+else if (profitMargin > 0.3)
+  score += 15; // 30-50% margin
+else if (profitMargin > 0.1)
+  score += 10; // 10-30% margin
+else score += 5; // <10% margin
 
 // Revenue per Labor Hour (0-20 points)
-if (revenuePerLaborHour > 100) score += 20;       // $100+/hour
-else if (revenuePerLaborHour > 50) score += 15;    // $50-100/hour
-else if (revenuePerLaborHour > 25) score += 10;    // $25-50/hour
-else score += 5;                                    // <$25/hour
+if (revenuePerLaborHour > 100)
+  score += 20; // $100+/hour
+else if (revenuePerLaborHour > 50)
+  score += 15; // $50-100/hour
+else if (revenuePerLaborHour > 25)
+  score += 10; // $25-50/hour
+else score += 5; // <$25/hour
 
 // Storage Life (0-10 points)
-if (storageLife > 90) score += 10;                // 3+ months
-else if (storageLife > 30) score += 7;             // 1-3 months
-else if (storageLife > 7) score += 4;              // 1-4 weeks
-else score += 2;                                    // <1 week
+if (storageLife > 90)
+  score += 10; // 3+ months
+else if (storageLife > 30)
+  score += 7; // 1-3 months
+else if (storageLife > 7)
+  score += 4; // 1-4 weeks
+else score += 2; // <1 week
 ```
 
 #### Example Calculation
@@ -221,31 +237,33 @@ Total Profitability:   92/100
 
 #### Factors
 
-| Factor | Weight | Criteria |
-|--------|--------|----------|
-| **Water Efficiency** | 20% | Low/Moderate/High water requirements |
-| **Soil Health Impact** | 20% | Legumes (N-fixing), roots (soil breaking) |
-| **Biodiversity** | 15% | Number of companion plants |
-| **Input Requirements** | 15% | Cost/environmental impact of inputs |
-| **Organic/Biodynamic** | 10% | Certification bonus |
-| **Pest Resistance** | 10% | Fewer pests = higher score |
-| **Crop Rotation** | 10% | New crop bonus |
+| Factor                 | Weight | Criteria                                  |
+| ---------------------- | ------ | ----------------------------------------- |
+| **Water Efficiency**   | 20%    | Low/Moderate/High water requirements      |
+| **Soil Health Impact** | 20%    | Legumes (N-fixing), roots (soil breaking) |
+| **Biodiversity**       | 15%    | Number of companion plants                |
+| **Input Requirements** | 15%    | Cost/environmental impact of inputs       |
+| **Organic/Biodynamic** | 10%    | Certification bonus                       |
+| **Pest Resistance**    | 10%    | Fewer pests = higher score                |
+| **Crop Rotation**      | 10%    | New crop bonus                            |
 
 #### Score Calculation
 
 ```typescript
 // Water Efficiency (0-25 points total)
-if (waterRequirements === 'LOW') score += 20;
-else if (waterRequirements === 'MODERATE') score += 12;
+if (waterRequirements === "LOW") score += 20;
+else if (waterRequirements === "MODERATE") score += 12;
 else score += 5;
 
 // Water availability match bonus (+5)
 if (waterRequirements === farmProfile.waterAvailability) score += 5;
 
 // Soil Health Impact (0-20 points)
-if (cropCategory === 'LEGUME') score += 20;        // Nitrogen fixing
-else if (cropCategory === 'ROOT') score += 10;      // Breaks up soil
-else if (cropCategory === 'LEAFY_GREEN') score += 15; // Quick rotation
+if (cropCategory === "LEGUME")
+  score += 20; // Nitrogen fixing
+else if (cropCategory === "ROOT")
+  score += 10; // Breaks up soil
+else if (cropCategory === "LEAFY_GREEN") score += 15; // Quick rotation
 
 // Biodiversity (0-15 points)
 if (companionPlants.length > 10) score += 15;
@@ -254,9 +272,11 @@ else score += 5;
 
 // Input Requirements (0-15 points)
 const inputCostRatio = inputCostPerAcre / 1000;
-if (inputCostRatio < 0.5) score += 15;            // Under $500/acre
-else if (inputCostRatio < 1) score += 10;          // $500-1000/acre
-else if (inputCostRatio < 2) score += 5;           // $1000-2000/acre
+if (inputCostRatio < 0.5)
+  score += 15; // Under $500/acre
+else if (inputCostRatio < 1)
+  score += 10; // $500-1000/acre
+else if (inputCostRatio < 2) score += 5; // $1000-2000/acre
 
 // Organic/Biodynamic Bonus (0-10 points)
 if (farmProfile.isBiodynamic) score += 10;
@@ -268,8 +288,9 @@ else if (pestCount < 6) score += 7;
 else if (pestCount < 10) score += 4;
 
 // Crop Rotation (0-10 points)
-if (!previouslyGrown) score += 10;                 // New crop
-else score += 3;                                    // Previously grown
+if (!previouslyGrown)
+  score += 10; // New crop
+else score += 3; // Previously grown
 ```
 
 #### Example Calculation
@@ -303,14 +324,14 @@ Total Sustainability:  72/100
 
 #### Factors
 
-| Factor | Weight | Description |
-|--------|--------|-------------|
-| **Demand Index** | 25% | Current market demand (0-100) |
-| **Supply-Demand Balance** | 20% | Ratio of demand to supply |
-| **Price Trend** | 20% | Increasing/Stable/Decreasing |
-| **Competition Level** | 15% | Low/Medium/High competition |
-| **Seasonal Factor** | 10% | Price multiplier for season |
-| **Organic Premium** | 10% | Premium for organic certification |
+| Factor                    | Weight | Description                       |
+| ------------------------- | ------ | --------------------------------- |
+| **Demand Index**          | 25%    | Current market demand (0-100)     |
+| **Supply-Demand Balance** | 20%    | Ratio of demand to supply         |
+| **Price Trend**           | 20%    | Increasing/Stable/Decreasing      |
+| **Competition Level**     | 15%    | Low/Medium/High competition       |
+| **Seasonal Factor**       | 10%    | Price multiplier for season       |
+| **Organic Premium**       | 10%    | Premium for organic certification |
 
 #### Score Calculation
 
@@ -320,19 +341,20 @@ score += (demandIndex / 100) * 25;
 
 // Supply-Demand Balance (0-20 points)
 const ratio = demandIndex / supplyIndex;
-if (ratio > 1.5) score += 20;                     // High demand, low supply
+if (ratio > 1.5)
+  score += 20; // High demand, low supply
 else if (ratio > 1.2) score += 15;
 else if (ratio > 0.8) score += 10;
 else score += 5;
 
 // Price Trend (0-20 points)
-if (trendDirection === 'INCREASING') score += 20;
-else if (trendDirection === 'STABLE') score += 12;
+if (trendDirection === "INCREASING") score += 20;
+else if (trendDirection === "STABLE") score += 12;
 else score += 5; // DECREASING
 
 // Competition Level (0-15 points)
-if (competitionLevel === 'LOW') score += 15;
-else if (competitionLevel === 'MEDIUM') score += 10;
+if (competitionLevel === "LOW") score += 15;
+else if (competitionLevel === "MEDIUM") score += 10;
 else score += 5; // HIGH
 
 // Seasonal Factor (0-10 points)
@@ -373,14 +395,14 @@ Total Market Demand:   57/100
 
 #### Factors
 
-| Factor | Weight | Criteria |
-|--------|--------|----------|
-| **Hardiness Zone** | 25% | USDA zone compatibility |
-| **Soil Type** | 20% | Soil preference match |
-| **Water Availability** | 20% | Water requirement match |
-| **Sun Exposure** | 15% | Sun requirement match |
-| **Labor Capacity** | 10% | Available labor vs. required |
-| **Budget** | 10% | Input costs vs. budget |
+| Factor                 | Weight | Criteria                     |
+| ---------------------- | ------ | ---------------------------- |
+| **Hardiness Zone**     | 25%    | USDA zone compatibility      |
+| **Soil Type**          | 20%    | Soil preference match        |
+| **Water Availability** | 20%    | Water requirement match      |
+| **Sun Exposure**       | 15%    | Sun requirement match        |
+| **Labor Capacity**     | 10%    | Available labor vs. required |
+| **Budget**             | 10%    | Input costs vs. budget       |
 
 #### Score Calculation
 
@@ -389,7 +411,7 @@ Total Market Demand:   57/100
 if (crop.hardinessZones.includes(farm.hardinessZone)) score += 25;
 else {
   const zoneDiff = Math.abs(closestZone - farm.hardinessZone);
-  score += Math.max(0, 25 - (zoneDiff * 5));
+  score += Math.max(0, 25 - zoneDiff * 5);
 }
 
 // Soil Compatibility (0-20 points)
@@ -400,14 +422,14 @@ else score += 8; // Partial credit
 if (waterRequirements === waterAvailability) score += 20;
 else {
   const diff = Math.abs(levelIndex(required) - levelIndex(available));
-  score += Math.max(0, 20 - (diff * 10));
+  score += Math.max(0, 20 - diff * 10);
 }
 
 // Sun Match (0-15 points)
 if (sunRequirements === sunExposure) score += 15;
 else {
   const diff = Math.abs(levelIndex(required) - levelIndex(available));
-  score += Math.max(0, 15 - (diff * 7));
+  score += Math.max(0, 15 - diff * 7);
 }
 
 // Labor Capacity (0-10 points)
@@ -465,7 +487,7 @@ const defaultWeights = {
   profitability: 0.25,
   sustainability: 0.25,
   marketDemand: 0.25,
-  suitability: 0.25
+  suitability: 0.25,
 };
 ```
 
@@ -475,25 +497,25 @@ const defaultWeights = {
 // Priority: Profit
 if (preferences.prioritizeProfit) {
   weights = {
-    profitability: 0.40,  // +15%
-    sustainability: 0.20, // -5%
+    profitability: 0.4, // +15%
+    sustainability: 0.2, // -5%
     marketDemand: 0.25,
-    suitability: 0.15     // -10%
+    suitability: 0.15, // -10%
   };
 }
 
 // Priority: Sustainability
 if (preferences.prioritizeSustainability) {
   weights = {
-    profitability: 0.20,  // -5%
-    sustainability: 0.40, // +15%
-    marketDemand: 0.20,   // -5%
-    suitability: 0.20     // -5%
+    profitability: 0.2, // -5%
+    sustainability: 0.4, // +15%
+    marketDemand: 0.2, // -5%
+    suitability: 0.2, // -5%
   };
 }
 
 // Overall calculation
-overallScore = 
+overallScore =
   profitabilityScore * weights.profitability +
   sustainabilityScore * weights.sustainability +
   marketDemandScore * weights.marketDemand +
@@ -508,16 +530,16 @@ const scores = {
   profitability: 92,
   sustainability: 72,
   marketDemand: 85,
-  suitability: 100
+  suitability: 100,
 };
 
 // With profit priority
-const overall = 
-  92 * 0.40 +  // 36.8
-  72 * 0.20 +  // 14.4
-  85 * 0.25 +  // 21.25
-  100 * 0.15;  // 15.0
-  
+const overall =
+  92 * 0.4 + // 36.8
+  72 * 0.2 + // 14.4
+  85 * 0.25 + // 21.25
+  100 * 0.15; // 15.0
+
 // Total: 87.45 → 87/100
 ```
 
@@ -544,15 +566,15 @@ GET /api/v1/crops/recommendations?farmId={farmId}&maxRecommendations=10
 
 #### Query Parameters
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `farmId` | string | ✅ | Farm identifier |
-| `maxRecommendations` | number | ❌ | Max results (default: 10) |
-| `prioritizeProfit` | boolean | ❌ | Emphasize profitability |
-| `prioritizeSustainability` | boolean | ❌ | Emphasize sustainability |
-| `riskTolerance` | enum | ❌ | LOW, MEDIUM, HIGH |
-| `experienceLevel` | enum | ❌ | BEGINNER, INTERMEDIATE, EXPERT |
-| `marketAccess` | enum | ❌ | LOCAL, REGIONAL, NATIONAL |
+| Parameter                  | Type    | Required | Description                    |
+| -------------------------- | ------- | -------- | ------------------------------ |
+| `farmId`                   | string  | ✅       | Farm identifier                |
+| `maxRecommendations`       | number  | ❌       | Max results (default: 10)      |
+| `prioritizeProfit`         | boolean | ❌       | Emphasize profitability        |
+| `prioritizeSustainability` | boolean | ❌       | Emphasize sustainability       |
+| `riskTolerance`            | enum    | ❌       | LOW, MEDIUM, HIGH              |
+| `experienceLevel`          | enum    | ❌       | BEGINNER, INTERMEDIATE, EXPERT |
+| `marketAccess`             | enum    | ❌       | LOCAL, REGIONAL, NATIONAL      |
 
 #### Response
 
@@ -696,12 +718,7 @@ Get lunar calendar for the next period.
     "lunarPhaseEmoji": "🌒",
     "lunarAge": 3.2,
     "isOptimalPlanting": true,
-    "optimalOperations": [
-      "REST",
-      "PLAN",
-      "REPAIR",
-      "INDOOR_GROWING"
-    ],
+    "optimalOperations": ["REST", "PLAN", "REPAIR", "INDOOR_GROWING"],
     "seasonalGuidance": "Winter is a time of rest and planning..."
   }
 }
@@ -745,27 +762,27 @@ Get lunar calendar for the next period.
 ### Example 1: Get Recommendations for a Farm
 
 ```typescript
-import { cropRecommendationEngine } from '@/lib/services/crop-recommendation.service';
-import { biodynamicCalendar } from '@/lib/services/biodynamic-calendar.service';
+import { cropRecommendationEngine } from "@/lib/services/crop-recommendation.service";
+import { biodynamicCalendar } from "@/lib/services/biodynamic-calendar.service";
 
 // Build farm profile
 const farmProfile = {
-  id: 'farm_123',
+  id: "farm_123",
   location: {
     latitude: 40.7128,
-    longitude: -74.0060,
-    hardinessZone: 7
+    longitude: -74.006,
+    hardinessZone: 7,
   },
   farmSize: 5,
-  soilType: 'LOAMY',
-  waterAvailability: 'MODERATE',
-  sunExposure: 'FULL_SUN',
+  soilType: "LOAMY",
+  waterAvailability: "MODERATE",
+  sunExposure: "FULL_SUN",
   isOrganic: true,
   isBiodynamic: false,
-  previousCrops: ['lettuce-1', 'carrot-1'],
-  equipmentAvailable: ['tractor', 'irrigation'],
+  previousCrops: ["lettuce-1", "carrot-1"],
+  equipmentAvailable: ["tractor", "irrigation"],
   laborCapacity: 40,
-  budgetPerAcre: 5000
+  budgetPerAcre: 5000,
 };
 
 // Set preferences
@@ -773,63 +790,75 @@ const preferences = {
   prioritizeOrganic: true,
   prioritizeProfit: true,
   prioritizeSustainability: false,
-  riskTolerance: 'MEDIUM',
-  experienceLevel: 'INTERMEDIATE',
-  marketAccess: 'LOCAL'
+  riskTolerance: "MEDIUM",
+  experienceLevel: "INTERMEDIATE",
+  marketAccess: "LOCAL",
 };
 
 // Get market data
 const marketData = new Map([
-  ['tomato-1', {
-    cropId: 'tomato-1',
-    averagePrice: 2.75,
-    priceVolatility: 0.15,
-    demandIndex: 85,
-    supplyIndex: 65,
-    trendDirection: 'INCREASING',
-    seasonalPriceFactor: 1.2,
-    competitionLevel: 'MEDIUM'
-  }]
+  [
+    "tomato-1",
+    {
+      cropId: "tomato-1",
+      averagePrice: 2.75,
+      priceVolatility: 0.15,
+      demandIndex: 85,
+      supplyIndex: 65,
+      trendDirection: "INCREASING",
+      seasonalPriceFactor: 1.2,
+      competitionLevel: "MEDIUM",
+    },
+  ],
 ]);
 
 // Get recommendations
 const recommendations = await cropRecommendationEngine.getRecommendations(
   farmProfile,
   preferences,
-  marketData
+  marketData,
 );
 
 // Process results
-recommendations.forEach(rec => {
+recommendations.forEach((rec) => {
   console.log(`${rec.crop.name}: ${rec.overallScore}/100`);
   console.log(`  Profitability: ${rec.profitabilityScore}`);
   console.log(`  Sustainability: ${rec.sustainabilityScore}`);
   console.log(`  Market Demand: ${rec.marketDemandScore}`);
   console.log(`  Suitability: ${rec.suitabilityScore}`);
-  console.log(`  Expected Revenue: $${rec.expectedRevenue.min}-${rec.expectedRevenue.max}`);
-  console.log(`  Strengths: ${rec.strengths.join(', ')}`);
+  console.log(
+    `  Expected Revenue: $${rec.expectedRevenue.min}-${rec.expectedRevenue.max}`,
+  );
+  console.log(`  Strengths: ${rec.strengths.join(", ")}`);
 });
 ```
 
 ### Example 2: Check Optimal Planting Time
 
 ```typescript
-import { biodynamicCalendar, CropType } from '@/lib/services/biodynamic-calendar.service';
+import {
+  biodynamicCalendar,
+  CropType,
+} from "@/lib/services/biodynamic-calendar.service";
 
 // Check if today is optimal for planting
 const isOptimal = biodynamicCalendar.isOptimalPlantingDate(CropType.LEAFY);
 
 if (isOptimal) {
-  console.log('Today is an excellent day for planting leafy greens!');
-  
+  console.log("Today is an excellent day for planting leafy greens!");
+
   // Get context
   const context = biodynamicCalendar.getBiodynamicContext();
   console.log(`Season: ${context.season}`);
   console.log(`Lunar Phase: ${context.lunarPhase}`);
-  console.log(`Recommended operations: ${context.optimalOperations.join(', ')}`);
+  console.log(
+    `Recommended operations: ${context.optimalOperations.join(", ")}`,
+  );
 } else {
   // Find next optimal date
-  const nextDate = biodynamicCalendar.getNextOptimalPlantingDate(CropType.LEAFY);
+  const nextDate = biodynamicCalendar.getNextOptimalPlantingDate(
+    CropType.LEAFY,
+  );
   console.log(`Next optimal planting date: ${nextDate?.toLocaleDateString()}`);
 }
 ```
@@ -837,18 +866,23 @@ if (isOptimal) {
 ### Example 3: Get Planting Calendar
 
 ```typescript
-import { biodynamicCalendar, CropType } from '@/lib/services/biodynamic-calendar.service';
+import {
+  biodynamicCalendar,
+  CropType,
+} from "@/lib/services/biodynamic-calendar.service";
 
 // Get 30-day planting calendar for root crops
 const windows = biodynamicCalendar.getOptimalPlantingDays(
   CropType.ROOT,
   30,
-  new Date()
+  new Date(),
 );
 
-console.log('Optimal planting windows for root crops:');
-windows.forEach(window => {
-  console.log(`${window.start.toLocaleDateString()} - ${window.end.toLocaleDateString()}`);
+console.log("Optimal planting windows for root crops:");
+windows.forEach((window) => {
+  console.log(
+    `${window.start.toLocaleDateString()} - ${window.end.toLocaleDateString()}`,
+  );
   console.log(`  Lunar Phase: ${window.lunarPhase}`);
   console.log(`  Score: ${window.score}/100`);
   console.log(`  Reason: ${window.reason}`);
@@ -858,7 +892,7 @@ windows.forEach(window => {
 ### Example 4: Calculate Biodynamic Score
 
 ```typescript
-import { biodynamicCalendar } from '@/lib/services/biodynamic-calendar.service';
+import { biodynamicCalendar } from "@/lib/services/biodynamic-calendar.service";
 
 // Assess farm's biodynamic practices
 const farmPractices = {
@@ -868,7 +902,7 @@ const farmPractices = {
   maintainsBiodiversity: true,
   compostOnSite: true,
   avoidsChemicals: true,
-  integratesLivestock: false
+  integratesLivestock: false,
 };
 
 const score = biodynamicCalendar.calculateBiodynamicScore(farmPractices);
@@ -876,11 +910,11 @@ const score = biodynamicCalendar.calculateBiodynamicScore(farmPractices);
 console.log(`Biodynamic Alignment Score: ${score}/100`);
 
 if (score >= 80) {
-  console.log('Excellent biodynamic practices!');
+  console.log("Excellent biodynamic practices!");
 } else if (score >= 60) {
-  console.log('Good practices with room for improvement');
+  console.log("Good practices with room for improvement");
 } else {
-  console.log('Consider adopting more biodynamic principles');
+  console.log("Consider adopting more biodynamic principles");
 }
 ```
 
@@ -896,8 +930,16 @@ All services are already included in the platform. No additional dependencies re
 
 ```typescript
 // Import biodynamic services
-import { biodynamicCalendar, CropType, Season, LunarPhase } from '@/lib/services/biodynamic-calendar.service';
-import { cropRecommendationEngine, CropCategory } from '@/lib/services/crop-recommendation.service';
+import {
+  biodynamicCalendar,
+  CropType,
+  Season,
+  LunarPhase,
+} from "@/lib/services/biodynamic-calendar.service";
+import {
+  cropRecommendationEngine,
+  CropCategory,
+} from "@/lib/services/crop-recommendation.service";
 
 // Import types
 import type {
@@ -905,8 +947,8 @@ import type {
   FarmProfile,
   FarmerPreferences,
   MarketData,
-  BiodynamicContext
-} from '@/types/biodynamic.types';
+  BiodynamicContext,
+} from "@/types/biodynamic.types";
 ```
 
 ### Step 3: Build Farm Profile
@@ -917,8 +959,8 @@ const farm = await database.farm.findUnique({
   where: { id: farmId },
   include: {
     certifications: true,
-    products: true
-  }
+    products: true,
+  },
 });
 
 // Convert to FarmProfile
@@ -927,18 +969,18 @@ const farmProfile: FarmProfile = {
   location: {
     latitude: farm.latitude || 0,
     longitude: farm.longitude || 0,
-    hardinessZone: farm.hardinessZone || 7
+    hardinessZone: farm.hardinessZone || 7,
   },
-  farmSize: parseFloat(farm.farmSize?.toString() || '1'),
-  soilType: farm.soilType || 'LOAMY',
-  waterAvailability: farm.waterAvailability || 'MODERATE',
-  sunExposure: farm.sunExposure || 'FULL_SUN',
-  isOrganic: farm.certifications.some(c => c.type === 'ORGANIC'),
-  isBiodynamic: farm.certifications.some(c => c.type === 'BIODYNAMIC'),
-  previousCrops: farm.products.map(p => p.id),
+  farmSize: parseFloat(farm.farmSize?.toString() || "1"),
+  soilType: farm.soilType || "LOAMY",
+  waterAvailability: farm.waterAvailability || "MODERATE",
+  sunExposure: farm.sunExposure || "FULL_SUN",
+  isOrganic: farm.certifications.some((c) => c.type === "ORGANIC"),
+  isBiodynamic: farm.certifications.some((c) => c.type === "BIODYNAMIC"),
+  previousCrops: farm.products.map((p) => p.id),
   equipmentAvailable: farm.equipment || [],
   laborCapacity: farm.laborCapacity || 40,
-  budgetPerAcre: farm.budgetPerAcre || 5000
+  budgetPerAcre: farm.budgetPerAcre || 5000,
 };
 ```
 
@@ -950,9 +992,9 @@ const preferences: FarmerPreferences = {
   prioritizeOrganic: farmProfile.isOrganic,
   prioritizeProfit: true,
   prioritizeSustainability: false,
-  riskTolerance: 'MEDIUM',
-  experienceLevel: 'INTERMEDIATE',
-  marketAccess: 'LOCAL'
+  riskTolerance: "MEDIUM",
+  experienceLevel: "INTERMEDIATE",
+  marketAccess: "LOCAL",
 };
 
 // Get market data (integrate with your market data source)
@@ -962,14 +1004,16 @@ const marketData = await getMarketData();
 const recommendations = await cropRecommendationEngine.getRecommendations(
   farmProfile,
   preferences,
-  marketData
+  marketData,
 );
 
 // Use recommendations
 const topCrop = recommendations[0];
 console.log(`Best crop: ${topCrop.crop.name}`);
 console.log(`Overall score: ${topCrop.overallScore}/100`);
-console.log(`Expected revenue: $${topCrop.expectedRevenue.min}-${topCrop.expectedRevenue.max}`);
+console.log(
+  `Expected revenue: $${topCrop.expectedRevenue.min}-${topCrop.expectedRevenue.max}`,
+);
 ```
 
 ### Step 5: Display Biodynamic Context
@@ -1012,48 +1056,51 @@ const context = biodynamicCalendar.getBiodynamicContext();
 ### Unit Tests
 
 ```typescript
-import { describe, it, expect } from 'vitest';
-import { biodynamicCalendar, CropType } from '@/lib/services/biodynamic-calendar.service';
-import { cropRecommendationEngine } from '@/lib/services/crop-recommendation.service';
+import { describe, it, expect } from "vitest";
+import {
+  biodynamicCalendar,
+  CropType,
+} from "@/lib/services/biodynamic-calendar.service";
+import { cropRecommendationEngine } from "@/lib/services/crop-recommendation.service";
 
-describe('BiodynamicCalendar', () => {
-  it('should calculate current season correctly', () => {
-    const marchDate = new Date('2025-03-15');
+describe("BiodynamicCalendar", () => {
+  it("should calculate current season correctly", () => {
+    const marchDate = new Date("2025-03-15");
     const season = biodynamicCalendar.getCurrentSeason(marchDate);
-    expect(season).toBe('SPRING');
+    expect(season).toBe("SPRING");
   });
 
-  it('should calculate lunar age', () => {
-    const date = new Date('2025-01-15');
+  it("should calculate lunar age", () => {
+    const date = new Date("2025-01-15");
     const lunarAge = biodynamicCalendar.calculateLunarAge(date);
     expect(lunarAge).toBeGreaterThanOrEqual(0);
     expect(lunarAge).toBeLessThan(30);
   });
 
-  it('should identify optimal planting dates', () => {
+  it("should identify optimal planting dates", () => {
     const isOptimal = biodynamicCalendar.isOptimalPlantingDate(
       CropType.LEAFY,
-      new Date()
+      new Date(),
     );
-    expect(typeof isOptimal).toBe('boolean');
+    expect(typeof isOptimal).toBe("boolean");
   });
 
-  it('should get planting windows', () => {
+  it("should get planting windows", () => {
     const windows = biodynamicCalendar.getOptimalPlantingDays(
       CropType.ROOT,
-      14
+      14,
     );
     expect(Array.isArray(windows)).toBe(true);
-    windows.forEach(window => {
-      expect(window).toHaveProperty('start');
-      expect(window).toHaveProperty('end');
-      expect(window).toHaveProperty('score');
+    windows.forEach((window) => {
+      expect(window).toHaveProperty("start");
+      expect(window).toHaveProperty("end");
+      expect(window).toHaveProperty("score");
       expect(window.score).toBeGreaterThanOrEqual(0);
       expect(window.score).toBeLessThanOrEqual(100);
     });
   });
 
-  it('should calculate biodynamic score', () => {
+  it("should calculate biodynamic score", () => {
     const score = biodynamicCalendar.calculateBiodynamicScore({
       followsLunarCalendar: true,
       usesBiodynamicPreparations: true,
@@ -1061,56 +1108,56 @@ describe('BiodynamicCalendar', () => {
       maintainsBiodiversity: true,
       compostOnSite: true,
       avoidsChemicals: true,
-      integratesLivestock: false
+      integratesLivestock: false,
     });
     expect(score).toBe(90);
   });
 });
 
-describe('CropRecommendationEngine', () => {
-  it('should calculate profitability score', () => {
+describe("CropRecommendationEngine", () => {
+  it("should calculate profitability score", () => {
     const crop = {
       averageYieldPerAcre: 25000,
       marketPricePerLb: 2.5,
       inputCostPerAcre: 3500,
       laborHoursPerAcre: 120,
       storageLife: 14,
-      organicPremium: 1.4
+      organicPremium: 1.4,
     };
 
     const farmProfile = {
-      isOrganic: true
+      isOrganic: true,
     };
 
     const score = cropRecommendationEngine.calculateProfitabilityScore(
       crop as any,
       farmProfile as any,
-      undefined
+      undefined,
     );
 
     expect(score).toBeGreaterThanOrEqual(0);
     expect(score).toBeLessThanOrEqual(100);
   });
 
-  it('should calculate sustainability score', () => {
+  it("should calculate sustainability score", () => {
     const crop = {
-      category: 'LEGUME',
-      waterRequirements: 'LOW',
-      companionPlants: Array(12).fill('plant'),
+      category: "LEGUME",
+      waterRequirements: "LOW",
+      companionPlants: Array(12).fill("plant"),
       inputCostPerAcre: 500,
-      pests: ['pest1', 'pest2']
+      pests: ["pest1", "pest2"],
     };
 
     const farmProfile = {
-      waterAvailability: 'LOW',
+      waterAvailability: "LOW",
       isBiodynamic: true,
       isOrganic: true,
-      previousCrops: []
+      previousCrops: [],
     };
 
     const score = cropRecommendationEngine.calculateSustainabilityScore(
       crop as any,
-      farmProfile as any
+      farmProfile as any,
     );
 
     expect(score).toBeGreaterThanOrEqual(0);
@@ -1122,13 +1169,16 @@ describe('CropRecommendationEngine', () => {
 ### Integration Tests
 
 ```typescript
-describe('Crop Recommendations API', () => {
-  it('should return recommendations for authenticated user', async () => {
-    const response = await fetch('/api/v1/crops/recommendations?farmId=farm_123', {
-      headers: {
-        'Authorization': `Bearer ${authToken}`
-      }
-    });
+describe("Crop Recommendations API", () => {
+  it("should return recommendations for authenticated user", async () => {
+    const response = await fetch(
+      "/api/v1/crops/recommendations?farmId=farm_123",
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      },
+    );
 
     expect(response.status).toBe(200);
     const data = await response.json();
@@ -1137,8 +1187,10 @@ describe('Crop Recommendations API', () => {
     expect(data.biodynamicContext).toBeDefined();
   });
 
-  it('should return 401 for unauthenticated requests', async () => {
-    const response = await fetch('/api/v1/crops/recommendations?farmId=farm_123');
+  it("should return 401 for unauthenticated requests", async () => {
+    const response = await fetch(
+      "/api/v1/crops/recommendations?farmId=farm_123",
+    );
     expect(response.status).toBe(401);
   });
 });
@@ -1155,16 +1207,21 @@ Biodynamic calculations and crop recommendations should be cached:
 ```typescript
 // Cache biodynamic context for 1 hour
 const context = await cache.wrap(
-  'biodynamic-context',
+  "biodynamic-context",
   () => biodynamicCalendar.getBiodynamicContext(),
-  3600
+  3600,
 );
 
 // Cache crop recommendations for 24 hours
 const recommendations = await cache.wrap(
   `recommendations:${farmId}`,
-  () => cropRecommendationEngine.getRecommendations(farmProfile, preferences, marketData),
-  86400
+  () =>
+    cropRecommendationEngine.getRecommendations(
+      farmProfile,
+      preferences,
+      marketData,
+    ),
+  86400,
 );
 ```
 
@@ -1194,6 +1251,7 @@ CREATE INDEX idx_recommendations_farm ON crop_recommendations(farm_id, expires_a
 ## Future Enhancements
 
 ### Phase 1 (Completed)
+
 - ✅ Biodynamic calendar calculations
 - ✅ Lunar phase tracking
 - ✅ Profitability scoring
@@ -1203,6 +1261,7 @@ CREATE INDEX idx_recommendations_farm ON crop_recommendations(farm_id, expires_a
 - ✅ API endpoints
 
 ### Phase 2 (Planned)
+
 - 🔄 Real-time market data integration
 - 🔄 Weather data integration
 - 🔄 Historical yield data
@@ -1211,6 +1270,7 @@ CREATE INDEX idx_recommendations_farm ON crop_recommendations(farm_id, expires_a
 - 🔄 Pest/disease prediction models
 
 ### Phase 3 (Future)
+
 - 📋 Mobile app integration
 - 📋 Push notifications for optimal planting times
 - 📋 Community crop performance sharing

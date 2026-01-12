@@ -638,7 +638,7 @@ export class AuthService {
       // Check if login error message is shown
       const errorSelectors = [
         '[data-testid="login-error"]',
-        '.error-message',
+        ".error-message",
         '[role="alert"]',
       ];
 
