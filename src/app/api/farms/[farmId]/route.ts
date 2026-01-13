@@ -215,7 +215,11 @@ export async function PATCH(
       dataToUpdate.images = updateData.images;
 
     // Update farm using optimized service
-    const updatedFarm = await farmService.updateFarm(farmId, dataToUpdate);
+    const updatedFarm = await farmService.updateFarm(
+      farmId,
+      dataToUpdate,
+      user.id,
+    );
 
     return NextResponse.json({
       success: true,
@@ -282,7 +286,7 @@ export async function DELETE(
     }
 
     // Soft delete using optimized service
-    await farmService.deleteFarm(farmId);
+    await farmService.deleteFarm(farmId, user.id);
 
     return NextResponse.json({
       success: true,
