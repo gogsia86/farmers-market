@@ -9,8 +9,8 @@
  */
 
 import { auth } from "@/lib/auth";
-import { database } from "@/lib/database";
 import { logger } from "@/lib/monitoring/logger";
+import { farmService } from "@/lib/services/farm.service";
 import { NextRequest, NextResponse } from "next/server";
 
 /**
@@ -60,126 +60,30 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get("page") || "1");
     const pageSize = parseInt(searchParams.get("pageSize") || "50");
 
-    // Build where clause
-    const where: any = {};
+    // Build filter options for optimized service
+    const filterOptions: any = {
+      page,
+      limit: pageSize,
+      searchQuery,
+      status: statusFilter,
+    };
 
-    if (
-      statusFilter &&
-      ["PENDING", "VERIFIED", "REJECTED"].includes(statusFilter)
-    ) {
-      where.verificationStatus = statusFilter;
-    }
+    // Fetch farms with pagination using optimized service
+    const result = await farmService.getAllFarms(filterOptions);
 
-    if (searchQuery) {
-      where.OR = [
-        {
-          name: {
-            contains: searchQuery,
-            mode: "insensitive",
-          },
-        },
-        {
-          owner: {
-            email: {
-              contains: searchQuery,
-              mode: "insensitive",
-            },
-          },
-        },
-        {
-          owner: {
-            firstName: {
-              contains: searchQuery,
-              mode: "insensitive",
-            },
-          },
-        },
-        {
-          owner: {
-            lastName: {
-              contains: searchQuery,
-              mode: "insensitive",
-            },
-          },
-        },
-      ];
-    }
+    // Extract data from service result
+    const farms = result.farms;
+    const totalCount = result.total;
 
-    // Fetch farms with pagination
-    const [farms, totalCount] = await Promise.all([
-      database.farm.findMany({
-        where,
-        select: {
-          id: true,
-          name: true,
-          slug: true,
-          description: true,
-          status: true,
-          verificationStatus: true,
-          verifiedBy: true,
-          verifiedAt: true,
-          email: true,
-          phone: true,
-          address: true,
-          city: true,
-          state: true,
-          zipCode: true,
-          latitude: true,
-          longitude: true,
-          logoUrl: true,
-          bannerUrl: true,
-          createdAt: true,
-          updatedAt: true,
-          owner: {
-            select: {
-              id: true,
-              email: true,
-              firstName: true,
-              lastName: true,
-              role: true,
-            },
-          },
-          certifications: {
-            select: {
-              id: true,
-              type: true,
-              certifierName: true,
-              status: true,
-            },
-          },
-          _count: {
-            select: {
-              products: true,
-              orders: true,
-            },
-          },
-        },
-        orderBy: [
-          {
-            verificationStatus: "asc", // PENDING first
-          },
-          {
-            createdAt: "desc",
-          },
-        ],
-        skip: (page - 1) * pageSize,
-        take: pageSize,
-      }),
-      database.farm.count({ where }),
-    ]);
-
-    // Calculate stats
+    // Calculate stats (these could be moved to service layer in future)
     const stats = {
       total: totalCount,
-      pending: await database.farm.count({
-        where: { verificationStatus: "PENDING" },
-      }),
-      verified: await database.farm.count({
-        where: { verificationStatus: "VERIFIED" },
-      }),
-      rejected: await database.farm.count({
-        where: { verificationStatus: "REJECTED" },
-      }),
+      pending: farms.filter((f: any) => f.verificationStatus === "PENDING")
+        .length,
+      verified: farms.filter((f: any) => f.verificationStatus === "VERIFIED")
+        .length,
+      rejected: farms.filter((f: any) => f.verificationStatus === "REJECTED")
+        .length,
     };
 
     return NextResponse.json({

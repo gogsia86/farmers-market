@@ -9,8 +9,8 @@
  */
 
 import { auth } from "@/lib/auth";
-import { database } from "@/lib/database";
-import type { Farm, FarmStatus } from "@prisma/client";
+import { farmService } from "@/lib/services/farm.service";
+import type { Farm } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -71,57 +71,8 @@ export async function GET(
   try {
     const { farmId } = params;
 
-    // Get farm with related data
-    const farm = await database.farm.findUnique({
-      where: { id: farmId },
-      include: {
-        owner: {
-          select: {
-            id: true,
-            email: true,
-            firstName: true,
-            lastName: true,
-          },
-        },
-        products: {
-          where: {
-            status: "ACTIVE",
-          },
-          take: 10,
-          orderBy: { createdAt: "desc" },
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-            price: true,
-            unit: true,
-            images: true,
-            category: true,
-            organic: true,
-          },
-        },
-        reviews: {
-          take: 5,
-          orderBy: { createdAt: "desc" },
-          include: {
-            customer: {
-              select: {
-                id: true,
-                firstName: true,
-                lastName: true,
-              },
-            },
-          },
-        },
-        _count: {
-          select: {
-            products: true,
-            reviews: true,
-            orders: true,
-          },
-        },
-      },
-    });
+    // Get farm with related data using optimized service
+    const farm = await farmService.getFarmDetailData(farmId);
 
     if (!farm) {
       return NextResponse.json(
@@ -184,27 +135,10 @@ export async function PATCH(
     const { farmId } = params;
     const user = session.user as any;
 
-    // Get farm to check ownership
-    const farm = await database.farm.findUnique({
-      where: { id: farmId },
-      select: { id: true, ownerId: true },
-    });
+    // Verify farm ownership using optimized service
+    const hasAccess = await farmService.verifyFarmOwnership(farmId, user.id);
 
-    if (!farm) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: "NOT_FOUND",
-            message: "Farm not found",
-          },
-        },
-        { status: 404 },
-      );
-    }
-
-    // Check authorization (owner or admin)
-    if (farm.ownerId !== user.id && user.role !== "ADMIN") {
+    if (!hasAccess && user.role !== "ADMIN") {
       return NextResponse.json(
         {
           success: false,
@@ -280,11 +214,8 @@ export async function PATCH(
     if (updateData.images !== undefined)
       dataToUpdate.images = updateData.images;
 
-    // Update farm
-    const updatedFarm = await database.farm.update({
-      where: { id: farmId },
-      data: dataToUpdate,
-    });
+    // Update farm using optimized service
+    const updatedFarm = await farmService.updateFarm(farmId, dataToUpdate);
 
     return NextResponse.json({
       success: true,
@@ -334,36 +265,10 @@ export async function DELETE(
     const { farmId } = params;
     const user = session.user as any;
 
-    // Get farm to check ownership and dependencies
-    const farm = await database.farm.findUnique({
-      where: { id: farmId },
-      select: {
-        id: true,
-        ownerId: true,
-        _count: {
-          select: {
-            products: true,
-            orders: true,
-          },
-        },
-      },
-    });
+    // Verify farm ownership using optimized service
+    const hasAccess = await farmService.verifyFarmOwnership(farmId, user.id);
 
-    if (!farm) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: "NOT_FOUND",
-            message: "Farm not found",
-          },
-        },
-        { status: 404 },
-      );
-    }
-
-    // Check authorization (owner or admin)
-    if (farm.ownerId !== user.id && user.role !== "ADMIN") {
+    if (!hasAccess && user.role !== "ADMIN") {
       return NextResponse.json(
         {
           success: false,
@@ -376,32 +281,8 @@ export async function DELETE(
       );
     }
 
-    // Check if farm has active orders
-    if (farm._count.orders > 0) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: "FARM_HAS_ORDERS",
-            message:
-              "Cannot delete farm with existing orders. Please deactivate instead.",
-            details: {
-              orderCount: farm._count.orders,
-            },
-          },
-        },
-        { status: 409 },
-      );
-    }
-
-    // Soft delete by setting status to INACTIVE
-    await database.farm.update({
-      where: { id: farmId },
-      data: {
-        status: "INACTIVE" as FarmStatus,
-        updatedAt: new Date(),
-      },
-    });
+    // Soft delete using optimized service
+    await farmService.deleteFarm(farmId);
 
     return NextResponse.json({
       success: true,
