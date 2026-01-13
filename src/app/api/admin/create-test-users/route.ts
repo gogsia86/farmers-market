@@ -26,7 +26,7 @@ const TEST_USERS = [
     email: "test@example.com",
     name: "Test Customer",
     password: "test123",
-    role: "CUSTOMER",
+    role: "CONSUMER",
     description: "E2E test customer account",
   },
   {
@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
           success: false,
           error: "Admin endpoint not properly configured",
         },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
           success: false,
           error: "Unauthorized - Invalid admin secret",
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -113,10 +113,9 @@ export async function POST(request: NextRequest) {
             email: userData.email,
             name: userData.name,
             password: hashedPassword,
-            emailVerified: new Date(), // Pre-verify test accounts
-            image: null,
-            // Note: Role field depends on your schema
-            // Adjust based on actual User model structure
+            emailVerified: true, // Pre-verify test accounts
+            emailVerifiedAt: new Date(),
+            role: userData.role as any, // Type assertion for role enum
           },
           select: {
             id: true,
@@ -178,7 +177,7 @@ export async function POST(request: NextRequest) {
       },
       {
         status: results.failed.length === 0 ? 200 : 207, // 207 Multi-Status for partial success
-      }
+      },
     );
   } catch (error) {
     logger.error("Test users creation failed", {
@@ -197,7 +196,7 @@ export async function POST(request: NextRequest) {
               : String(error)
             : undefined,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -218,7 +217,7 @@ export async function GET(request: NextRequest) {
           success: false,
           error: "Unauthorized",
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -258,7 +257,7 @@ export async function GET(request: NextRequest) {
         success: false,
         error: "Failed to list test users",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -278,7 +277,7 @@ export async function DELETE(request: NextRequest) {
           success: false,
           error: "Unauthorized",
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -312,7 +311,7 @@ export async function DELETE(request: NextRequest) {
         success: false,
         error: "Failed to delete test users",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
