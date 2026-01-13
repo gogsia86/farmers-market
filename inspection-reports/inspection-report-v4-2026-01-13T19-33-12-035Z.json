@@ -1,0 +1,428 @@
+{
+  "version": "4.0.0",
+  "summary": {
+    "totalPages": 17,
+    "successful": 17,
+    "errors": 0,
+    "warnings": 0,
+    "missing": 0,
+    "totalDuration": 23053,
+    "avgLoadTime": 2478.764705882353,
+    "timestamp": "2026-01-13T19:33:12.035Z"
+  },
+  "results": [
+    {
+      "path": "/",
+      "name": "Homepage",
+      "status": "success",
+      "loadTime": 558,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [],
+      "performanceMetrics": {
+        "ttfb": 47.30000000074506,
+        "fcp": 0,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T19:32:56.580Z",
+      "workerId": 0,
+      "statusCode": 200,
+      "retryCount": 1
+    },
+    {
+      "path": "/products",
+      "name": "Products",
+      "status": "success",
+      "loadTime": 1238,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "3 form inputs without labels"
+      ],
+      "performanceMetrics": {
+        "ttfb": 46.90000000037253,
+        "fcp": 1208,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T19:32:57.246Z",
+      "workerId": 1,
+      "statusCode": 200,
+      "retryCount": 1
+    },
+    {
+      "path": "/farms",
+      "name": "Farms",
+      "status": "success",
+      "loadTime": 5739,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [],
+      "performanceMetrics": {
+        "ttfb": 56.40000000037253,
+        "fcp": 2388,
+        "domComplete": 5736.0999999996275,
+        "loadComplete": 5770.700000000186
+      },
+      "timestamp": "2026-01-13T19:33:01.879Z",
+      "workerId": 2,
+      "statusCode": 200,
+      "retryCount": 1
+    },
+    {
+      "path": "/about",
+      "name": "About",
+      "status": "success",
+      "loadTime": 1710,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [],
+      "performanceMetrics": {
+        "ttfb": 51,
+        "fcp": 0,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T19:32:57.752Z",
+      "workerId": 3,
+      "statusCode": 200,
+      "retryCount": 1
+    },
+    {
+      "path": "/farms/eko-farma-adriatica",
+      "name": "Farms - Eko Farma Adriatica",
+      "status": "success",
+      "loadTime": 6084,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [
+        "Page title too long"
+      ],
+      "a11yIssues": [],
+      "performanceMetrics": {
+        "ttfb": 46,
+        "fcp": 2260,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T19:33:02.166Z",
+      "workerId": 4,
+      "statusCode": 200,
+      "retryCount": 1
+    },
+    {
+      "path": "/farms/morska-sola-domagoj",
+      "name": "Farms - Morska Sola Domagoj",
+      "status": "success",
+      "loadTime": 4321,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [
+        "Page title too long"
+      ],
+      "a11yIssues": [],
+      "performanceMetrics": {
+        "ttfb": 211.3999999994412,
+        "fcp": 668,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T19:33:06.681Z",
+      "workerId": 5,
+      "statusCode": 200,
+      "retryCount": 1
+    },
+    {
+      "path": "/farms/kozje-gospodarstvo-sibenik",
+      "name": "Farms - Kozje Gospodarstvo Sibenik",
+      "status": "success",
+      "loadTime": 5251,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [
+        "Page title too long"
+      ],
+      "a11yIssues": [],
+      "performanceMetrics": {
+        "ttfb": 55.200000000186265,
+        "fcp": 1272,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T19:33:07.620Z",
+      "workerId": 6,
+      "statusCode": 200,
+      "retryCount": 1
+    },
+    {
+      "path": "/farms/opg-krka-vocnjak",
+      "name": "Farms - Opg Krka Vocnjak",
+      "status": "success",
+      "loadTime": 3219,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [],
+      "performanceMetrics": {
+        "ttfb": 980.9000000003725,
+        "fcp": 0,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T19:33:05.566Z",
+      "workerId": 7,
+      "statusCode": 200,
+      "retryCount": 1
+    },
+    {
+      "path": "/login",
+      "name": "Login",
+      "status": "success",
+      "loadTime": 728,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "2 form inputs without labels"
+      ],
+      "performanceMetrics": {
+        "ttfb": 67.29999999981374,
+        "fcp": 0,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T19:33:03.138Z",
+      "workerId": 8,
+      "statusCode": 200,
+      "retryCount": 1
+    },
+    {
+      "path": "/contact",
+      "name": "Contact",
+      "status": "success",
+      "loadTime": 3109,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "4 form inputs without labels"
+      ],
+      "performanceMetrics": {
+        "ttfb": 193.5,
+        "fcp": 0,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T19:33:05.490Z",
+      "workerId": 9,
+      "statusCode": 200,
+      "retryCount": 1
+    },
+    {
+      "path": "/help",
+      "name": "Help",
+      "status": "success",
+      "loadTime": 3412,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "2 form inputs without labels"
+      ],
+      "performanceMetrics": {
+        "ttfb": 46.09999999962747,
+        "fcp": 3424,
+        "domComplete": 3407.7999999998137,
+        "loadComplete": 3431.5
+      },
+      "timestamp": "2026-01-13T19:33:11.242Z",
+      "workerId": 10,
+      "statusCode": 200,
+      "retryCount": 1
+    },
+    {
+      "path": "/terms",
+      "name": "Terms",
+      "status": "success",
+      "loadTime": 1254,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "2 form inputs without labels"
+      ],
+      "performanceMetrics": {
+        "ttfb": 51.299999999813735,
+        "fcp": 0,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T19:33:09.046Z",
+      "workerId": 11,
+      "statusCode": 200,
+      "retryCount": 1
+    },
+    {
+      "path": "/privacy",
+      "name": "Privacy",
+      "status": "success",
+      "loadTime": 1293,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "2 form inputs without labels"
+      ],
+      "performanceMetrics": {
+        "ttfb": 44.09999999962747,
+        "fcp": 0,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T19:33:09.096Z",
+      "workerId": 12,
+      "statusCode": 200,
+      "retryCount": 1
+    },
+    {
+      "path": "/shipping",
+      "name": "Shipping",
+      "status": "success",
+      "loadTime": 2569,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "2 form inputs without labels"
+      ],
+      "performanceMetrics": {
+        "ttfb": 44.40000000037253,
+        "fcp": 0,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T19:33:10.373Z",
+      "workerId": 13,
+      "statusCode": 200,
+      "retryCount": 1
+    },
+    {
+      "path": "/farmer/register",
+      "name": "Farmer - Register",
+      "status": "success",
+      "loadTime": 571,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "2 form inputs without labels"
+      ],
+      "performanceMetrics": {
+        "ttfb": 58,
+        "fcp": 0,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T19:33:12.023Z",
+      "workerId": 0,
+      "statusCode": 200,
+      "retryCount": 1
+    },
+    {
+      "path": "/farmer/dashboard",
+      "name": "Farmer - Dashboard",
+      "status": "success",
+      "loadTime": 534,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "2 form inputs without labels"
+      ],
+      "performanceMetrics": {
+        "ttfb": 60,
+        "fcp": 0,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T19:33:12.028Z",
+      "workerId": 1,
+      "statusCode": 200,
+      "retryCount": 1
+    },
+    {
+      "path": "/help/farmers",
+      "name": "Help - Farmers",
+      "status": "success",
+      "loadTime": 549,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "2 form inputs without labels"
+      ],
+      "performanceMetrics": {
+        "ttfb": 57.799999999813735,
+        "fcp": 0,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T19:33:12.011Z",
+      "workerId": 2,
+      "statusCode": 200,
+      "retryCount": 1
+    }
+  ],
+  "criticalIssues": [
+    "Total crashes: 17 across 17 pages"
+  ],
+  "recommendations": [],
+  "metadata": {
+    "concurrency": 5,
+    "lighthouseEnabled": false,
+    "securityEnabled": false,
+    "visualRegressionEnabled": true,
+    "mockAuthEnabled": true,
+    "crashRecoveryEnabled": true,
+    "environment": "production"
+  }
+}
