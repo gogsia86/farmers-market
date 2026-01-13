@@ -1,6 +1,11 @@
 /**
  * 📧 CONTACT US PAGE
  * Contact form and support information
+ *
+ * Performance Optimizations:
+ * - ISR with 1-hour revalidation (static content)
+ * - No dynamic data fetching
+ * - Optimized for fast delivery
  */
 
 import type { Metadata } from "next";
@@ -11,6 +16,11 @@ export const metadata: Metadata = {
   description:
     "Get in touch with us for questions, support, or partnership opportunities",
 };
+
+// ============================================================================
+// ISR CONFIGURATION - Static content, low revalidation frequency
+// ============================================================================
+export const revalidate = 3600; // 1 hour
 
 export default function ContactPage() {
   return (
