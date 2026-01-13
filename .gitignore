@@ -373,3 +373,5 @@ mobile-app-export-*/
 mobile-app-export-20260111/
 *.tar.gz
 .env.vercel.production
+DEV-API-KEYS.md
+COMPLETE-API-KEYS-SUMMARY.md

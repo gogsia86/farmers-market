@@ -190,7 +190,7 @@ export function Header() {
                       {/* My Farm (Farmer only) */}
                       {userRole === "FARMER" && (
                         <Link
-                          href="/farmer/farm"
+                          href="/farmer/farms"
                           className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                           onClick={() => setUserMenuOpen(false)}
                         >
@@ -300,7 +300,7 @@ export function Header() {
                   </Link>
                   {userRole === "FARMER" && (
                     <Link
-                      href="/farmer/farm"
+                      href="/farmer/farms"
                       className="block rounded-lg px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50"
                       onClick={() => setMobileMenuOpen(false)}
                     >
