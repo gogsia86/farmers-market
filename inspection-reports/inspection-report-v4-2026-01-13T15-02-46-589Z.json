@@ -1,0 +1,335 @@
+{
+  "version": "4.0.0",
+  "summary": {
+    "totalPages": 13,
+    "successful": 13,
+    "errors": 0,
+    "warnings": 0,
+    "missing": 0,
+    "totalDuration": 122044,
+    "avgLoadTime": 6273.384615384615,
+    "timestamp": "2026-01-13T15:02:46.589Z"
+  },
+  "results": [
+    {
+      "path": "/",
+      "name": "Homepage",
+      "status": "success",
+      "loadTime": 10771,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [],
+      "performanceMetrics": {
+        "ttfb": 94.20000000298023,
+        "fcp": 0,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T15:00:56.456Z",
+      "workerId": 0,
+      "statusCode": 200,
+      "retryCount": 1
+    },
+    {
+      "path": "/auth/signin",
+      "name": "Sign In",
+      "status": "success",
+      "loadTime": 5292,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "2 form inputs without labels"
+      ],
+      "performanceMetrics": {
+        "ttfb": 493.69999999552965,
+        "fcp": 0,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T15:00:50.976Z",
+      "workerId": 1,
+      "statusCode": 200,
+      "retryCount": 1
+    },
+    {
+      "path": "/auth/signup",
+      "name": "Sign Up",
+      "status": "success",
+      "loadTime": 5752,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "2 form inputs without labels"
+      ],
+      "performanceMetrics": {
+        "ttfb": 610.3999999985099,
+        "fcp": 0,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T15:00:51.457Z",
+      "workerId": 2,
+      "statusCode": 200,
+      "retryCount": 1
+    },
+    {
+      "path": "/about",
+      "name": "About Us",
+      "status": "success",
+      "loadTime": 7017,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [],
+      "performanceMetrics": {
+        "ttfb": 817.2999999970198,
+        "fcp": 0,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T15:00:52.697Z",
+      "workerId": 3,
+      "statusCode": 200,
+      "retryCount": 1
+    },
+    {
+      "path": "/contact",
+      "name": "Contact",
+      "status": "success",
+      "loadTime": 5980,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "4 form inputs without labels"
+      ],
+      "performanceMetrics": {
+        "ttfb": 527.2000000029802,
+        "fcp": 0,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T15:00:51.681Z",
+      "workerId": 4,
+      "statusCode": 200,
+      "retryCount": 1
+    },
+    {
+      "path": "/farms",
+      "name": "Browse Farms",
+      "status": "success",
+      "loadTime": 6712,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [],
+      "performanceMetrics": {
+        "ttfb": 2209.10000000149,
+        "fcp": 0,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T15:01:03.352Z",
+      "workerId": 5,
+      "statusCode": 200,
+      "retryCount": 1
+    },
+    {
+      "path": "/products",
+      "name": "Browse Products",
+      "status": "success",
+      "loadTime": 3773,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "3 form inputs without labels"
+      ],
+      "performanceMetrics": {
+        "ttfb": 2168.5,
+        "fcp": 0,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T15:01:00.426Z",
+      "workerId": 6,
+      "statusCode": 200,
+      "retryCount": 1
+    },
+    {
+      "path": "/auth/forgot-password",
+      "name": "Forgot Password",
+      "status": "success",
+      "loadTime": 9449,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "2 form inputs without labels"
+      ],
+      "performanceMetrics": {
+        "ttfb": 928.8000000044703,
+        "fcp": 0,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T15:01:06.107Z",
+      "workerId": 7,
+      "statusCode": 200,
+      "retryCount": 1
+    },
+    {
+      "path": "/faq",
+      "name": "FAQ",
+      "status": "success",
+      "loadTime": 8809,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [
+        "Page title too long"
+      ],
+      "a11yIssues": [],
+      "performanceMetrics": {
+        "ttfb": 1603.6000000014901,
+        "fcp": 0,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T15:01:05.484Z",
+      "workerId": 8,
+      "statusCode": 200,
+      "retryCount": 1
+    },
+    {
+      "path": "/how-it-works",
+      "name": "How It Works",
+      "status": "success",
+      "loadTime": 9747,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [],
+      "performanceMetrics": {
+        "ttfb": 1672.8000000044703,
+        "fcp": 0,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T15:01:06.431Z",
+      "workerId": 9,
+      "statusCode": 200,
+      "retryCount": 1
+    },
+    {
+      "path": "/markets",
+      "name": "Find Markets",
+      "status": "success",
+      "loadTime": 4543,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "2 form inputs without labels"
+      ],
+      "performanceMetrics": {
+        "ttfb": 309.40000000596046,
+        "fcp": 0,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T15:01:11.140Z",
+      "workerId": 10,
+      "statusCode": 200,
+      "retryCount": 1
+    },
+    {
+      "path": "/privacy",
+      "name": "Privacy Policy",
+      "status": "success",
+      "loadTime": 1463,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "2 form inputs without labels"
+      ],
+      "performanceMetrics": {
+        "ttfb": 294.3999999985099,
+        "fcp": 0,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T15:01:08.066Z",
+      "workerId": 11,
+      "statusCode": 200,
+      "retryCount": 1
+    },
+    {
+      "path": "/terms",
+      "name": "Terms of Service",
+      "status": "success",
+      "loadTime": 2246,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "2 form inputs without labels"
+      ],
+      "performanceMetrics": {
+        "ttfb": 403.70000000298023,
+        "fcp": 0,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T15:01:08.859Z",
+      "workerId": 12,
+      "statusCode": 200,
+      "retryCount": 1
+    }
+  ],
+  "criticalIssues": [
+    "Total crashes: 13 across 13 pages"
+  ],
+  "recommendations": [
+    "Improve TTFB for Browse Farms: 2209ms (target: 2000ms)",
+    "Improve TTFB for Browse Products: 2169ms (target: 2000ms)"
+  ],
+  "metadata": {
+    "concurrency": 5,
+    "lighthouseEnabled": false,
+    "securityEnabled": false,
+    "visualRegressionEnabled": false,
+    "mockAuthEnabled": false,
+    "crashRecoveryEnabled": true,
+    "environment": "production"
+  }
+}
