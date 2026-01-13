@@ -31,6 +31,11 @@
  * @reference OPTIMIZATION_RESULTS.md - Measured performance improvements
  */
 
+import {
+  CacheKeys,
+  CacheTTL,
+  multiLayerCache,
+} from "@/lib/cache/multi-layer.cache";
 import { createLogger } from "@/lib/monitoring/logger";
 import { farmRepository } from "@/lib/repositories/farm.repository";
 import {
@@ -207,6 +212,9 @@ export class EnhancedBiodynamicFarmService {
       // Create farm using standard repository
       const farm = await farmRepository.create(createData);
 
+      // Invalidate relevant caches
+      await this.invalidateFarmCaches(farm.id, farm.ownerId);
+
       logger.info("Farm created successfully", {
         requestId,
         farmId: farm.id,
@@ -226,17 +234,29 @@ export class EnhancedBiodynamicFarmService {
 
   /**
    * 🔍 GET FARM BY ID (OPTIMIZED)
-   * Retrieves farm details by ID using optimized repository
+   * Retrieves farm details by ID using optimized repository with caching
    */
   async getFarmById(farmId: string): Promise<OptimizedFarmDetail | null> {
     const requestId = nanoid();
     logger.info("Fetching farm by ID (optimized)", { requestId, farmId });
 
     try {
+      // Try cache first
+      const cacheKey = CacheKeys.farm(farmId);
+      const cached = await multiLayerCache.get<OptimizedFarmDetail>(cacheKey);
+
+      if (cached) {
+        logger.info("Farm found in cache", { requestId, farmId });
+        return cached;
+      }
+
+      // Cache miss - fetch from database
       const farm = await optimizedFarmRepository.findByIdOptimized(farmId);
 
       if (farm) {
-        logger.info("Farm found (optimized)", { requestId, farmId });
+        // Cache the result
+        await multiLayerCache.set(cacheKey, farm, { ttl: CacheTTL.MEDIUM });
+        logger.info("Farm found and cached (optimized)", { requestId, farmId });
       } else {
         logger.warn("Farm not found", { requestId, farmId });
       }
@@ -250,17 +270,32 @@ export class EnhancedBiodynamicFarmService {
 
   /**
    * 🔍 GET FARM BY SLUG (OPTIMIZED)
-   * Retrieves farm details by slug using optimized repository
+   * Retrieves farm details by slug using optimized repository with caching
    */
   async getFarmBySlug(slug: string): Promise<OptimizedFarmDetail | null> {
     const requestId = nanoid();
     logger.info("Fetching farm by slug (optimized)", { requestId, slug });
 
     try {
+      // Try cache first
+      const cacheKey = CacheKeys.farmBySlug(slug);
+      const cached = await multiLayerCache.get<OptimizedFarmDetail>(cacheKey);
+
+      if (cached) {
+        logger.info("Farm found in cache by slug", { requestId, slug });
+        return cached;
+      }
+
+      // Cache miss - fetch from database
       const farm = await optimizedFarmRepository.findBySlugOptimized(slug);
 
       if (farm) {
-        logger.info("Farm found by slug (optimized)", {
+        // Cache the result (both by slug and by ID)
+        await multiLayerCache.set(cacheKey, farm, { ttl: CacheTTL.MEDIUM });
+        await multiLayerCache.set(CacheKeys.farm(farm.id), farm, {
+          ttl: CacheTTL.MEDIUM,
+        });
+        logger.info("Farm found by slug and cached (optimized)", {
           requestId,
           slug,
           farmId: farm.id,
@@ -278,7 +313,7 @@ export class EnhancedBiodynamicFarmService {
 
   /**
    * 📋 LIST FARMS (OPTIMIZED)
-   * Lists farms with optional filters and pagination
+   * Lists farms with optional filters and pagination with caching
    */
   async listFarms(
     filters: FarmSearchFilters = {},
@@ -292,12 +327,28 @@ export class EnhancedBiodynamicFarmService {
     });
 
     try {
+      // Generate cache key based on filters and pagination
+      const filterHash = JSON.stringify({ filters, pagination });
+      const cacheKey = CacheKeys.farmsList(pagination.page, filterHash);
+
+      // Try cache first
+      const cached = await multiLayerCache.get<PaginatedFarmList>(cacheKey);
+
+      if (cached) {
+        logger.info("Farms list found in cache", { requestId });
+        return cached;
+      }
+
+      // Cache miss - fetch from database
       const result = await optimizedFarmRepository.listFarmsOptimized(
         filters,
         pagination,
       );
 
-      logger.info("Farms listed successfully (optimized)", {
+      // Cache the result (shorter TTL for lists)
+      await multiLayerCache.set(cacheKey, result, { ttl: CacheTTL.SHORT });
+
+      logger.info("Farms listed and cached successfully (optimized)", {
         requestId,
         count: result.items.length,
         total: result.total,
@@ -312,7 +363,7 @@ export class EnhancedBiodynamicFarmService {
 
   /**
    * 🔎 SEARCH FARMS (OPTIMIZED)
-   * Full-text search with trigram index optimization
+   * Full-text search with trigram index optimization and caching
    */
   async searchFarms(
     query: string,
@@ -322,12 +373,28 @@ export class EnhancedBiodynamicFarmService {
     logger.info("Searching farms (optimized)", { requestId, query });
 
     try {
+      // Generate cache key based on search query and pagination
+      const searchHash = JSON.stringify({ query, pagination });
+      const cacheKey = `farms:search:${searchHash}`;
+
+      // Try cache first (very short TTL for search results)
+      const cached = await multiLayerCache.get<PaginatedFarmList>(cacheKey);
+
+      if (cached) {
+        logger.info("Search results found in cache", { requestId, query });
+        return cached;
+      }
+
+      // Cache miss - search database
       const result = await optimizedFarmRepository.searchFarmsOptimized(
         query,
         pagination,
       );
 
-      logger.info("Farm search completed (optimized)", {
+      // Cache the result (short TTL - 1 minute)
+      await multiLayerCache.set(cacheKey, result, { ttl: 60 });
+
+      logger.info("Farm search completed and cached (optimized)", {
         requestId,
         query,
         count: result.items.length,
@@ -342,7 +409,7 @@ export class EnhancedBiodynamicFarmService {
 
   /**
    * 📍 FIND FARMS NEAR LOCATION (OPTIMIZED)
-   * Location-based search using GiST spatial index
+   * Location-based search using GiST spatial index with caching
    */
   async findFarmsNearLocation(
     latitude: number,
@@ -359,6 +426,20 @@ export class EnhancedBiodynamicFarmService {
     });
 
     try {
+      // Generate cache key (round coordinates to 2 decimals for cache hits)
+      const lat = Math.round(latitude * 100) / 100;
+      const lng = Math.round(longitude * 100) / 100;
+      const cacheKey = CacheKeys.farmsNearby(lat, lng, radiusKm);
+
+      // Try cache first
+      const cached = await multiLayerCache.get<PaginatedFarmList>(cacheKey);
+
+      if (cached) {
+        logger.info("Nearby farms found in cache", { requestId });
+        return cached;
+      }
+
+      // Cache miss - search database
       const result = await optimizedFarmRepository.findNearLocationOptimized(
         latitude,
         longitude,
@@ -366,7 +447,10 @@ export class EnhancedBiodynamicFarmService {
         pagination,
       );
 
-      logger.info("Location-based search completed (optimized)", {
+      // Cache the result (short TTL)
+      await multiLayerCache.set(cacheKey, result, { ttl: CacheTTL.SHORT });
+
+      logger.info("Location-based search completed and cached (optimized)", {
         requestId,
         count: result.items.length,
       });
@@ -383,20 +467,36 @@ export class EnhancedBiodynamicFarmService {
 
   /**
    * ⭐ GET FEATURED FARMS (OPTIMIZED)
-   * Retrieves verified active farms sorted by rating
+   * Retrieves verified active farms sorted by rating with caching
    */
   async getFeaturedFarms(limit: number = 10): Promise<OptimizedFarmListItem[]> {
     const requestId = nanoid();
     logger.info("Fetching featured farms (optimized)", { requestId, limit });
 
     try {
+      // Cache key includes limit
+      const cacheKey = `farms:featured:${limit}`;
+
+      // Try cache first (longer TTL - featured farms change slowly)
+      const cached =
+        await multiLayerCache.get<OptimizedFarmListItem[]>(cacheKey);
+
+      if (cached) {
+        logger.info("Featured farms found in cache", { requestId });
+        return cached;
+      }
+
+      // Cache miss - fetch from database
       const result =
         await optimizedFarmRepository.findVerifiedActiveFarmsOptimized({
           page: 1,
           pageSize: limit,
         });
 
-      logger.info("Featured farms fetched (optimized)", {
+      // Cache the result (longer TTL - 10 minutes)
+      await multiLayerCache.set(cacheKey, result.items, { ttl: 600 });
+
+      logger.info("Featured farms fetched and cached (optimized)", {
         requestId,
         count: result.items.length,
       });
@@ -410,7 +510,7 @@ export class EnhancedBiodynamicFarmService {
 
   /**
    * 👤 GET FARMS BY OWNER (OPTIMIZED)
-   * Retrieves all farms owned by a specific user
+   * Retrieves all farms owned by a specific user with caching
    */
   async getFarmsByOwner(
     ownerId: string,
@@ -423,12 +523,27 @@ export class EnhancedBiodynamicFarmService {
     });
 
     try {
+      // Generate cache key
+      const cacheKey = CacheKeys.farmsByOwner(ownerId);
+
+      // Try cache first
+      const cached = await multiLayerCache.get<PaginatedFarmList>(cacheKey);
+
+      if (cached) {
+        logger.info("Owner farms found in cache", { requestId, ownerId });
+        return cached;
+      }
+
+      // Cache miss - fetch from database
       const result = await optimizedFarmRepository.findByOwnerIdOptimized(
         ownerId,
         pagination,
       );
 
-      logger.info("Owner farms fetched (optimized)", {
+      // Cache the result
+      await multiLayerCache.set(cacheKey, result, { ttl: CacheTTL.SHORT });
+
+      logger.info("Owner farms fetched and cached (optimized)", {
         requestId,
         ownerId,
         count: result.items.length,
@@ -447,7 +562,7 @@ export class EnhancedBiodynamicFarmService {
 
   /**
    * ✏️ UPDATE FARM
-   * Updates farm details with validation
+   * Updates farm details with validation and cache invalidation
    */
   async updateFarm(farmId: string, updates: UpdateFarmRequest): Promise<Farm> {
     const requestId = nanoid();
@@ -457,6 +572,12 @@ export class EnhancedBiodynamicFarmService {
       // Validate update data
       await this.validateFarmData(updates);
 
+      // Get farm before update to get owner ID
+      const existingFarm = await farmRepository.findById(farmId);
+      if (!existingFarm) {
+        throw new Error("Farm not found");
+      }
+
       // Prepare update data
       const updateData: Prisma.FarmUpdateInput = {
         ...updates,
@@ -465,6 +586,9 @@ export class EnhancedBiodynamicFarmService {
 
       // Update farm using standard repository
       const farm = await farmRepository.update(farmId, updateData);
+
+      // Invalidate caches
+      await this.invalidateFarmCaches(farmId, farm.ownerId);
 
       logger.info("Farm updated successfully", { requestId, farmId });
 
@@ -484,10 +608,19 @@ export class EnhancedBiodynamicFarmService {
     logger.info("Deleting farm", { requestId, farmId });
 
     try {
+      // Get farm to get owner ID
+      const farm = await farmRepository.findById(farmId);
+      if (!farm) {
+        throw new Error("Farm not found");
+      }
+
       await farmRepository.update(farmId, {
         status: "INACTIVE",
         updatedAt: new Date(),
       });
+
+      // Invalidate caches
+      await this.invalidateFarmCaches(farmId, farm.ownerId);
 
       logger.info("Farm deleted (archived) successfully", {
         requestId,
@@ -519,6 +652,9 @@ export class EnhancedBiodynamicFarmService {
         updatedAt: new Date(),
       });
 
+      // Invalidate caches
+      await this.invalidateFarmCaches(farmId, farm.ownerId);
+
       logger.info("Farm approved successfully", { requestId, farmId });
 
       return farm;
@@ -542,6 +678,9 @@ export class EnhancedBiodynamicFarmService {
         verificationStatus: "REJECTED",
         updatedAt: new Date(),
       });
+
+      // Invalidate caches
+      await this.invalidateFarmCaches(farmId, farm.ownerId);
 
       logger.info("Farm rejected", { requestId, farmId });
 
@@ -681,6 +820,42 @@ export class EnhancedBiodynamicFarmService {
     }
 
     return uniqueSlug;
+  }
+
+  // ==========================================================================
+  // CACHE INVALIDATION HELPERS
+  // ==========================================================================
+
+  /**
+   * 🗑️ INVALIDATE FARM CACHES
+   * Clears all caches related to a farm
+   */
+  private async invalidateFarmCaches(
+    farmId: string,
+    ownerId: string,
+  ): Promise<void> {
+    try {
+      // Invalidate specific farm caches
+      await multiLayerCache.delete(CacheKeys.farm(farmId));
+
+      // Invalidate owner's farms list
+      await multiLayerCache.delete(CacheKeys.farmsByOwner(ownerId));
+
+      // Invalidate list and search caches (pattern-based)
+      await multiLayerCache.invalidatePattern("farms:list:*");
+      await multiLayerCache.invalidatePattern("farms:search:*");
+      await multiLayerCache.invalidatePattern("farms:nearby:*");
+      await multiLayerCache.invalidatePattern("farms:featured:*");
+
+      logger.info("Farm caches invalidated", { farmId, ownerId });
+    } catch (error) {
+      logger.error("Failed to invalidate farm caches", {
+        farmId,
+        ownerId,
+        error,
+      });
+      // Don't throw - cache invalidation failure shouldn't break operations
+    }
   }
 
   // ==========================================================================
