@@ -1,0 +1,16 @@
+npm warn config optional Use `--omit=optional` to exclude optional dependencies, or
+npm warn config `--include=optional` to include them.
+npm warn config
+npm warn config       Default value does install optional deps unless otherwise omitted.
+M:\Repo\Farmers Market Platform web and app\src\lib\database\index.ts:34
+    throw new Error("DATABASE_URL environment variable is not set");
+          ^
+
+Error: DATABASE_URL environment variable is not set
+    at createPrismaClient (M:\Repo\Farmers Market Platform web and app\src\lib\database\index.ts:34:11)
+    at <anonymous> (M:\Repo\Farmers Market Platform web and app\src\lib\database\index.ts:158:46)
+    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:665:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+
+Node.js v22.21.0

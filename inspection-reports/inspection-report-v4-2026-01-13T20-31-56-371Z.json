@@ -1,0 +1,432 @@
+{
+  "version": "4.0.0",
+  "summary": {
+    "totalPages": 17,
+    "successful": 17,
+    "errors": 0,
+    "warnings": 0,
+    "missing": 0,
+    "totalDuration": 36255,
+    "avgLoadTime": 7288.64705882353,
+    "timestamp": "2026-01-13T20:31:56.371Z"
+  },
+  "results": [
+    {
+      "path": "/",
+      "name": "Homepage",
+      "status": "success",
+      "loadTime": 10548,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [],
+      "performanceMetrics": {
+        "ttfb": 179.5,
+        "fcp": 0,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T20:31:31.073Z",
+      "workerId": 0,
+      "statusCode": 200,
+      "retryCount": 1
+    },
+    {
+      "path": "/auth/signin",
+      "name": "Sign In",
+      "status": "success",
+      "loadTime": 7028,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "2 form inputs without labels"
+      ],
+      "performanceMetrics": {
+        "ttfb": 543.7999999988824,
+        "fcp": 0,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T20:31:27.474Z",
+      "workerId": 1,
+      "statusCode": 200,
+      "retryCount": 1
+    },
+    {
+      "path": "/auth/signup",
+      "name": "Sign Up",
+      "status": "success",
+      "loadTime": 6531,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "2 form inputs without labels"
+      ],
+      "performanceMetrics": {
+        "ttfb": 110.19999999925494,
+        "fcp": 0,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T20:31:27.029Z",
+      "workerId": 2,
+      "statusCode": 200,
+      "retryCount": 1
+    },
+    {
+      "path": "/farms",
+      "name": "Browse Farms",
+      "status": "success",
+      "loadTime": 20619,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [],
+      "performanceMetrics": {
+        "ttfb": 190.90000000037253,
+        "fcp": 7848,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T20:31:41.138Z",
+      "workerId": 3,
+      "statusCode": 200,
+      "retryCount": 1
+    },
+    {
+      "path": "/products",
+      "name": "Browse Products",
+      "status": "success",
+      "loadTime": 21757,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "2 form inputs without labels"
+      ],
+      "performanceMetrics": {
+        "ttfb": 185.19999999925494,
+        "fcp": 7380,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T20:31:42.279Z",
+      "workerId": 4,
+      "statusCode": 200,
+      "retryCount": 1
+    },
+    {
+      "path": "/customer/dashboard",
+      "name": "Customer Dashboard",
+      "status": "success",
+      "loadTime": 1647,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "2 form inputs without labels"
+      ],
+      "performanceMetrics": {
+        "ttfb": 245.2000000011176,
+        "fcp": 0,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T20:31:44.161Z",
+      "workerId": 0,
+      "statusCode": 200,
+      "retryCount": 1
+    },
+    {
+      "path": "/customer/orders",
+      "name": "My Orders",
+      "status": "success",
+      "loadTime": 1633,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "2 form inputs without labels"
+      ],
+      "performanceMetrics": {
+        "ttfb": 245.09999999962747,
+        "fcp": 0,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T20:31:44.148Z",
+      "workerId": 1,
+      "statusCode": 200,
+      "retryCount": 1
+    },
+    {
+      "path": "/customer/cart",
+      "name": "Shopping Cart",
+      "status": "success",
+      "loadTime": 1621,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "2 form inputs without labels"
+      ],
+      "performanceMetrics": {
+        "ttfb": 245.40000000037253,
+        "fcp": 0,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T20:31:44.153Z",
+      "workerId": 2,
+      "statusCode": 200,
+      "retryCount": 1
+    },
+    {
+      "path": "/farmer/dashboard",
+      "name": "Farmer Dashboard",
+      "status": "success",
+      "loadTime": 5534,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "2 form inputs without labels"
+      ],
+      "performanceMetrics": {
+        "ttfb": 52.40000000037253,
+        "fcp": 0,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T20:31:49.965Z",
+      "workerId": 0,
+      "statusCode": 200,
+      "retryCount": 1
+    },
+    {
+      "path": "/farmer/products",
+      "name": "Manage Products",
+      "status": "success",
+      "loadTime": 5519,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "2 form inputs without labels"
+      ],
+      "performanceMetrics": {
+        "ttfb": 65.20000000111759,
+        "fcp": 0,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T20:31:49.958Z",
+      "workerId": 1,
+      "statusCode": 200,
+      "retryCount": 1
+    },
+    {
+      "path": "/farmer/orders",
+      "name": "Farmer Orders",
+      "status": "success",
+      "loadTime": 5508,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "2 form inputs without labels"
+      ],
+      "performanceMetrics": {
+        "ttfb": 66.20000000111759,
+        "fcp": 0,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T20:31:49.963Z",
+      "workerId": 2,
+      "statusCode": 200,
+      "retryCount": 1
+    },
+    {
+      "path": "/farmer/profile",
+      "name": "Farm Profile",
+      "status": "success",
+      "loadTime": 5487,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "2 form inputs without labels"
+      ],
+      "performanceMetrics": {
+        "ttfb": 65.5,
+        "fcp": 0,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T20:31:49.955Z",
+      "workerId": 3,
+      "statusCode": 200,
+      "retryCount": 1
+    },
+    {
+      "path": "/admin/dashboard",
+      "name": "Admin Dashboard",
+      "status": "success",
+      "loadTime": 6125,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "2 form inputs without labels"
+      ],
+      "performanceMetrics": {
+        "ttfb": 149.40000000037253,
+        "fcp": 0,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T20:31:56.354Z",
+      "workerId": 0,
+      "statusCode": 200,
+      "retryCount": 1
+    },
+    {
+      "path": "/admin/users",
+      "name": "User Management",
+      "status": "success",
+      "loadTime": 6111,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "2 form inputs without labels"
+      ],
+      "performanceMetrics": {
+        "ttfb": 96.89999999850988,
+        "fcp": 0,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T20:31:56.360Z",
+      "workerId": 1,
+      "statusCode": 200,
+      "retryCount": 1
+    },
+    {
+      "path": "/admin/farms",
+      "name": "Farm Management",
+      "status": "success",
+      "loadTime": 6108,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "2 form inputs without labels"
+      ],
+      "performanceMetrics": {
+        "ttfb": 149.10000000149012,
+        "fcp": 0,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T20:31:56.362Z",
+      "workerId": 2,
+      "statusCode": 200,
+      "retryCount": 1
+    },
+    {
+      "path": "/admin/products",
+      "name": "Product Management",
+      "status": "success",
+      "loadTime": 6073,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "2 form inputs without labels"
+      ],
+      "performanceMetrics": {
+        "ttfb": 97,
+        "fcp": 0,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T20:31:56.350Z",
+      "workerId": 3,
+      "statusCode": 200,
+      "retryCount": 1
+    },
+    {
+      "path": "/admin/orders",
+      "name": "Order Management",
+      "status": "success",
+      "loadTime": 6058,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "2 form inputs without labels"
+      ],
+      "performanceMetrics": {
+        "ttfb": 251.10000000149012,
+        "fcp": 0,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T20:31:56.342Z",
+      "workerId": 4,
+      "statusCode": 200,
+      "retryCount": 1
+    }
+  ],
+  "criticalIssues": [
+    "Total crashes: 17 across 17 pages"
+  ],
+  "recommendations": [],
+  "metadata": {
+    "concurrency": 5,
+    "lighthouseEnabled": false,
+    "securityEnabled": false,
+    "visualRegressionEnabled": false,
+    "mockAuthEnabled": true,
+    "crashRecoveryEnabled": true,
+    "environment": "production"
+  }
+}
