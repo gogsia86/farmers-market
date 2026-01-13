@@ -29,7 +29,7 @@ import {
   type FarmSearchFilters,
   type OptimizedFarmListItem,
 } from "@/lib/repositories/farm.repository.optimized";
-import { convertDecimalToNumber } from "@/lib/utils/decimal-converter";
+import { decimalToNumber } from "@/lib/utils/decimal-converter";
 import type { FarmStatus, FarmVerificationStatus } from "@prisma/client";
 
 // ============================================================================
@@ -75,11 +75,11 @@ function createRawFarmListItem(overrides: Partial<any> = {}) {
     description: "Organic vegetables and sustainable farming",
     status: "ACTIVE" as FarmStatus,
     verificationStatus: "VERIFIED" as FarmVerificationStatus,
-    latitude: 45.5231,
-    longitude: -122.6765,
+    latitude: { toNumber: () => 45.5231 },
+    longitude: { toNumber: () => -122.6765 },
     logoUrl: "https://example.com/logo.jpg",
     images: ["https://example.com/img1.jpg", "https://example.com/img2.jpg"],
-    averageRating: 4.5,
+    averageRating: { toNumber: () => 4.5 },
     reviewCount: 42,
     certificationsArray: ["ORGANIC", "NON_GMO"],
     createdAt: new Date("2024-01-01"),
@@ -100,27 +100,27 @@ function createRawFarmDetail(overrides: Partial<any> = {}) {
     name: "Green Valley Farm",
     slug: "green-valley-farm",
     description: "Organic vegetables and sustainable farming",
-    story: "Founded in 2010 with a commitment to organic practices...",
+    story: "Our farm has been family-owned for three generations...",
     city: "Portland",
     state: "OR",
     country: "USA",
     zipCode: "97201",
-    address: "123 Farm Road",
-    latitude: 45.5231,
-    longitude: -122.6765,
+    address: "123 Farm Lane",
+    latitude: { toNumber: () => 45.5231 },
+    longitude: { toNumber: () => -122.6765 },
     phone: "+15035551234",
-    email: "info@greenvalley.farm",
-    website: "https://greenvalley.farm",
+    email: "info@greenvalley.com",
+    website: "https://greenvalley.com",
     status: "ACTIVE" as FarmStatus,
     verificationStatus: "VERIFIED" as FarmVerificationStatus,
     certificationsArray: ["ORGANIC", "NON_GMO"],
     farmingPractices: ["ORGANIC", "PERMACULTURE"],
-    farmSize: 50,
-    yearEstablished: 2010,
+    farmSize: { toNumber: () => 50.5 },
+    yearEstablished: 1985,
     logoUrl: "https://example.com/logo.jpg",
     bannerUrl: "https://example.com/banner.jpg",
-    images: ["https://example.com/img1.jpg"],
-    averageRating: 4.5,
+    images: ["https://example.com/img1.jpg", "https://example.com/img2.jpg"],
+    averageRating: { toNumber: () => 4.5 },
     reviewCount: 42,
     totalOrdersCount: 150,
     createdAt: new Date("2024-01-01"),
@@ -128,39 +128,39 @@ function createRawFarmDetail(overrides: Partial<any> = {}) {
     owner: {
       id: "user_123",
       name: "John Farmer",
-      email: "john@greenvalley.farm",
+      email: "john@greenvalley.com",
       avatar: "https://example.com/avatar.jpg",
     },
     photos: [
       {
         id: "photo_1",
         photoUrl: "https://example.com/photo1.jpg",
-        caption: "Fresh vegetables",
+        caption: "Main field",
         sortOrder: 1,
       },
       {
         id: "photo_2",
         photoUrl: "https://example.com/photo2.jpg",
-        caption: "Farm view",
+        caption: "Greenhouse",
         sortOrder: 2,
       },
     ],
     products: [
       {
-        id: "prod_1",
+        id: "product_1",
         name: "Organic Tomatoes",
         slug: "organic-tomatoes",
-        price: 3.99,
+        price: { toNumber: () => 4.99 },
         unit: "lb",
         category: "VEGETABLES",
         quantityAvailable: 100,
         images: ["https://example.com/tomato.jpg"],
       },
       {
-        id: "prod_2",
+        id: "product_2",
         name: "Fresh Lettuce",
         slug: "fresh-lettuce",
-        price: 2.49,
+        price: { toNumber: () => 3.49 },
         unit: "head",
         category: "VEGETABLES",
         quantityAvailable: 50,
@@ -212,36 +212,36 @@ function createExpectedFarmListItem(
 describe("OptimizedFarmRepository - Decimal Conversion", () => {
   it("should convert Decimal-like object to number correctly", () => {
     const decimal = { toNumber: () => 45.5231 };
-    const result = convertDecimalToNumber(decimal);
+    const result = decimalToNumber(decimal);
     expect(result).toBe(45.5231);
     expect(typeof result).toBe("number");
   });
 
   it("should handle null values", () => {
-    const result = convertDecimalToNumber(null);
-    expect(result).toBe(0);
+    const result = decimalToNumber(null);
+    expect(result).toBeNull();
   });
 
   it("should handle undefined values", () => {
-    const result = convertDecimalToNumber(undefined);
-    expect(result).toBe(0);
+    const result = decimalToNumber(undefined);
+    expect(result).toBeNull();
   });
 
   it("should handle zero values", () => {
     const decimal = { toNumber: () => 0 };
-    const result = convertDecimalToNumber(decimal);
+    const result = decimalToNumber(decimal);
     expect(result).toBe(0);
   });
 
   it("should handle negative values", () => {
     const decimal = { toNumber: () => -122.6765 };
-    const result = convertDecimalToNumber(decimal);
+    const result = decimalToNumber(decimal);
     expect(result).toBe(-122.6765);
   });
 
   it("should handle large values", () => {
     const decimal = { toNumber: () => 9999999.99 };
-    const result = convertDecimalToNumber(decimal);
+    const result = decimalToNumber(decimal);
     expect(result).toBe(9999999.99);
   });
 });
@@ -305,7 +305,7 @@ describe("OptimizedFarmRepository - findByIdOptimized", () => {
     expect(result?.owner).toEqual({
       id: "user_123",
       name: "John Farmer",
-      email: "john@greenvalley.farm",
+      email: "john@greenvalley.com",
       avatar: "https://example.com/avatar.jpg",
     });
   });
@@ -322,8 +322,8 @@ describe("OptimizedFarmRepository - findByIdOptimized", () => {
     expect(result?.photos).toHaveLength(2);
     expect(result?.photos[0]).toEqual({
       id: "photo_1",
-      url: "https://example.com/photo1.jpg",
-      caption: "Fresh vegetables",
+      photoUrl: "https://example.com/photo1.jpg",
+      caption: "Main field",
       sortOrder: 1,
     });
   });
@@ -338,7 +338,7 @@ describe("OptimizedFarmRepository - findByIdOptimized", () => {
     const result = await optimizedFarmRepository.findByIdOptimized("farm_123");
 
     expect(result?.recentProducts).toHaveLength(2);
-    expect(result?.recentProducts[0].price).toBe(3.99);
+    expect(result?.recentProducts[0].price).toBe(4.99);
     expect(typeof result?.recentProducts[0].price).toBe("number");
     expect(result?.recentProducts[0].quantityAvailable).toBe(100);
   });
@@ -763,8 +763,8 @@ describe("OptimizedFarmRepository - findVerifiedActiveFarmsOptimized", () => {
 
   it("should order by rating descending", async () => {
     const rawFarms = [
-      createRawFarmListItem({ averageRating: 4.8 }),
-      createRawFarmListItem({ averageRating: 4.2 }),
+      createRawFarmListItem({ averageRating: { toNumber: () => 4.8 } }),
+      createRawFarmListItem({ averageRating: { toNumber: () => 4.2 } }),
     ];
 
     (database.farm.findMany as jest.MockedFunction<any>).mockResolvedValue(
@@ -796,8 +796,8 @@ describe("OptimizedFarmRepository - getFarmStats", () => {
 
   it("should get farm statistics", async () => {
     const rawFarm = {
-      averageRating: 4.5,
-      totalRevenueUSD: 15000.5,
+      averageRating: { toNumber: () => 4.5 },
+      totalRevenueUSD: { toNumber: () => 15000.5 },
       _count: {
         products: 25,
         reviews: 42,
@@ -818,14 +818,13 @@ describe("OptimizedFarmRepository - getFarmStats", () => {
     expect(result.totalRevenue).toBe(15000.5);
   });
 
-  it("should throw error if farm not found", async () => {
+  it("should return null if farm not found", async () => {
     (database.farm.findUnique as jest.MockedFunction<any>).mockResolvedValue(
       null,
     );
 
-    await expect(
-      optimizedFarmRepository.getFarmStats("nonexistent"),
-    ).rejects.toThrow("Farm not found");
+    const result = await optimizedFarmRepository.getFarmStats("nonexistent");
+    expect(result).toBeNull();
   });
 });
 

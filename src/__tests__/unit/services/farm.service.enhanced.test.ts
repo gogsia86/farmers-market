@@ -73,6 +73,32 @@ jest.mock("@/lib/monitoring/logger", () => ({
   })),
 }));
 
+// Mock multi-layer cache
+jest.mock("@/lib/cache/multi-layer.cache", () => ({
+  multiLayerCache: {
+    get: jest.fn(),
+    set: jest.fn(),
+    delete: jest.fn(),
+    invalidatePattern: jest.fn(),
+    clear: jest.fn(),
+  },
+  CacheKeys: {
+    farm: (id: string) => `farm:${id}`,
+    farmBySlug: (slug: string) => `farm:slug:${slug}`,
+    farmsByOwner: (ownerId: string) => `farms:owner:${ownerId}`,
+    farmsList: (page: number, filters?: string) =>
+      `farms:list:${page}:${filters || "all"}`,
+    farmsNearby: (lat: number, lng: number, radius: number) =>
+      `farms:nearby:${lat}:${lng}:${radius}`,
+  },
+  CacheTTL: {
+    SHORT: 300,
+    MEDIUM: 1800,
+    LONG: 3600,
+    VERY_LONG: 86400,
+  },
+}));
+
 // Mock nanoid
 jest.mock("nanoid", () => ({
   nanoid: jest.fn(() => "test-request-id-123"),
@@ -703,6 +729,9 @@ describe("EnhancedFarmService - updateFarm", () => {
     };
     const mockFarm = createMockFarm(updates);
 
+    (farmRepository.findById as jest.MockedFunction<any>).mockResolvedValue(
+      mockFarm,
+    );
     (farmRepository.update as jest.MockedFunction<any>).mockResolvedValue(
       mockFarm,
     );
@@ -745,6 +774,9 @@ describe("EnhancedFarmService - deleteFarm", () => {
   it("should soft delete farm by setting status to INACTIVE", async () => {
     const mockFarm = createMockFarm({ status: "INACTIVE" });
 
+    (farmRepository.findById as jest.MockedFunction<any>).mockResolvedValue(
+      createMockFarm({ status: "ACTIVE" }),
+    );
     (farmRepository.update as jest.MockedFunction<any>).mockResolvedValue(
       mockFarm,
     );
