@@ -1,0 +1,373 @@
+{
+  "version": "3.0.0",
+  "summary": {
+    "totalPages": 13,
+    "successful": 0,
+    "errors": 0,
+    "warnings": 13,
+    "missing": 0,
+    "totalDuration": 241523,
+    "avgLoadTime": 3875.769230769231,
+    "timestamp": "2026-01-13T05:34:59.160Z"
+  },
+  "results": [
+    {
+      "path": "/",
+      "name": "Homepage",
+      "status": "warning",
+      "loadTime": 7550,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state"
+      ],
+      "missingElements": [],
+      "brokenLinks": [
+        "https://twitter.com/"
+      ],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 86.90000000037253,
+        "fcp": 7648,
+        "domComplete": 11861.5,
+        "loadComplete": 11861.700000001118
+      },
+      "timestamp": "2026-01-13T05:30:57.780Z",
+      "workerId": 0,
+      "statusCode": 200
+    },
+    {
+      "path": "/auth/signin",
+      "name": "Sign In",
+      "status": "warning",
+      "loadTime": 10936,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state"
+      ],
+      "missingElements": [],
+      "brokenLinks": [
+        "https://twitter.com/"
+      ],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 71.60000000149012,
+        "fcp": 10956,
+        "domComplete": 15966.200000001118,
+        "loadComplete": 15966.300000000745
+      },
+      "timestamp": "2026-01-13T05:30:57.785Z",
+      "workerId": 1,
+      "statusCode": 200
+    },
+    {
+      "path": "/auth/signup",
+      "name": "Sign Up",
+      "status": "warning",
+      "loadTime": 4735,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state"
+      ],
+      "missingElements": [],
+      "brokenLinks": [
+        "https://twitter.com/"
+      ],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 76.5,
+        "fcp": 4756,
+        "domComplete": 13401.5,
+        "loadComplete": 13401.699999999255
+      },
+      "timestamp": "2026-01-13T05:30:57.793Z",
+      "workerId": 2,
+      "statusCode": 200
+    },
+    {
+      "path": "/about",
+      "name": "About Us",
+      "status": "warning",
+      "loadTime": 4956,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state"
+      ],
+      "missingElements": [],
+      "brokenLinks": [
+        "https://twitter.com/"
+      ],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 958.9000000003725,
+        "fcp": 4984,
+        "domComplete": 12786.799999998882,
+        "loadComplete": 12786.900000000373
+      },
+      "timestamp": "2026-01-13T05:30:57.812Z",
+      "workerId": 3,
+      "statusCode": 200
+    },
+    {
+      "path": "/contact",
+      "name": "Contact",
+      "status": "warning",
+      "loadTime": 4489,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state"
+      ],
+      "missingElements": [],
+      "brokenLinks": [
+        "https://twitter.com/"
+      ],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 114.90000000037253,
+        "fcp": 4520,
+        "domComplete": 10824.200000001118,
+        "loadComplete": 10824.300000000745
+      },
+      "timestamp": "2026-01-13T05:30:57.822Z",
+      "workerId": 4,
+      "statusCode": 200
+    },
+    {
+      "path": "/farms",
+      "name": "Browse Farms",
+      "status": "warning",
+      "loadTime": 1701,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state"
+      ],
+      "missingElements": [],
+      "brokenLinks": [
+        "https://twitter.com/"
+      ],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 67.09999999962747,
+        "fcp": 1728,
+        "domComplete": 10457.800000000745,
+        "loadComplete": 10458
+      },
+      "timestamp": "2026-01-13T05:31:20.926Z",
+      "workerId": 5,
+      "statusCode": 200
+    },
+    {
+      "path": "/products",
+      "name": "Browse Products",
+      "status": "warning",
+      "loadTime": 3096,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state"
+      ],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label",
+        "Input without label: unknown"
+      ],
+      "performanceMetrics": {
+        "ttfb": 53,
+        "fcp": 3124,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T05:31:20.937Z",
+      "workerId": 6,
+      "statusCode": 200
+    },
+    {
+      "path": "/auth/forgot-password",
+      "name": "Forgot Password",
+      "status": "warning",
+      "loadTime": 2825,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state"
+      ],
+      "missingElements": [],
+      "brokenLinks": [
+        "https://twitter.com/"
+      ],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 94.70000000111759,
+        "fcp": 2896,
+        "domComplete": 7890,
+        "loadComplete": 7890.0999999996275
+      },
+      "timestamp": "2026-01-13T05:31:20.948Z",
+      "workerId": 7,
+      "statusCode": 200
+    },
+    {
+      "path": "/faq",
+      "name": "FAQ",
+      "status": "warning",
+      "loadTime": 1846,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state"
+      ],
+      "missingElements": [],
+      "brokenLinks": [
+        "https://twitter.com/"
+      ],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 69.5,
+        "fcp": 1940,
+        "domComplete": 5903.9000000003725,
+        "loadComplete": 5904.0999999996275
+      },
+      "timestamp": "2026-01-13T05:31:20.961Z",
+      "workerId": 8,
+      "statusCode": 200
+    },
+    {
+      "path": "/how-it-works",
+      "name": "How It Works",
+      "status": "warning",
+      "loadTime": 1764,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state"
+      ],
+      "missingElements": [],
+      "brokenLinks": [
+        "https://twitter.com/"
+      ],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 99.90000000037253,
+        "fcp": 1796,
+        "domComplete": 6128.4000000003725,
+        "loadComplete": 6128.5
+      },
+      "timestamp": "2026-01-13T05:31:20.975Z",
+      "workerId": 9,
+      "statusCode": 200
+    },
+    {
+      "path": "/markets",
+      "name": "Find Markets",
+      "status": "warning",
+      "loadTime": 1661,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state"
+      ],
+      "missingElements": [],
+      "brokenLinks": [
+        "https://twitter.com/"
+      ],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 267.80000000074506,
+        "fcp": 1692,
+        "domComplete": 4497.5,
+        "loadComplete": 4497.699999999255
+      },
+      "timestamp": "2026-01-13T05:31:41.903Z",
+      "workerId": 10,
+      "statusCode": 200
+    },
+    {
+      "path": "/privacy",
+      "name": "Privacy Policy",
+      "status": "warning",
+      "loadTime": 2623,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state"
+      ],
+      "missingElements": [],
+      "brokenLinks": [
+        "https://twitter.com/"
+      ],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 268,
+        "fcp": 2656,
+        "domComplete": 7779.9000000003725,
+        "loadComplete": 7780
+      },
+      "timestamp": "2026-01-13T05:31:41.909Z",
+      "workerId": 11,
+      "statusCode": 200
+    },
+    {
+      "path": "/terms",
+      "name": "Terms of Service",
+      "status": "warning",
+      "loadTime": 2203,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state"
+      ],
+      "missingElements": [],
+      "brokenLinks": [
+        "https://twitter.com/"
+      ],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 72.90000000037253,
+        "fcp": 2232,
+        "domComplete": 5867.799999998882,
+        "loadComplete": 5867.9000000003725
+      },
+      "timestamp": "2026-01-13T05:31:41.921Z",
+      "workerId": 12,
+      "statusCode": 200
+    }
+  ],
+  "criticalIssues": [],
+  "recommendations": [],
+  "metadata": {
+    "concurrency": 5,
+    "lighthouseEnabled": false,
+    "securityEnabled": false,
+    "environment": "https://farmers-market-platform.vercel.app"
+  }
+}

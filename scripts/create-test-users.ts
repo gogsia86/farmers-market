@@ -27,9 +27,10 @@
  *   TEST_ADMIN_PASSWORD (optional)      # Default: Test123!@#
  */
 
-import { PrismaClient } from "@prisma/client";
+// ✅ CANONICAL DATABASE IMPORT - Following .cursorrules
 import * as bcrypt from "bcryptjs";
 import "dotenv/config";
+import { database } from "../src/lib/database/index.js";
 
 // ============================================================================
 // CONFIGURATION
@@ -52,7 +53,7 @@ const CONFIG = {
       email: process.env.TEST_CUSTOMER_EMAIL || "customer@test.com",
       password: process.env.TEST_CUSTOMER_PASSWORD || "Test123!@#",
       name: "Test Customer",
-      role: "CUSTOMER" as const,
+      role: "CONSUMER" as const,
     },
     farmer: {
       email: process.env.TEST_FARMER_EMAIL || "farmer@test.com",
@@ -75,7 +76,7 @@ const CONFIG = {
 
 function log(
   message: string,
-  level: "info" | "success" | "error" | "warn" = "info"
+  level: "info" | "success" | "error" | "warn" = "info",
 ) {
   const c = CONFIG.colors;
   const icons = {
@@ -93,7 +94,7 @@ function log(
 
   const timestamp = new Date().toISOString().split("T")[1].split(".")[0];
   console.log(
-    `${c.dim}[${timestamp}]${c.reset} ${icons[level]} ${colors[level]}${message}${c.reset}`
+    `${c.dim}[${timestamp}]${c.reset} ${icons[level]} ${colors[level]}${message}${c.reset}`,
   );
 }
 
@@ -108,7 +109,8 @@ function logSection(title: string) {
 // DATABASE FUNCTIONS
 // ============================================================================
 
-const prisma = new PrismaClient();
+// ✅ Use canonical database singleton (no new PrismaClient instances)
+const prisma = database;
 
 /**
  * Hash password with bcrypt
@@ -135,7 +137,7 @@ async function createTestUser(config: {
   email: string;
   password: string;
   name: string;
-  role: "CUSTOMER" | "FARMER" | "ADMIN";
+  role: "CONSUMER" | "FARMER" | "ADMIN";
 }) {
   const { email, password, name, role } = config;
 
@@ -157,7 +159,8 @@ async function createTestUser(config: {
       password: hashedPassword,
       name,
       role,
-      emailVerified: new Date(), // Mark as verified for testing
+      emailVerified: true, // Mark as verified for testing
+      emailVerifiedAt: new Date(), // Set verification timestamp
     },
   });
 
@@ -190,20 +193,21 @@ async function createTestFarm(farmerId: string) {
       ownerId: farmerId,
       status: "ACTIVE",
       slug: `test-farm-${Date.now()}`,
-      // Add location if your schema requires it
-      // location: {
-      //   create: {
-      //     address: "123 Test Farm Road",
-      //     city: "Farmville",
-      //     state: "CA",
-      //     zipCode: "12345",
-      //     country: "USA",
-      //     coordinates: {
-      //       lat: 37.7749,
-      //       lng: -122.4194,
-      //     },
-      //   },
-      // },
+      // Required contact fields
+      email: "testfarm@example.com",
+      phone: "+1-555-123-4567",
+      // Required location fields
+      address: "123 Test Farm Road",
+      city: "Farmville",
+      state: "California",
+      zipCode: "12345",
+      country: "US",
+      latitude: 37.7749,
+      longitude: -122.4194,
+      // Optional agricultural metadata
+      isOrganic: true,
+      isBiodynamic: false,
+      yearEstablished: 2020,
     },
   });
 
@@ -230,7 +234,8 @@ async function createTestProducts(farmId: string) {
   const products = [
     {
       name: "Organic Tomatoes",
-      description: "Fresh, juicy organic tomatoes. Perfect for salads and cooking.",
+      description:
+        "Fresh, juicy organic tomatoes. Perfect for salads and cooking.",
       price: 5.99,
       unit: "lb",
       category: "VEGETABLES",
@@ -283,7 +288,10 @@ async function main() {
       throw new Error("DATABASE_URL environment variable is required");
     }
 
-    log(`Database: ${process.env.DATABASE_URL.split("@")[1] || "connected"}`, "info");
+    log(
+      `Database: ${process.env.DATABASE_URL.split("@")[1] || "connected"}`,
+      "info",
+    );
 
     // Create customer
     logSection("👤 CREATING CUSTOMER USER");
@@ -322,13 +330,17 @@ async function main() {
     const totalFarms = await prisma.farm.count();
     const totalProducts = await prisma.product.count();
 
-    console.log(`${CONFIG.colors.bright}Database Statistics:${CONFIG.colors.reset}`);
+    console.log(
+      `${CONFIG.colors.bright}Database Statistics:${CONFIG.colors.reset}`,
+    );
     console.log(`  Total Users:    ${totalUsers}`);
     console.log(`  Total Farms:    ${totalFarms}`);
     console.log(`  Total Products: ${totalProducts}`);
 
     logSection("✅ TEST USERS SETUP COMPLETE");
-    console.log(`\n${CONFIG.colors.green}${CONFIG.colors.bright}Test credentials:${CONFIG.colors.reset}\n`);
+    console.log(
+      `\n${CONFIG.colors.green}${CONFIG.colors.bright}Test credentials:${CONFIG.colors.reset}\n`,
+    );
     console.log(`${CONFIG.colors.cyan}Customer:${CONFIG.colors.reset}`);
     console.log(`  Email:    ${CONFIG.users.customer.email}`);
     console.log(`  Password: ${CONFIG.users.customer.password}\n`);
@@ -339,7 +351,9 @@ async function main() {
     console.log(`  Email:    ${CONFIG.users.admin.email}`);
     console.log(`  Password: ${CONFIG.users.admin.password}\n`);
 
-    console.log(`${CONFIG.colors.yellow}⚠️  Security Note:${CONFIG.colors.reset}`);
+    console.log(
+      `${CONFIG.colors.yellow}⚠️  Security Note:${CONFIG.colors.reset}`,
+    );
     console.log(`  These are TEST users for automated testing only.`);
     console.log(`  Do NOT use these credentials for real accounts.`);
     console.log(`  Change passwords immediately in production!\n`);

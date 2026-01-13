@@ -1,0 +1,1580 @@
+{
+  "version": "3.0.0",
+  "summary": {
+    "totalPages": 32,
+    "successful": 0,
+    "errors": 0,
+    "warnings": 32,
+    "missing": 0,
+    "totalDuration": 201434,
+    "avgLoadTime": 2989.0625,
+    "timestamp": "2026-01-13T05:47:00.150Z"
+  },
+  "results": [
+    {
+      "path": "/",
+      "name": "Homepage",
+      "status": "warning",
+      "loadTime": 2045,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state"
+      ],
+      "missingElements": [],
+      "brokenLinks": [
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/cart",
+        "https://farmers-market-platform.vercel.app/login",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/login",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/farmer/register",
+        "https://farmers-market-platform.vercel.app/farmer/dashboard",
+        "https://farmers-market-platform.vercel.app/privacy",
+        "https://twitter.com/",
+        "https://instagram.com/"
+      ],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 121.09999999962747,
+        "fcp": 2168,
+        "domComplete": 4917.5999999996275,
+        "loadComplete": 4917.699999999255
+      },
+      "timestamp": "2026-01-13T05:43:38.827Z",
+      "workerId": 0,
+      "statusCode": 200
+    },
+    {
+      "path": "/auth/signin",
+      "name": "Sign In",
+      "status": "warning",
+      "loadTime": 1143,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state"
+      ],
+      "missingElements": [],
+      "brokenLinks": [
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/cart",
+        "https://farmers-market-platform.vercel.app/login",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/forgot-password",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/farmer/register",
+        "https://farmers-market-platform.vercel.app/farmer/dashboard",
+        "https://farmers-market-platform.vercel.app/help/farmers",
+        "https://farmers-market-platform.vercel.app/help",
+        "https://farmers-market-platform.vercel.app/terms",
+        "https://farmers-market-platform.vercel.app/privacy",
+        "https://farmers-market-platform.vercel.app/shipping",
+        "https://twitter.com/",
+        "https://instagram.com/"
+      ],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 50,
+        "fcp": 1168,
+        "domComplete": 4106.699999999255,
+        "loadComplete": 4106.800000000745
+      },
+      "timestamp": "2026-01-13T05:43:38.838Z",
+      "workerId": 1,
+      "statusCode": 200
+    },
+    {
+      "path": "/auth/signup",
+      "name": "Sign Up",
+      "status": "warning",
+      "loadTime": 2461,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state"
+      ],
+      "missingElements": [],
+      "brokenLinks": [
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/cart",
+        "https://farmers-market-platform.vercel.app/login",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/forgot-password",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/farmer/register",
+        "https://farmers-market-platform.vercel.app/farmer/dashboard",
+        "https://farmers-market-platform.vercel.app/help/farmers",
+        "https://farmers-market-platform.vercel.app/help",
+        "https://farmers-market-platform.vercel.app/terms",
+        "https://farmers-market-platform.vercel.app/privacy",
+        "https://farmers-market-platform.vercel.app/shipping",
+        "https://twitter.com/"
+      ],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 54.70000000111759,
+        "fcp": 2488,
+        "domComplete": 3279.2000000011176,
+        "loadComplete": 3279.4000000003725
+      },
+      "timestamp": "2026-01-13T05:43:38.845Z",
+      "workerId": 2,
+      "statusCode": 200
+    },
+    {
+      "path": "/about",
+      "name": "About Us",
+      "status": "warning",
+      "loadTime": 1345,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state"
+      ],
+      "missingElements": [],
+      "brokenLinks": [
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/cart",
+        "https://farmers-market-platform.vercel.app/login",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/farmer/register",
+        "https://farmers-market-platform.vercel.app/farmer/dashboard",
+        "https://farmers-market-platform.vercel.app/help/farmers",
+        "https://farmers-market-platform.vercel.app/help",
+        "https://farmers-market-platform.vercel.app/terms",
+        "https://farmers-market-platform.vercel.app/privacy",
+        "https://farmers-market-platform.vercel.app/shipping",
+        "https://twitter.com/"
+      ],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 107.70000000111759,
+        "fcp": 1428,
+        "domComplete": 4873.10000000149,
+        "loadComplete": 4873.10000000149
+      },
+      "timestamp": "2026-01-13T05:43:38.861Z",
+      "workerId": 3,
+      "statusCode": 200
+    },
+    {
+      "path": "/contact",
+      "name": "Contact",
+      "status": "warning",
+      "loadTime": 910,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state"
+      ],
+      "missingElements": [],
+      "brokenLinks": [
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/cart",
+        "https://farmers-market-platform.vercel.app/login",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/faq",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/register-farm",
+        "https://farmers-market-platform.vercel.app/help",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/contact",
+        "https://farmers-market-platform.vercel.app/farmer/register",
+        "https://farmers-market-platform.vercel.app/farmer/dashboard",
+        "https://farmers-market-platform.vercel.app/help/farmers",
+        "https://farmers-market-platform.vercel.app/help",
+        "https://farmers-market-platform.vercel.app/terms",
+        "https://twitter.com/"
+      ],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 112.59999999962747,
+        "fcp": 940,
+        "domComplete": 2718.9000000003725,
+        "loadComplete": 2719
+      },
+      "timestamp": "2026-01-13T05:43:38.870Z",
+      "workerId": 4,
+      "statusCode": 200
+    },
+    {
+      "path": "/farms",
+      "name": "Browse Farms",
+      "status": "warning",
+      "loadTime": 3481,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state"
+      ],
+      "missingElements": [],
+      "brokenLinks": [
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/contact",
+        "https://farmers-market-platform.vercel.app/farmer/register",
+        "https://farmers-market-platform.vercel.app/farmer/dashboard",
+        "https://farmers-market-platform.vercel.app/terms",
+        "https://farmers-market-platform.vercel.app/privacy",
+        "https://farmers-market-platform.vercel.app/shipping",
+        "https://twitter.com/",
+        "https://instagram.com/"
+      ],
+      "seoIssues": [],
+      "a11yIssues": [],
+      "performanceMetrics": {
+        "ttfb": 216.40000000037253,
+        "fcp": 3504,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T05:44:20.333Z",
+      "workerId": 5,
+      "statusCode": 200
+    },
+    {
+      "path": "/products",
+      "name": "Browse Products",
+      "status": "warning",
+      "loadTime": 28126,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state"
+      ],
+      "missingElements": [],
+      "brokenLinks": [
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/cart",
+        "https://farmers-market-platform.vercel.app/login",
+        "https://farmers-market-platform.vercel.app/register"
+      ],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label",
+        "Input without label: unknown"
+      ],
+      "performanceMetrics": {
+        "ttfb": 69.70000000111759,
+        "fcp": 3724,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T05:44:20.345Z",
+      "workerId": 6,
+      "statusCode": 200
+    },
+    {
+      "path": "/auth/forgot-password",
+      "name": "Forgot Password",
+      "status": "warning",
+      "loadTime": 7142,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state"
+      ],
+      "missingElements": [],
+      "brokenLinks": [
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/cart",
+        "https://farmers-market-platform.vercel.app/login",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/forgot-password",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/contact",
+        "https://farmers-market-platform.vercel.app/farmer/register",
+        "https://farmers-market-platform.vercel.app/farmer/dashboard",
+        "https://farmers-market-platform.vercel.app/terms",
+        "https://farmers-market-platform.vercel.app/privacy",
+        "https://farmers-market-platform.vercel.app/shipping",
+        "https://twitter.com/",
+        "https://instagram.com/"
+      ],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 56.70000000111759,
+        "fcp": 7216,
+        "domComplete": 10540.400000000373,
+        "loadComplete": 10540.599999999627
+      },
+      "timestamp": "2026-01-13T05:44:20.367Z",
+      "workerId": 7,
+      "statusCode": 200
+    },
+    {
+      "path": "/faq",
+      "name": "FAQ",
+      "status": "warning",
+      "loadTime": 3153,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state"
+      ],
+      "missingElements": [],
+      "brokenLinks": [
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/cart",
+        "https://farmers-market-platform.vercel.app/login",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/privacy",
+        "https://farmers-market-platform.vercel.app/contact",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/contact",
+        "https://farmers-market-platform.vercel.app/farmer/register",
+        "https://farmers-market-platform.vercel.app/farmer/dashboard",
+        "https://farmers-market-platform.vercel.app/terms",
+        "https://farmers-market-platform.vercel.app/privacy",
+        "https://farmers-market-platform.vercel.app/shipping",
+        "https://twitter.com/",
+        "https://instagram.com/"
+      ],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 301.90000000037253,
+        "fcp": 3180,
+        "domComplete": 8443.800000000745,
+        "loadComplete": 8443.900000000373
+      },
+      "timestamp": "2026-01-13T05:44:20.381Z",
+      "workerId": 8,
+      "statusCode": 200
+    },
+    {
+      "path": "/how-it-works",
+      "name": "How It Works",
+      "status": "warning",
+      "loadTime": 3526,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state"
+      ],
+      "missingElements": [],
+      "brokenLinks": [
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/cart",
+        "https://farmers-market-platform.vercel.app/login",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/register-farm",
+        "https://farmers-market-platform.vercel.app/faq",
+        "https://farmers-market-platform.vercel.app/contact",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/contact",
+        "https://farmers-market-platform.vercel.app/farmer/register",
+        "https://farmers-market-platform.vercel.app/farmer/dashboard",
+        "https://farmers-market-platform.vercel.app/terms",
+        "https://farmers-market-platform.vercel.app/privacy",
+        "https://farmers-market-platform.vercel.app/shipping",
+        "https://twitter.com/",
+        "https://instagram.com/"
+      ],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 199.69999999925494,
+        "fcp": 3556,
+        "domComplete": 10936.5,
+        "loadComplete": 10936.800000000745
+      },
+      "timestamp": "2026-01-13T05:44:20.403Z",
+      "workerId": 9,
+      "statusCode": 200
+    },
+    {
+      "path": "/markets",
+      "name": "Find Markets",
+      "status": "warning",
+      "loadTime": 934,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state"
+      ],
+      "missingElements": [],
+      "brokenLinks": [
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/cart",
+        "https://farmers-market-platform.vercel.app/login",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/forgot-password",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/contact",
+        "https://farmers-market-platform.vercel.app/farmer/register",
+        "https://farmers-market-platform.vercel.app/farmer/dashboard",
+        "https://farmers-market-platform.vercel.app/terms",
+        "https://farmers-market-platform.vercel.app/privacy",
+        "https://farmers-market-platform.vercel.app/shipping",
+        "https://twitter.com/",
+        "https://instagram.com/"
+      ],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 47.5,
+        "fcp": 964,
+        "domComplete": 4373.0999999996275,
+        "loadComplete": 4373.300000000745
+      },
+      "timestamp": "2026-01-13T05:45:08.447Z",
+      "workerId": 10,
+      "statusCode": 200
+    },
+    {
+      "path": "/privacy",
+      "name": "Privacy Policy",
+      "status": "warning",
+      "loadTime": 945,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state"
+      ],
+      "missingElements": [],
+      "brokenLinks": [
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/cart",
+        "https://farmers-market-platform.vercel.app/login",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/forgot-password",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/contact",
+        "https://farmers-market-platform.vercel.app/farmer/register",
+        "https://farmers-market-platform.vercel.app/farmer/dashboard",
+        "https://farmers-market-platform.vercel.app/terms",
+        "https://farmers-market-platform.vercel.app/privacy",
+        "https://farmers-market-platform.vercel.app/shipping",
+        "https://twitter.com/",
+        "https://instagram.com/"
+      ],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 62.40000000037253,
+        "fcp": 988,
+        "domComplete": 4310.4000000003725,
+        "loadComplete": 4310.5999999996275
+      },
+      "timestamp": "2026-01-13T05:45:08.455Z",
+      "workerId": 11,
+      "statusCode": 200
+    },
+    {
+      "path": "/terms",
+      "name": "Terms of Service",
+      "status": "warning",
+      "loadTime": 1216,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state"
+      ],
+      "missingElements": [],
+      "brokenLinks": [
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/cart",
+        "https://farmers-market-platform.vercel.app/login",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/forgot-password",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/contact",
+        "https://farmers-market-platform.vercel.app/farmer/register",
+        "https://farmers-market-platform.vercel.app/farmer/dashboard",
+        "https://farmers-market-platform.vercel.app/terms",
+        "https://farmers-market-platform.vercel.app/privacy",
+        "https://farmers-market-platform.vercel.app/shipping",
+        "https://twitter.com/",
+        "https://instagram.com/"
+      ],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 61.5,
+        "fcp": 1244,
+        "domComplete": 6672.5999999996275,
+        "loadComplete": 6672.700000001118
+      },
+      "timestamp": "2026-01-13T05:45:08.464Z",
+      "workerId": 12,
+      "statusCode": 200
+    },
+    {
+      "path": "/customer/dashboard",
+      "name": "Customer Dashboard",
+      "status": "warning",
+      "loadTime": 3607,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state"
+      ],
+      "missingElements": [
+        "[data-testid*=\"dashboard\"]"
+      ],
+      "brokenLinks": [
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/cart",
+        "https://farmers-market-platform.vercel.app/login",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/forgot-password",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/contact",
+        "https://farmers-market-platform.vercel.app/farmer/register",
+        "https://farmers-market-platform.vercel.app/farmer/dashboard",
+        "https://farmers-market-platform.vercel.app/terms",
+        "https://farmers-market-platform.vercel.app/privacy",
+        "https://farmers-market-platform.vercel.app/shipping",
+        "https://twitter.com/",
+        "https://instagram.com/"
+      ],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 152,
+        "fcp": 3636,
+        "domComplete": 9596.800000000745,
+        "loadComplete": 9596.900000000373
+      },
+      "timestamp": "2026-01-13T05:45:32.578Z",
+      "workerId": 0,
+      "statusCode": 200
+    },
+    {
+      "path": "/customer/orders",
+      "name": "My Orders",
+      "status": "warning",
+      "loadTime": 2662,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state"
+      ],
+      "missingElements": [
+        "[data-testid*=\"dashboard\"]"
+      ],
+      "brokenLinks": [
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/cart",
+        "https://farmers-market-platform.vercel.app/login",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/forgot-password",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/contact",
+        "https://farmers-market-platform.vercel.app/farmer/register",
+        "https://farmers-market-platform.vercel.app/farmer/dashboard",
+        "https://farmers-market-platform.vercel.app/terms",
+        "https://farmers-market-platform.vercel.app/privacy",
+        "https://farmers-market-platform.vercel.app/shipping",
+        "https://twitter.com/",
+        "https://instagram.com/"
+      ],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 152.40000000037253,
+        "fcp": 2684,
+        "domComplete": 9892.5,
+        "loadComplete": 9892.699999999255
+      },
+      "timestamp": "2026-01-13T05:45:32.614Z",
+      "workerId": 1,
+      "statusCode": 200
+    },
+    {
+      "path": "/customer/cart",
+      "name": "Shopping Cart",
+      "status": "warning",
+      "loadTime": 6803,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state"
+      ],
+      "missingElements": [
+        "[data-testid*=\"dashboard\"]"
+      ],
+      "brokenLinks": [
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/cart",
+        "https://farmers-market-platform.vercel.app/login",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/forgot-password",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/contact",
+        "https://farmers-market-platform.vercel.app/farmer/register",
+        "https://farmers-market-platform.vercel.app/farmer/dashboard",
+        "https://farmers-market-platform.vercel.app/terms",
+        "https://farmers-market-platform.vercel.app/privacy",
+        "https://farmers-market-platform.vercel.app/shipping",
+        "https://twitter.com/",
+        "https://instagram.com/"
+      ],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 114,
+        "fcp": 6828,
+        "domComplete": 7962.4000000003725,
+        "loadComplete": 7962.5
+      },
+      "timestamp": "2026-01-13T05:45:32.598Z",
+      "workerId": 2,
+      "statusCode": 200
+    },
+    {
+      "path": "/customer/profile",
+      "name": "Profile Settings",
+      "status": "warning",
+      "loadTime": 2364,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state"
+      ],
+      "missingElements": [
+        "[data-testid*=\"dashboard\"]"
+      ],
+      "brokenLinks": [
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/cart",
+        "https://farmers-market-platform.vercel.app/login",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/forgot-password",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/contact",
+        "https://farmers-market-platform.vercel.app/farmer/register",
+        "https://farmers-market-platform.vercel.app/farmer/dashboard",
+        "https://farmers-market-platform.vercel.app/terms",
+        "https://farmers-market-platform.vercel.app/privacy",
+        "https://farmers-market-platform.vercel.app/shipping",
+        "https://twitter.com/",
+        "https://instagram.com/"
+      ],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 155.30000000074506,
+        "fcp": 2388,
+        "domComplete": 11206.199999999255,
+        "loadComplete": 11206.299999998882
+      },
+      "timestamp": "2026-01-13T05:45:32.641Z",
+      "workerId": 3,
+      "statusCode": 200
+    },
+    {
+      "path": "/customer/addresses",
+      "name": "Saved Addresses",
+      "status": "warning",
+      "loadTime": 4111,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state"
+      ],
+      "missingElements": [
+        "[data-testid*=\"dashboard\"]"
+      ],
+      "brokenLinks": [
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/cart",
+        "https://farmers-market-platform.vercel.app/login",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/forgot-password",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/contact",
+        "https://farmers-market-platform.vercel.app/farmer/register",
+        "https://farmers-market-platform.vercel.app/farmer/dashboard",
+        "https://farmers-market-platform.vercel.app/terms",
+        "https://farmers-market-platform.vercel.app/privacy",
+        "https://farmers-market-platform.vercel.app/shipping",
+        "https://twitter.com/",
+        "https://instagram.com/"
+      ],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 144.80000000074506,
+        "fcp": 4136,
+        "domComplete": 10633.900000000373,
+        "loadComplete": 10634
+      },
+      "timestamp": "2026-01-13T05:45:32.658Z",
+      "workerId": 4,
+      "statusCode": 200
+    },
+    {
+      "path": "/customer/payment-methods",
+      "name": "Payment Methods",
+      "status": "warning",
+      "loadTime": 2893,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state"
+      ],
+      "missingElements": [
+        "[data-testid*=\"dashboard\"]"
+      ],
+      "brokenLinks": [
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/cart",
+        "https://farmers-market-platform.vercel.app/login",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/forgot-password",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/contact",
+        "https://farmers-market-platform.vercel.app/farmer/register",
+        "https://farmers-market-platform.vercel.app/farmer/dashboard",
+        "https://farmers-market-platform.vercel.app/terms",
+        "https://farmers-market-platform.vercel.app/privacy",
+        "https://farmers-market-platform.vercel.app/shipping",
+        "https://twitter.com/",
+        "https://instagram.com/"
+      ],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 82.40000000037253,
+        "fcp": 2920,
+        "domComplete": 6111.10000000149,
+        "loadComplete": 6111.200000001118
+      },
+      "timestamp": "2026-01-13T05:45:49.660Z",
+      "workerId": 5,
+      "statusCode": 200
+    },
+    {
+      "path": "/farmer/dashboard",
+      "name": "Farmer Dashboard",
+      "status": "warning",
+      "loadTime": 2189,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state"
+      ],
+      "missingElements": [
+        "[data-testid*=\"dashboard\"]"
+      ],
+      "brokenLinks": [
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/cart",
+        "https://farmers-market-platform.vercel.app/login",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/forgot-password",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/contact",
+        "https://farmers-market-platform.vercel.app/farmer/register",
+        "https://farmers-market-platform.vercel.app/farmer/dashboard",
+        "https://farmers-market-platform.vercel.app/terms",
+        "https://farmers-market-platform.vercel.app/privacy",
+        "https://farmers-market-platform.vercel.app/shipping",
+        "https://twitter.com/",
+        "https://instagram.com/"
+      ],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 81.09999999962747,
+        "fcp": 2216,
+        "domComplete": 6218.299999998882,
+        "loadComplete": 6218.4000000003725
+      },
+      "timestamp": "2026-01-13T05:46:08.346Z",
+      "workerId": 0,
+      "statusCode": 200
+    },
+    {
+      "path": "/farmer/products",
+      "name": "Manage Products",
+      "status": "warning",
+      "loadTime": 1527,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state"
+      ],
+      "missingElements": [
+        "[data-testid*=\"dashboard\"]"
+      ],
+      "brokenLinks": [
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/cart",
+        "https://farmers-market-platform.vercel.app/login",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/forgot-password",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/contact",
+        "https://farmers-market-platform.vercel.app/farmer/register",
+        "https://farmers-market-platform.vercel.app/farmer/dashboard",
+        "https://farmers-market-platform.vercel.app/terms",
+        "https://farmers-market-platform.vercel.app/privacy",
+        "https://farmers-market-platform.vercel.app/shipping",
+        "https://twitter.com/",
+        "https://instagram.com/"
+      ],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 62.80000000074506,
+        "fcp": 1552,
+        "domComplete": 8784.200000001118,
+        "loadComplete": 8784.300000000745
+      },
+      "timestamp": "2026-01-13T05:46:08.361Z",
+      "workerId": 1,
+      "statusCode": 200
+    },
+    {
+      "path": "/farmer/orders",
+      "name": "Farmer Orders",
+      "status": "warning",
+      "loadTime": 1418,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state"
+      ],
+      "missingElements": [
+        "[data-testid*=\"dashboard\"]"
+      ],
+      "brokenLinks": [
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/cart",
+        "https://farmers-market-platform.vercel.app/login",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/forgot-password",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/contact",
+        "https://farmers-market-platform.vercel.app/farmer/register",
+        "https://farmers-market-platform.vercel.app/farmer/dashboard",
+        "https://farmers-market-platform.vercel.app/terms",
+        "https://farmers-market-platform.vercel.app/privacy",
+        "https://farmers-market-platform.vercel.app/shipping",
+        "https://twitter.com/",
+        "https://instagram.com/"
+      ],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 59.5,
+        "fcp": 1444,
+        "domComplete": 7767.5999999996275,
+        "loadComplete": 7767.699999999255
+      },
+      "timestamp": "2026-01-13T05:46:08.374Z",
+      "workerId": 2,
+      "statusCode": 200
+    },
+    {
+      "path": "/farmer/products/add",
+      "name": "Add Product",
+      "status": "warning",
+      "loadTime": 1306,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state"
+      ],
+      "missingElements": [
+        "[data-testid*=\"dashboard\"]"
+      ],
+      "brokenLinks": [
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/cart",
+        "https://farmers-market-platform.vercel.app/login",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/forgot-password",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/contact",
+        "https://farmers-market-platform.vercel.app/farmer/register",
+        "https://farmers-market-platform.vercel.app/farmer/dashboard",
+        "https://farmers-market-platform.vercel.app/terms",
+        "https://farmers-market-platform.vercel.app/privacy",
+        "https://farmers-market-platform.vercel.app/shipping",
+        "https://twitter.com/",
+        "https://instagram.com/"
+      ],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 268.40000000037253,
+        "fcp": 1332,
+        "domComplete": 6649.800000000745,
+        "loadComplete": 6649.9000000003725
+      },
+      "timestamp": "2026-01-13T05:46:08.386Z",
+      "workerId": 3,
+      "statusCode": 200
+    },
+    {
+      "path": "/farmer/inventory",
+      "name": "Inventory Management",
+      "status": "warning",
+      "loadTime": 1635,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state"
+      ],
+      "missingElements": [
+        "[data-testid*=\"dashboard\"]"
+      ],
+      "brokenLinks": [
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/cart",
+        "https://farmers-market-platform.vercel.app/login",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/forgot-password",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/contact",
+        "https://farmers-market-platform.vercel.app/farmer/register",
+        "https://farmers-market-platform.vercel.app/farmer/dashboard",
+        "https://farmers-market-platform.vercel.app/terms",
+        "https://farmers-market-platform.vercel.app/privacy",
+        "https://farmers-market-platform.vercel.app/shipping",
+        "https://twitter.com/",
+        "https://instagram.com/"
+      ],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 74.69999999925494,
+        "fcp": 1660,
+        "domComplete": 7322,
+        "loadComplete": 7322.0999999996275
+      },
+      "timestamp": "2026-01-13T05:46:08.397Z",
+      "workerId": 4,
+      "statusCode": 200
+    },
+    {
+      "path": "/farmer/profile",
+      "name": "Farm Profile",
+      "status": "warning",
+      "loadTime": 634,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state"
+      ],
+      "missingElements": [
+        "[data-testid*=\"dashboard\"]"
+      ],
+      "brokenLinks": [
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/cart",
+        "https://farmers-market-platform.vercel.app/login",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/forgot-password",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/contact",
+        "https://farmers-market-platform.vercel.app/farmer/register",
+        "https://farmers-market-platform.vercel.app/farmer/dashboard",
+        "https://farmers-market-platform.vercel.app/terms",
+        "https://farmers-market-platform.vercel.app/privacy",
+        "https://farmers-market-platform.vercel.app/shipping",
+        "https://twitter.com/",
+        "https://instagram.com/"
+      ],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 45.40000000037253,
+        "fcp": 660,
+        "domComplete": 2126.5,
+        "loadComplete": 2126.5
+      },
+      "timestamp": "2026-01-13T05:46:20.765Z",
+      "workerId": 5,
+      "statusCode": 200
+    },
+    {
+      "path": "/farmer/settings",
+      "name": "Farmer Settings",
+      "status": "warning",
+      "loadTime": 1279,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state"
+      ],
+      "missingElements": [
+        "[data-testid*=\"dashboard\"]"
+      ],
+      "brokenLinks": [
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/cart",
+        "https://farmers-market-platform.vercel.app/login",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/forgot-password",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/contact",
+        "https://farmers-market-platform.vercel.app/farmer/register",
+        "https://farmers-market-platform.vercel.app/farmer/dashboard",
+        "https://farmers-market-platform.vercel.app/terms",
+        "https://farmers-market-platform.vercel.app/privacy",
+        "https://farmers-market-platform.vercel.app/shipping",
+        "https://twitter.com/",
+        "https://instagram.com/"
+      ],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 43.5,
+        "fcp": 1304,
+        "domComplete": 1643.699999999255,
+        "loadComplete": 1643.7999999988824
+      },
+      "timestamp": "2026-01-13T05:46:20.755Z",
+      "workerId": 6,
+      "statusCode": 200
+    },
+    {
+      "path": "/admin/dashboard",
+      "name": "Admin Dashboard",
+      "status": "warning",
+      "loadTime": 1157,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state"
+      ],
+      "missingElements": [
+        "[data-testid*=\"admin\"]"
+      ],
+      "brokenLinks": [
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/cart",
+        "https://farmers-market-platform.vercel.app/login",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/forgot-password",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/contact",
+        "https://farmers-market-platform.vercel.app/farmer/register",
+        "https://farmers-market-platform.vercel.app/farmer/dashboard",
+        "https://farmers-market-platform.vercel.app/terms",
+        "https://farmers-market-platform.vercel.app/privacy",
+        "https://farmers-market-platform.vercel.app/shipping",
+        "https://twitter.com/",
+        "https://instagram.com/"
+      ],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 64.59999999962747,
+        "fcp": 1188,
+        "domComplete": 6361.9000000003725,
+        "loadComplete": 6362
+      },
+      "timestamp": "2026-01-13T05:46:36.769Z",
+      "workerId": 0,
+      "statusCode": 200
+    },
+    {
+      "path": "/admin/users",
+      "name": "User Management",
+      "status": "warning",
+      "loadTime": 993,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state"
+      ],
+      "missingElements": [
+        "[data-testid*=\"admin\"]"
+      ],
+      "brokenLinks": [
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/cart",
+        "https://farmers-market-platform.vercel.app/login",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/forgot-password",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/contact",
+        "https://farmers-market-platform.vercel.app/farmer/register",
+        "https://farmers-market-platform.vercel.app/farmer/dashboard",
+        "https://farmers-market-platform.vercel.app/terms",
+        "https://farmers-market-platform.vercel.app/privacy",
+        "https://farmers-market-platform.vercel.app/shipping",
+        "https://twitter.com/",
+        "https://instagram.com/"
+      ],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 65.40000000037253,
+        "fcp": 1020,
+        "domComplete": 4629.5999999996275,
+        "loadComplete": 4629.699999999255
+      },
+      "timestamp": "2026-01-13T05:46:36.778Z",
+      "workerId": 1,
+      "statusCode": 200
+    },
+    {
+      "path": "/admin/farms",
+      "name": "Farm Management",
+      "status": "warning",
+      "loadTime": 735,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state"
+      ],
+      "missingElements": [
+        "[data-testid*=\"admin\"]"
+      ],
+      "brokenLinks": [
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/cart",
+        "https://farmers-market-platform.vercel.app/login",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/forgot-password",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/contact",
+        "https://farmers-market-platform.vercel.app/farmer/register",
+        "https://farmers-market-platform.vercel.app/farmer/dashboard",
+        "https://farmers-market-platform.vercel.app/terms",
+        "https://farmers-market-platform.vercel.app/privacy",
+        "https://farmers-market-platform.vercel.app/shipping",
+        "https://twitter.com/",
+        "https://instagram.com/"
+      ],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 56.5,
+        "fcp": 760,
+        "domComplete": 3189.5,
+        "loadComplete": 3189.800000000745
+      },
+      "timestamp": "2026-01-13T05:46:36.793Z",
+      "workerId": 2,
+      "statusCode": 200
+    },
+    {
+      "path": "/admin/orders",
+      "name": "Order Management",
+      "status": "warning",
+      "loadTime": 1423,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state"
+      ],
+      "missingElements": [
+        "[data-testid*=\"admin\"]"
+      ],
+      "brokenLinks": [
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/cart",
+        "https://farmers-market-platform.vercel.app/login",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/forgot-password",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/contact",
+        "https://farmers-market-platform.vercel.app/farmer/register",
+        "https://farmers-market-platform.vercel.app/farmer/dashboard",
+        "https://farmers-market-platform.vercel.app/terms",
+        "https://farmers-market-platform.vercel.app/privacy",
+        "https://farmers-market-platform.vercel.app/shipping",
+        "https://twitter.com/",
+        "https://instagram.com/"
+      ],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 77.70000000111759,
+        "fcp": 1452,
+        "domComplete": 4872.39999999851,
+        "loadComplete": 4872.5999999996275
+      },
+      "timestamp": "2026-01-13T05:46:36.820Z",
+      "workerId": 3,
+      "statusCode": 200
+    },
+    {
+      "path": "/admin/products",
+      "name": "Product Management",
+      "status": "warning",
+      "loadTime": 947,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state"
+      ],
+      "missingElements": [
+        "[data-testid*=\"admin\"]"
+      ],
+      "brokenLinks": [
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/cart",
+        "https://farmers-market-platform.vercel.app/login",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/forgot-password",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/contact",
+        "https://farmers-market-platform.vercel.app/farmer/register",
+        "https://farmers-market-platform.vercel.app/farmer/dashboard",
+        "https://farmers-market-platform.vercel.app/terms",
+        "https://farmers-market-platform.vercel.app/privacy",
+        "https://farmers-market-platform.vercel.app/shipping",
+        "https://twitter.com/",
+        "https://instagram.com/"
+      ],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 42.90000000037253,
+        "fcp": 972,
+        "domComplete": 4820.9000000003725,
+        "loadComplete": 4821.0999999996275
+      },
+      "timestamp": "2026-01-13T05:46:36.804Z",
+      "workerId": 4,
+      "statusCode": 200
+    },
+    {
+      "path": "/admin/settings",
+      "name": "Platform Settings",
+      "status": "warning",
+      "loadTime": 1540,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state"
+      ],
+      "missingElements": [
+        "[data-testid*=\"admin\"]"
+      ],
+      "brokenLinks": [
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/cart",
+        "https://farmers-market-platform.vercel.app/login",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/register",
+        "https://farmers-market-platform.vercel.app/forgot-password",
+        "https://farmers-market-platform.vercel.app/products",
+        "https://farmers-market-platform.vercel.app/farms",
+        "https://farmers-market-platform.vercel.app/about",
+        "https://farmers-market-platform.vercel.app/contact",
+        "https://farmers-market-platform.vercel.app/farmer/register",
+        "https://farmers-market-platform.vercel.app/farmer/dashboard",
+        "https://farmers-market-platform.vercel.app/terms",
+        "https://farmers-market-platform.vercel.app/privacy",
+        "https://farmers-market-platform.vercel.app/shipping",
+        "https://twitter.com/",
+        "https://instagram.com/"
+      ],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 615.7000000011176,
+        "fcp": 1568,
+        "domComplete": 2296.4000000003725,
+        "loadComplete": 2296.5999999996275
+      },
+      "timestamp": "2026-01-13T05:46:48.452Z",
+      "workerId": 5,
+      "statusCode": 200
+    }
+  ],
+  "criticalIssues": [],
+  "recommendations": [
+    "Fix broken links on Homepage: 20 found",
+    "Fix broken links on Sign In: 22 found",
+    "Fix broken links on Sign Up: 21 found",
+    "Fix broken links on About Us: 20 found",
+    "Fix broken links on Contact: 22 found",
+    "Fix broken links on Browse Farms: 16 found",
+    "Fix broken links on Browse Products: 8 found",
+    "Fix broken links on Forgot Password: 21 found",
+    "Fix broken links on FAQ: 21 found",
+    "Fix broken links on How It Works: 22 found",
+    "Fix broken links on Find Markets: 21 found",
+    "Fix broken links on Privacy Policy: 21 found",
+    "Fix broken links on Terms of Service: 21 found",
+    "Fix broken links on Customer Dashboard: 21 found",
+    "Fix broken links on My Orders: 21 found",
+    "Fix broken links on Shopping Cart: 21 found",
+    "Fix broken links on Profile Settings: 21 found",
+    "Fix broken links on Saved Addresses: 21 found",
+    "Fix broken links on Payment Methods: 21 found",
+    "Fix broken links on Farmer Dashboard: 21 found",
+    "Fix broken links on Manage Products: 21 found",
+    "Fix broken links on Farmer Orders: 21 found",
+    "Fix broken links on Add Product: 21 found",
+    "Fix broken links on Inventory Management: 21 found",
+    "Fix broken links on Farm Profile: 21 found",
+    "Fix broken links on Farmer Settings: 21 found",
+    "Fix broken links on Admin Dashboard: 21 found",
+    "Fix broken links on User Management: 21 found",
+    "Fix broken links on Farm Management: 21 found",
+    "Fix broken links on Order Management: 21 found",
+    "Fix broken links on Product Management: 21 found",
+    "Fix broken links on Platform Settings: 21 found"
+  ],
+  "metadata": {
+    "concurrency": 5,
+    "lighthouseEnabled": false,
+    "securityEnabled": false,
+    "environment": "https://farmers-market-platform.vercel.app"
+  }
+}

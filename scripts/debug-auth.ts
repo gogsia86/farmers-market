@@ -1,129 +1,261 @@
+#!/usr/bin/env tsx
 /**
- * 🔍 DEBUG AUTH SCRIPT
- * Verify user credentials and password hashing
+ * 🔐 DEBUG AUTHENTICATION TEST
+ * Quick script to test authentication flow for inspector bot
  */
 
-// Load environment variables FIRST
-import { config } from "dotenv";
-config();
+import "dotenv/config";
+import { chromium } from "playwright";
 
-import { compare, hash } from "bcryptjs";
-import { database } from "../src/lib/database/index";
+const BASE_URL =
+  process.env.BASE_URL || "https://farmers-market-platform.vercel.app";
 
-async function main() {
-  console.log("🔍 AUTH DEBUG SCRIPT\n");
+const TEST_USERS = {
+  customer: {
+    email: "customer@test.com",
+    password: "Test123!@#",
+  },
+  farmer: {
+    email: "farmer@test.com",
+    password: "Test123!@#",
+  },
+  admin: {
+    email: "admin@test.com",
+    password: "Test123!@#",
+  },
+};
 
-  const testEmail = "farmer1@example.com";
-  const testPassword = "Farmer123!";
+async function testAuth(
+  role: "customer" | "farmer" | "admin",
+  headless: boolean = false,
+) {
+  console.log(`\n${"=".repeat(80)}`);
+  console.log(`🔐 Testing authentication for: ${role.toUpperCase()}`);
+  console.log("=".repeat(80));
+
+  const browser = await chromium.launch({ headless });
+  const context = await browser.newContext();
+  const page = await context.newPage();
+
+  const credentials = TEST_USERS[role];
 
   try {
-    // 1. Check if user exists
-    console.log(`📧 Checking user: ${testEmail}`);
-    const user = await database.user.findUnique({
-      where: { email: testEmail },
-      select: {
-        id: true,
-        email: true,
-        password: true,
-        firstName: true,
-        lastName: true,
-        role: true,
-        status: true,
-        emailVerified: true,
-        createdAt: true,
-      },
+    // Navigate to sign-in page
+    console.log(`\n1️⃣  Navigating to: ${BASE_URL}/auth/signin`);
+    await page.goto(`${BASE_URL}/auth/signin`, {
+      waitUntil: "domcontentloaded",
+      timeout: 30000,
     });
+    console.log("✅ Page loaded");
 
-    if (!user) {
-      console.log("❌ User NOT found in database");
-      console.log("\n💡 Run seed script to create test users:");
-      console.log("   npm run seed:basic");
-      return;
-    }
+    // Take screenshot
+    await page.screenshot({ path: `debug-auth-${role}-1-loaded.png` });
 
-    console.log("✅ User found:");
-    console.log(`   ID: ${user.id}`);
-    console.log(`   Name: ${user.firstName} ${user.lastName}`);
-    console.log(`   Role: ${user.role}`);
-    console.log(`   Status: ${user.status}`);
-    console.log(`   Email Verified: ${user.emailVerified}`);
-    console.log(`   Has Password: ${!!user.password}`);
-    console.log(`   Created: ${user.createdAt}`);
+    // Check if email input exists
+    console.log("\n2️⃣  Looking for email input...");
+    const emailSelectors = [
+      'input[type="email"]',
+      'input[name="email"]',
+      'input[id="email"]',
+      'input[placeholder*="email" i]',
+    ];
 
-    if (!user.password) {
-      console.log("\n❌ User has no password set!");
-      return;
-    }
-
-    // 2. Test password comparison
-    console.log(`\n🔐 Testing password: "${testPassword}"`);
-    const isValid = await compare(testPassword, user.password);
-
-    if (isValid) {
-      console.log("✅ Password is CORRECT - Authentication should work!");
-    } else {
-      console.log("❌ Password is INCORRECT");
-      console.log("\n🔧 Debugging password hash:");
-      console.log(`   Stored hash: ${user.password.substring(0, 30)}...`);
-      console.log(`   Hash length: ${user.password.length}`);
-      console.log(`   Expected length: 60 (bcrypt)`);
-
-      // Test if we can hash and compare the expected password
-      console.log("\n🧪 Testing fresh hash...");
-      const freshHash = await hash(testPassword, 12);
-      const freshCompare = await compare(testPassword, freshHash);
-      console.log(`   Fresh hash works: ${freshCompare ? "✅ YES" : "❌ NO"}`);
-
-      // Try alternative passwords
-      console.log("\n🔍 Trying alternative passwords:");
-      const alternatives = [
-        "password123",
-        "Farmer123",
-        "farmer123",
-        "password",
-      ];
-
-      for (const alt of alternatives) {
-        const altValid = await compare(alt, user.password);
-        if (altValid) {
-          console.log(`   ✅ "${alt}" - WORKS!`);
-        } else {
-          console.log(`   ❌ "${alt}" - Failed`);
-        }
+    let emailFound = false;
+    for (const selector of emailSelectors) {
+      const count = await page.locator(selector).count();
+      console.log(`   ${selector}: ${count} found`);
+      if (count > 0) {
+        emailFound = true;
+        console.log(`✅ Found email input: ${selector}`);
+        await page.fill(selector, credentials.email);
+        console.log(`✅ Filled email: ${credentials.email}`);
+        break;
       }
     }
 
-    // 3. Check auth configuration
-    console.log("\n⚙️  Environment Check:");
-    console.log(`   NEXTAUTH_SECRET set: ${!!process.env.NEXTAUTH_SECRET}`);
-    console.log(`   NEXTAUTH_URL: ${process.env.NEXTAUTH_URL || "not set"}`);
-    console.log(`   NODE_ENV: ${process.env.NODE_ENV}`);
+    if (!emailFound) {
+      console.error("❌ No email input found!");
+      const html = await page.content();
+      console.log("\n📄 Page HTML (first 1000 chars):");
+      console.log(html.substring(0, 1000));
+      return false;
+    }
 
-    // 4. Recommendations
-    console.log("\n💡 Recommendations:");
-    if (!isValid) {
-      console.log("   1. Re-run seed script to reset passwords:");
-      console.log("      npm run seed:basic");
-      console.log("   2. Or manually update password in database");
-      console.log(
-        "   3. Check if bcrypt version matches between seed and auth",
-      );
+    await page.screenshot({ path: `debug-auth-${role}-2-email-filled.png` });
+
+    // Check if password input exists
+    console.log("\n3️⃣  Looking for password input...");
+    const passwordSelectors = [
+      'input[type="password"]',
+      'input[name="password"]',
+      'input[id="password"]',
+    ];
+
+    let passwordFound = false;
+    for (const selector of passwordSelectors) {
+      const count = await page.locator(selector).count();
+      console.log(`   ${selector}: ${count} found`);
+      if (count > 0) {
+        passwordFound = true;
+        console.log(`✅ Found password input: ${selector}`);
+        await page.fill(selector, credentials.password);
+        console.log(`✅ Filled password: ***`);
+        break;
+      }
+    }
+
+    if (!passwordFound) {
+      console.error("❌ No password input found!");
+      return false;
+    }
+
+    await page.screenshot({ path: `debug-auth-${role}-3-password-filled.png` });
+
+    // Look for submit button
+    console.log("\n4️⃣  Looking for submit button...");
+    const submitSelectors = [
+      'button[type="submit"]',
+      'button:has-text("Sign In")',
+      'button:has-text("Log In")',
+      'button:has-text("Login")',
+      'input[type="submit"]',
+    ];
+
+    let submitFound = false;
+    for (const selector of submitSelectors) {
+      const count = await page.locator(selector).count();
+      console.log(`   ${selector}: ${count} found`);
+      if (count > 0) {
+        submitFound = true;
+        console.log(`✅ Found submit button: ${selector}`);
+        break;
+      }
+    }
+
+    if (!submitFound) {
+      console.error("❌ No submit button found!");
+      return false;
+    }
+
+    // Submit form
+    console.log("\n5️⃣  Submitting form...");
+    const currentUrl = page.url();
+    console.log(`   Current URL: ${currentUrl}`);
+
+    await page.click('button[type="submit"]');
+    console.log("✅ Clicked submit button");
+
+    // Wait for navigation or error message
+    console.log("\n6️⃣  Waiting for response...");
+    await page.waitForTimeout(3000); // Give it 3 seconds
+
+    const newUrl = page.url();
+    console.log(`   New URL: ${newUrl}`);
+
+    await page.screenshot({ path: `debug-auth-${role}-4-after-submit.png` });
+
+    // Check for error messages
+    const errorMessages = await page
+      .locator("text=/error|invalid|incorrect|failed/i")
+      .allTextContents();
+    if (errorMessages.length > 0) {
+      console.log("\n⚠️  Error messages found:");
+      errorMessages.forEach((msg) => console.log(`   - ${msg}`));
+    }
+
+    // Check if authenticated
+    const isAuthenticated =
+      !newUrl.includes("/auth/signin") && !newUrl.includes("/auth/error");
+
+    if (isAuthenticated) {
+      console.log("\n✅ AUTHENTICATION SUCCESSFUL!");
+      console.log(`   Redirected to: ${newUrl}`);
+
+      // Try to access dashboard
+      console.log("\n7️⃣  Testing dashboard access...");
+      const dashboardUrls = [
+        `/dashboard`,
+        `/customer/dashboard`,
+        `/farmer/dashboard`,
+        `/admin/dashboard`,
+      ];
+
+      for (const dashUrl of dashboardUrls) {
+        try {
+          await page.goto(`${BASE_URL}${dashUrl}`, {
+            waitUntil: "domcontentloaded",
+            timeout: 10000,
+          });
+          const dashPageUrl = page.url();
+          if (
+            !dashPageUrl.includes("/auth/signin") &&
+            !dashPageUrl.includes("/auth/error")
+          ) {
+            console.log(`✅ Dashboard accessible: ${dashUrl}`);
+            await page.screenshot({
+              path: `debug-auth-${role}-5-dashboard.png`,
+            });
+            break;
+          }
+        } catch (e) {
+          console.log(`   ${dashUrl}: not accessible`);
+        }
+      }
+
+      return true;
     } else {
-      console.log("   ✅ Everything looks good!");
-      console.log("   If login still fails, check:");
-      console.log("   - Browser cookies are enabled");
-      console.log("   - NEXTAUTH_SECRET is set correctly");
-      console.log("   - No CORS issues");
+      console.log("\n❌ AUTHENTICATION FAILED");
+      console.log(`   Still on: ${newUrl}`);
+
+      // Get page content for debugging
+      const html = await page.content();
+      console.log("\n📄 Page HTML (first 2000 chars):");
+      console.log(html.substring(0, 2000));
+
+      return false;
     }
   } catch (error) {
-    console.error("\n❌ Error:", error);
-    if (error instanceof Error) {
-      console.error("   Message:", error.message);
-      console.error("   Stack:", error.stack);
-    }
+    console.error("\n❌ ERROR:", error);
+    await page.screenshot({ path: `debug-auth-${role}-error.png` });
+    return false;
   } finally {
-    await database.$disconnect();
+    await browser.close();
   }
 }
 
-main();
+async function main() {
+  const headless = process.env.HEADLESS !== "false";
+  console.log(`\n🚀 Starting authentication debug tests`);
+  console.log(`   Base URL: ${BASE_URL}`);
+  console.log(`   Headless: ${headless}`);
+
+  const roles: Array<"customer" | "farmer" | "admin"> = [
+    "customer",
+    "farmer",
+    "admin",
+  ];
+
+  const results: Record<string, boolean> = {};
+
+  for (const role of roles) {
+    const success = await testAuth(role, headless);
+    results[role] = success;
+  }
+
+  console.log(`\n${"=".repeat(80)}`);
+  console.log("📊 SUMMARY");
+  console.log("=".repeat(80));
+  for (const [role, success] of Object.entries(results)) {
+    console.log(
+      `   ${success ? "✅" : "❌"} ${role}: ${success ? "PASS" : "FAIL"}`,
+    );
+  }
+  console.log("");
+
+  process.exit(Object.values(results).every((r) => r) ? 0 : 1);
+}
+
+main().catch((error) => {
+  console.error("Fatal error:", error);
+  process.exit(1);
+});
