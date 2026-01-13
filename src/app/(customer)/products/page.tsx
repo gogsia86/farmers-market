@@ -163,11 +163,16 @@ export default async function ProductsPage({ searchParams }: PageProps) {
           {/* Search Bar */}
           <form method="GET" action="/products" className="mt-6">
             <div className="flex gap-2">
+              <label htmlFor="product-search" className="sr-only">
+                Search products
+              </label>
               <input
                 type="text"
+                id="product-search"
                 name="search"
                 defaultValue={params.search}
                 placeholder="Search products..."
+                aria-label="Search products"
                 className="block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm"
               />
               <button

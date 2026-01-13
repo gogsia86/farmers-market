@@ -11,8 +11,8 @@ import { notFound } from "next/navigation";
 import { cache, Suspense } from "react";
 
 // Enable ISR with smart revalidation
-// Revalidate every 5 minutes for fresh data with great performance
-export const revalidate = 300;
+// Revalidate every 10 minutes for optimal performance
+export const revalidate = 600;
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -76,6 +76,7 @@ function FarmPhotoGallery({
           fill
           className="object-cover"
           priority
+          quality={85}
           sizes="100vw"
         />
       </div>
@@ -93,6 +94,8 @@ function FarmPhotoGallery({
                 alt={`${farmName} - Photo ${index + 2}`}
                 fill
                 className="object-cover transition-transform hover:scale-110"
+                loading="lazy"
+                quality={75}
                 sizes="(max-width: 768px) 50vw, 25vw"
               />
             </div>
@@ -158,6 +161,8 @@ async function FarmProducts({ farmId }: { farmId: string }) {
                   alt={product.name}
                   fill
                   className="object-cover transition-transform group-hover:scale-105"
+                  loading="lazy"
+                  quality={80}
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
                 />
               ) : (
@@ -250,8 +255,10 @@ async function FarmCertifications({ farmId }: { farmId: string }) {
 // ============================================================================
 
 // Cached farm data fetching with React cache for request deduplication
+// This ensures the same farm data is only fetched once per request
 const getFarmData = cache(async (slug: string) => {
-  return await farmService.getFarmDetailData(slug);
+  const data = await farmService.getFarmDetailData(slug);
+  return data;
 });
 
 export default async function FarmDetailPage({ params }: PageProps) {
@@ -579,7 +586,7 @@ export async function generateMetadata({
     "/images/placeholder-farm.jpg";
 
   return {
-    title: `${farm.name} | Farmers Market`,
+    title: `${farm.name} | Fresh Farm`,
     description: farm.description || `Discover fresh produce from ${farm.name}`,
     openGraph: {
       title: farm.name,
