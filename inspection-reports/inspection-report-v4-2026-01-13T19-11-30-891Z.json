@@ -1,0 +1,144 @@
+{
+  "version": "4.0.0",
+  "summary": {
+    "totalPages": 5,
+    "successful": 5,
+    "errors": 0,
+    "warnings": 0,
+    "missing": 0,
+    "totalDuration": 102459,
+    "avgLoadTime": 3837,
+    "timestamp": "2026-01-13T19:11:30.891Z"
+  },
+  "results": [
+    {
+      "path": "/",
+      "name": "Homepage",
+      "status": "success",
+      "loadTime": 539,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [],
+      "performanceMetrics": {
+        "ttfb": 73.09999999962747,
+        "fcp": 0,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T19:09:49.328Z",
+      "workerId": 0,
+      "statusCode": 200,
+      "retryCount": 1
+    },
+    {
+      "path": "/auth/signin",
+      "name": "Sign In",
+      "status": "success",
+      "loadTime": 9038,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "2 form inputs without labels"
+      ],
+      "performanceMetrics": {
+        "ttfb": 44.89999999944121,
+        "fcp": 0,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T19:09:57.792Z",
+      "workerId": 1,
+      "statusCode": 200,
+      "retryCount": 1
+    },
+    {
+      "path": "/auth/signup",
+      "name": "Sign Up",
+      "status": "success",
+      "loadTime": 1860,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "2 form inputs without labels"
+      ],
+      "performanceMetrics": {
+        "ttfb": 42.700000000186265,
+        "fcp": 0,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T19:09:50.687Z",
+      "workerId": 2,
+      "statusCode": 200,
+      "retryCount": 1
+    },
+    {
+      "path": "/farms",
+      "name": "Browse Farms",
+      "status": "success",
+      "loadTime": 4227,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [],
+      "performanceMetrics": {
+        "ttfb": 54.09999999962747,
+        "fcp": 1684,
+        "domComplete": 4222.700000000186,
+        "loadComplete": 4253.5999999996275
+      },
+      "timestamp": "2026-01-13T19:09:53.144Z",
+      "workerId": 3,
+      "statusCode": 200,
+      "retryCount": 1
+    },
+    {
+      "path": "/products",
+      "name": "Browse Products",
+      "status": "success",
+      "loadTime": 3521,
+      "errors": [],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "3 form inputs without labels"
+      ],
+      "performanceMetrics": {
+        "ttfb": 52.5,
+        "fcp": 1112,
+        "domComplete": 0,
+        "loadComplete": 0
+      },
+      "timestamp": "2026-01-13T19:09:52.425Z",
+      "workerId": 4,
+      "statusCode": 200,
+      "retryCount": 1
+    }
+  ],
+  "criticalIssues": [
+    "Total crashes: 5 across 5 pages"
+  ],
+  "recommendations": [],
+  "metadata": {
+    "concurrency": 5,
+    "lighthouseEnabled": false,
+    "securityEnabled": false,
+    "visualRegressionEnabled": false,
+    "mockAuthEnabled": false,
+    "crashRecoveryEnabled": true,
+    "environment": "production"
+  }
+}

@@ -1,0 +1,15 @@
+
+> farmers-market@1.1.0 pretest
+> prisma generate
+
+
+✔ Generated Prisma Client (v7.2.0) to .\node_modules\@prisma\client in 773ms
+
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+
+Tip: Want to turn off tips and other hints? https://pris.ly/tip-4-nohints
+
+
+> farmers-market@1.1.0 test
+> cross-env NODE_OPTIONS=--max-old-space-size=8192 jest --maxWorkers=6 --passWithNoTests --maxWorkers=2 --silent
+
