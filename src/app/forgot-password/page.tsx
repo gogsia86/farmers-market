@@ -62,13 +62,10 @@ class ErrorBoundary extends Component<
  * - Removed Suspense to prevent page crashes
  * - Simplified component structure
  * - Added proper error boundaries
- * - Added dynamic rendering
+ * - Client component for ErrorBoundary compatibility
  */
 
-// Prevent static optimization issues
-export const dynamic = "force-dynamic";
-
-export default function ForgotPasswordPage() {
+function ForgotPasswordPage() {
   return (
     <ErrorBoundary>
       <main className="min-h-screen bg-gradient-to-b from-green-50 to-white flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -77,3 +74,5 @@ export default function ForgotPasswordPage() {
     </ErrorBoundary>
   );
 }
+
+export default ForgotPasswordPage;

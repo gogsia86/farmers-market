@@ -1,13 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";
 import { readFileSync } from "fs";
+import { NextRequest, NextResponse } from "next/server";
 import { join } from "path";
-import yaml from "js-yaml";
 
 /**
  * GET /api/openapi.json
  *
  * Serves the OpenAPI specification as JSON.
- * Converts the YAML spec to JSON format for Swagger UI consumption.
+ * Reads the pre-converted JSON spec for Swagger UI consumption.
  *
  * @route GET /api/openapi.json
  * @returns OpenAPI 3.0.3 specification in JSON format
@@ -20,12 +19,10 @@ import yaml from "js-yaml";
  */
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
-    // Read the OpenAPI YAML file
-    const openapiPath = join(process.cwd(), "docs", "api", "openapi.yaml");
-    const openapiYaml = readFileSync(openapiPath, "utf8");
-
-    // Convert YAML to JSON
-    const openapiJson = yaml.load(openapiYaml) as Record<string, any>;
+    // Read the OpenAPI JSON file (pre-converted from YAML)
+    const openapiPath = join(process.cwd(), "docs", "api", "openapi.json");
+    const openapiContent = readFileSync(openapiPath, "utf8");
+    const openapiJson = JSON.parse(openapiContent) as Record<string, any>;
 
     // Determine the base URL based on the request
     const protocol = request.headers.get("x-forwarded-proto") || "http";
@@ -62,23 +59,31 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   } catch (error) {
     console.error("Failed to load OpenAPI specification:", error);
 
-    return NextResponse.json(
-      {
-        success: false,
-        error: {
-          code: "OPENAPI_LOAD_ERROR",
-          message: "Failed to load OpenAPI specification",
-          details:
-            error instanceof Error ? error.message : "Unknown error occurred",
-        },
+    // Return a minimal OpenAPI spec as fallback
+    const fallbackSpec = {
+      openapi: "3.0.3",
+      info: {
+        title: "Farmers Market Platform API",
+        version: "1.0.0",
+        description:
+          "API documentation is temporarily unavailable. Please try again later.",
       },
-      {
-        status: 500,
-        headers: {
-          "Content-Type": "application/json",
+      servers: [
+        {
+          url: `${request.headers.get("x-forwarded-proto") || "http"}://${request.headers.get("host") || "localhost:3001"}`,
+          description: "Current server",
         },
+      ],
+      paths: {},
+    };
+
+    return NextResponse.json(fallbackSpec, {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": "no-cache",
       },
-    );
+    });
   }
 }
 

@@ -63,12 +63,10 @@ class ErrorBoundary extends Component<
  * - Removed Suspense to prevent hydration crashes
  * - Simplified component structure
  * - Added proper error boundaries
+ * - Client component for ErrorBoundary compatibility
  */
 
-// Prevent static optimization issues
-export const dynamic = "force-dynamic";
-
-export default function SignupPage() {
+function SignupPage() {
   return (
     <ErrorBoundary>
       <main className="min-h-screen bg-gradient-to-b from-green-50 to-white flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -79,3 +77,5 @@ export default function SignupPage() {
     </ErrorBoundary>
   );
 }
+
+export default SignupPage;

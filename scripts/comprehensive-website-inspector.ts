@@ -552,41 +552,113 @@ class WebsiteInspector {
   async authenticate(role: "customer" | "farmer" | "admin") {
     log(`Authenticating as ${role}...`, "info");
 
-    try {
-      const credentials = CONFIG.testUsers[role];
+    const maxRetries = 2;
+    let attempt = 0;
 
-      // Go to login page
-      await this.page!.goto(`${CONFIG.baseUrl}/login`, {
-        waitUntil: "networkidle",
-        timeout: CONFIG.navigationTimeout,
-      });
+    while (attempt < maxRetries) {
+      try {
+        attempt++;
+        if (attempt > 1) {
+          log(`Retry attempt ${attempt}/${maxRetries} for ${role}...`, "warn");
+        }
 
-      // Fill login form
-      await this.page!.fill(
-        'input[name="email"], input[type="email"]',
-        credentials.email,
-      );
-      await this.page!.fill(
-        'input[name="password"], input[type="password"]',
-        credentials.password,
-      );
+        const credentials = CONFIG.testUsers[role];
 
-      // Submit form
-      await this.page!.click(
-        'button[type="submit"], button:has-text("Login"), button:has-text("Sign In")',
-      );
+        // Go to login page with more reliable wait condition
+        log(`Navigating to login page...`, "info");
+        await this.page!.goto(`${CONFIG.baseUrl}/login`, {
+          waitUntil: "domcontentloaded", // Changed from networkidle for better reliability
+          timeout: 45000, // Reduced from 60s for faster failure detection
+        });
 
-      // Wait for navigation
-      await this.page!.waitForURL((url) => !url.pathname.includes("/login"), {
-        timeout: CONFIG.timeout,
-      });
+        // Wait a bit for any dynamic content to load
+        await this.page!.waitForTimeout(2000);
 
-      log(`Authenticated as ${role} successfully`, "success");
-      return true;
-    } catch (error) {
-      log(`Authentication failed for ${role}: ${error}`, "error");
-      return false;
+        // Verify login form is present
+        const emailInput = await this.page!.$(
+          'input[name="email"], input[type="email"]',
+        );
+        const passwordInput = await this.page!.$(
+          'input[name="password"], input[type="password"]',
+        );
+
+        if (!emailInput || !passwordInput) {
+          throw new Error("Login form not found on page");
+        }
+
+        log(`Filling credentials for ${credentials.email}...`, "info");
+
+        // Fill login form
+        await this.page!.fill(
+          'input[name="email"], input[type="email"]',
+          credentials.email,
+        );
+        await this.page!.fill(
+          'input[name="password"], input[type="password"]',
+          credentials.password,
+        );
+
+        // Wait a moment before submitting
+        await this.page!.waitForTimeout(500);
+
+        log(`Submitting login form...`, "info");
+
+        // Submit form
+        await this.page!.click(
+          'button[type="submit"], button:has-text("Login"), button:has-text("Sign In")',
+        );
+
+        // Wait for navigation with better error handling
+        try {
+          await this.page!.waitForURL(
+            (url) => !url.pathname.includes("/login"),
+            {
+              timeout: 30000, // 30 seconds for navigation
+            },
+          );
+        } catch (navError) {
+          // Check if we're still on login page (invalid credentials) vs timeout
+          const currentUrl = this.page!.url();
+          if (currentUrl.includes("/login")) {
+            // Check for error messages on the page
+            const errorText = await this.page!.textContent("body");
+            if (errorText?.toLowerCase().includes("invalid")) {
+              throw new Error(
+                "Invalid credentials - user may not exist in database",
+              );
+            }
+            throw new Error(
+              "Login failed - still on login page after submission",
+            );
+          }
+          throw navError;
+        }
+
+        log(`Authenticated as ${role} successfully`, "success");
+        return true;
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        log(
+          `Authentication attempt ${attempt} failed: ${errorMessage}`,
+          "error",
+        );
+
+        if (attempt >= maxRetries) {
+          log(`All authentication attempts failed for ${role}`, "error");
+          log(
+            `Possible causes: User doesn't exist, invalid credentials, or network issues`,
+            "warn",
+          );
+          return false;
+        }
+
+        // Wait before retry
+        await this.page!.waitForTimeout(2000);
+      }
     }
+
+    return false;
   }
 
   // Inspect a single page

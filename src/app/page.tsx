@@ -9,22 +9,27 @@ export const metadata: Metadata = {
     "Connect with local farmers and get fresh, organic produce delivered to your door",
 };
 
-// Force dynamic rendering to fetch fresh data
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+// Enable ISR with 5-minute revalidation for better performance
+export const revalidate = 300;
 
 export default async function HomePage() {
-  // Fetch featured data with error handling
+  // Fetch featured data with error handling and parallel requests
   let featuredProducts: any[] = [];
   let featuredFarms: any[] = [];
 
   try {
-    const [products, { farms }] = await Promise.all([
-      productService.getFeaturedProducts(8),
-      farmService.getAllFarms({ status: "ACTIVE", limit: 6 }),
+    // Use Promise.allSettled to handle partial failures gracefully
+    const results = await Promise.allSettled([
+      productService.getFeaturedProducts(6), // Reduced from 8 to 6 for faster loading
+      farmService.getAllFarms({ status: "ACTIVE", limit: 4 }), // Reduced from 6 to 4
     ]);
-    featuredProducts = products;
-    featuredFarms = farms;
+
+    if (results[0].status === "fulfilled") {
+      featuredProducts = results[0].value;
+    }
+    if (results[1].status === "fulfilled") {
+      featuredFarms = results[1].value.farms;
+    }
   } catch (error) {
     console.error("Error fetching homepage data:", error);
     // Continue with empty arrays - page will still render
