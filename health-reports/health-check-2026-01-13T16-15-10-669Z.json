@@ -1,0 +1,284 @@
+{
+  "overall": "critical",
+  "baseUrl": "https://farmers-market-platform.vercel.app",
+  "checks": [
+    {
+      "name": "Homepage Load",
+      "category": "Core",
+      "status": "pass",
+      "duration": 24100,
+      "message": "Successfully loaded with title: \"Farmers Market Platform | Fresh Local Produce\"",
+      "details": {
+        "statusCode": 200,
+        "title": "Farmers Market Platform | Fresh Local Produce",
+        "url": "https://farmers-market-platform.vercel.app"
+      },
+      "timestamp": "2026-01-13T16:13:32.167Z"
+    },
+    {
+      "name": "Health API Endpoint",
+      "category": "Core",
+      "status": "warn",
+      "duration": 1941,
+      "message": "Health endpoint returned unexpected format",
+      "details": {
+        "statusCode": 503
+      },
+      "timestamp": "2026-01-13T16:13:34.110Z"
+    },
+    {
+      "name": "Database Connection",
+      "category": "Core",
+      "status": "fail",
+      "duration": 1424,
+      "message": "Database connection failed",
+      "error": "Database is responsive",
+      "timestamp": "2026-01-13T16:13:35.535Z"
+    },
+    {
+      "name": "Authentication Pages",
+      "category": "Authentication",
+      "status": "pass",
+      "duration": 1024,
+      "message": "Login and registration pages accessible",
+      "details": {
+        "loginStatus": 200,
+        "registerStatus": 200
+      },
+      "timestamp": "2026-01-13T16:13:36.559Z"
+    },
+    {
+      "name": "Auth API Endpoints",
+      "category": "Authentication",
+      "status": "pass",
+      "duration": 613,
+      "message": "NextAuth endpoints responding",
+      "details": {
+        "statusCode": 200
+      },
+      "timestamp": "2026-01-13T16:13:37.173Z"
+    },
+    {
+      "name": "Products API",
+      "category": "API",
+      "status": "pass",
+      "duration": 1333,
+      "message": "Products API working (0 products)",
+      "details": {
+        "productCount": 0,
+        "statusCode": 200
+      },
+      "timestamp": "2026-01-13T16:13:38.709Z"
+    },
+    {
+      "name": "Farms API",
+      "category": "API",
+      "status": "pass",
+      "duration": 510,
+      "message": "Farms API working (10 farms)",
+      "details": {
+        "farmCount": 10,
+        "statusCode": 200
+      },
+      "timestamp": "2026-01-13T16:13:39.530Z"
+    },
+    {
+      "name": "Categories API",
+      "category": "API",
+      "status": "pass",
+      "duration": 514,
+      "message": "Categories API working (0 categories)",
+      "details": {
+        "categoryCount": 0,
+        "statusCode": 200
+      },
+      "timestamp": "2026-01-13T16:13:40.149Z"
+    },
+    {
+      "name": "Search API",
+      "category": "API",
+      "status": "pass",
+      "duration": 1015,
+      "message": "Search API working (0 results for \"tomato\")",
+      "details": {
+        "resultCount": 0,
+        "statusCode": 200
+      },
+      "timestamp": "2026-01-13T16:13:41.268Z"
+    },
+    {
+      "name": "Marketplace Page",
+      "category": "Pages",
+      "status": "pass",
+      "duration": 8914,
+      "message": "Marketplace page loaded",
+      "details": {
+        "statusCode": 200,
+        "hasProducts": false
+      },
+      "timestamp": "2026-01-13T16:13:50.197Z"
+    },
+    {
+      "name": "Farms Page",
+      "category": "Pages",
+      "status": "pass",
+      "duration": 2139,
+      "message": "Farms page loaded successfully",
+      "details": {
+        "statusCode": 200
+      },
+      "timestamp": "2026-01-13T16:13:52.337Z"
+    },
+    {
+      "name": "About Page",
+      "category": "Pages",
+      "status": "pass",
+      "duration": 1936,
+      "message": "About page accessible",
+      "details": {
+        "statusCode": 200
+      },
+      "timestamp": "2026-01-13T16:13:54.273Z"
+    },
+    {
+      "name": "Page Performance",
+      "category": "Performance",
+      "status": "fail",
+      "duration": 30016,
+      "message": "Performance check failed",
+      "error": "page.goto: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"https://farmers-market-platform.vercel.app/\", waiting until \"load\"\u001b[22m\n",
+      "timestamp": "2026-01-13T16:14:24.290Z"
+    },
+    {
+      "name": "Security Headers",
+      "category": "Security",
+      "status": "pass",
+      "duration": 808,
+      "message": "All security headers present",
+      "details": {
+        "found": 4,
+        "missing": 0,
+        "missingHeaders": ""
+      },
+      "timestamp": "2026-01-13T16:14:25.098Z"
+    },
+    {
+      "name": "SSL Certificate",
+      "category": "Security",
+      "status": "pass",
+      "duration": 0,
+      "message": "HTTPS enabled and working",
+      "details": {
+        "https": true,
+        "statusCode": 200
+      },
+      "timestamp": "2026-01-13T16:14:27.700Z"
+    },
+    {
+      "name": "SEO Meta Tags",
+      "category": "SEO",
+      "status": "pass",
+      "duration": 8764,
+      "message": "SEO score: 3/3",
+      "details": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasOgTitle": true,
+        "title": "Farmers Market Platform | Fresh Local Produce"
+      },
+      "timestamp": "2026-01-13T16:14:36.465Z"
+    },
+    {
+      "name": "Static Assets",
+      "category": "Performance",
+      "status": "warn",
+      "duration": 30008,
+      "message": "Static assets check incomplete",
+      "error": "page.goto: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"https://farmers-market-platform.vercel.app/\", waiting until \"networkidle\"\u001b[22m\n",
+      "timestamp": "2026-01-13T16:15:06.474Z"
+    },
+    {
+      "name": "Dashboard Route Protection",
+      "category": "Security",
+      "status": "pass",
+      "duration": 4189,
+      "message": "Dashboard correctly protected (redirects to login)",
+      "details": {
+        "statusCode": 307,
+        "protected": true
+      },
+      "timestamp": "2026-01-13T16:15:10.663Z"
+    }
+  ],
+  "totalDuration": 122598,
+  "timestamp": "2026-01-13T16:15:10.664Z",
+  "successRate": 77.77777777777779,
+  "categories": {
+    "Core": {
+      "total": 3,
+      "passed": 1,
+      "failed": 1,
+      "warned": 1
+    },
+    "Authentication": {
+      "total": 2,
+      "passed": 2,
+      "failed": 0,
+      "warned": 0
+    },
+    "API": {
+      "total": 4,
+      "passed": 4,
+      "failed": 0,
+      "warned": 0
+    },
+    "Pages": {
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "warned": 0
+    },
+    "Performance": {
+      "total": 2,
+      "passed": 0,
+      "failed": 1,
+      "warned": 1
+    },
+    "Security": {
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "warned": 0
+    },
+    "SEO": {
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "warned": 0
+    }
+  },
+  "performance": {
+    "fastest": {
+      "name": "SSL Certificate",
+      "category": "Security",
+      "status": "pass",
+      "duration": 0,
+      "message": "HTTPS enabled and working",
+      "details": {
+        "https": true,
+        "statusCode": 200
+      },
+      "timestamp": "2026-01-13T16:14:27.700Z"
+    },
+    "slowest": {
+      "name": "Page Performance",
+      "category": "Performance",
+      "status": "fail",
+      "duration": 30016,
+      "message": "Performance check failed",
+      "error": "page.goto: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"https://farmers-market-platform.vercel.app/\", waiting until \"load\"\u001b[22m\n",
+      "timestamp": "2026-01-13T16:14:24.290Z"
+    },
+    "average": 6624.888888888889
+  }
+}
