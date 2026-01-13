@@ -1,0 +1,846 @@
+{
+  "summary": {
+    "totalPages": 39,
+    "successful": 0,
+    "errors": 22,
+    "warnings": 17,
+    "missing": 0,
+    "totalDuration": 903745,
+    "timestamp": "2026-01-13T01:02:58.602Z"
+  },
+  "results": [
+    {
+      "path": "/",
+      "name": "Homepage",
+      "status": "warning",
+      "loadTime": 11814,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state",
+        "Accessibility issues detected: 1",
+        "Slow TTFB: 2047ms",
+        "Slow FCP: 11844ms"
+      ],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 2047,
+        "fcp": 11844
+      },
+      "timestamp": "2026-01-13T00:47:55.060Z",
+      "statusCode": 200,
+      "screenshot": "inspection-reports\\screenshots\\public--.png"
+    },
+    {
+      "path": "/about",
+      "name": "About Us",
+      "status": "warning",
+      "loadTime": 521,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state",
+        "Accessibility issues detected: 1"
+      ],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 142.29999999701977,
+        "fcp": 552
+      },
+      "timestamp": "2026-01-13T00:48:49.301Z",
+      "statusCode": 200,
+      "screenshot": "inspection-reports\\screenshots\\public--about.png"
+    },
+    {
+      "path": "/contact",
+      "name": "Contact",
+      "status": "warning",
+      "loadTime": 503,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state",
+        "Accessibility issues detected: 1"
+      ],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 83.19999998807907,
+        "fcp": 448
+      },
+      "timestamp": "2026-01-13T00:49:35.543Z",
+      "statusCode": 200,
+      "screenshot": "inspection-reports\\screenshots\\public--contact.png"
+    },
+    {
+      "path": "/faq",
+      "name": "FAQ",
+      "status": "warning",
+      "loadTime": 467,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state",
+        "Broken link: /",
+        "SEO issues detected: 1",
+        "Accessibility issues detected: 1"
+      ],
+      "missingElements": [],
+      "brokenLinks": [
+        "/ (failed to fetch)"
+      ],
+      "seoIssues": [
+        "Page title too long (> 60 characters)"
+      ],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 48.3999999910593,
+        "fcp": 412
+      },
+      "timestamp": "2026-01-13T00:50:15.923Z",
+      "statusCode": 200,
+      "screenshot": "inspection-reports\\screenshots\\public--faq.png"
+    },
+    {
+      "path": "/how-it-works",
+      "name": "How It Works",
+      "status": "warning",
+      "loadTime": 497,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state",
+        "Broken link: /register-farm",
+        "Accessibility issues detected: 1"
+      ],
+      "missingElements": [],
+      "brokenLinks": [
+        "/register-farm (failed to fetch)"
+      ],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 182.5,
+        "fcp": 564
+      },
+      "timestamp": "2026-01-13T00:51:10.267Z",
+      "statusCode": 200,
+      "screenshot": "inspection-reports\\screenshots\\public--how-it-works.png"
+    },
+    {
+      "path": "/shipping",
+      "name": "Shipping Info",
+      "status": "warning",
+      "loadTime": 504,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state",
+        "Accessibility issues detected: 1"
+      ],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 99.69999998807907,
+        "fcp": 532
+      },
+      "timestamp": "2026-01-13T00:51:52.652Z",
+      "statusCode": 200,
+      "screenshot": "inspection-reports\\screenshots\\public--shipping.png"
+    },
+    {
+      "path": "/marketplace",
+      "name": "Marketplace",
+      "status": "warning",
+      "loadTime": 2107,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state",
+        "SEO issues detected: 2",
+        "Accessibility issues detected: 1"
+      ],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [
+        "Page title too long (> 60 characters)",
+        "Missing H1 heading"
+      ],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 50.599999994039536,
+        "fcp": 532
+      },
+      "timestamp": "2026-01-13T00:52:38.155Z",
+      "statusCode": 200,
+      "screenshot": "inspection-reports\\screenshots\\public--marketplace.png"
+    },
+    {
+      "path": "/products",
+      "name": "Products",
+      "status": "warning",
+      "loadTime": 1616,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state",
+        "Accessibility issues detected: 2"
+      ],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label",
+        "Input without associated label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 64.70000000298023,
+        "fcp": 1568
+      },
+      "timestamp": "2026-01-13T00:53:24.936Z",
+      "statusCode": 200,
+      "screenshot": "inspection-reports\\screenshots\\public--products.png"
+    },
+    {
+      "path": "/farms",
+      "name": "Farm Directory",
+      "status": "warning",
+      "loadTime": 618,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state",
+        "Accessibility issues detected: 2"
+      ],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label",
+        "Potential low contrast issues detected"
+      ],
+      "performanceMetrics": {
+        "ttfb": 95.70000000298023,
+        "fcp": 648
+      },
+      "timestamp": "2026-01-13T00:54:09.041Z",
+      "statusCode": 200,
+      "screenshot": "inspection-reports\\screenshots\\public--farms.png"
+    },
+    {
+      "path": "/login",
+      "name": "Login",
+      "status": "warning",
+      "loadTime": 361,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state",
+        "Accessibility issues detected: 1"
+      ],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 47.20000000298023,
+        "fcp": 392
+      },
+      "timestamp": "2026-01-13T00:54:50.050Z",
+      "statusCode": 200,
+      "screenshot": "inspection-reports\\screenshots\\auth--login.png"
+    },
+    {
+      "path": "/register",
+      "name": "Register",
+      "status": "warning",
+      "loadTime": 688,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state",
+        "Accessibility issues detected: 2"
+      ],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label",
+        "Potential low contrast issues detected"
+      ],
+      "performanceMetrics": {
+        "ttfb": 67.19999998807907,
+        "fcp": 720
+      },
+      "timestamp": "2026-01-13T00:55:32.730Z",
+      "statusCode": 200,
+      "screenshot": "inspection-reports\\screenshots\\auth--register.png"
+    },
+    {
+      "path": "/register-farm",
+      "name": "Farmer Registration",
+      "status": "warning",
+      "loadTime": 446,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state",
+        "Accessibility issues detected: 1"
+      ],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 101,
+        "fcp": 476
+      },
+      "timestamp": "2026-01-13T00:56:17.314Z",
+      "statusCode": 200,
+      "screenshot": "inspection-reports\\screenshots\\auth--register-farm.png"
+    },
+    {
+      "path": "/signup",
+      "name": "Signup",
+      "status": "warning",
+      "loadTime": 686,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state",
+        "Accessibility issues detected: 2"
+      ],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label",
+        "Potential low contrast issues detected"
+      ],
+      "performanceMetrics": {
+        "ttfb": 60.79999999701977,
+        "fcp": 716
+      },
+      "timestamp": "2026-01-13T00:56:57.625Z",
+      "statusCode": 200,
+      "screenshot": "inspection-reports\\screenshots\\auth--signup.png"
+    },
+    {
+      "path": "/forgot-password",
+      "name": "Forgot Password",
+      "status": "warning",
+      "loadTime": 555,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state",
+        "Missing expected element: input[type=\"password\"]",
+        "Accessibility issues detected: 1"
+      ],
+      "missingElements": [
+        "input[type=\"password\"]"
+      ],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 121.5,
+        "fcp": 580
+      },
+      "timestamp": "2026-01-13T00:57:39.844Z",
+      "statusCode": 200,
+      "screenshot": "inspection-reports\\screenshots\\auth--forgot-password.png"
+    },
+    {
+      "path": "/legal/terms",
+      "name": "Terms of Service",
+      "status": "warning",
+      "loadTime": 485,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state",
+        "Missing expected element: article, section",
+        "Accessibility issues detected: 1"
+      ],
+      "missingElements": [
+        "article, section"
+      ],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 99.30000001192093,
+        "fcp": 516
+      },
+      "timestamp": "2026-01-13T00:58:20.054Z",
+      "statusCode": 200,
+      "screenshot": "inspection-reports\\screenshots\\legal--legal-terms.png"
+    },
+    {
+      "path": "/legal/privacy",
+      "name": "Privacy Policy",
+      "status": "warning",
+      "loadTime": 1101,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state",
+        "Missing expected element: article, section",
+        "Accessibility issues detected: 1"
+      ],
+      "missingElements": [
+        "article, section"
+      ],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [
+        "Button without text or aria-label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 101.40000000596046,
+        "fcp": 1132
+      },
+      "timestamp": "2026-01-13T00:59:02.135Z",
+      "statusCode": 200,
+      "screenshot": "inspection-reports\\screenshots\\legal--legal-privacy.png"
+    },
+    {
+      "path": "/api-docs",
+      "name": "API Documentation",
+      "status": "warning",
+      "loadTime": 2020,
+      "errors": [],
+      "warnings": [
+        "Page did not reach networkidle state",
+        "SEO issues detected: 2",
+        "Accessibility issues detected: 2"
+      ],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [
+        "Page title too long (> 60 characters)",
+        "Multiple H1 headings found"
+      ],
+      "a11yIssues": [
+        "Button without text or aria-label",
+        "Input without associated label"
+      ],
+      "performanceMetrics": {
+        "ttfb": 150.5,
+        "fcp": 2028
+      },
+      "timestamp": "2026-01-13T00:59:46.494Z",
+      "statusCode": 200,
+      "screenshot": "inspection-reports\\screenshots\\api--api-docs.png"
+    },
+    {
+      "path": "/customer/dashboard",
+      "name": "Customer Dashboard",
+      "status": "error",
+      "loadTime": 0,
+      "errors": [
+        "Authentication failed"
+      ],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [],
+      "performanceMetrics": {},
+      "timestamp": "2026-01-13T01:01:34.537Z"
+    },
+    {
+      "path": "/customer/marketplace",
+      "name": "Customer Marketplace",
+      "status": "error",
+      "loadTime": 0,
+      "errors": [
+        "Authentication failed"
+      ],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [],
+      "performanceMetrics": {},
+      "timestamp": "2026-01-13T01:01:34.537Z"
+    },
+    {
+      "path": "/customer/farms",
+      "name": "Customer Farms",
+      "status": "error",
+      "loadTime": 0,
+      "errors": [
+        "Authentication failed"
+      ],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [],
+      "performanceMetrics": {},
+      "timestamp": "2026-01-13T01:01:34.537Z"
+    },
+    {
+      "path": "/customer/cart",
+      "name": "Shopping Cart",
+      "status": "error",
+      "loadTime": 0,
+      "errors": [
+        "Authentication failed"
+      ],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [],
+      "performanceMetrics": {},
+      "timestamp": "2026-01-13T01:01:34.537Z"
+    },
+    {
+      "path": "/customer/orders",
+      "name": "Customer Orders",
+      "status": "error",
+      "loadTime": 0,
+      "errors": [
+        "Authentication failed"
+      ],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [],
+      "performanceMetrics": {},
+      "timestamp": "2026-01-13T01:01:34.537Z"
+    },
+    {
+      "path": "/customer/favorites",
+      "name": "Favorites",
+      "status": "error",
+      "loadTime": 0,
+      "errors": [
+        "Authentication failed"
+      ],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [],
+      "performanceMetrics": {},
+      "timestamp": "2026-01-13T01:01:34.537Z"
+    },
+    {
+      "path": "/customer/settings",
+      "name": "Customer Settings",
+      "status": "error",
+      "loadTime": 0,
+      "errors": [
+        "Authentication failed"
+      ],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [],
+      "performanceMetrics": {},
+      "timestamp": "2026-01-13T01:01:34.537Z"
+    },
+    {
+      "path": "/checkout",
+      "name": "Checkout",
+      "status": "error",
+      "loadTime": 0,
+      "errors": [
+        "Authentication failed"
+      ],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [],
+      "performanceMetrics": {},
+      "timestamp": "2026-01-13T01:01:34.537Z"
+    },
+    {
+      "path": "/farmer/dashboard",
+      "name": "Farmer Dashboard",
+      "status": "error",
+      "loadTime": 0,
+      "errors": [
+        "Authentication failed"
+      ],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [],
+      "performanceMetrics": {},
+      "timestamp": "2026-01-13T01:02:44.620Z"
+    },
+    {
+      "path": "/farmer/farms",
+      "name": "Farmer Farms",
+      "status": "error",
+      "loadTime": 0,
+      "errors": [
+        "Authentication failed"
+      ],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [],
+      "performanceMetrics": {},
+      "timestamp": "2026-01-13T01:02:44.620Z"
+    },
+    {
+      "path": "/farmer/products",
+      "name": "Farmer Products",
+      "status": "error",
+      "loadTime": 0,
+      "errors": [
+        "Authentication failed"
+      ],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [],
+      "performanceMetrics": {},
+      "timestamp": "2026-01-13T01:02:44.620Z"
+    },
+    {
+      "path": "/farmer/orders",
+      "name": "Farmer Orders",
+      "status": "error",
+      "loadTime": 0,
+      "errors": [
+        "Authentication failed"
+      ],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [],
+      "performanceMetrics": {},
+      "timestamp": "2026-01-13T01:02:44.620Z"
+    },
+    {
+      "path": "/farmer/dashboard/analytics",
+      "name": "Farmer Analytics",
+      "status": "error",
+      "loadTime": 0,
+      "errors": [
+        "Authentication failed"
+      ],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [],
+      "performanceMetrics": {},
+      "timestamp": "2026-01-13T01:02:44.620Z"
+    },
+    {
+      "path": "/farmer/dashboard/finances",
+      "name": "Farmer Finances",
+      "status": "error",
+      "loadTime": 0,
+      "errors": [
+        "Authentication failed"
+      ],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [],
+      "performanceMetrics": {},
+      "timestamp": "2026-01-13T01:02:44.621Z"
+    },
+    {
+      "path": "/farmer/dashboard/recommendations",
+      "name": "Farmer Recommendations",
+      "status": "error",
+      "loadTime": 0,
+      "errors": [
+        "Authentication failed"
+      ],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [],
+      "performanceMetrics": {},
+      "timestamp": "2026-01-13T01:02:44.621Z"
+    },
+    {
+      "path": "/admin",
+      "name": "Admin Dashboard",
+      "status": "error",
+      "loadTime": 0,
+      "errors": [
+        "Authentication failed"
+      ],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [],
+      "performanceMetrics": {},
+      "timestamp": "2026-01-13T01:02:58.602Z"
+    },
+    {
+      "path": "/admin/users",
+      "name": "Admin Users",
+      "status": "error",
+      "loadTime": 0,
+      "errors": [
+        "Authentication failed"
+      ],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [],
+      "performanceMetrics": {},
+      "timestamp": "2026-01-13T01:02:58.602Z"
+    },
+    {
+      "path": "/admin/farms",
+      "name": "Admin Farms",
+      "status": "error",
+      "loadTime": 0,
+      "errors": [
+        "Authentication failed"
+      ],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [],
+      "performanceMetrics": {},
+      "timestamp": "2026-01-13T01:02:58.602Z"
+    },
+    {
+      "path": "/admin/products",
+      "name": "Admin Products",
+      "status": "error",
+      "loadTime": 0,
+      "errors": [
+        "Authentication failed"
+      ],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [],
+      "performanceMetrics": {},
+      "timestamp": "2026-01-13T01:02:58.602Z"
+    },
+    {
+      "path": "/admin/orders",
+      "name": "Admin Orders",
+      "status": "error",
+      "loadTime": 0,
+      "errors": [
+        "Authentication failed"
+      ],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [],
+      "performanceMetrics": {},
+      "timestamp": "2026-01-13T01:02:58.602Z"
+    },
+    {
+      "path": "/admin/reports",
+      "name": "Admin Reports",
+      "status": "error",
+      "loadTime": 0,
+      "errors": [
+        "Authentication failed"
+      ],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [],
+      "performanceMetrics": {},
+      "timestamp": "2026-01-13T01:02:58.602Z"
+    },
+    {
+      "path": "/admin/settings",
+      "name": "Admin Settings",
+      "status": "error",
+      "loadTime": 0,
+      "errors": [
+        "Authentication failed"
+      ],
+      "warnings": [],
+      "missingElements": [],
+      "brokenLinks": [],
+      "seoIssues": [],
+      "a11yIssues": [],
+      "performanceMetrics": {},
+      "timestamp": "2026-01-13T01:02:58.602Z"
+    }
+  ],
+  "criticalIssues": [
+    "CRITICAL: Customer Dashboard (/customer/dashboard) - Authentication failed",
+    "CRITICAL: Customer Marketplace (/customer/marketplace) - Authentication failed",
+    "CRITICAL: Customer Farms (/customer/farms) - Authentication failed",
+    "CRITICAL: Shopping Cart (/customer/cart) - Authentication failed",
+    "CRITICAL: Customer Orders (/customer/orders) - Authentication failed",
+    "CRITICAL: Checkout (/checkout) - Authentication failed",
+    "CRITICAL: Farmer Dashboard (/farmer/dashboard) - Authentication failed",
+    "CRITICAL: Farmer Farms (/farmer/farms) - Authentication failed",
+    "CRITICAL: Farmer Products (/farmer/products) - Authentication failed",
+    "CRITICAL: Farmer Orders (/farmer/orders) - Authentication failed",
+    "CRITICAL: Farmer Analytics (/farmer/dashboard/analytics) - Authentication failed",
+    "CRITICAL: Admin Dashboard (/admin) - Authentication failed",
+    "CRITICAL: Admin Users (/admin/users) - Authentication failed",
+    "CRITICAL: Admin Farms (/admin/farms) - Authentication failed",
+    "CRITICAL: Admin Products (/admin/products) - Authentication failed",
+    "CRITICAL: Admin Orders (/admin/orders) - Authentication failed"
+  ],
+  "recommendations": [
+    "Homepage: Fix accessibility issues (1)",
+    "About Us: Fix accessibility issues (1)",
+    "Contact: Fix accessibility issues (1)",
+    "FAQ: Fix SEO issues (1)",
+    "FAQ: Fix accessibility issues (1)",
+    "FAQ: Fix broken links (1)",
+    "How It Works: Fix accessibility issues (1)",
+    "How It Works: Fix broken links (1)",
+    "Shipping Info: Fix accessibility issues (1)",
+    "Marketplace: Fix SEO issues (2)",
+    "Marketplace: Fix accessibility issues (1)",
+    "Products: Fix accessibility issues (2)",
+    "Farm Directory: Fix accessibility issues (2)",
+    "Login: Fix accessibility issues (1)",
+    "Register: Fix accessibility issues (2)",
+    "Farmer Registration: Fix accessibility issues (1)",
+    "Signup: Fix accessibility issues (2)",
+    "Forgot Password: Fix accessibility issues (1)",
+    "Terms of Service: Fix accessibility issues (1)",
+    "Privacy Policy: Fix accessibility issues (1)"
+  ]
+}

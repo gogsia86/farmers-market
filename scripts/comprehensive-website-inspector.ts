@@ -40,8 +40,8 @@ import { Browser, BrowserContext, chromium, Page } from "playwright";
 
 const CONFIG = {
   baseUrl: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001",
-  timeout: 30000,
-  navigationTimeout: 60000,
+  timeout: 45000,
+  navigationTimeout: 90000,
   headless: true,
   viewport: { width: 1920, height: 1080 },
   mobileViewport: { width: 375, height: 812 },
@@ -523,6 +523,16 @@ class WebsiteInspector {
     this.browser = await chromium.launch({
       headless: CONFIG.headless,
       slowMo: CONFIG.slowMo,
+      args: [
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-dev-shm-usage",
+        "--disable-web-security",
+        "--disable-features=IsolateOrigins,site-per-process",
+        "--max-old-space-size=4096",
+        "--js-flags=--max-old-space-size=4096",
+      ],
+      timeout: 60000,
     });
 
     this.context = await this.browser.newContext({
