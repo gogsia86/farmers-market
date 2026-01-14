@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "npm run build",
+  "buildCommand": "rm -rf node_modules/.prisma node_modules/@prisma/client && npm ci && npx prisma generate --no-engine && npm run build",
   "framework": "nextjs",
   "build": {
     "env": {

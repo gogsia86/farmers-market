@@ -176,6 +176,11 @@ backups/**
 *-backup*/
 backup-*/
 
+# Prisma cache directories (CRITICAL: Prevents cached WASM errors)
+node_modules/.prisma/
+node_modules/@prisma/client/
+.prisma/
+
 # ═══════════════════════════════════════════════════════════
 # 🔐 Environment & Secrets (EXCLUDE - Use Vercel env vars)
 # ═══════════════════════════════════════════════════════════
