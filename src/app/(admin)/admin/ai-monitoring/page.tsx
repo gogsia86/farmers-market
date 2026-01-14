@@ -11,19 +11,19 @@ import { auth } from "@/lib/auth";
 import { database } from "@/lib/database";
 import { formatCurrency } from "@/lib/utils/currency";
 import {
-    endOfDay,
-    endOfMonth,
-    startOfDay,
-    startOfMonth,
-    subMonths
+  endOfDay,
+  endOfMonth,
+  startOfDay,
+  startOfMonth,
+  subMonths,
 } from "date-fns";
 import {
-    Activity,
-    AlertCircle,
-    DollarSign,
-    TrendingUp,
-    Users,
-    Zap,
+  Activity,
+  AlertCircle,
+  DollarSign,
+  TrendingUp,
+  Users,
+  Zap,
 } from "lucide-react";
 import { redirect } from "next/navigation";
 
@@ -116,7 +116,7 @@ export default async function AIMonitoringPage() {
       },
     },
     orderBy: {
-      monthlyTokensUsed: "desc",
+      monthlyTokenUsed: "desc",
     },
   });
 
@@ -125,11 +125,11 @@ export default async function AIMonitoringPage() {
     totalRequests: currentMonthUsage.length,
     totalTokens: currentMonthUsage.reduce(
       (sum, log) => sum + (log.tokensUsed || 0),
-      0
+      0,
     ),
     totalCost: currentMonthUsage.reduce(
-      (sum, log) => sum + (log.estimatedCost || 0),
-      0
+      (sum, log) => sum + Number(log.costUSD || 0),
+      0,
     ),
     uniqueUsers: new Set(currentMonthUsage.map((log) => log.userId)).size,
     avgTokensPerRequest:
@@ -137,8 +137,8 @@ export default async function AIMonitoringPage() {
         ? Math.round(
             currentMonthUsage.reduce(
               (sum, log) => sum + (log.tokensUsed || 0),
-              0
-            ) / currentMonthUsage.length
+              0,
+            ) / currentMonthUsage.length,
           )
         : 0,
   };
@@ -148,21 +148,24 @@ export default async function AIMonitoringPage() {
     totalRequests: lastMonthUsage.length,
     totalTokens: lastMonthUsage.reduce(
       (sum, log) => sum + (log.tokensUsed || 0),
-      0
+      0,
     ),
     totalCost: lastMonthUsage.reduce(
-      (sum, log) => sum + (log.estimatedCost || 0),
-      0
+      (sum, log) => sum + Number(log.costUSD || 0),
+      0,
     ),
   };
 
   // Calculate today's statistics
   const todayStats = {
     totalRequests: todayUsage.length,
-    totalTokens: todayUsage.reduce((sum, log) => sum + (log.tokensUsed || 0), 0),
+    totalTokens: todayUsage.reduce(
+      (sum, log) => sum + (log.tokensUsed || 0),
+      0,
+    ),
     totalCost: todayUsage.reduce(
-      (sum, log) => sum + (log.estimatedCost || 0),
-      0
+      (sum, log) => sum + Number(log.costUSD || 0),
+      0,
     ),
   };
 
@@ -194,15 +197,15 @@ export default async function AIMonitoringPage() {
       }
       acc[endpoint].count++;
       acc[endpoint].tokens += log.tokensUsed || 0;
-      acc[endpoint].cost += log.estimatedCost || 0;
+      acc[endpoint].cost += Number(log.costUSD || 0);
       return acc;
     },
-    {} as Record<string, { count: number; tokens: number; cost: number }>
+    {} as Record<string, { count: number; tokens: number; cost: number }>,
   );
 
   // Find users exceeding quotas
   const usersExceedingQuota = userQuotas.filter(
-    (quota) => quota.monthlyTokensUsed > quota.monthlyTokenLimit
+    (quota) => quota.monthlyTokenUsed > quota.monthlyTokenLimit,
   );
 
   return (
@@ -389,7 +392,7 @@ export default async function AIMonitoringPage() {
             <tbody className="divide-y divide-gray-200">
               {userQuotas.map((quota) => {
                 const usagePercent =
-                  (quota.monthlyTokensUsed / quota.monthlyTokenLimit) * 100;
+                  (quota.monthlyTokenUsed / quota.monthlyTokenLimit) * 100;
                 const isExceeded = usagePercent > 100;
                 const isWarning = usagePercent > 80 && usagePercent <= 100;
 
@@ -412,7 +415,7 @@ export default async function AIMonitoringPage() {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                      {(quota.monthlyTokensUsed / 1000).toFixed(1)}K /{" "}
+                      {(quota.monthlyTokenUsed / 1000).toFixed(1)}K /{" "}
                       {(quota.monthlyTokenLimit / 1000).toFixed(0)}K
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
