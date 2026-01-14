@@ -10,7 +10,7 @@
   },
   "scripts": {
     "///// LIFECYCLE HOOKS /////": "",
-    "postinstall": "prisma generate || echo 'Prisma generate skipped'",
+    "postinstall": "echo 'Skipping postinstall - Prisma will generate during build command'",
     "prepare": "node -e \"if (!process.env.CI && !process.env.DOCKER && !process.env.HUSKY) { try { require('husky').install() } catch (e) {} }\"",
     "prebuild": "echo 'Skipping type check in CI/production builds'",
     "///// DEVELOPMENT /////": "",
