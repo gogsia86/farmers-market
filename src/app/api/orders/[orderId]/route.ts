@@ -11,6 +11,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 import { logger } from "@/lib/monitoring/logger";
+import {
+  emitNotification,
+  emitOrderStatusChange,
+  emitOrderUpdate,
+} from "@/lib/realtime/emit-helpers";
 
 /**
  * Update order validation schema
@@ -191,11 +196,47 @@ export async function PATCH(
 
     const updates = validation.data;
 
+    // Get the original order to track status changes
+    const originalOrder = await orderService.getOrderById(orderId);
+
     const order = await orderService.updateOrder(
       orderId,
       updates,
       session.user.id,
     );
+
+    // Emit real-time events if status changed
+    if (updates.status && updates.status !== originalOrder.status) {
+      emitOrderStatusChange({
+        orderId: order.id,
+        previousStatus: originalOrder.status,
+        newStatus: updates.status,
+        timestamp: new Date().toISOString(),
+        updatedBy: session.user.id,
+      });
+
+      // Send notification to customer
+      emitNotification(order.customerId, {
+        id: `order-status-${order.id}-${Date.now()}`,
+        type: "ORDER_STATUS",
+        title: "Order Status Updated",
+        message: `Your order #${order.orderNumber} is now ${updates.status.toLowerCase().replace(/_/g, " ")}`,
+        actionUrl: `/orders/${order.id}`,
+        priority: "MEDIUM",
+      });
+    }
+
+    // Emit general order update
+    emitOrderUpdate(order.id, {
+      status: order.status,
+      message: updates.status
+        ? `Status updated to ${updates.status}`
+        : "Order details updated",
+      metadata: {
+        trackingNumber: updates.trackingNumber,
+        deliveryNotes: updates.deliveryNotes,
+      },
+    });
 
     return NextResponse.json({
       success: true,
@@ -278,7 +319,47 @@ export async function DELETE(
 
     const { orderId } = params;
 
+    // Get order with farm details before cancellation
+    const orderBeforeCancel = await orderService.getOrderById(orderId);
+
     const order = await orderService.cancelOrder(orderId, session.user.id);
+
+    // Emit real-time cancellation events
+    emitOrderStatusChange({
+      orderId: order.id,
+      previousStatus: order.status === "CANCELLED" ? "PENDING" : order.status,
+      newStatus: "CANCELLED",
+      timestamp: new Date().toISOString(),
+      updatedBy: session.user.id,
+      reason: "Cancelled by user",
+    });
+
+    emitOrderUpdate(order.id, {
+      status: "CANCELLED",
+      message: "Order has been cancelled",
+    });
+
+    // Send notification to customer
+    emitNotification(order.customerId, {
+      id: `order-cancelled-${order.id}-${Date.now()}`,
+      type: "ORDER_STATUS",
+      title: "Order Cancelled",
+      message: `Your order #${order.orderNumber} has been cancelled`,
+      actionUrl: `/orders/${order.id}`,
+      priority: "HIGH",
+    });
+
+    // Send notification to farm owner if available
+    if (orderBeforeCancel.farm?.ownerId) {
+      emitNotification(orderBeforeCancel.farm.ownerId, {
+        id: `order-cancelled-farm-${order.id}-${Date.now()}`,
+        type: "ORDER_STATUS",
+        title: "Order Cancelled",
+        message: `Order #${order.orderNumber} has been cancelled by customer`,
+        actionUrl: `/farmer/farms/${order.farmId}/orders/${order.id}`,
+        priority: "MEDIUM",
+      });
+    }
 
     return NextResponse.json({
       success: true,

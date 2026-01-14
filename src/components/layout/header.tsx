@@ -14,6 +14,7 @@
  */
 
 import { CartBadge } from "@/components/features/cart/cart-badge";
+import { NotificationBell } from "@/components/notifications/NotificationBell";
 import { Button } from "@/components/ui/button";
 import type { UserRole } from "@/types/core-entities";
 import {
@@ -113,6 +114,11 @@ export function Header() {
 
           {/* Actions */}
           <div className="flex items-center space-x-4">
+            {/* Notification Bell - only show when mounted and authenticated */}
+            {mounted && isAuthenticated && (
+              <NotificationBell userId={userId} showBadge={true} />
+            )}
+
             {/* Cart Badge with Mini-Cart - only show when mounted to prevent hydration issues */}
             {mounted && (
               <CartBadge

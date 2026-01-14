@@ -58,6 +58,10 @@ export interface RateLimitResult {
   limit: number;
   /** Whether Redis is being used (vs in-memory) */
   isRedis: boolean;
+  /** Time when the rate limit resets (timestamp) */
+  reset?: number;
+  /** Number of seconds to retry after (for 429 responses) */
+  retryAfter?: number;
 }
 
 interface InMemoryStore {
@@ -168,6 +172,7 @@ function checkRateLimitInMemory(
     // Handle zero max requests case
     const allowed = config.maxRequests === 0 ? false : true;
 
+    const resetTimestamp = now + config.windowMs;
     return {
       allowed,
       remaining: Math.max(0, config.maxRequests - 1),
@@ -175,6 +180,8 @@ function checkRateLimitInMemory(
       current: 1,
       limit: config.maxRequests,
       isRedis: false,
+      reset: resetTimestamp,
+      retryAfter: Math.ceil(config.windowMs / 1000),
     };
   }
 
@@ -185,6 +192,7 @@ function checkRateLimitInMemory(
   const remaining = Math.max(0, config.maxRequests - current);
   const resetTime = inMemoryStore[key].resetTime - now;
 
+  const resetTimestamp = inMemoryStore[key].resetTime;
   return {
     allowed,
     remaining,
@@ -192,6 +200,8 @@ function checkRateLimitInMemory(
     current,
     limit: config.maxRequests,
     isRedis: false,
+    reset: resetTimestamp,
+    retryAfter: Math.ceil(resetTime / 1000),
   };
 }
 
@@ -222,13 +232,16 @@ async function checkRateLimitRedis(
     // Check rate limit
     const result = await customLimiter.limit(identifier);
 
+    const resetTime = result.reset - Date.now();
     return {
       allowed: result.success,
       remaining: result.remaining,
-      resetTime: result.reset - Date.now(), // Convert to milliseconds until reset
+      resetTime, // Convert to milliseconds until reset
       current: config.maxRequests - result.remaining,
       limit: config.maxRequests,
       isRedis: true,
+      reset: result.reset,
+      retryAfter: Math.ceil(resetTime / 1000),
     };
   } catch (error) {
     logger.error("Redis rate limit check failed, falling back to in-memory", {
@@ -260,6 +273,8 @@ export async function checkRateLimitAsync(
 ): Promise<RateLimitResult> {
   // Skip rate limiting if configured
   if (config.skip || process.env.DISABLE_RATE_LIMITING === "true") {
+    const now = Date.now();
+    const resetTimestamp = now + config.windowMs;
     return {
       allowed: true,
       remaining: config.maxRequests,
@@ -267,6 +282,8 @@ export async function checkRateLimitAsync(
       current: 0,
       limit: config.maxRequests,
       isRedis: false,
+      reset: resetTimestamp,
+      retryAfter: 0,
     };
   }
 
@@ -292,6 +309,8 @@ export function checkRateLimit(
   config: RateLimitConfig,
 ): RateLimitResult {
   if (config.skip || process.env.DISABLE_RATE_LIMITING === "true") {
+    const now = Date.now();
+    const resetTimestamp = now + config.windowMs;
     return {
       allowed: true,
       remaining: config.maxRequests,
@@ -299,6 +318,8 @@ export function checkRateLimit(
       current: 0,
       limit: config.maxRequests,
       isRedis: false,
+      reset: resetTimestamp,
+      retryAfter: 0,
     };
   }
 
@@ -314,6 +335,8 @@ export function checkRateLimitSync(
   config: RateLimitConfig,
 ): RateLimitResult {
   if (config.skip || process.env.DISABLE_RATE_LIMITING === "true") {
+    const now = Date.now();
+    const resetTimestamp = now + config.windowMs;
     return {
       allowed: true,
       remaining: config.maxRequests,
@@ -321,6 +344,8 @@ export function checkRateLimitSync(
       current: 0,
       limit: config.maxRequests,
       isRedis: false,
+      reset: resetTimestamp,
+      retryAfter: 0,
     };
   }
 
@@ -458,9 +483,83 @@ export const LOGIN_RATE_LIMIT: RateLimitConfig = RateLimitProfiles.AUTH;
  */
 export const SENSITIVE_RATE_LIMIT: RateLimitConfig = RateLimitProfiles.STRICT;
 
+/**
+ * AI-specific rate limits for different operations
+ */
+export const RATE_LIMITS = {
+  /** Product description generation: 20 requests per hour */
+  PRODUCT_DESCRIPTION: {
+    maxRequests: 20,
+    windowMs: 60 * 60 * 1000,
+  },
+  /** AI Advisor chat: 50 messages per hour */
+  ADVISOR_CHAT: {
+    maxRequests: 50,
+    windowMs: 60 * 60 * 1000,
+  },
+  /** Image analysis (vision): 10 requests per hour (more expensive) */
+  IMAGE_ANALYSIS: {
+    maxRequests: 10,
+    windowMs: 60 * 60 * 1000,
+  },
+  /** Pricing recommendations: 30 requests per hour */
+  PRICING: {
+    maxRequests: 30,
+    windowMs: 60 * 60 * 1000,
+  },
+  /** Market insights: 100 requests per hour */
+  MARKET_INSIGHTS: {
+    maxRequests: 100,
+    windowMs: 60 * 60 * 1000,
+  },
+} as const;
+
 // ============================================================================
-// RATE LIMIT RESPONSE HELPER
+// RESPONSE HELPERS
 // ============================================================================
+
+/**
+ * Create headers object from rate limit result
+ *
+ * @param result - Rate limit result
+ * @returns Headers object
+ */
+export function createRateLimitHeaders(
+  result: RateLimitResult,
+): Record<string, string> {
+  const headers: Record<string, string> = {
+    "X-RateLimit-Limit": result.limit.toString(),
+    "X-RateLimit-Remaining": result.remaining.toString(),
+    "X-RateLimit-Reset": result.resetTime.toString(),
+  };
+
+  if (!result.allowed) {
+    const retryAfter = Math.ceil(result.resetTime / 1000);
+    headers["Retry-After"] = retryAfter.toString();
+  }
+
+  return headers;
+}
+
+/**
+ * Add rate limit headers to a Response object
+ *
+ * @param response - Response object to add headers to
+ * @param result - Rate limit result
+ */
+export function addRateLimitHeaders(
+  response: Response,
+  result: RateLimitResult,
+): void {
+  response.headers.set("X-RateLimit-Limit", result.limit.toString());
+  response.headers.set("X-RateLimit-Remaining", result.remaining.toString());
+  response.headers.set("X-RateLimit-Reset", result.resetTime.toString());
+
+  if (!result.allowed) {
+    const retryAfter = Math.ceil(result.resetTime / 1000);
+    response.headers.set("Retry-After", retryAfter.toString());
+  }
+}
 
 /**
  * Create a rate limit exceeded response
@@ -491,26 +590,6 @@ export function createRateLimitResponse(result: RateLimitResult): Response {
       },
     },
   );
-}
-
-/**
- * Add rate limit headers to a response
- *
- * @param response - Response to add headers to
- * @param result - Rate limit result
- */
-export function addRateLimitHeaders(
-  response: Response,
-  result: RateLimitResult,
-): void {
-  response.headers.set("X-RateLimit-Limit", result.limit.toString());
-  response.headers.set("X-RateLimit-Remaining", result.remaining.toString());
-  response.headers.set("X-RateLimit-Reset", result.resetTime.toString());
-
-  if (!result.allowed) {
-    const retryAfter = Math.ceil(result.resetTime / 1000);
-    response.headers.set("Retry-After", retryAfter.toString());
-  }
 }
 
 /**
@@ -570,13 +649,16 @@ export function getRateLimitStatus(
     return null;
   }
 
+  const resetTime = entry.resetTime - now;
   return {
-    allowed: entry.count < config.maxRequests,
+    allowed: entry.resetTime >= now,
     remaining: Math.max(0, config.maxRequests - entry.count),
-    resetTime: entry.resetTime - now,
+    resetTime,
     current: entry.count,
     limit: config.maxRequests,
     isRedis: false,
+    reset: entry.resetTime,
+    retryAfter: Math.ceil(resetTime / 1000),
   };
 }
 

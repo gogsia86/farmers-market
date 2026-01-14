@@ -11,6 +11,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 import { logger } from "@/lib/monitoring/logger";
+import { emitNewOrder, emitNotification } from "@/lib/realtime/emit-helpers";
 
 /**
  * Create order validation schema (legacy format - single farm)
@@ -250,6 +251,34 @@ export async function POST(request: NextRequest) {
         );
       }
 
+      // Emit real-time events for each order
+      for (const order of orders) {
+        // Emit new order event to farm
+        emitNewOrder(order.farmId, order);
+
+        // Send notification to farm owner
+        if (order.farm?.ownerId) {
+          emitNotification(order.farm.ownerId, {
+            id: `new-order-${order.id}-${Date.now()}`,
+            type: "ORDER_NEW",
+            title: "New Order Received!",
+            message: `New order #${order.orderNumber} - ${order.items?.length || 0} items`,
+            actionUrl: `/farmer/farms/${order.farmId}/orders/${order.id}`,
+            priority: "HIGH",
+          });
+        }
+
+        // Send confirmation notification to customer
+        emitNotification(session.user.id, {
+          id: `order-confirmation-${order.id}-${Date.now()}`,
+          type: "ORDER_UPDATE",
+          title: "Order Confirmed",
+          message: `Your order #${order.orderNumber} has been placed successfully`,
+          actionUrl: `/orders/${order.id}`,
+          priority: "MEDIUM",
+        });
+      }
+
       return NextResponse.json(
         {
           success: true,
@@ -291,6 +320,31 @@ export async function POST(request: NextRequest) {
         },
         deliveryInstructions: orderData.deliveryInstructions,
         paymentMethod: orderData.paymentMethod,
+      });
+
+      // Emit real-time events for new order
+      emitNewOrder(orderData.farmId, order);
+
+      // Send notification to farm owner if available
+      if (order.farm?.ownerId) {
+        emitNotification(order.farm.ownerId, {
+          id: `new-order-${order.id}-${Date.now()}`,
+          type: "ORDER_NEW",
+          title: "New Order Received!",
+          message: `New order #${order.orderNumber}`,
+          actionUrl: `/farmer/farms/${orderData.farmId}/orders/${order.id}`,
+          priority: "HIGH",
+        });
+      }
+
+      // Send confirmation notification to customer
+      emitNotification(session.user.id, {
+        id: `order-confirmation-${order.id}-${Date.now()}`,
+        type: "ORDER_UPDATE",
+        title: "Order Confirmed",
+        message: `Your order #${order.orderNumber} has been placed successfully`,
+        actionUrl: `/orders/${order.id}`,
+        priority: "MEDIUM",
       });
 
       return NextResponse.json(
