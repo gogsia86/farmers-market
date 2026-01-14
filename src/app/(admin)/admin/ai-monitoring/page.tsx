@@ -27,7 +27,9 @@ import {
 } from "lucide-react";
 import { redirect } from "next/navigation";
 
-export const metadata = {
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
   title: "AI Cost Monitoring | Admin Dashboard",
   description: "Monitor AI usage, costs, and quotas across the platform",
 };
@@ -124,11 +126,11 @@ export default async function AIMonitoringPage() {
   const currentMonthStats = {
     totalRequests: currentMonthUsage.length,
     totalTokens: currentMonthUsage.reduce(
-      (sum, log) => sum + (log.tokensUsed || 0),
+      (sum: number, log) => sum + (log.tokensUsed || 0),
       0,
     ),
     totalCost: currentMonthUsage.reduce(
-      (sum, log) => sum + Number(log.costUSD || 0),
+      (sum: number, log) => sum + Number(log.costUSD || 0),
       0,
     ),
     uniqueUsers: new Set(currentMonthUsage.map((log) => log.userId)).size,
@@ -136,7 +138,7 @@ export default async function AIMonitoringPage() {
       currentMonthUsage.length > 0
         ? Math.round(
             currentMonthUsage.reduce(
-              (sum, log) => sum + (log.tokensUsed || 0),
+              (sum: number, log) => sum + (log.tokensUsed || 0),
               0,
             ) / currentMonthUsage.length,
           )
@@ -147,11 +149,11 @@ export default async function AIMonitoringPage() {
   const lastMonthStats = {
     totalRequests: lastMonthUsage.length,
     totalTokens: lastMonthUsage.reduce(
-      (sum, log) => sum + (log.tokensUsed || 0),
+      (sum: number, log) => sum + (log.tokensUsed || 0),
       0,
     ),
     totalCost: lastMonthUsage.reduce(
-      (sum, log) => sum + Number(log.costUSD || 0),
+      (sum: number, log) => sum + Number(log.costUSD || 0),
       0,
     ),
   };
@@ -160,11 +162,11 @@ export default async function AIMonitoringPage() {
   const todayStats = {
     totalRequests: todayUsage.length,
     totalTokens: todayUsage.reduce(
-      (sum, log) => sum + (log.tokensUsed || 0),
+      (sum: number, log) => sum + (log.tokensUsed || 0),
       0,
     ),
     totalCost: todayUsage.reduce(
-      (sum, log) => sum + Number(log.costUSD || 0),
+      (sum: number, log) => sum + Number(log.costUSD || 0),
       0,
     ),
   };
@@ -186,7 +188,10 @@ export default async function AIMonitoringPage() {
 
   // Group usage by endpoint
   const usageByEndpoint = currentMonthUsage.reduce(
-    (acc, log) => {
+    (
+      acc: Record<string, { count: number; tokens: number; cost: number }>,
+      log,
+    ) => {
       const endpoint = log.endpoint || "unknown";
       if (!acc[endpoint]) {
         acc[endpoint] = {
@@ -205,7 +210,7 @@ export default async function AIMonitoringPage() {
 
   // Find users exceeding quotas
   const usersExceedingQuota = userQuotas.filter(
-    (quota) => quota.monthlyTokenUsed > quota.monthlyTokenLimit,
+    (quota: any) => quota.monthlyTokenUsed > quota.monthlyTokenLimit,
   );
 
   return (
@@ -338,8 +343,8 @@ export default async function AIMonitoringPage() {
             </thead>
             <tbody className="divide-y divide-gray-200">
               {Object.entries(usageByEndpoint)
-                .sort(([, a], [, b]) => b.cost - a.cost)
-                .map(([endpoint, stats]) => (
+                .sort(([, a], [, b]) => (b as any).cost - (a as any).cost)
+                .map(([endpoint, stats]: [string, any]) => (
                   <tr key={endpoint} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                       {endpoint}
@@ -390,7 +395,7 @@ export default async function AIMonitoringPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {userQuotas.map((quota) => {
+              {userQuotas.map((quota: any) => {
                 const usagePercent =
                   (quota.monthlyTokenUsed / quota.monthlyTokenLimit) * 100;
                 const isExceeded = usagePercent > 100;
