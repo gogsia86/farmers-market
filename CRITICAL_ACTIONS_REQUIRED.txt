@@ -1,0 +1,177 @@
+================================================================================
+🚨 CRITICAL ACTIONS REQUIRED - Vercel Deployment Fix
+================================================================================
+
+Status: WAITING FOR MANUAL ACTION
+Priority: CRITICAL
+ETA to Fix: 3 MINUTES
+Last Updated: January 2025
+
+================================================================================
+📋 WHAT YOU NEED TO DO NOW (3 STEPS)
+================================================================================
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│ STEP 1: CLEAR VERCEL BUILD CACHE (MANDATORY - 30 SECONDS)              │
+└─────────────────────────────────────────────────────────────────────────┘
+
+🌐 Go to: https://vercel.com/dashboard
+
+1. Click on your project: "farmers-market"
+2. Go to "Deployments" tab
+3. Find the LATEST deployment (should be building now)
+4. Click the three dots "⋮" menu
+5. Select "Clear Build Cache" or "Redeploy" (check option to clear cache)
+
+⚠️ THIS IS CRITICAL! Without clearing cache, all fixes will fail.
+
+Alternative (CLI):
+  vercel --force
+
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│ STEP 2: VERIFY DEPLOYMENT IS BUILDING (30 SECONDS)                     │
+└─────────────────────────────────────────────────────────────────────────┘
+
+Your latest push (commit: bc41cf34) should trigger automatic deployment.
+
+Check status:
+  🌐 Vercel Dashboard → Deployments → [Latest]
+
+OR via CLI:
+  vercel ls
+
+You should see a new deployment building with these changes:
+  - Updated vercel.json with cache-busting build command
+  - Pinned Node.js to 20.18.0
+  - Removed deprecated Prisma config
+
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│ STEP 3: MONITOR BUILD LOGS (2-3 MINUTES)                               │
+└─────────────────────────────────────────────────────────────────────────┘
+
+Watch in real-time:
+  vercel logs --follow
+
+OR in Dashboard:
+  Deployments → [Latest] → View Function Logs
+
+
+================================================================================
+✅ EXPECTED SUCCESS LOGS
+================================================================================
+
+You should see:
+  ✓ Removing cached Prisma files...
+  ✓ Installing dependencies...
+  ✓ Generated Prisma Client (v7.2.0) to ./node_modules/@prisma/client
+  ✓ Compiled successfully
+  ✓ Generating static pages (76/76)
+  Build Completed in /vercel/output ✅
+
+
+================================================================================
+❌ IF STILL FAILING
+================================================================================
+
+If you see this error again:
+  "Cannot find module 'query_engine_bg.postgresql.wasm-base64.js'"
+
+DO THIS:
+  1. Go to Vercel Dashboard → Settings → General
+  2. Find "Build & Development Settings"
+  3. Override "Build Command" manually with:
+
+     rm -rf node_modules/.prisma node_modules/@prisma/client && npm ci && npx prisma generate --no-engine && npm run build
+
+  4. Save and click "Redeploy"
+
+
+================================================================================
+📊 WHAT WAS FIXED
+================================================================================
+
+Commit: bc41cf34
+Files Changed:
+  ✅ vercel.json - New cache-busting build command
+  ✅ package.json - Pinned Node 20.18.0, removed deprecated config
+  ✅ .vercelignore - Added Prisma cache directories
+
+Build Command (NEW):
+  rm -rf node_modules/.prisma node_modules/@prisma/client && npm ci && npx prisma generate --no-engine && npm run build
+
+Why This Works:
+  • rm -rf → Forces removal of cached Prisma files
+  • npm ci → Clean install (no cache)
+  • --no-engine → Skips binary downloads (Vercel compatible)
+  • Fresh Prisma generation every build
+
+
+================================================================================
+⏱️ TIMELINE
+================================================================================
+
+✅ Code fixes pushed to GitHub (DONE)
+⏳ Clear Vercel cache (DO NOW - 30s)
+⏳ Wait for deployment (2-3 minutes)
+⏳ Verify health endpoint (30s)
+🎯 TOTAL: 5 minutes from now
+
+
+================================================================================
+🔗 QUICK LINKS
+================================================================================
+
+Vercel Dashboard: https://vercel.com/dashboard
+Your Repo: https://github.com/gogsia86/farmers-market
+Full Guide: docs/VERCEL_DEPLOYMENT_FINAL.md
+Emergency Fix: EMERGENCY_DEPLOYMENT_FIX.md (if exists locally)
+
+
+================================================================================
+✅ SUCCESS VERIFICATION
+================================================================================
+
+After deployment completes, test:
+
+1. Homepage loads:
+   https://your-domain.vercel.app
+
+2. Health check:
+   curl https://your-domain.vercel.app/api/health
+
+3. Database query works:
+   curl https://your-domain.vercel.app/api/farms
+
+4. Vercel deployment shows:
+   Status: ● Ready (green dot)
+
+
+================================================================================
+🎯 ACTION CHECKLIST
+================================================================================
+
+[ ] Step 1: Clear Vercel build cache
+[ ] Step 2: Confirm deployment is building
+[ ] Step 3: Watch build logs complete successfully
+[ ] Step 4: Test health endpoint
+[ ] Step 5: Verify database queries work
+[ ] Step 6: Check deployment status = Ready
+
+
+================================================================================
+🚀 START HERE
+================================================================================
+
+RIGHT NOW, DO THIS:
+  1. Open https://vercel.com/dashboard
+  2. Click your project
+  3. Deployments → [Latest] → ⋮ → Clear Build Cache
+  4. Wait 3 minutes
+  5. Celebrate! 🎉
+
+
+Need help? Read: EMERGENCY_DEPLOYMENT_FIX.md
+
+================================================================================

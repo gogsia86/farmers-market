@@ -5,15 +5,15 @@
 
 "use client";
 
-import { useState } from "react";
 import { formatDistanceToNow } from "date-fns";
+import { useState } from "react";
 import type { OrderWithRelations } from "../types";
 
-import { Card, CardHeader, CardBody } from "@/components/ui/card";
+import { Card, CardBody, CardHeader } from "@/components/ui/card";
 import type {
+  FulfillmentMethod,
   OrderStatus,
   PaymentStatus,
-  FulfillmentMethod,
 } from "@prisma/client";
 
 // ============================================================================
@@ -47,7 +47,7 @@ export function OrderCard({
 
   // Calculate total items
   const totalItems = order.items.reduce(
-    (sum, item) => sum + Number(item.quantity),
+    (sum: number, item) => sum + Number(item.quantity),
     0,
   );
 

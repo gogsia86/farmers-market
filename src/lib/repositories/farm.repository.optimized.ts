@@ -505,7 +505,7 @@ export class OptimizedFarmRepository {
       database.farm.count({ where }),
     ]);
 
-    const items: OptimizedFarmListItem[] = rawItems.map((farm) =>
+    const items: OptimizedFarmListItem[] = rawItems.map((farm: any) =>
       this.mapToListItem(farm as RawFarmListItem),
     );
 
@@ -560,7 +560,7 @@ export class OptimizedFarmRepository {
     ]);
 
     const totalPages = Math.ceil(total / pagination.pageSize);
-    const items: OptimizedFarmListItem[] = rawItems.map((farm) =>
+    const items: OptimizedFarmListItem[] = rawItems.map((farm: any) =>
       this.mapToListItem(farm as RawFarmListItem),
     );
 
@@ -617,7 +617,7 @@ export class OptimizedFarmRepository {
     ]);
 
     const totalPages = Math.ceil(total / pagination.pageSize);
-    const items: OptimizedFarmListItem[] = rawItems.map((farm) =>
+    const items: OptimizedFarmListItem[] = rawItems.map((farm: any) =>
       this.mapToListItem(farm as RawFarmListItem),
     );
 
@@ -657,7 +657,7 @@ export class OptimizedFarmRepository {
     ]);
 
     const totalPages = Math.ceil(total / pagination.pageSize);
-    const items: OptimizedFarmListItem[] = rawItems.map((farm) =>
+    const items: OptimizedFarmListItem[] = rawItems.map((farm: any) =>
       this.mapToListItem(farm as RawFarmListItem),
     );
 
@@ -699,7 +699,7 @@ export class OptimizedFarmRepository {
     ]);
 
     const totalPages = Math.ceil(total / pagination.pageSize);
-    const items: OptimizedFarmListItem[] = rawItems.map((farm) =>
+    const items: OptimizedFarmListItem[] = rawItems.map((farm: any) =>
       this.mapToListItem(farm as RawFarmListItem),
     );
 

@@ -268,7 +268,7 @@ class PlatformAnalyticsService {
         ),
         orderCount: farm._count.orders,
       }))
-      .sort((a, b) => b.revenue - a.revenue)
+      .sort((a: any, b: any) => b.revenue - a.revenue)
       .slice(0, 5);
 
     return {
@@ -348,7 +348,7 @@ class PlatformAnalyticsService {
           0,
         ),
       }))
-      .sort((a, b) => b.sales - a.sales)
+      .sort((a: any, b: any) => b.sales - a.sales)
       .slice(0, 10);
 
     return {

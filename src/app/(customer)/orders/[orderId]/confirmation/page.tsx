@@ -101,7 +101,7 @@ export default async function OrderConfirmationPage({ params }: PageProps) {
         totalValue={Number(order.total)}
         tax={Number(order.tax || 0)}
         shipping={Number(order.deliveryFee || 0)}
-        items={order.items.map((item) => ({
+        items={order.items.map((item: any) => ({
           productId: item.productId,
           productName: item.productName,
           price: Number(item.unitPrice),

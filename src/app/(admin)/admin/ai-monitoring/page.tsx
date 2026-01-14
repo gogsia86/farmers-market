@@ -126,19 +126,19 @@ export default async function AIMonitoringPage() {
   const currentMonthStats = {
     totalRequests: currentMonthUsage.length,
     totalTokens: currentMonthUsage.reduce(
-      (sum: number, log) => sum + (log.tokensUsed || 0),
+      (sum: number, log: any) => sum + (log.tokensUsed || 0),
       0,
     ),
     totalCost: currentMonthUsage.reduce(
-      (sum: number, log) => sum + Number(log.costUSD || 0),
+      (sum: number, log: any) => sum + Number(log.costUSD || 0),
       0,
     ),
-    uniqueUsers: new Set(currentMonthUsage.map((log) => log.userId)).size,
+    uniqueUsers: new Set(currentMonthUsage.map((log: any) => log.userId)).size,
     avgTokensPerRequest:
       currentMonthUsage.length > 0
         ? Math.round(
             currentMonthUsage.reduce(
-              (sum: number, log) => sum + (log.tokensUsed || 0),
+              (sum: number, log: any) => sum + (log.tokensUsed || 0),
               0,
             ) / currentMonthUsage.length,
           )
@@ -149,11 +149,11 @@ export default async function AIMonitoringPage() {
   const lastMonthStats = {
     totalRequests: lastMonthUsage.length,
     totalTokens: lastMonthUsage.reduce(
-      (sum: number, log) => sum + (log.tokensUsed || 0),
+      (sum: number, log: any) => sum + (log.tokensUsed || 0),
       0,
     ),
     totalCost: lastMonthUsage.reduce(
-      (sum: number, log) => sum + Number(log.costUSD || 0),
+      (sum: number, log: any) => sum + Number(log.costUSD || 0),
       0,
     ),
   };
@@ -162,11 +162,11 @@ export default async function AIMonitoringPage() {
   const todayStats = {
     totalRequests: todayUsage.length,
     totalTokens: todayUsage.reduce(
-      (sum: number, log) => sum + (log.tokensUsed || 0),
+      (sum: number, log: any) => sum + (log.tokensUsed || 0),
       0,
     ),
     totalCost: todayUsage.reduce(
-      (sum: number, log) => sum + Number(log.costUSD || 0),
+      (sum: number, log: any) => sum + Number(log.costUSD || 0),
       0,
     ),
   };
@@ -190,7 +190,7 @@ export default async function AIMonitoringPage() {
   const usageByEndpoint = currentMonthUsage.reduce(
     (
       acc: Record<string, { count: number; tokens: number; cost: number }>,
-      log,
+      log: any,
     ) => {
       const endpoint = log.endpoint || "unknown";
       if (!acc[endpoint]) {

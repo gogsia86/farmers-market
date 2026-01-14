@@ -236,7 +236,7 @@ class OrderService extends BaseService {
             orderNumber: order.orderNumber,
             customerName: order.customer.name || "Valued Customer",
             farmName: order.farm?.name || "Farm",
-            items: order.items.map((item) => ({
+            items: order.items.map((item: any) => ({
               name: item.productName,
               quantity: item.quantity,
               unit: item.unit,
@@ -648,7 +648,7 @@ class OrderService extends BaseService {
 
     const totalOrders = orders.length;
     const totalRevenue = orders.reduce(
-      (sum, order) => sum + this.toNumber(order.total),
+      (sum: number, order: any) => sum + this.toNumber(order.total),
       0,
     );
     const averageOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
@@ -884,7 +884,7 @@ class OrderService extends BaseService {
                   `${order.customer.firstName || ""} ${order.customer.lastName || ""}`.trim() ||
                   "Valued Customer",
                 farmName: order.farm?.name || "Farm",
-                items: order.items.map((item) => ({
+                items: order.items.map((item: any) => ({
                   name: item.productName,
                   quantity: item.quantity,
                   unit: item.unit,
@@ -1019,7 +1019,7 @@ class OrderService extends BaseService {
     const productMap = new Map(products.map((p: any) => [p.id, p]));
 
     const orderItems = items.map((item: any) => {
-      const product = productMap.get(item.productId);
+      const product: any = productMap.get(item.productId);
       return {
         orderId,
         productId: item.productId,

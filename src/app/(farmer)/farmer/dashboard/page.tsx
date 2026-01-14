@@ -1,6 +1,5 @@
 import { auth } from "@/lib/auth";
 
-import type { Product, Order } from "@prisma/client";
 import { database } from "@/lib/database";
 import { farmService } from "@/lib/services/farm.service";
 import { formatCurrency } from "@/lib/utils/currency";
@@ -56,7 +55,7 @@ export default async function FarmerDashboardPage() {
     0,
   );
   const totalOrders = orders.length;
-  const activeOrders = orders.filter((o) =>
+  const activeOrders = orders.filter((o: any) =>
     ["PENDING", "CONFIRMED", "PROCESSING", "SHIPPED"].includes(o.status),
   ).length;
 
@@ -64,7 +63,7 @@ export default async function FarmerDashboardPage() {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const todayOrders = orders.filter(
-    (o) => new Date(o.createdAt) >= today,
+    (o: any) => new Date(o.createdAt) >= today,
   ).length;
 
   // Get total products count

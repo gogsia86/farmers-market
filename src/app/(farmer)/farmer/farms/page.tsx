@@ -91,7 +91,7 @@ export default async function FarmerFarmsPage() {
               total: true,
             },
           })
-          .then((result) =>
+          .then((result: any) =>
             result._sum?.total ? Number(result._sum.total) : 0,
           ),
       ]);

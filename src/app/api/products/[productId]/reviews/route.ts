@@ -351,7 +351,7 @@ export async function POST(
     }
 
     // Create review in a transaction
-    const review = await database.$transaction(async (tx) => {
+    const review = await database.$transaction(async (tx: any) => {
       // Create the review
       const newReview = await tx.review.create({
         data: {

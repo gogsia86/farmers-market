@@ -27,10 +27,10 @@ import type {
   WorkflowSchedule as PrismaWorkflowSchedule,
 } from "@prisma/client";
 import type {
-  MonitoringReport,
-  WorkflowResult,
   HealthCheckResult,
+  MonitoringReport,
   Notification,
+  WorkflowResult,
 } from "../types";
 
 // ============================================================================
@@ -571,14 +571,14 @@ class DatabaseStorageService {
       .filter((e: any) => e.durationMs !== null)
       .map((e: any) => e.durationMs!);
     const successCount = executions.filter(
-      (e) => e.status === "SUCCESS",
+      (e: any) => e.status === "SUCCESS",
     ).length;
 
     const oneDayAgo = new Date();
     oneDayAgo.setDate(oneDayAgo.getDate() - 1);
 
     const recentFailures = executions.filter(
-      (e) => e.status === "FAILURE" && e.startedAt >= oneDayAgo,
+      (e: any) => e.status === "FAILURE" && e.startedAt >= oneDayAgo,
     ).length;
 
     return {
@@ -766,5 +766,5 @@ function getDatabaseStorage(): DatabaseStorageService {
 // EXPORTS
 // ============================================================================
 
-export { DatabaseStorageService, getDatabaseStorage, createDatabaseStorage };
-export type { StorageStats, QueryOptions };
+export { createDatabaseStorage, DatabaseStorageService, getDatabaseStorage };
+export type { QueryOptions, StorageStats };

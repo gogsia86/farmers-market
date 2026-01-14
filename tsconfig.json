@@ -105,7 +105,7 @@
     ".next/dev/types/**/*.ts",
     "**/*.d.ts", // Include all declaration files
     "jest.setup.js" // Include Jest setup for global types
-  ],
+, "prisma.config.ts.disabled"  ],
   "exclude": [
     "node_modules", // Exclude dependencies
     ".next", // Exclude Next.js build output

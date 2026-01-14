@@ -1,0 +1,175 @@
+prisma/seeds/seed-crops.ts(7,8): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/app/(admin)/admin/notifications/page.tsx(10,53): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/app/(customer)/checkout/page.tsx(8,24): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/app/(customer)/farms/page.tsx(17,27): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/app/(customer)/marketplace/page.tsx(28,27): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/app/(customer)/products/page.tsx(29,38): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/app/(farmer)/farmer/orders/page.tsx(2,28): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/app/actions/product.actions.ts(24,53): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/app/api/admin/farms/verify/route.ts(13,45): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/app/api/admin/orders/route.ts(9,28): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/app/api/admin/users/[id]/route.ts(8,28): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/app/api/cart/route.ts(16,40): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/app/api/categories/route.ts(9,33): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/app/api/farms/[farmId]/products/route.ts(8,62): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/app/api/farms/[farmId]/route.ts(13,27): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/app/api/farms/featured/route.ts(11,27): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/app/api/favorites/route.ts(15,30): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/app/api/products/[productId]/reviews/route.ts(9,43): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/app/api/products/[productId]/route.ts(9,62): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/app/api/products/route.ts(12,62): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/app/api/products/search/route.ts(11,62): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/app/api/search/route.ts(13,8): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/app/api/user/addresses/route.ts(16,34): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/app/api/webhooks/stripe/route.ts(263,11): error TS2322: Type 'unknown' is not assignable to type 'string | undefined'.
+src/components/features/cart/cart-item-card.tsx(36,49): error TS2339: Property 'quantity' does not exist on type 'CartItemWithProduct'.
+src/components/features/cart/cart-item-card.tsx(40,27): error TS2339: Property 'priceAtAdd' does not exist on type 'CartItemWithProduct'.
+src/components/features/cart/cart-item-card.tsx(75,35): error TS2339: Property 'id' does not exist on type 'CartItemWithProduct'.
+src/components/features/cart/cart-item-card.tsx(99,27): error TS2339: Property 'id' does not exist on type 'CartItemWithProduct'.
+src/components/features/cart/cart-item-card.tsx(155,54): error TS2339: Property 'unit' does not exist on type 'CartItemWithProduct'.
+src/components/features/cart/cart-item-card.tsx(176,53): error TS2339: Property 'unit' does not exist on type 'CartItemWithProduct'.
+src/components/features/cart/cart-item-card.tsx(219,63): error TS2339: Property 'unit' does not exist on type 'CartItemWithProduct'.
+src/components/features/cart/cart-item-card.tsx(261,53): error TS2339: Property 'unit' does not exist on type 'CartItemWithProduct'.
+src/components/features/cart/cart-item-card.tsx(266,53): error TS2339: Property 'unit' does not exist on type 'CartItemWithProduct'.
+src/components/features/checkout/cart-summary.tsx(8,46): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/components/features/checkout/checkout-wizard.tsx(9,59): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/components/features/checkout/review-step.tsx(10,46): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/components/features/checkout/shipping-step.tsx(11,34): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/components/features/products/create-product-form.tsx(31,38): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/components/images/FarmImage.tsx(7,27): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/components/images/ProductImage.tsx(7,30): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/features/order-management/components/OrderCard.tsx(17,8): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/features/order-management/components/OrderList.tsx(11,34): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/features/order-management/hooks/useOrders.ts(18,34): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/features/order-management/types/index.ts(14,8): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/generated/prisma.ts(5,15): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/generated/prisma.ts(6,30): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/hooks/realtime/useRealtimeOrders.ts(8,28): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/hooks/saved-searches/useSavedSearches.ts(19,24): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/hooks/saved-searches/useSavedSearchMutations.ts(26,47): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/hooks/saved-searches/useSearchAlerts.ts(22,33): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/hooks/use-analytics.ts(11,53): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/hooks/useCart.ts(283,49): error TS2339: Property 'quantity' does not exist on type 'CartItemWithProduct'.
+src/hooks/useCart.ts(329,48): error TS2339: Property 'quantity' does not exist on type 'CartItemWithProduct'.
+src/lib/ai/chat-summary.service.ts(24,8): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/lib/ai/chat/index.ts(31,8): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/lib/ai/ollama.ts(21,58): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/lib/ai/perplexity.ts(30,58): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/lib/api/error-handler.ts(19,24): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/lib/api/error-handler.ts(279,34): error TS18046: 'error' is of type 'unknown'.
+src/lib/auth/config.ts(21,43): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/lib/auth/timeout-handler.ts(15,43): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/lib/database-safe.ts(28,43): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/lib/database-safe.ts(433,8): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/lib/database/index.ts(20,30): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/lib/database/query-optimizer.ts(16,29): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/lib/monitoring/storage/database.storage.ts(28,8): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/lib/queue/email.queue.ts(12,40): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/lib/queue/notification.queue.ts(11,37): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/lib/rbac/components.tsx(1,26): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/lib/rbac/components.tsx(154,100): error TS7053: Element implicitly has an 'any' type because expression of type 'UserRole' can't be used to index type '{ CONSUMER: string; FARMER: string; MODERATOR: string; ADMIN: string; SUPER_ADMIN: string; }'.
+src/lib/rbac/components.tsx(156,31): error TS7053: Element implicitly has an 'any' type because expression of type 'UserRole' can't be used to index type '{ CONSUMER: string; FARMER: string; MODERATOR: string; ADMIN: string; SUPER_ADMIN: string; }'.
+src/lib/rbac/index.ts(1,26): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/lib/rbac/permissions.tsx(2,26): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/lib/realtime/emit-helpers.ts(7,28): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/lib/repositories/base.repository.ts(19,35): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/lib/repositories/farm.repository.optimized.ts(31,8): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/lib/repositories/farm.repository.optimized.ts(508,58): error TS7006: Parameter 'farm' implicitly has an 'any' type.
+src/lib/repositories/farm.repository.optimized.ts(563,58): error TS7006: Parameter 'farm' implicitly has an 'any' type.
+src/lib/repositories/farm.repository.optimized.ts(620,58): error TS7006: Parameter 'farm' implicitly has an 'any' type.
+src/lib/repositories/farm.repository.optimized.ts(660,58): error TS7006: Parameter 'farm' implicitly has an 'any' type.
+src/lib/repositories/farm.repository.optimized.ts(702,58): error TS7006: Parameter 'farm' implicitly has an 'any' type.
+src/lib/repositories/farm.repository.ts(19,35): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/lib/repositories/order.repository.ts(26,24): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/lib/repositories/product.repository.ts(19,38): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/lib/repositories/user.repository.ts(26,24): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/lib/search/search-service.ts(8,36): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/lib/services/analytics/payment-analytics.service.ts(8,59): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/lib/services/analytics/payment-analytics.service.ts(210,8): error TS7006: Parameter 'p' implicitly has an 'any' type.
+src/lib/services/analytics/payment-analytics.service.ts(214,8): error TS7006: Parameter 'p' implicitly has an 'any' type.
+src/lib/services/analytics/payment-analytics.service.ts(218,8): error TS7006: Parameter 'p' implicitly has an 'any' type.
+src/lib/services/analytics/payment-analytics.service.ts(286,26): error TS7006: Parameter 'result' implicitly has an 'any' type.
+src/lib/services/analytics/platform-analytics.service.ts(271,14): error TS7006: Parameter 'a' implicitly has an 'any' type.
+src/lib/services/analytics/platform-analytics.service.ts(271,17): error TS7006: Parameter 'b' implicitly has an 'any' type.
+src/lib/services/analytics/platform-analytics.service.ts(351,14): error TS7006: Parameter 'a' implicitly has an 'any' type.
+src/lib/services/analytics/platform-analytics.service.ts(351,17): error TS7006: Parameter 'b' implicitly has an 'any' type.
+src/lib/services/base.service.ts(12,29): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/lib/services/cart.service.ts(5,40): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/lib/services/cart.service.ts(549,38): error TS2339: Property 'quantity' does not exist on type 'CartItemWithProduct'.
+src/lib/services/cart.service.ts(551,30): error TS2339: Property 'priceAtAdd' does not exist on type 'CartItemWithProduct'.
+src/lib/services/cart.service.ts(557,24): error TS2339: Property 'id' does not exist on type 'CartItemWithProduct'.
+src/lib/services/cart.service.ts(569,24): error TS2339: Property 'id' does not exist on type 'CartItemWithProduct'.
+src/lib/services/cart.service.ts(579,24): error TS2339: Property 'id' does not exist on type 'CartItemWithProduct'.
+src/lib/services/cart.service.ts(590,24): error TS2339: Property 'id' does not exist on type 'CartItemWithProduct'.
+src/lib/services/cart.service.ts(604,26): error TS2339: Property 'id' does not exist on type 'CartItemWithProduct'.
+src/lib/services/cart.service.ts(610,26): error TS2339: Property 'id' does not exist on type 'CartItemWithProduct'.
+src/lib/services/cart.service.ts(634,30): error TS2339: Property 'priceAtAdd' does not exist on type 'CartItemWithProduct'.
+src/lib/services/cart.service.ts(638,29): error TS2339: Property 'id' does not exist on type 'CartItemWithProduct'.
+src/lib/services/checkout.service.ts(5,41): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/lib/services/farm.service.enhanced.ts(49,47): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/lib/services/farm.service.ts(44,8): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/lib/services/harvest-tracking.service.ts(29,8): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/lib/services/harvest-tracking.service.ts(351,8): error TS7006: Parameter 'sum' implicitly has an 'any' type.
+src/lib/services/harvest-tracking.service.ts(351,13): error TS7006: Parameter 'h' implicitly has an 'any' type.
+src/lib/services/harvest-tracking.service.ts(366,23): error TS7006: Parameter 'h' implicitly has an 'any' type.
+src/lib/services/harvest-tracking.service.ts(382,23): error TS7006: Parameter 'h' implicitly has an 'any' type.
+src/lib/services/harvest-tracking.service.ts(434,23): error TS7006: Parameter 'h' implicitly has an 'any' type.
+src/lib/services/harvest-tracking.service.ts(454,53): error TS7006: Parameter 'h' implicitly has an 'any' type.
+src/lib/services/harvest-tracking.service.ts(460,37): error TS7006: Parameter 'h' implicitly has an 'any' type.
+src/lib/services/harvest-tracking.service.ts(480,8): error TS7006: Parameter 'sum' implicitly has an 'any' type.
+src/lib/services/harvest-tracking.service.ts(480,13): error TS7006: Parameter 'h' implicitly has an 'any' type.
+src/lib/services/harvest-tracking.service.ts(484,8): error TS7006: Parameter 'sum' implicitly has an 'any' type.
+src/lib/services/harvest-tracking.service.ts(484,13): error TS7006: Parameter 'h' implicitly has an 'any' type.
+src/lib/services/harvest-tracking.service.ts(560,14): error TS7006: Parameter 'sum' implicitly has an 'any' type.
+src/lib/services/harvest-tracking.service.ts(560,19): error TS7006: Parameter 'h' implicitly has an 'any' type.
+src/lib/services/harvest-tracking.service.ts(664,23): error TS7006: Parameter 'h' implicitly has an 'any' type.
+src/lib/services/harvest-tracking.service.ts(702,23): error TS7006: Parameter 'h' implicitly has an 'any' type.
+src/lib/services/harvest-tracking.service.ts(735,24): error TS7006: Parameter 'h' implicitly has an 'any' type.
+src/lib/services/harvest-tracking.service.ts(737,24): error TS7006: Parameter 'h' implicitly has an 'any' type.
+src/lib/services/harvest-tracking.service.ts(753,8): error TS7006: Parameter 'h' implicitly has an 'any' type.
+src/lib/services/harvest-tracking.service.ts(768,24): error TS7006: Parameter 'h' implicitly has an 'any' type.
+src/lib/services/invoice/invoice-pdf.service.ts(8,51): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/lib/services/invoice/invoice-pdf.service.ts(345,26): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/lib/services/invoice/invoice-pdf.service.ts(345,32): error TS7006: Parameter 'index' implicitly has an 'any' type.
+src/lib/services/notification.service.ts(15,8): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/lib/services/notification.service.ts(171,56): error TS2339: Property 'id' does not exist on type 'NotificationWithRelations'.
+src/lib/services/notification.service.ts(181,41): error TS2339: Property 'title' does not exist on type 'NotificationWithRelations'.
+src/lib/services/notification.service.ts(182,40): error TS2339: Property 'body' does not exist on type 'NotificationWithRelations'.
+src/lib/services/notification.service.ts(191,28): error TS2339: Property 'type' does not exist on type 'NotificationWithRelations'.
+src/lib/services/notification.service.ts(194,28): error TS2339: Property 'data' does not exist on type 'NotificationWithRelations'.
+src/lib/services/notification.service.ts(194,56): error TS2339: Property 'data' does not exist on type 'NotificationWithRelations'.
+src/lib/services/notification.service.ts(195,39): error TS2339: Property 'data' does not exist on type 'NotificationWithRelations'.
+src/lib/services/notification.service.ts(217,66): error TS2339: Property 'type' does not exist on type 'NotificationWithRelations'.
+src/lib/services/notification.service.ts(222,70): error TS2339: Property 'id' does not exist on type 'NotificationWithRelations'.
+src/lib/services/notification.service.ts(236,53): error TS2551: Property 'userId' does not exist on type 'NotificationWithRelations'. Did you mean 'user'?
+src/lib/services/notification.service.ts(245,34): error TS2339: Property 'title' does not exist on type 'NotificationWithRelations'.
+src/lib/services/notification.service.ts(245,59): error TS2339: Property 'body' does not exist on type 'NotificationWithRelations'.
+src/lib/services/notification.service.ts(246,30): error TS2551: Property 'userId' does not exist on type 'NotificationWithRelations'. Did you mean 'user'?
+src/lib/services/notification.service.ts(247,38): error TS2339: Property 'id' does not exist on type 'NotificationWithRelations'.
+src/lib/services/notification.service.ts(249,30): error TS2339: Property 'type' does not exist on type 'NotificationWithRelations'.
+src/lib/services/notification.service.ts(250,40): error TS2339: Property 'id' does not exist on type 'NotificationWithRelations'.
+src/lib/services/notification.service.ts(270,23): error TS2551: Property 'userId' does not exist on type 'NotificationWithRelations'. Did you mean 'user'?
+src/lib/services/notification.service.ts(278,30): error TS2551: Property 'userId' does not exist on type 'NotificationWithRelations'. Did you mean 'user'?
+src/lib/services/notification.service.ts(279,29): error TS2339: Property 'title' does not exist on type 'NotificationWithRelations'.
+src/lib/services/notification.service.ts(280,28): error TS2339: Property 'body' does not exist on type 'NotificationWithRelations'.
+src/lib/services/notification.service.ts(281,28): error TS2339: Property 'data' does not exist on type 'NotificationWithRelations'.
+src/lib/services/notification.service.ts(282,38): error TS2339: Property 'id' does not exist on type 'NotificationWithRelations'.
+src/lib/services/notification.service.ts(283,53): error TS2339: Property 'type' does not exist on type 'NotificationWithRelations'.
+src/lib/services/notification.service.ts(287,62): error TS2551: Property 'userId' does not exist on type 'NotificationWithRelations'. Did you mean 'user'?
+src/lib/services/order.service.ts(14,60): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/lib/services/product.service.ts(27,62): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/lib/services/product.service.ts(28,24): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/lib/services/webhook-event.service.ts(9,24): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/lib/stores/cart.store.ts(21,30): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/lib/utils/interaction.utils.ts(14,46): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/lib/utils/search.utils.ts(15,29): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/stores/checkoutStore.ts(16,40): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/types/analytics.types.ts(10,24): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/types/api/farm.types.ts(6,45): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/types/core-entities.ts(56,8): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/types/core-entities.ts(75,8): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/types/order.types.ts(7,8): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/types/payment.types.ts(2,46): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/types/product.ts(23,8): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/types/search.ts(4,29): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.
+src/types/settings.ts(7,29): error TS7016: Could not find a declaration file for module '@prisma/client'. 'M:/Repo/Farmers Market Platform web and app/node_modules/@prisma/client/index.js' implicitly has an 'any' type.

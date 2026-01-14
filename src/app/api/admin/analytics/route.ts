@@ -5,7 +5,6 @@
 
 import { auth } from "@/lib/auth";
 
-import type { Product, Order } from "@prisma/client";
 import { database } from "@/lib/database";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -285,7 +284,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     // Get customer details for recent orders
     const customerIds = [
-      ...new Set(recentOrdersDetails.map((o) => o.customerId)),
+      ...new Set(recentOrdersDetails.map((o: any) => o.customerId)),
     ];
     const customers = await database.user.findMany({
       where: { id: { in: customerIds } },
@@ -297,11 +296,11 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         lastName: true,
       },
     });
-    const customerMap = new Map(customers.map((c) => [c.id, c]));
+    const customerMap = new Map(customers.map((c: any) => [c.id, c]));
 
     // Format usersByRole
     const roleDistribution = usersByRole.reduce(
-      (acc, { role, _count }) => {
+      (acc: any, { role, _count }: any) => {
         acc[role] = _count;
         return acc;
       },
@@ -310,7 +309,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     // Format ordersByStatus
     const statusDistribution = ordersByStatus.reduce(
-      (acc, { status, _count }) => {
+      (acc: any, { status, _count }: any) => {
         acc[status] = _count;
         return acc;
       },
@@ -319,7 +318,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     // Format paymentsByStatus
     const paymentDistribution = paymentsByStatus.reduce(
-      (acc, { status, _count, _sum }) => {
+      (acc: any, { status, _count, _sum }: any) => {
         acc[status] = {
           count: _count,
           total: _sum.amount ? parseFloat(_sum.amount.toString()) : 0,

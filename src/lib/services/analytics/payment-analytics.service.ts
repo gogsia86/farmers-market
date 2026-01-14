@@ -207,15 +207,15 @@ export class PaymentAnalyticsService {
 
     // Calculate status counts
     const successfulTransactions = payments.filter(
-      (p) => p.status === "PAID",
+      (p: any) => p.status === "PAID",
     ).length;
 
     const failedTransactions = payments.filter(
-      (p) => p.status === "FAILED",
+      (p: any) => p.status === "FAILED",
     ).length;
 
     const pendingTransactions = payments.filter(
-      (p) => p.status === "PENDING" || p.status === "PROCESSING",
+      (p: any) => p.status === "PENDING" || p.status === "PROCESSING",
     ).length;
 
     const totalTransactions = payments.length;
@@ -283,7 +283,7 @@ export class PaymentAnalyticsService {
 
     // Get success rates for each method
     const methodMetrics = await Promise.all(
-      results.map(async (result) => {
+      results.map(async (result: any) => {
         const methodWhere: Prisma.PaymentWhereInput = {
           ...where,
           paymentMethod: result.paymentMethod,

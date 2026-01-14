@@ -106,11 +106,13 @@ export async function GET(request: NextRequest) {
       soilType: "LOAMY" as SoilType, // Default soil type, should be stored in farm metadata
       waterAvailability: "MODERATE" as WaterLevel, // Default water availability, should be stored in farm metadata
       sunExposure: "FULL_SUN" as SunLevel, // Default sun exposure, should be stored in farm metadata
-      isOrganic: farm.certifications.some((cert) => cert.type === "ORGANIC"),
-      isBiodynamic: farm.certifications.some(
-        (cert) => cert.type === "BIODYNAMIC",
+      isOrganic: farm.certifications.some(
+        (cert: any) => cert.type === "ORGANIC",
       ),
-      previousCrops: farm.products.map((p) => p.id),
+      isBiodynamic: farm.certifications.some(
+        (cert: any) => cert.type === "BIODYNAMIC",
+      ),
+      previousCrops: farm.products.map((p: any) => p.id),
       equipmentAvailable: [], // Default empty equipment, should be stored in farm metadata
       laborCapacity: 40, // Default labor capacity, should be stored in farm metadata
       budgetPerAcre: 5000, // Default budget, should be stored in farm metadata

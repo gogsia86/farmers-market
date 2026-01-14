@@ -348,7 +348,7 @@ export class HarvestTrackingService {
     // Calculate totals
     const totalHarvests = harvests.length;
     const totalYield = harvests.reduce(
-      (sum, h) => sum + Number(h.totalYield),
+      (sum: number, h: any) => sum + Number(h.totalYield),
       0,
     );
     const averageYield = totalHarvests > 0 ? totalYield / totalHarvests : 0;
@@ -363,8 +363,8 @@ export class HarvestTrackingService {
       FAILED: 0,
     };
 
-    harvests.forEach((h) => {
-      qualityDistribution[h.quality]++;
+    harvests.forEach((h: any) => {
+      qualityDistribution[h.quality as HarvestQuality]++;
     });
 
     // Top crops by yield
@@ -379,7 +379,7 @@ export class HarvestTrackingService {
       }
     >();
 
-    harvests.forEach((h) => {
+    harvests.forEach((h: any) => {
       const key = h.cropId;
       const existing = cropYields.get(key);
       const qualityScore = this.qualityToScore(h.quality);
@@ -431,7 +431,7 @@ export class HarvestTrackingService {
       { yields: number[]; qualities: number[] }
     >();
 
-    harvests.forEach((h) => {
+    harvests.forEach((h: any) => {
       if (!seasonalData.has(h.season)) {
         seasonalData.set(h.season, { yields: [], qualities: [] });
       }
@@ -451,13 +451,13 @@ export class HarvestTrackingService {
     });
 
     // Prediction accuracy
-    const predictionsWithActuals = harvests.filter((h) => h.prediction);
+    const predictionsWithActuals = harvests.filter((h: any) => h.prediction);
     const totalPredictions = predictionsWithActuals.length;
     let accuratePredictions = 0;
     let totalError = 0;
     let sumSquaredError = 0;
 
-    predictionsWithActuals.forEach((h) => {
+    predictionsWithActuals.forEach((h: any) => {
       if (h.prediction) {
         const predicted = Number(h.prediction.predictedYield);
         const actual = Number(h.totalYield);
@@ -477,11 +477,12 @@ export class HarvestTrackingService {
 
     // Revenue metrics
     const totalRevenue = harvests.reduce(
-      (sum, h) => sum + (h.marketValue ? Number(h.marketValue) : 0),
+      (sum: number, h: any) =>
+        sum + (h.marketValue ? Number(h.marketValue) : 0),
       0,
     );
     const totalCost = harvests.reduce(
-      (sum, h) => sum + (h.totalCost ? Number(h.totalCost) : 0),
+      (sum: number, h: any) => sum + (h.totalCost ? Number(h.totalCost) : 0),
       0,
     );
     const profit = totalRevenue - totalCost;
@@ -557,7 +558,7 @@ export class HarvestTrackingService {
       if (historicalHarvests.length > 0) {
         const avgHistoricalYield =
           historicalHarvests.reduce(
-            (sum, h) => sum + Number(h.yieldPerArea || 0),
+            (sum: number, h: any) => sum + Number(h.yieldPerArea || 0),
             0,
           ) / historicalHarvests.length;
 
@@ -661,7 +662,7 @@ export class HarvestTrackingService {
       }
     >();
 
-    harvests.forEach((h) => {
+    harvests.forEach((h: any) => {
       const existing = cropPerformance.get(h.cropId);
       const qualityScore = this.qualityToScore(h.quality);
 
@@ -699,7 +700,7 @@ export class HarvestTrackingService {
       { quality: number; count: number }
     >();
 
-    harvests.forEach((h) => {
+    harvests.forEach((h: any) => {
       const key = `${h.season}-${h.lunarPhase}`;
       const existing = harvestWindows.get(key);
       const qualityScore = this.qualityToScore(h.quality);
@@ -732,9 +733,9 @@ export class HarvestTrackingService {
 
     // Check for pest/disease issues
     const diseaseRate =
-      harvests.filter((h) => h.diseasePresent).length / harvests.length;
+      harvests.filter((h: any) => h.diseasePresent).length / harvests.length;
     const pestRate =
-      harvests.filter((h) => h.pestDamage).length / harvests.length;
+      harvests.filter((h: any) => h.pestDamage).length / harvests.length;
 
     if (diseaseRate > 0.2) {
       improvementRecommendations.push(
@@ -750,7 +751,7 @@ export class HarvestTrackingService {
 
     // Check soil health
     const lowPHHarvests = harvests.filter(
-      (h) => h.soilPH && Number(h.soilPH) < 6.0,
+      (h: any) => h.soilPH && Number(h.soilPH) < 6.0,
     );
     if (lowPHHarvests.length > harvests.length * 0.3) {
       improvementRecommendations.push(
@@ -765,8 +766,9 @@ export class HarvestTrackingService {
     if (pestRate > 0.3) riskFactors.push("High pest pressure");
 
     const poorQualityRate =
-      harvests.filter((h) => h.quality === "POOR" || h.quality === "FAILED")
-        .length / harvests.length;
+      harvests.filter(
+        (h: any) => h.quality === "POOR" || h.quality === "FAILED",
+      ).length / harvests.length;
     if (poorQualityRate > 0.2)
       riskFactors.push("Quality issues affecting more than 20% of harvests");
 

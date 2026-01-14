@@ -261,7 +261,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
   // Parse tags safely - tags is JsonValue which can be any type
   const tags = Array.isArray(product.tags)
-    ? product.tags.filter((tag): tag is string => typeof tag === "string")
+    ? product.tags.filter((tag: any): tag is string => typeof tag === "string")
     : [];
 
   return (

@@ -342,7 +342,7 @@ export class InvoicePDFService {
     doc.setTextColor(this.COLORS.text);
     doc.setFont("helvetica", "normal");
 
-    order.items.forEach((item, index) => {
+    order.items.forEach((item: any, index: number) => {
       // Alternate row background
       if (index % 2 === 0) {
         doc.setFillColor(this.COLORS.lightGray);

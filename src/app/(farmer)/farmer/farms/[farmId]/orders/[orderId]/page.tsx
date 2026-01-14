@@ -212,7 +212,7 @@ export default async function OrderDetailsPage({ params }: PageProps) {
 
   // Calculate totals
   const itemsSubtotal = order.items.reduce(
-    (sum: number, item) => sum + Number(item.subtotal),
+    (sum: number, item: any) => sum + Number(item.subtotal),
     0,
   );
 

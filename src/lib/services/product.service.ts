@@ -674,7 +674,7 @@ export class QuantumProductCatalogService {
     userId: string,
   ): Promise<Product[]> {
     // Use transaction for atomic updates
-    return await database.$transaction(async (tx) => {
+    return await database.$transaction(async (tx: any) => {
       const updatedProducts: Product[] = [];
 
       for (const { productId, updates: productUpdates } of updates) {
@@ -744,7 +744,7 @@ export class QuantumProductCatalogService {
     updates: BatchInventoryUpdate[],
     userId: string,
   ): Promise<Product[]> {
-    return await database.$transaction(async (tx) => {
+    return await database.$transaction(async (tx: any) => {
       const updatedProducts: Product[] = [];
 
       for (const { productId, quantityChange } of updates) {

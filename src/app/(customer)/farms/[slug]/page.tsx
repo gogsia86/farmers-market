@@ -273,7 +273,7 @@ export default async function FarmDetailPage({ params }: PageProps) {
   }
 
   // Collect all photo URLs
-  const photoUrls = farm?.photos?.map((photo) => photo.photoUrl) ?? [];
+  const photoUrls = farm?.photos?.map((photo: any) => photo.photoUrl) ?? [];
 
   return (
     <div className="min-h-screen bg-gray-50">

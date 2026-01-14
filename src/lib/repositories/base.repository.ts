@@ -452,7 +452,7 @@ export abstract class BaseRepository<
     this.logOperation("transaction:start", {});
 
     try {
-      const result = await this.db.$transaction(async (tx) => {
+      const result = await this.db.$transaction(async (tx: any) => {
         return await callback(tx);
       });
 

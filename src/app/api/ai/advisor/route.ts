@@ -9,9 +9,9 @@
  */
 
 import {
-    CUSTOMER_SUPPORT_AGENT,
-    FARM_ANALYST_AGENT,
-    getOpenAIClient
+  CUSTOMER_SUPPORT_AGENT,
+  FARM_ANALYST_AGENT,
+  getOpenAIClient,
 } from "@/lib/ai/agent-config";
 import { database } from "@/lib/database";
 import { createLogger } from "@/lib/utils/logger";
@@ -82,7 +82,7 @@ interface AdvisorResponse {
 // ============================================================================
 
 export async function POST(
-  request: NextRequest
+  request: NextRequest,
 ): Promise<NextResponse<AdvisorResponse>> {
   const startTime = Date.now();
   const requestId = crypto.randomUUID();
@@ -104,7 +104,7 @@ export async function POST(
     const thread = await getOrCreateThread(
       validatedData.userId,
       validatedData.farmId,
-      validatedData.threadId
+      validatedData.threadId,
     );
 
     // Get conversation history if requested
@@ -112,14 +112,14 @@ export async function POST(
     if (validatedData.includeHistory && thread) {
       conversationHistory = await getConversationHistory(
         thread.id,
-        validatedData.maxHistoryMessages
+        validatedData.maxHistoryMessages,
       );
     }
 
     // Determine which agent to use
     const agentName = determineAgent(
       validatedData.message,
-      validatedData.agentType
+      validatedData.agentType,
     );
 
     // Generate response
@@ -127,7 +127,7 @@ export async function POST(
       validatedData,
       agentName,
       conversationHistory,
-      requestId
+      requestId,
     );
 
     // Save message to database if thread exists
@@ -138,7 +138,7 @@ export async function POST(
         result.response,
         agentName,
         result.tokensUsed,
-        result.confidence
+        result.confidence,
       );
     }
 
@@ -172,7 +172,7 @@ export async function POST(
           conversationLength: conversationHistory.length + 2, // +2 for current exchange
         },
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     const processingTime = Date.now() - startTime;
@@ -194,7 +194,7 @@ export async function POST(
             processingTime,
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -209,8 +209,7 @@ export async function POST(
         success: false,
         error: {
           code: "INTERNAL_ERROR",
-          message:
-            "Failed to generate advisor response. Please try again.",
+          message: "Failed to generate advisor response. Please try again.",
         },
         metadata: {
           model: "gpt-4o",
@@ -219,7 +218,7 @@ export async function POST(
           processingTime,
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -231,7 +230,7 @@ export async function POST(
 async function getOrCreateThread(
   userId?: string,
   farmId?: string,
-  threadId?: string
+  threadId?: string,
 ) {
   try {
     // If threadId provided, try to get existing thread
@@ -271,7 +270,7 @@ async function getOrCreateThread(
 
 async function getConversationHistory(
   threadId: string,
-  maxMessages: number
+  maxMessages: number,
 ): Promise<string[]> {
   try {
     const messages = await database.chatMessage.findMany({
@@ -287,7 +286,7 @@ async function getConversationHistory(
     // Reverse to get chronological order and format
     return messages
       .reverse()
-      .map((msg) => `${msg.role.toUpperCase()}: ${msg.content}`);
+      .map((msg: any) => `${msg.role.toUpperCase()}: ${msg.content}`);
   } catch (error) {
     logger.error("Failed to get conversation history", { error, threadId });
     return [];
@@ -300,7 +299,7 @@ async function saveConversationMessages(
   assistantResponse: string,
   agentName: string,
   tokensUsed?: number,
-  confidence?: number
+  confidence?: number,
 ) {
   try {
     // Save user message
@@ -400,10 +399,10 @@ function determineAgent(message: string, requestedType: string): string {
 
   // Count keyword matches
   const farmScore = farmAnalysisKeywords.filter((kw) =>
-    messageLower.includes(kw)
+    messageLower.includes(kw),
   ).length;
   const supportScore = customerSupportKeywords.filter((kw) =>
-    messageLower.includes(kw)
+    messageLower.includes(kw),
   ).length;
 
   // Default to farm analyst for agricultural questions
@@ -418,7 +417,7 @@ async function generateAdvisorResponse(
   data: AdvisorRequest,
   agentName: string,
   conversationHistory: string[],
-  requestId: string
+  requestId: string,
 ): Promise<{
   response: string;
   confidence: number;
@@ -430,9 +429,7 @@ async function generateAdvisorResponse(
 }> {
   const client = getOpenAIClient();
   const agentConfig =
-    agentName === "farmAnalyst"
-      ? FARM_ANALYST_AGENT
-      : CUSTOMER_SUPPORT_AGENT;
+    agentName === "farmAnalyst" ? FARM_ANALYST_AGENT : CUSTOMER_SUPPORT_AGENT;
 
   // Build context-aware prompt
   const contextInfo = buildContextInfo(data.context);
@@ -482,7 +479,7 @@ Return your response as JSON with the following structure:
     // Calculate confidence
     const confidence = calculateResponseConfidence(
       parsedResponse,
-      data.message
+      data.message,
     );
 
     return {
@@ -530,7 +527,7 @@ function buildContextInfo(context?: AdvisorRequest["context"]): string {
 
 function calculateResponseConfidence(
   response: any,
-  originalQuestion: string
+  originalQuestion: string,
 ): number {
   let confidence = 0.5; // Base confidence
 
@@ -579,6 +576,6 @@ export async function OPTIONS() {
         "Access-Control-Allow-Methods": "POST, OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type, Authorization",
       },
-    }
+    },
   );
 }

@@ -28,54 +28,52 @@
 /**
  * Import ALL base types from Prisma schema
  * These are auto-generated and always in sync with database
+ *
+ * NOTE: Temporarily using any types until Prisma client is generated
+ * Run: npx prisma generate
  */
-export type {
-  // Core Entities
-  User,
-  Farm,
-  Product,
-  Order,
-  OrderItem,
-  Review,
-  Notification,
-  UserAddress,
 
-  // Supporting Entities
-  CartItem,
-  Favorite,
-
-  // Enums
-  UserRole,
+// Import actual Prisma types
+import type {
   FarmStatus,
-  ProductCategory,
-  ProductStatus,
+  FulfillmentMethod,
   OrderStatus,
   PaymentStatus,
-  FulfillmentMethod,
-  NotificationType,
-
-  // Prisma helpers
-  Prisma,
-} from "@prisma/client";
-
-// Re-import for internal use
-import type {
-  User as PrismaUser,
+  CartItem as PrismaCartItem,
   Farm as PrismaFarm,
-  Product as PrismaProduct,
+  Notification as PrismaNotification,
   Order as PrismaOrder,
   OrderItem as PrismaOrderItem,
+  Product as PrismaProduct,
   Review as PrismaReview,
+  User as PrismaUser,
   UserAddress as PrismaUserAddress,
-  CartItem as PrismaCartItem,
-  Notification as PrismaNotification,
-  UserRole,
-  FarmStatus,
   ProductStatus,
+  UserRole,
+} from "@prisma/client";
+
+// Re-export Prisma types as core entities
+export type {
+  PrismaCartItem as CartItem,
+  PrismaFarm as Farm,
+  PrismaNotification as Notification,
+  PrismaOrder as Order,
+  PrismaOrderItem as OrderItem,
+  PrismaProduct as Product,
+  PrismaReview as Review,
+  PrismaUser as User,
+  PrismaUserAddress as UserAddress,
+};
+
+// Re-export enums
+export type {
+  FarmStatus,
+  FulfillmentMethod,
   OrderStatus,
   PaymentStatus,
-  FulfillmentMethod,
-} from "@prisma/client";
+  ProductStatus,
+  UserRole,
+};
 
 // ============================================================================
 // EXTENDED TYPES - BASE + COMPUTED FIELDS
@@ -172,8 +170,17 @@ export interface ReviewWithRelations extends PrismaReview {
 
 /**
  * Cart Item with full product details
+ * Temporary standalone definition until Prisma is generated
  */
-export interface CartItemWithProduct extends PrismaCartItem {
+export interface CartItemWithProduct {
+  id: string;
+  userId: string;
+  productId: string;
+  quantity: number;
+  priceAtAdd: number | string;
+  unit: string;
+  createdAt?: Date;
+  updatedAt?: Date;
   product?: ProductWithRelations;
 }
 
@@ -630,7 +637,11 @@ export function isFarmer(user: PrismaUser): boolean {
  * Check if user is admin
  */
 export function isAdmin(user: PrismaUser): boolean {
-  return ["ADMIN", "SUPER_ADMIN", "MODERATOR"].includes(user.role);
+  return (
+    user.role === "ADMIN" ||
+    user.role === "SUPER_ADMIN" ||
+    user.role === "MODERATOR"
+  );
 }
 
 /**

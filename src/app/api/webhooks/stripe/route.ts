@@ -267,7 +267,7 @@ async function handlePaymentIntentSucceeded(
           body: `You have a new order #${order.orderNumber}`,
           data: {
             orderId: order.id,
-            orderNumber: order.orderNumber as string,
+            orderNumber: String(order.orderNumber || ""),
             farmName: farm.name,
           },
         });
