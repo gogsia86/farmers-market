@@ -3,11 +3,20 @@
 // 🌾 Domain: Real-time Communication Infrastructure
 // ⚡ Performance: Optimized WebSocket connections with agricultural consciousness
 
+import { createAdapter } from "@socket.io/redis-adapter";
 import { Server as HTTPServer } from "http";
+import { Redis } from "ioredis";
 import type { NextApiResponse } from "next";
 import { Socket, Server as SocketIOServer } from "socket.io";
 
 import { logger } from "@/lib/monitoring/logger";
+
+/**
+ * Redis clients for Socket.io adapter
+ * Enables multi-instance Socket.io with pub/sub
+ */
+let redisPubClient: Redis | null = null;
+let redisSubClient: Redis | null = null;
 
 /**
  * Socket.io event types for type safety
@@ -94,6 +103,60 @@ export function initializeSocketServer(httpServer: HTTPServer): SocketIOServer {
     pingTimeout: 60000,
     pingInterval: 25000,
   });
+
+  // Initialize Redis adapter for multi-instance support
+  const redisUrl =
+    process.env.UPSTASH_REDIS_REST_URL ||
+    process.env.REDIS_URL ||
+    process.env.REDIS_HOST;
+
+  if (redisUrl && process.env.NODE_ENV === "production") {
+    try {
+      logger.info("🔌 Initializing Redis adapter for Socket.io...");
+
+      // Create Redis clients for pub/sub
+      const createRedisClient = () => {
+        if (process.env.UPSTASH_REDIS_REST_URL) {
+          // Upstash Redis (Vercel recommended)
+          return new Redis({
+            host: new URL(redisUrl).hostname,
+            port: parseInt(new URL(redisUrl).port) || 6379,
+            password: process.env.UPSTASH_REDIS_REST_TOKEN,
+            tls: {},
+            retryStrategy: (times) => {
+              const delay = Math.min(times * 50, 2000);
+              return delay;
+            },
+          });
+        } else {
+          // Standard Redis
+          return new Redis(redisUrl, {
+            retryStrategy: (times) => {
+              const delay = Math.min(times * 50, 2000);
+              return delay;
+            },
+          });
+        }
+      };
+
+      redisPubClient = createRedisClient();
+      redisSubClient = redisPubClient.duplicate();
+
+      // Set up Redis adapter
+      io.adapter(createAdapter(redisPubClient, redisSubClient));
+
+      logger.info("✅ Redis adapter initialized for multi-instance Socket.io");
+    } catch (error) {
+      logger.error("❌ Failed to initialize Redis adapter:", { error });
+      logger.warn(
+        "⚠️ Falling back to in-memory adapter (single instance only)",
+      );
+    }
+  } else {
+    logger.warn(
+      "⚠️ Redis not configured - using in-memory adapter (development/single instance only)",
+    );
+  }
 
   // Connection handler
   io.on(SocketEvent.CONNECTION, (socket: Socket) => {
@@ -298,6 +361,16 @@ export function closeSocketServer(): void {
     io.close();
     io = null;
     logger.info("⚡ Socket.io server closed");
+  }
+
+  // Close Redis clients
+  if (redisPubClient) {
+    redisPubClient.quit();
+    redisPubClient = null;
+  }
+  if (redisSubClient) {
+    redisSubClient.quit();
+    redisSubClient = null;
   }
 }
 
