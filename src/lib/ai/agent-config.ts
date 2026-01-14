@@ -46,6 +46,9 @@ export interface AgentResponse {
 
 export interface AgentContext {
   userId?: string;
+  userRole?: string;
+  userName?: string;
+  userEmail?: string;
   farmId?: string;
   orderId?: string;
   productId?: string;
