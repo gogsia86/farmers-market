@@ -22,6 +22,7 @@ import {
   Menu,
   Package,
   Settings,
+  Sparkles,
   Store,
   User,
   X,
@@ -199,6 +200,30 @@ export function Header() {
                         </Link>
                       )}
 
+                      {/* AI Advisor (Farmer only) */}
+                      {userRole === "FARMER" && (
+                        <Link
+                          href="/farmer/ai-advisor"
+                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          onClick={() => setUserMenuOpen(false)}
+                        >
+                          <Sparkles className="mr-2 h-4 w-4" />
+                          AI Advisor
+                        </Link>
+                      )}
+
+                      {/* AI Assistant (Consumer only) */}
+                      {userRole === "CONSUMER" && (
+                        <Link
+                          href="/ai-assistant"
+                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          onClick={() => setUserMenuOpen(false)}
+                        >
+                          <Sparkles className="mr-2 h-4 w-4" />
+                          AI Assistant
+                        </Link>
+                      )}
+
                       {/* Settings */}
                       <Link
                         href="/settings"
@@ -299,12 +324,30 @@ export function Header() {
                     My Orders
                   </Link>
                   {userRole === "FARMER" && (
+                    <>
+                      <Link
+                        href="/farmer/farms"
+                        className="block rounded-lg px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        My Farm
+                      </Link>
+                      <Link
+                        href="/farmer/ai-advisor"
+                        className="block rounded-lg px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        ✨ AI Advisor
+                      </Link>
+                    </>
+                  )}
+                  {userRole === "CONSUMER" && (
                     <Link
-                      href="/farmer/farms"
+                      href="/ai-assistant"
                       className="block rounded-lg px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50"
                       onClick={() => setMobileMenuOpen(false)}
                     >
-                      My Farm
+                      ✨ AI Assistant
                     </Link>
                   )}
                   <Link
