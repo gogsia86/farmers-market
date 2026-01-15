@@ -35,12 +35,14 @@ import type { Farm, FarmStatus, Prisma } from "@prisma/client";
 jest.mock("@/lib/repositories/farm.repository", () => ({
   farmRepository: {
     create: jest.fn(),
+    manifestFarm: jest.fn(),
     findById: jest.fn(),
     findBySlug: jest.fn(),
     findByOwner: jest.fn(),
     findMany: jest.fn(),
     update: jest.fn(),
     delete: jest.fn(),
+    count: jest.fn(),
     withTransaction: jest.fn(),
   },
 }));
@@ -183,7 +185,7 @@ describe("FarmService", () => {
         email: farmRequest.email,
       });
 
-      jest.mocked(farmRepository.create).mockResolvedValue(expectedFarm);
+      jest.mocked(farmRepository.manifestFarm).mockResolvedValue(expectedFarm);
       jest
         .mocked(multiLayerCache.invalidatePattern)
         .mockResolvedValue(undefined);
@@ -193,8 +195,8 @@ describe("FarmService", () => {
 
       // Assert
       expect(result).toEqual(expectedFarm);
-      expect(farmRepository.create).toHaveBeenCalledTimes(1);
-      expect(farmRepository.create).toHaveBeenCalledWith(
+      expect(farmRepository.manifestFarm).toHaveBeenCalledTimes(1);
+      expect(farmRepository.manifestFarm).toHaveBeenCalledWith(
         expect.objectContaining({
           name: farmRequest.name,
           ownerId: farmRequest.ownerId,
@@ -211,13 +213,13 @@ describe("FarmService", () => {
       const farmRequest = createMockFarmRequest({ name: "Amazing Farm & Co!" });
       const expectedFarm = createMockFarm();
 
-      jest.mocked(farmRepository.create).mockResolvedValue(expectedFarm);
+      jest.mocked(farmRepository.manifestFarm).mockResolvedValue(expectedFarm);
 
       // Act
       await farmService.createFarm(farmRequest);
 
       // Assert
-      expect(farmRepository.create).toHaveBeenCalledWith(
+      expect(farmRepository.manifestFarm).toHaveBeenCalledWith(
         expect.objectContaining({
           slug: expect.stringMatching(/^[a-z0-9-]+$/), // Should be URL-safe
         }),
@@ -231,13 +233,18 @@ describe("FarmService", () => {
         status: "PENDING_VERIFICATION" as FarmStatus,
       });
 
-      jest.mocked(farmRepository.create).mockResolvedValue(expectedFarm);
+      jest.mocked(farmRepository.manifestFarm).mockResolvedValue(expectedFarm);
 
       // Act
       const result = await farmService.createFarm(farmRequest);
 
       // Assert
       expect(result.status).toBe("PENDING_VERIFICATION");
+      expect(farmRepository.manifestFarm).toHaveBeenCalledWith(
+        expect.objectContaining({
+          status: "PENDING_VERIFICATION",
+        }),
+      );
     });
 
     it("should handle validation errors gracefully", async () => {
@@ -255,7 +262,7 @@ describe("FarmService", () => {
       const farmRequest = createMockFarmRequest();
       const dbError = new Error("Database connection failed");
 
-      jest.mocked(farmRepository.create).mockRejectedValue(dbError);
+      jest.mocked(farmRepository.manifestFarm).mockRejectedValue(dbError);
 
       // Act & Assert
       await expect(farmService.createFarm(farmRequest)).rejects.toThrow(
@@ -268,7 +275,9 @@ describe("FarmService", () => {
       const farmRequest = createMockFarmRequest();
       const duplicateError = new Error("Unique constraint failed on slug");
 
-      jest.mocked(farmRepository.create).mockRejectedValue(duplicateError);
+      jest
+        .mocked(farmRepository.manifestFarm)
+        .mockRejectedValue(duplicateError);
 
       // Act & Assert
       await expect(farmService.createFarm(farmRequest)).rejects.toThrow();
@@ -522,13 +531,8 @@ describe("FarmService", () => {
         createMockFarm({ id: "farm_2" }),
       ];
 
-      jest.mocked(farmRepository.findMany).mockResolvedValue({
-        farms,
-        total: 50,
-        page: 1,
-        pageSize: 20,
-        hasMore: true,
-      });
+      jest.mocked(farmRepository.findMany).mockResolvedValue(farms);
+      jest.mocked(farmRepository.count).mockResolvedValue(50);
 
       // Act
       const result = await farmService.getAllFarms(filters);
@@ -545,13 +549,8 @@ describe("FarmService", () => {
       const filters = { page: 1, limit: 20, searchQuery: "organic" };
       const farms = [createMockFarm({ name: "Organic Farm" })];
 
-      jest.mocked(farmRepository.findMany).mockResolvedValue({
-        farms,
-        total: 1,
-        page: 1,
-        pageSize: 20,
-        hasMore: false,
-      });
+      jest.mocked(farmRepository.findMany).mockResolvedValue(farms);
+      jest.mocked(farmRepository.count).mockResolvedValue(1);
 
       // Act
       const result = await farmService.getAllFarms(filters);
@@ -571,12 +570,17 @@ describe("FarmService", () => {
       // Arrange
       const farmId = "farm_123";
       const adminId = "admin_456";
+      const existingFarm = createMockFarm({
+        id: farmId,
+        status: "PENDING_VERIFICATION" as FarmStatus,
+      });
       const approvedFarm = createMockFarm({
         id: farmId,
         status: "ACTIVE" as FarmStatus,
         verificationStatus: "VERIFIED",
       });
 
+      jest.mocked(farmRepository.findById).mockResolvedValue(existingFarm);
       jest.mocked(farmRepository.update).mockResolvedValue(approvedFarm);
       jest.mocked(multiLayerCache.delete).mockResolvedValue(undefined);
       jest
