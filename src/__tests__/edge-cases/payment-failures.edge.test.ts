@@ -678,6 +678,7 @@ describe("Payment Failure Edge Cases", () => {
         id: "order_pending",
         status: "PENDING",
         total: 100,
+        paymentIntentId: "pi_pending",
       });
 
       await expect(
