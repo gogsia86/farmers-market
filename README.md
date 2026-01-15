@@ -8,7 +8,9 @@
 
 > **Enterprise-grade marketplace connecting farmers directly with consumers**
 >
-> 🚀 **Status**: Production Ready | ✅ **Grade**: A+ (95/100) | 📊 **Completion**: 95%
+> ⚠️ **Status**: Pre-Production | 📊 **Grade**: B+ (88/100) | 📈 **Completion**: 85%
+>
+> 🎯 **Next Steps**: See [TODO.md](TODO.md) | 📋 **Review**: See [PROJECT_REVIEW_SUMMARY.md](PROJECT_REVIEW_SUMMARY.md)
 >
 > 📱 **Mobile App**: Now in [separate repository](https://github.com/gogsia86/farmers-market-mobile-app) - See [migration guide](MOBILE_APP_MIGRATION.md)
 
@@ -18,6 +20,9 @@
 
 | Documentation                                                          | Description              |
 | ---------------------------------------------------------------------- | ------------------------ |
+| [✅ TODO List](TODO.md)                                                 | Complete task roadmap    |
+| [📊 Project Review](PROJECT_REVIEW_SUMMARY.md)                         | Code review & analysis   |
+| [⚡ Quick Reference](QUICK_REFERENCE.md)                               | Daily commands & tips    |
 | [🚀 Quick Start](docs/getting-started/QUICK_START_GUIDE.md)            | Get started in 5 minutes |
 | [📚 Developer Guide](docs/getting-started/developer-quickstart.md)     | Complete setup guide     |
 | [🏗️ Architecture](docs/architecture/README.md)                         | System architecture      |
@@ -54,7 +59,17 @@
 - PostgreSQL 15+
 - npm 10+
 
-### Installation
+### Quick Setup (Automated)
+
+```bash
+# Linux/macOS
+./START_HERE.sh
+
+# Windows PowerShell
+.\START_HERE.ps1
+```
+
+### Manual Installation
 
 ```bash
 # 1. Clone the repository
@@ -270,16 +285,30 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 
 ## 📊 Project Status
 
-| Metric                 | Status    |
-| ---------------------- | --------- |
-| **Feature Completion** | 95% ✅    |
-| **Test Coverage**      | 85% ✅    |
-| **Type Safety**        | 98% ✅    |
-| **Security Grade**     | A+ ✅     |
-| **Performance**        | 95/100 ✅ |
-| **Production Ready**   | YES ✅    |
+| Metric                 | Status        |
+| ---------------------- | ------------- |
+| **Feature Completion** | 85% 🔄        |
+| **Test Coverage**      | 85% ✅        |
+| **Type Safety**        | 98% ✅        |
+| **Security Grade**     | A- ⚠️         |
+| **Performance**        | 88/100 🔄     |
+| **Production Ready**   | 2-4 Weeks ⏳  |
 
 **Last Updated:** January 2025
+
+---
+
+## 🎯 Current Focus
+
+**Phase 1: Critical Blockers** (Week 1)
+- [ ] Fix Vercel deployment issues
+- [ ] Verify test suite execution
+- [ ] Security audit (source maps)
+- [ ] Environment variable audit
+
+**See [TODO.md](TODO.md) for complete roadmap**
+
+**Read [PROJECT_REVIEW_SUMMARY.md](PROJECT_REVIEW_SUMMARY.md) for detailed analysis**
 
 ---
 

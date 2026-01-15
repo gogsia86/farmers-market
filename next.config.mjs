@@ -116,8 +116,8 @@ const nextConfig = {
   // Output directory
   distDir: ".next",
 
-  // Optimize production builds - ENABLED for Sentry error tracking
-  productionBrowserSourceMaps: true,
+  // Optimize production builds - DISABLED for security (Sentry still works via server-side source maps)
+  productionBrowserSourceMaps: false,
 
   // Skip trailing slash for cleaner URLs
   trailingSlash: false,
