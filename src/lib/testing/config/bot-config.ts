@@ -308,16 +308,28 @@ export function mergeConfigs(
       ...override.execution,
     },
     monitoring: {
-      ...base.monitoring,
-      ...override.monitoring,
+      enabled:
+        base.monitoring?.enabled ?? override.monitoring?.enabled ?? false,
+      interval:
+        base.monitoring?.interval ?? override.monitoring?.interval ?? 60000,
+      alertThreshold:
+        base.monitoring?.alertThreshold ??
+        override.monitoring?.alertThreshold ??
+        50,
     },
     reporting: {
       ...base.reporting,
       ...override.reporting,
     },
     testData: {
-      ...base.testData,
-      ...override.testData,
+      useSeededData:
+        override.testData?.useSeededData ??
+        base.testData?.useSeededData ??
+        true,
+      generateDynamic:
+        override.testData?.generateDynamic ??
+        base.testData?.generateDynamic ??
+        false,
       credentials: {
         ...base.testData?.credentials,
         ...override.testData?.credentials,
@@ -376,7 +388,9 @@ export function loadConfigFromEnv(): Partial<BotConfig> {
         admin: {
           email: process.env.ADMIN_EMAIL || "admin@farmersmarket.app",
           password:
-            process.env.ADMIN_PASSWORD || process.env.TEST_USER_PASSWORD,
+            process.env.ADMIN_PASSWORD ||
+            process.env.TEST_USER_PASSWORD ||
+            "Test123!@#",
         },
       },
     },

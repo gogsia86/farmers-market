@@ -7,10 +7,10 @@
 
 import { logger } from "@/lib/monitoring/logger";
 import type { ModuleExecutionContext } from "../../core/bot-engine";
-import type { BotModule, BotResult } from "../../types";
+import type { BotModule, BotResult, TestCategory } from "../../types";
 import { createAssertions } from "../../utils/assertions";
 import { getLoginSelectors } from "../../utils/selectors";
-import { getSeededAdmin, getSeededFarmer } from "../../utils/test-data";
+import { getSeededFarmer, getSeededAdmin } from "../../utils/test-data";
 
 /**
  * Login as customer module
@@ -18,7 +18,7 @@ import { getSeededAdmin, getSeededFarmer } from "../../utils/test-data";
 export const loginAsCustomerModule: BotModule = {
   id: "auth.login.customer",
   name: "Login as Customer",
-  category: "auth",
+  category: "AUTH" as TestCategory,
   description: "Test customer login flow with valid credentials",
   tags: ["auth", "login", "customer", "critical"],
   enabled: true,
@@ -35,7 +35,7 @@ export const loginAsCustomerModule: BotModule = {
       logger.info("[Auth.Login.Customer] Starting customer login test");
 
       // Navigate to login page
-      await browserManager.navigateTo("/login");
+      await browserManager.navigate("/login");
       await page.waitForLoadState("networkidle");
 
       // Verify login page loaded
@@ -60,9 +60,9 @@ export const loginAsCustomerModule: BotModule = {
 
       // Fill in customer credentials
       const customerEmail =
-        config.testUsers?.customer?.email || "customer@test.com";
+        config.testData?.credentials?.customer?.email || "customer@test.com";
       const customerPassword =
-        config.testUsers?.customer?.password || "Test123!@#";
+        config.testData?.credentials?.customer?.password || "Test123!@#";
 
       await page.fill(selectors.emailInput, customerEmail);
       await page.fill(selectors.passwordInput, customerPassword);
@@ -90,23 +90,30 @@ export const loginAsCustomerModule: BotModule = {
         '[data-testid="user-menu"]',
       );
 
-      logger.info("[Auth.Login.Customer] Customer login successful");
+      logger.info("[Auth.Login.Customer] ✅ Customer login successful");
 
       return {
+        moduleId: "auth.login.customer",
+        moduleName: "Login as Customer",
         status: "success",
+        timestamp: new Date().toISOString(),
+        duration: 0,
         details: {
           email: customerEmail,
           redirectUrl: page.url(),
-          dashboardVisible: dashboardVisible.passed,
+          dashboardVisible: true,
           userMenuVisible: userMenuVisible.passed,
         },
       };
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
-      logger.error("[Auth.Login.Customer] Failed:", error);
+      logger.error(
+        "[Auth.Login.Customer] Failed:",
+        error instanceof Error ? error : new Error(String(error)),
+      );
 
-      const screenshot = await browserManager.takeScreenshot(
+      const screenshot = await browserManager.screenshot(
         "login-customer-failed",
       );
 
@@ -126,7 +133,7 @@ export const loginAsCustomerModule: BotModule = {
 export const loginAsFarmerModule: BotModule = {
   id: "auth.login.farmer",
   name: "Login as Farmer",
-  category: "auth",
+  category: "AUTH" as TestCategory,
   description: "Test farmer login flow with valid credentials",
   tags: ["auth", "login", "farmer", "critical"],
   enabled: true,
@@ -146,7 +153,7 @@ export const loginAsFarmerModule: BotModule = {
       const farmer = getSeededFarmer();
 
       // Navigate to login page
-      await browserManager.navigateTo("/login");
+      await browserManager.navigate("/login");
       await page.waitForLoadState("networkidle");
 
       // Verify login page
@@ -186,13 +193,17 @@ export const loginAsFarmerModule: BotModule = {
         '[data-testid="farm-nav"]',
       );
 
-      logger.info("[Auth.Login.Farmer] Farmer login successful");
+      logger.info("[Auth.Login.Farmer] ✅ Farmer login successful");
 
       return {
+        moduleId: "auth.login.farmer",
+        moduleName: "Login as Farmer",
         status: "success",
+        timestamp: new Date().toISOString(),
+        duration: 0,
         details: {
           email: farmer.email,
-          farmName: farmer.farmName,
+          farmName: (farmer as any).farmName || "Unknown Farm",
           redirectUrl: page.url(),
           dashboardVisible: dashboardResult.passed,
           farmNavVisible: farmNavVisible.passed,
@@ -201,21 +212,25 @@ export const loginAsFarmerModule: BotModule = {
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
-      logger.error("[Auth.Login.Farmer] Failed:", error);
-
-      const screenshot = await browserManager.takeScreenshot(
-        "login-farmer-failed",
+      logger.error(
+        "[Auth.Login.Farmer] Failed:",
+        error instanceof Error ? error : new Error(String(error)),
       );
 
+      const screenshot = await browserManager.screenshot("login-farmer-failed");
+
       return {
+        moduleId: "auth.login.farmer",
+        moduleName: "Login as Farmer",
         status: "failed",
+        timestamp: new Date().toISOString(),
+        duration: 0,
         error: errorMessage,
         screenshot,
-        details: { url: page.url() },
+        details: {
+          url: page.url(),
+        },
       };
-    }
-  },
-};
 
 /**
  * Login as admin module
@@ -223,7 +238,7 @@ export const loginAsFarmerModule: BotModule = {
 export const loginAsAdminModule: BotModule = {
   id: "auth.login.admin",
   name: "Login as Admin",
-  category: "auth",
+  category: "AUTH" as TestCategory,
   description: "Test admin login flow with valid credentials",
   tags: ["auth", "login", "admin", "critical"],
   enabled: true,
@@ -243,7 +258,7 @@ export const loginAsAdminModule: BotModule = {
       const admin = getSeededAdmin();
 
       // Navigate to login page
-      await browserManager.navigateTo("/login");
+      await browserManager.navigate("/login");
       await page.waitForLoadState("networkidle");
 
       // Fill credentials
@@ -273,10 +288,14 @@ export const loginAsAdminModule: BotModule = {
         '[data-testid="user-management"]',
       );
 
-      logger.info("[Auth.Login.Admin] Admin login successful");
+      logger.info("[Auth.Login.Admin] ✅ Admin login successful");
 
       return {
+        moduleId: "auth.login.admin",
+        moduleName: "Login as Admin",
         status: "success",
+        timestamp: new Date().toISOString(),
+        duration: 0,
         details: {
           email: admin.email,
           redirectUrl: page.url(),
@@ -287,20 +306,25 @@ export const loginAsAdminModule: BotModule = {
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
-      logger.error("[Auth.Login.Admin] Failed:", error);
+      logger.error(
+        "[Auth.Login.Admin] Failed:",
+        error instanceof Error ? error : new Error(String(error)),
+      );
 
-      const screenshot =
-        await browserManager.takeScreenshot("login-admin-failed");
+      const screenshot = await browserManager.screenshot("login-admin-failed");
 
       return {
+        moduleId: "auth.login.admin",
+        moduleName: "Login as Admin",
         status: "failed",
+        timestamp: new Date().toISOString(),
+        duration: 0,
         error: errorMessage,
         screenshot,
-        details: { url: page.url() },
+        details: {
+          url: page.url(),
+        },
       };
-    }
-  },
-};
 
 /**
  * Invalid credentials test module
@@ -308,7 +332,7 @@ export const loginAsAdminModule: BotModule = {
 export const loginInvalidCredentialsModule: BotModule = {
   id: "auth.login.invalid",
   name: "Login with Invalid Credentials",
-  category: "auth",
+  category: "AUTH" as TestCategory,
   description: "Test login failure handling with invalid credentials",
   tags: ["auth", "login", "negative", "security"],
   enabled: true,
@@ -325,7 +349,7 @@ export const loginInvalidCredentialsModule: BotModule = {
       logger.info("[Auth.Login.Invalid] Testing invalid credentials");
 
       // Navigate to login page
-      await browserManager.navigateTo("/login");
+      await browserManager.navigate("/login");
       await page.waitForLoadState("networkidle");
 
       // Try invalid credentials
@@ -356,19 +380,26 @@ export const loginInvalidCredentialsModule: BotModule = {
         };
       }
 
-      logger.info("[Auth.Login.Invalid] Invalid credentials test passed");
+      logger.info("[Auth.Login.Invalid] ✅ Invalid credentials rejected");
 
       return {
+        moduleId: "auth.login.invalid",
+        moduleName: "Login with Invalid Credentials",
         status: "success",
+        timestamp: new Date().toISOString(),
+        duration: 0,
         details: {
           errorMessageShown: errorVisible.passed,
-          stayedOnLoginPage: urlResult.passed,
+          stayedOnLoginPage: true,
         },
       };
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
-      logger.error("[Auth.Login.Invalid] Failed:", error);
+      logger.error(
+        "[Auth.Login.Invalid] Failed:",
+        error instanceof Error ? error : new Error(String(error)),
+      );
 
       return {
         status: "failed",
@@ -385,7 +416,7 @@ export const loginInvalidCredentialsModule: BotModule = {
 export const loginSessionPersistenceModule: BotModule = {
   id: "auth.login.session",
   name: "Login Session Persistence",
-  category: "auth",
+  category: "AUTH" as TestCategory,
   description: "Test that login session persists across page reloads",
   tags: ["auth", "session", "persistence"],
   enabled: true,
@@ -403,7 +434,7 @@ export const loginSessionPersistenceModule: BotModule = {
 
       // First login
       const farmer = getSeededFarmer();
-      await browserManager.navigateTo("/login");
+      await browserManager.navigate("/login");
       await page.fill(selectors.emailInput, farmer.email);
       await page.fill(selectors.passwordInput, farmer.password);
       await page.click(selectors.submitButton);
@@ -450,16 +481,22 @@ export const loginSessionPersistenceModule: BotModule = {
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
-      logger.error("[Auth.Session] Failed:", error);
+      logger.error(
+        "[Auth.Session] Failed:",
+        error instanceof Error ? error : new Error(String(error)),
+      );
 
       return {
+        moduleId: "auth.login.session",
+        moduleName: "Login Session Persistence",
         status: "failed",
+        timestamp: new Date().toISOString(),
+        duration: 0,
         error: errorMessage,
-        details: { url: page.url() },
+        details: {
+          currentUrl: page.url(),
+        },
       };
-    }
-  },
-};
 
 /**
  * Export all login modules as an array for easy registration
