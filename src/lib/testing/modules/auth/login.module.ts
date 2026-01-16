@@ -10,7 +10,7 @@ import type { ModuleExecutionContext } from "../../core/bot-engine";
 import type { BotModule, BotResult, TestCategory } from "../../types";
 import { createAssertions } from "../../utils/assertions";
 import { getLoginSelectors } from "../../utils/selectors";
-import { getSeededFarmer, getSeededAdmin } from "../../utils/test-data";
+import { getSeededAdmin, getSeededFarmer } from "../../utils/test-data";
 
 /**
  * Login as customer module
@@ -42,7 +42,11 @@ export const loginAsCustomerModule: BotModule = {
       const titleResult = await assertions.titleMatches(/login/i);
       if (!titleResult.passed) {
         return {
+          moduleId: "auth.login.customer",
+          moduleName: "Login as Customer",
           status: "failed",
+          timestamp: new Date().toISOString(),
+          duration: 0,
           error: "Login page did not load correctly",
           details: { titleCheck: titleResult },
         };
@@ -52,7 +56,11 @@ export const loginAsCustomerModule: BotModule = {
       const formVisible = await assertions.isVisible(selectors.emailInput);
       if (!formVisible.passed) {
         return {
+          moduleId: "auth.login.customer",
+          moduleName: "Login as Customer",
           status: "failed",
+          timestamp: new Date().toISOString(),
+          duration: 0,
           error: "Login form not visible",
           screenshot: formVisible.screenshot,
         };
@@ -79,7 +87,11 @@ export const loginAsCustomerModule: BotModule = {
       );
       if (!dashboardVisible.passed) {
         return {
+          moduleId: "auth.login.customer",
+          moduleName: "Login as Customer",
           status: "failed",
+          timestamp: new Date().toISOString(),
+          duration: 0,
           error: "Dashboard not visible after login",
           screenshot: dashboardVisible.screenshot,
         };
@@ -118,7 +130,11 @@ export const loginAsCustomerModule: BotModule = {
       );
 
       return {
+        moduleId: "auth.login.customer",
+        moduleName: "Login as Customer",
         status: "failed",
+        timestamp: new Date().toISOString(),
+        duration: 0,
         error: errorMessage,
         screenshot,
         details: { url: page.url() },
@@ -160,7 +176,11 @@ export const loginAsFarmerModule: BotModule = {
       const formVisible = await assertions.isVisible(selectors.emailInput);
       if (!formVisible.passed) {
         return {
+          moduleId: "auth.login.farmer",
+          moduleName: "Login as Farmer",
           status: "failed",
+          timestamp: new Date().toISOString(),
+          duration: 0,
           error: "Login form not visible",
           screenshot: formVisible.screenshot,
         };
@@ -182,7 +202,11 @@ export const loginAsFarmerModule: BotModule = {
       );
       if (!dashboardResult.passed) {
         return {
+          moduleId: "auth.login.farmer",
+          moduleName: "Login as Farmer",
           status: "failed",
+          timestamp: new Date().toISOString(),
+          duration: 0,
           error: "Farmer dashboard not visible after login",
           screenshot: dashboardResult.screenshot,
         };
@@ -231,6 +255,9 @@ export const loginAsFarmerModule: BotModule = {
           url: page.url(),
         },
       };
+    }
+  },
+};
 
 /**
  * Login as admin module
@@ -277,7 +304,11 @@ export const loginAsAdminModule: BotModule = {
       );
       if (!adminPanelResult.passed) {
         return {
+          moduleId: "auth.login.admin",
+          moduleName: "Login as Admin",
           status: "failed",
+          timestamp: new Date().toISOString(),
+          duration: 0,
           error: "Admin panel not visible after login",
           screenshot: adminPanelResult.screenshot,
         };
@@ -325,6 +356,9 @@ export const loginAsAdminModule: BotModule = {
           url: page.url(),
         },
       };
+    }
+  },
+};
 
 /**
  * Invalid credentials test module
@@ -364,7 +398,11 @@ export const loginInvalidCredentialsModule: BotModule = {
       const errorVisible = await assertions.isVisible(selectors.errorMessage);
       if (!errorVisible.passed) {
         return {
+          moduleId: "auth.login.invalid",
+          moduleName: "Login with Invalid Credentials",
           status: "failed",
+          timestamp: new Date().toISOString(),
+          duration: 0,
           error: "Error message not shown for invalid credentials",
           screenshot: errorVisible.screenshot,
         };
@@ -374,7 +412,11 @@ export const loginInvalidCredentialsModule: BotModule = {
       const urlResult = await assertions.urlMatches("/login");
       if (!urlResult.passed) {
         return {
+          moduleId: "auth.login.invalid",
+          moduleName: "Login with Invalid Credentials",
           status: "failed",
+          timestamp: new Date().toISOString(),
+          duration: 0,
           error: "User was redirected despite invalid credentials",
           details: { currentUrl: page.url() },
         };
@@ -402,7 +444,11 @@ export const loginInvalidCredentialsModule: BotModule = {
       );
 
       return {
+        moduleId: "auth.login.invalid",
+        moduleName: "Login with Invalid Credentials",
         status: "failed",
+        timestamp: new Date().toISOString(),
+        duration: 0,
         error: errorMessage,
         details: { url: page.url() },
       };
@@ -446,7 +492,11 @@ export const loginSessionPersistenceModule: BotModule = {
       );
       if (!initialDashboard.passed) {
         return {
+          moduleId: "auth.login.session",
+          moduleName: "Login Session Persistence",
           status: "failed",
+          timestamp: new Date().toISOString(),
+          duration: 0,
           error: "Initial login failed",
         };
       }
@@ -460,7 +510,11 @@ export const loginSessionPersistenceModule: BotModule = {
       );
       if (!afterReloadDashboard.passed) {
         return {
+          moduleId: "auth.login.session",
+          moduleName: "Login Session Persistence",
           status: "failed",
+          timestamp: new Date().toISOString(),
+          duration: 0,
           error: "Session not persisted after page reload",
           screenshot: afterReloadDashboard.screenshot,
         };
@@ -472,7 +526,11 @@ export const loginSessionPersistenceModule: BotModule = {
       logger.info("[Auth.Session] Session persistence test passed");
 
       return {
+        moduleId: "auth.login.session",
+        moduleName: "Login Session Persistence",
         status: "success",
+        timestamp: new Date().toISOString(),
+        duration: 0,
         details: {
           sessionPersisted: afterReloadDashboard.passed,
           notRedirectedToLogin: notOnLogin,
@@ -497,6 +555,9 @@ export const loginSessionPersistenceModule: BotModule = {
           currentUrl: page.url(),
         },
       };
+    }
+  },
+};
 
 /**
  * Export all login modules as an array for easy registration
