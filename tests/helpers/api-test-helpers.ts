@@ -7,7 +7,7 @@
  */
 
 import { database } from "@/lib/database";
-import { Prisma } from "@prisma/client";
+import { Prisma, ProductCategory, ProductStatus } from "@prisma/client";
 import type { User, Farm, Product, Order } from "@prisma/client";
 import { hash } from "bcryptjs";
 
@@ -189,7 +189,7 @@ export async function createTestProduct(
       description:
         restOverrides.description ||
         "Divine test product with quantum properties",
-      category: restOverrides.category || "VEGETABLES",
+      category: restOverrides.category || ProductCategory.VEGETABLES,
       // Flat price field (required by schema)
       price: price ?? 10.0,
       unit: restOverrides.unit || "lb",
@@ -197,7 +197,7 @@ export async function createTestProduct(
       pricing: pricing as any,
       inventory: inventory as any,
       attributes: (restOverrides.attributes as any) || defaultAttributes,
-      status: restOverrides.status || "ACTIVE",
+      status: restOverrides.status || ProductStatus.ACTIVE,
       ...restOverrides,
     } as any, // Cast to bypass complex Prisma type inference
   });

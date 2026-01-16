@@ -67,7 +67,7 @@ const createMockUser = (overrides: Partial<any> = {}) => ({
   email: "customer@example.com",
   firstName: "John",
   lastName: "Doe",
-  role: "CUSTOMER",
+  role: "CONSUMER",
   ...overrides,
 });
 

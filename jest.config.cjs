@@ -81,14 +81,39 @@ module.exports = {
     "useSeasonalConsciousness.test.ts",
   ],
 
-  // Coverage configuration
+  // Coverage configuration - FOCUS ON BUSINESS LOGIC
+  // Excludes Next.js pages and React components for accurate metrics
   collectCoverageFrom: [
-    "src/**/*.{ts,tsx}",
-    "!src/**/*.d.ts",
-    "!src/**/*.stories.{ts,tsx}",
+    // INCLUDE: Business logic only
+    "src/lib/**/*.{ts,tsx}",
+    "src/app/api/**/*.{ts,tsx}",
+
+    // EXCLUDE: Test files
+    "!src/**/*.test.{ts,tsx}",
+    "!src/**/*.spec.{ts,tsx}",
     "!src/**/__tests__/**",
-    "!src/**/index.{ts,tsx}",
+    "!src/**/__mocks__/**",
+
+    // EXCLUDE: Type definitions
+    "!src/**/*.d.ts",
     "!src/types/**",
+
+    // EXCLUDE: UI files (Next.js pages and React components)
+    "!src/app/**/*.tsx",
+    "!src/app/**/layout.tsx",
+    "!src/app/**/loading.tsx",
+    "!src/app/**/error.tsx",
+    "!src/app/**/not-found.tsx",
+    "!src/app/**/page.tsx",
+    "!src/components/**/*.tsx",
+    "!src/components/**/*.jsx",
+
+    // EXCLUDE: Config and setup files
+    "!src/**/index.{ts,tsx}",
+    "!src/**/*.stories.{ts,tsx}",
+    "!src/instrumentation*.ts",
+    "!src/i18n.ts",
+    "!src/proxy.ts",
   ],
 
   // Coverage provider (v8 is faster and more accurate)
@@ -96,12 +121,13 @@ module.exports = {
 
   coverageThreshold: {
     global: {
-      // Realistic baseline thresholds - increase as coverage improves
-      // Long-term target: branches: 80, functions: 80, lines: 80, statements: 80
+      // Business logic thresholds (src/lib + src/app/api only)
+      // Target: 80% coverage of all business logic
+      // Current baseline: ~50-60% (utilities at 92%)
       branches: 50,
       functions: 50,
-      lines: 40,
-      statements: 40,
+      lines: 50,
+      statements: 50,
     },
   },
 

@@ -49,7 +49,6 @@ describe("🔗 Product Repository Integration Tests", () => {
         inStock: true,
         organic: true,
         seasonal: true,
-        status: "ACTIVE" as ProductStatus,
       };
 
       // Act
@@ -65,7 +64,9 @@ describe("🔗 Product Repository Integration Tests", () => {
       expect(createdProduct.id).toBeDefined();
       expect(createdProduct.name).toBe(productData.name);
       expect(createdProduct.slug).toBe(productData.slug);
-      expect(createdProduct.price).toBe(productData.price);
+      expect(createdProduct.price.toString()).toBe(
+        productData.price.toString(),
+      );
       expect(createdProduct.category).toBe("FRUITS");
       expect(createdProduct.organic).toBe(true);
 
@@ -90,12 +91,12 @@ describe("🔗 Product Repository Integration Tests", () => {
           name: "First Product",
           slug,
           farmId: TEST_IDS.FARM_1,
-          category: "VEGETABLES",
+          category: ProductCategory.VEGETABLES,
           price: 4.99,
           unit: "lb",
           quantityAvailable: 50,
           inStock: true,
-          status: "ACTIVE",
+          status: ProductStatus.ACTIVE,
         },
       });
 
@@ -106,12 +107,12 @@ describe("🔗 Product Repository Integration Tests", () => {
             name: "Second Product",
             slug, // Same slug
             farmId: TEST_IDS.FARM_1,
-            category: "VEGETABLES",
+            category: ProductCategory.VEGETABLES,
             price: 3.99,
             unit: "lb",
             quantityAvailable: 30,
             inStock: true,
-            status: "ACTIVE",
+            status: ProductStatus.ACTIVE,
           },
         }),
       ).rejects.toThrow();
@@ -185,9 +186,14 @@ describe("🔗 Product Repository Integration Tests", () => {
     });
 
     it("should find product by slug", async () => {
-      // Act
+      // Act - Use composite key (farmId + slug)
       const product = await prisma.product.findUnique({
-        where: { slug: "test-organic-tomatoes" },
+        where: {
+          farmId_slug: {
+            farmId: TEST_IDS.FARM_1,
+            slug: "test-organic-tomatoes",
+          },
+        },
       });
 
       // Assert
@@ -212,7 +218,7 @@ describe("🔗 Product Repository Integration Tests", () => {
     it("should find products by category", async () => {
       // Act
       const vegetables = await prisma.product.findMany({
-        where: { category: "VEGETABLES" },
+        where: { category: ProductCategory.VEGETABLES },
       });
 
       const dairy = await prisma.product.findMany({
@@ -222,7 +228,7 @@ describe("🔗 Product Repository Integration Tests", () => {
       // Assert
       expect(vegetables.length).toBeGreaterThanOrEqual(3);
       vegetables.forEach((product) => {
-        expect(product.category).toBe("VEGETABLES");
+        expect(product.category).toBe(ProductCategory.VEGETABLES);
       });
 
       expect(dairy.length).toBeGreaterThanOrEqual(1);
@@ -311,8 +317,9 @@ describe("🔗 Product Repository Integration Tests", () => {
       // Assert
       expect(affordableProducts.length).toBeGreaterThanOrEqual(1);
       affordableProducts.forEach((product) => {
-        expect(product.price).toBeGreaterThanOrEqual(2.0);
-        expect(product.price).toBeLessThanOrEqual(5.0);
+        const priceNum = parseFloat(product.price.toString());
+        expect(priceNum).toBeGreaterThanOrEqual(2.0);
+        expect(priceNum).toBeLessThanOrEqual(5.0);
       });
     });
 
@@ -320,7 +327,7 @@ describe("🔗 Product Repository Integration Tests", () => {
       // Act
       const filteredProducts = await prisma.product.findMany({
         where: {
-          category: "VEGETABLES",
+          category: ProductCategory.VEGETABLES,
           inStock: true,
           organic: true,
           price: {
@@ -331,10 +338,11 @@ describe("🔗 Product Repository Integration Tests", () => {
 
       // Assert
       filteredProducts.forEach((product) => {
-        expect(product.category).toBe("VEGETABLES");
+        expect(product.category).toBe(ProductCategory.VEGETABLES);
         expect(product.inStock).toBe(true);
         expect(product.organic).toBe(true);
-        expect(product.price).toBeLessThanOrEqual(10.0);
+        const priceNum = parseFloat(product.price.toString());
+        expect(priceNum).toBeLessThanOrEqual(10.0);
       });
     });
 
@@ -347,7 +355,9 @@ describe("🔗 Product Repository Integration Tests", () => {
 
       // Assert
       for (let i = 1; i < products.length; i++) {
-        expect(products[i].price).toBeGreaterThanOrEqual(products[i - 1].price);
+        const currentPrice = parseFloat(products[i].price.toString());
+        const prevPrice = parseFloat(products[i - 1].price.toString());
+        expect(currentPrice).toBeGreaterThanOrEqual(prevPrice);
       }
     });
 
@@ -360,7 +370,9 @@ describe("🔗 Product Repository Integration Tests", () => {
 
       // Assert
       for (let i = 1; i < products.length; i++) {
-        expect(products[i].price).toBeLessThanOrEqual(products[i - 1].price);
+        const currentPrice = parseFloat(products[i].price.toString());
+        const prevPrice = parseFloat(products[i - 1].price.toString());
+        expect(currentPrice).toBeLessThanOrEqual(prevPrice);
       }
     });
 
@@ -402,13 +414,13 @@ describe("🔗 Product Repository Integration Tests", () => {
       });
 
       // Assert
-      expect(updatedProduct.price).toBe(newPrice);
+      expect(updatedProduct.price.toString()).toBe("6.99");
 
       // Verify persistence
       const retrieved = await prisma.product.findUnique({
         where: { id: TEST_IDS.PRODUCT_TOMATOES },
       });
-      expect(retrieved?.price).toBe(newPrice);
+      expect(retrieved?.price.toString()).toBe(newPrice.toString());
     });
 
     it("should update product stock", async () => {
@@ -422,7 +434,7 @@ describe("🔗 Product Repository Integration Tests", () => {
       });
 
       // Assert
-      expect(updatedProduct.quantityAvailable).toBe(200);
+      expect(updatedProduct.quantityAvailable?.toString()).toBe("200");
       expect(updatedProduct.inStock).toBe(true);
     });
 
@@ -437,7 +449,7 @@ describe("🔗 Product Repository Integration Tests", () => {
       });
 
       // Assert
-      expect(updatedProduct.quantityAvailable).toBe(0);
+      expect(updatedProduct.quantityAvailable?.toString()).toBe("0");
       expect(updatedProduct.inStock).toBe(false);
     });
 
@@ -454,7 +466,7 @@ describe("🔗 Product Repository Integration Tests", () => {
 
       // Assert
       expect(updatedProduct.name).toBe("Premium Organic Tomatoes");
-      expect(updatedProduct.price).toBe(7.99);
+      expect(updatedProduct.price.toString()).toBe("7.99");
       expect(updatedProduct.description).toBe(
         "Updated description for integration test",
       );
@@ -500,12 +512,12 @@ describe("🔗 Product Repository Integration Tests", () => {
           name: "Product To Delete",
           slug: `product-to-delete-${Date.now()}`,
           farmId: TEST_IDS.FARM_1,
-          category: "VEGETABLES",
-          price: 4.99,
+          category: ProductCategory.VEGETABLES,
+          price: 3.49,
           unit: "lb",
           quantityAvailable: 50,
           inStock: true,
-          status: "ACTIVE",
+          status: ProductStatus.ARCHIVED,
         },
       });
 
@@ -535,13 +547,13 @@ describe("🔗 Product Repository Integration Tests", () => {
       const softDeletedProduct = await prisma.product.update({
         where: { id: TEST_IDS.PRODUCT_TOMATOES },
         data: {
-          status: "INACTIVE",
+          status: ProductStatus.ARCHIVED,
           inStock: false,
         },
       });
 
       // Assert
-      expect(softDeletedProduct.status).toBe("INACTIVE");
+      expect(softDeletedProduct.status).toBe(ProductStatus.ARCHIVED);
       expect(softDeletedProduct.inStock).toBe(false);
 
       // Product still exists in database
@@ -556,11 +568,11 @@ describe("🔗 Product Repository Integration Tests", () => {
     it("should count products by category", async () => {
       // Act
       const vegetableCount = await prisma.product.count({
-        where: { category: "VEGETABLES" },
+        where: { category: ProductCategory.VEGETABLES },
       });
 
       const dairyCount = await prisma.product.count({
-        where: { category: "DAIRY" },
+        where: { category: ProductCategory.DAIRY },
       });
 
       // Assert
@@ -607,10 +619,11 @@ describe("🔗 Product Repository Integration Tests", () => {
 
       // Assert
       expect(aggregation._count).toBeGreaterThanOrEqual(1);
-      expect(aggregation._avg.price).toBeGreaterThan(0);
-      expect(aggregation._min.price).toBeLessThanOrEqual(
-        aggregation._max.price!,
-      );
+      const avgPrice = parseFloat(aggregation._avg.price?.toString() || "0");
+      const minPrice = parseFloat(aggregation._min.price?.toString() || "0");
+      const maxPrice = parseFloat(aggregation._max.price?.toString() || "0");
+      expect(avgPrice).toBeGreaterThan(0);
+      expect(minPrice).toBeLessThanOrEqual(maxPrice);
     });
 
     it("should group products by category", async () => {
@@ -643,12 +656,12 @@ describe("🔗 Product Repository Integration Tests", () => {
             name: "Transaction Test Product",
             slug: `transaction-test-product-${Date.now()}`,
             farmId: TEST_IDS.FARM_1,
-            category: "VEGETABLES",
-            price: 5.99,
+            category: ProductCategory.VEGETABLES,
+            price: 2.99,
             unit: "lb",
             quantityAvailable: 100,
             inStock: true,
-            status: "ACTIVE",
+            status: ProductStatus.ACTIVE,
           },
         });
 
@@ -683,12 +696,12 @@ describe("🔗 Product Repository Integration Tests", () => {
               name: "Rollback Test Product",
               slug: productSlug,
               farmId: TEST_IDS.FARM_1,
-              category: "VEGETABLES",
+              category: ProductCategory.VEGETABLES,
               price: 4.99,
               unit: "lb",
               quantityAvailable: 50,
               inStock: true,
-              status: "ACTIVE",
+              status: ProductStatus.ACTIVE,
             },
           });
 
@@ -715,12 +728,12 @@ describe("🔗 Product Repository Integration Tests", () => {
         name: `Bulk Product ${i}`,
         slug: `bulk-product-${Date.now()}-${i}`,
         farmId: TEST_IDS.FARM_1,
-        category: "VEGETABLES" as ProductCategory,
+        category: ProductCategory.VEGETABLES,
         price: Math.random() * 20 + 1,
         unit: "lb",
         quantityAvailable: Math.floor(Math.random() * 100) + 10,
         inStock: true,
-        status: "ACTIVE" as ProductStatus,
+        status: ProductStatus.ACTIVE,
       }));
 
       // Act

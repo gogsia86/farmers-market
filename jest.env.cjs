@@ -9,9 +9,10 @@
 process.env.NODE_ENV = "test";
 
 // Database configuration for testing
+// Use TEST_DATABASE_URL from .env.test if available, otherwise use default
 process.env.DATABASE_URL =
   process.env.TEST_DATABASE_URL ||
-  "postgresql://test:test@localhost:5432/farmers_market_test";
+  "postgresql://postgres:test_password_123@localhost:5433/farmersmarket_test";
 
 // NextAuth configuration for testing
 process.env.NEXTAUTH_URL = "http://localhost:3001";
