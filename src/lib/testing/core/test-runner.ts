@@ -264,7 +264,10 @@ export class TestRunner {
         results.push(result);
 
         // Check if we should continue on failure
-        if (result.status === "failed" && !this.config.continueOnFailure) {
+        if (
+          result.status === "failed" &&
+          !this.config.execution.continueOnFailure
+        ) {
           logger.warn("[TestRunner] Stopping execution due to failure");
           break;
         }
@@ -376,7 +379,7 @@ export class TestRunner {
     // Filter by tags
     if (filter.tags && filter.tags.length > 0) {
       modules = modules.filter((m) =>
-        m.tags.some((tag) => filter.tags!.includes(tag)),
+        m.tags?.some((tag) => filter.tags!.includes(tag)),
       );
     }
 
@@ -395,7 +398,7 @@ export class TestRunner {
     // Exclude by tags
     if (filter.exclude?.tags && filter.exclude.tags.length > 0) {
       modules = modules.filter(
-        (m) => !m.tags.some((tag) => filter.exclude!.tags!.includes(tag)),
+        (m) => !m.tags?.some((tag) => filter.exclude!.tags!.includes(tag)),
       );
     }
 

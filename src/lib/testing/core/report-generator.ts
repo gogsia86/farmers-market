@@ -75,7 +75,7 @@ export class ReportGenerator {
       } catch (error) {
         logger.error(
           `[ReportGenerator] Failed to generate ${format} report:`,
-          error,
+          error instanceof Error ? error : new Error(String(error)),
         );
         generated.push({
           format,
@@ -265,10 +265,10 @@ export class ReportGenerator {
       JSON.stringify(
         {
           baseUrl: report.config.baseUrl,
-          headless: report.config.headless,
+          headless: report.config.browser.headless,
           retryAttempts: report.config.retryAttempts,
-          timeout: report.config.timeout,
-          screenshot: report.config.screenshot,
+          timeout: report.config.browser.timeout,
+          screenshot: report.config.reporting.screenshotOnFailure,
         },
         null,
         2,
@@ -648,7 +648,7 @@ export class ReportGenerator {
     } catch (error) {
       logger.error(
         "[ReportGenerator] Failed to create output directory:",
-        error,
+        error instanceof Error ? error : new Error(String(error)),
       );
       throw error;
     }

@@ -201,11 +201,11 @@ function getConfig(options: CLIOptions): BotConfig {
 
   // Override with CLI flags
   if (options.flags.headless !== undefined) {
-    config.headless = options.flags.headless as boolean;
+    config.browser.headless = options.flags.headless as boolean;
   }
 
   if (options.flags.headed !== undefined) {
-    config.headless = false;
+    config.browser.headless = false;
   }
 
   if (options.flags.verbose !== undefined) {
@@ -213,11 +213,13 @@ function getConfig(options: CLIOptions): BotConfig {
   }
 
   if (options.flags["continue-on-failure"] !== undefined) {
-    config.continueOnFailure = options.flags["continue-on-failure"] as boolean;
+    config.execution.continueOnFailure = options.flags[
+      "continue-on-failure"
+    ] as boolean;
   }
 
   if (options.flags.output) {
-    config.reportDir = options.flags.output as string;
+    config.reporting.outputDir = options.flags.output as string;
   }
 
   return config;
@@ -343,9 +345,9 @@ function listModules(): void {
 
   modules.forEach((module) => {
     const categoryColor =
-      module.category === "CRITICAL"
+      module.category === "HEALTH_CHECK"
         ? colors.red
-        : module.category === "IMPORTANT"
+        : module.category === "AUTH"
           ? colors.yellow
           : colors.dim;
 
@@ -355,8 +357,8 @@ function listModules(): void {
     console.log(
       `    Category: ${categoryColor}${module.category}${colors.reset}`,
     );
-    console.log(`    Tags: ${module.tags.join(", ")}`);
-    console.log(`    Tests: ${module.tests.length}`);
+    console.log(`    Tags: ${module.tags?.join(", ") || "none"}`);
+    console.log(`    Tests: ${module.tests?.length || "N/A"}`);
     console.log("");
   });
 
@@ -453,7 +455,7 @@ function printReportSummary(report: TestRunReport): void {
         }
         if (result.screenshot) {
           console.log(
-            `    ${colors.dim}Screenshot: ${result.screenshot}${colors.reset}`,
+            `${colors.dim}Screenshot:${colors.reset} ${result.screenshot}`,
           );
         }
         console.log("");
@@ -498,7 +500,7 @@ async function runTest(options: CLIOptions): Promise<void> {
     `${colors.dim}Preset:${colors.reset} ${options.flags.preset || "mvp"}`,
   );
   console.log(
-    `${colors.dim}Mode:${colors.reset}   ${config.headless ? "headless" : "headed"}\n`,
+    `${colors.dim}Mode:${colors.reset}   ${config.browser.headless ? "headless" : "headed"}\n`,
   );
 
   const runner = createTestRunner(config, filter);
@@ -531,7 +533,7 @@ async function runTest(options: CLIOptions): Promise<void> {
       : ["json", "markdown", "console"];
 
     const reportGen = createReportGenerator({
-      outputDir: config.reportDir || "./reports",
+      outputDir: config.reporting.outputDir || "./reports",
       formats: reportFormats as any,
       includeScreenshots: true,
       includeLogs: true,
@@ -584,7 +586,7 @@ async function runAll(options: CLIOptions): Promise<void> {
 
     // Generate reports
     const reportGen = createReportGenerator({
-      outputDir: config.reportDir || "./reports",
+      outputDir: config.reporting.outputDir || "./reports",
       formats: ["json", "markdown", "html"],
       includeScreenshots: true,
       includeLogs: true,
