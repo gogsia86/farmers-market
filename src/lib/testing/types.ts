@@ -211,6 +211,7 @@ export interface BotResult {
   timestamp: string;
   duration: number;
   error?: string;
+  screenshot?: string; // Path to screenshot file
   details?: {
     totalTests?: number;
     passedTests?: number;
@@ -218,6 +219,16 @@ export interface BotResult {
     skippedTests?: number;
     successRate?: number;
     results?: any[];
+    [key: string]: any; // Allow additional custom properties
+  };
+  metrics?: {
+    totalTests?: number;
+    passedTests?: number;
+    failedTests?: number;
+    skippedTests?: number;
+    successRate?: number;
+    results?: any[];
+    [key: string]: any; // Allow additional custom properties for test-specific metadata
   };
 }
 
@@ -743,6 +754,55 @@ export interface NotificationPayload {
   severity: "info" | "warning" | "error" | "critical";
   report?: BotReport;
   timestamp: Date;
+}
+
+// ============================================================================
+// HELPER FUNCTIONS FOR BOT CONFIG ACCESS
+// ============================================================================
+
+/**
+ * Helper functions to safely access nested BotConfig properties
+ * These provide backward compatibility and type-safe access patterns
+ */
+
+export function getHeadless(config: BotConfig): boolean {
+  return config.browser.headless;
+}
+
+export function getTimeout(config: BotConfig): number {
+  return config.browser.timeout;
+}
+
+export function getReportDir(config: BotConfig): string {
+  return config.reporting.outputDir;
+}
+
+export function getContinueOnFailure(config: BotConfig): boolean {
+  return config.execution.continueOnFailure;
+}
+
+export function getScreenshotOnFailure(config: BotConfig): boolean {
+  return config.reporting.screenshotOnFailure;
+}
+
+export function getScreenshotOnSuccess(config: BotConfig): boolean {
+  return config.reporting.screenshotOnSuccess;
+}
+
+export function getTestCredentials(config: BotConfig) {
+  return config.testData?.credentials;
+}
+
+export function getAdminCredentials(config: BotConfig) {
+  return config.testData?.credentials?.admin;
+}
+
+export function getFarmerCredentials(config: BotConfig) {
+  return config.testData?.credentials?.farmer;
+}
+
+export function getCustomerCredentials(config: BotConfig) {
+  return config.testData?.credentials?.customer;
 }
 
 // ============================================================================

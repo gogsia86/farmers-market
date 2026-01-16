@@ -83,6 +83,20 @@ export type {
   TestSuiteResult,
 } from "./types";
 
+// Export BotConfig helper functions
+export {
+  getAdminCredentials,
+  getContinueOnFailure,
+  getCustomerCredentials,
+  getFarmerCredentials,
+  getHeadless,
+  getReportDir,
+  getScreenshotOnFailure,
+  getScreenshotOnSuccess,
+  getTestCredentials,
+  getTimeout,
+} from "./types";
+
 // ============================================================================
 // UTILITIES
 // ============================================================================

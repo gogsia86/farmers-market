@@ -1,0 +1,162 @@
+npm warn config optional Use `--omit=optional` to exclude optional dependencies, or
+npm warn config `--include=optional` to include them.
+npm warn config
+npm warn config       Default value does install optional deps unless otherwise omitted.
+node_modules/@auth/core/lib/utils/cookie.d.ts(1,45): error TS2305: Module '"../../types.js"' has no exported member 'RequestInternal'.
+node_modules/@auth/core/lib/utils/webauthn-utils.d.ts(2,48): error TS2305: Module '"../../types.js"' has no exported member 'InternalOptions'.
+node_modules/@auth/core/lib/utils/webauthn-utils.d.ts(2,65): error TS2305: Module '"../../types.js"' has no exported member 'RequestInternal'.
+node_modules/@auth/core/lib/utils/webauthn-utils.d.ts(4,105): error TS2307: Cannot find module '@simplewebauthn/types' or its corresponding type declarations.
+node_modules/@auth/core/providers/oauth.d.ts(15,44): error TS2552: Cannot find name 'EndpointHandler'. Did you mean 'TokenEndpointHandler'?
+node_modules/@auth/core/providers/oauth.d.ts(16,36): error TS2552: Cannot find name 'EndpointHandler'. Did you mean 'TokenEndpointHandler'?
+node_modules/@auth/core/providers/oauth.d.ts(30,39): error TS2552: Cannot find name 'EndpointHandler'. Did you mean 'TokenEndpointHandler'?
+node_modules/@auth/core/providers/oauth.d.ts(182,43): error TS2552: Cannot find name 'OAuthConfigInternal'. Did you mean 'OIDCConfigInternal'?
+node_modules/@auth/core/providers/webauthn.d.ts(1,134): error TS2307: Cannot find module '@simplewebauthn/server' or its corresponding type declarations.
+node_modules/@auth/core/providers/webauthn.d.ts(3,155): error TS2307: Cannot find module '@simplewebauthn/server' or its corresponding type declarations.
+node_modules/@auth/core/providers/webauthn.d.ts(4,15): error TS2305: Module '"../types.js"' has no exported member 'InternalOptions'.
+node_modules/@auth/core/providers/webauthn.d.ts(4,32): error TS2305: Module '"../types.js"' has no exported member 'RequestInternal'.
+node_modules/next-auth/node_modules/@auth/core/lib/utils/cookie.d.ts(1,45): error TS2305: Module '"../../types.js"' has no exported member 'RequestInternal'.
+node_modules/next-auth/node_modules/@auth/core/lib/utils/webauthn-utils.d.ts(2,48): error TS2305: Module '"../../types.js"' has no exported member 'InternalOptions'.
+node_modules/next-auth/node_modules/@auth/core/lib/utils/webauthn-utils.d.ts(2,65): error TS2305: Module '"../../types.js"' has no exported member 'RequestInternal'.
+node_modules/next-auth/node_modules/@auth/core/lib/utils/webauthn-utils.d.ts(4,105): error TS2307: Cannot find module '@simplewebauthn/types' or its corresponding type declarations.
+node_modules/next-auth/node_modules/@auth/core/providers/oauth.d.ts(15,44): error TS2552: Cannot find name 'EndpointHandler'. Did you mean 'TokenEndpointHandler'?
+node_modules/next-auth/node_modules/@auth/core/providers/oauth.d.ts(16,36): error TS2552: Cannot find name 'EndpointHandler'. Did you mean 'TokenEndpointHandler'?
+node_modules/next-auth/node_modules/@auth/core/providers/oauth.d.ts(30,39): error TS2552: Cannot find name 'EndpointHandler'. Did you mean 'TokenEndpointHandler'?
+node_modules/next-auth/node_modules/@auth/core/providers/oauth.d.ts(182,43): error TS2552: Cannot find name 'OAuthConfigInternal'. Did you mean 'OIDCConfigInternal'?
+node_modules/next-auth/node_modules/@auth/core/providers/webauthn.d.ts(1,134): error TS2307: Cannot find module '@simplewebauthn/server' or its corresponding type declarations.
+node_modules/next-auth/node_modules/@auth/core/providers/webauthn.d.ts(3,155): error TS2307: Cannot find module '@simplewebauthn/server' or its corresponding type declarations.
+node_modules/next-auth/node_modules/@auth/core/providers/webauthn.d.ts(4,15): error TS2305: Module '"../types.js"' has no exported member 'InternalOptions'.
+node_modules/next-auth/node_modules/@auth/core/providers/webauthn.d.ts(4,32): error TS2305: Module '"../types.js"' has no exported member 'RequestInternal'.
+node_modules/next-auth/node_modules/@auth/core/types.d.ts(95,18): error TS2430: Interface 'Account' incorrectly extends interface 'Partial<TokenEndpointResponse>'.
+  Types of property 'access_token' are incompatible.
+    Type 'string | null | undefined' is not assignable to type 'string | undefined'.
+      Type 'null' is not assignable to type 'string | undefined'.
+node_modules/next-auth/node_modules/@auth/core/types.d.ts(112,5): error TS2687: All declarations of 'userId' must have identical modifiers.
+node_modules/next-auth/react.d.ts(15,75): error TS2305: Module '"./lib/client.js"' has no exported member 'SignInAuthorizationParams'.
+node_modules/next-auth/react.d.ts(100,25): error TS2451: Cannot redeclare block-scoped variable 'SessionProvider'.
+node_modules/next-auth/react.d.ts(100,71): error TS2503: Cannot find namespace 'JSX'.
+node_modules/next/types/global.d.ts(23,14): error TS2687: All declarations of 'NODE_ENV' must have identical modifiers.
+node_modules/typescript/lib/lib.es5.d.ts(1570,6): error TS2300: Duplicate identifier 'Awaited'.
+node_modules/typescript/lib/lib.es5.d.ts(1635,6): error TS2300: Duplicate identifier 'NonNullable'.
+src/lib/testing/cli/index.ts(204,12): error TS2339: Property 'headless' does not exist on type 'BotConfig'.
+src/lib/testing/cli/index.ts(208,12): error TS2339: Property 'headless' does not exist on type 'BotConfig'.
+src/lib/testing/cli/index.ts(216,12): error TS2339: Property 'continueOnFailure' does not exist on type 'BotConfig'.
+src/lib/testing/cli/index.ts(220,12): error TS2339: Property 'reportDir' does not exist on type 'BotConfig'.
+src/lib/testing/cli/index.ts(346,7): error TS2367: This comparison appears to be unintentional because the types 'TestCategory' and '"CRITICAL"' have no overlap.
+src/lib/testing/cli/index.ts(358,30): error TS18048: 'module.tags' is possibly 'undefined'.
+src/lib/testing/cli/index.ts(359,38): error TS2339: Property 'tests' does not exist on type 'BotModule'.
+src/lib/testing/cli/index.ts(454,20): error TS2339: Property 'screenshot' does not exist on type 'BotResult'.
+src/lib/testing/cli/index.ts(456,52): error TS2339: Property 'screenshot' does not exist on type 'BotResult'.
+src/lib/testing/cli/index.ts(501,51): error TS2339: Property 'headless' does not exist on type 'BotConfig'.
+src/lib/testing/cli/index.ts(534,25): error TS2339: Property 'reportDir' does not exist on type 'BotConfig'.
+src/lib/testing/cli/index.ts(587,25): error TS2339: Property 'reportDir' does not exist on type 'BotConfig'.
+src/lib/testing/config/bot-config.ts(310,5): error TS2322: Type '{ enabled?: boolean | undefined; interval?: number | undefined; alertThreshold?: number | undefined; }' is not assignable to type '{ enabled: boolean; interval: number; alertThreshold: number; }'.
+  Types of property 'enabled' are incompatible.
+    Type 'boolean | undefined' is not assignable to type 'boolean'.
+      Type 'undefined' is not assignable to type 'boolean'.
+src/lib/testing/config/bot-config.ts(318,5): error TS2322: Type '{ credentials: { admin?: { email: string; password: string; }; farmer?: { email: string; password: string; }; customer?: { email: string; password: string; }; }; useSeededData?: boolean | undefined; generateDynamic?: boolean | undefined; }' is not assignable to type '{ useSeededData: boolean; generateDynamic: boolean; credentials?: { admin?: { email: string; password: string; } | undefined; farmer?: { email: string; password: string; } | undefined; customer?: { ...; } | undefined; } | undefined; }'.
+  Types of property 'useSeededData' are incompatible.
+    Type 'boolean | undefined' is not assignable to type 'boolean'.
+      Type 'undefined' is not assignable to type 'boolean'.
+src/lib/testing/config/bot-config.ts(378,11): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/lib/testing/core/report-generator.ts(78,11): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'Error | LogContext | undefined'.
+src/lib/testing/core/report-generator.ts(224,20): error TS2339: Property 'screenshot' does not exist on type 'BotResult'.
+src/lib/testing/core/report-generator.ts(225,52): error TS2339: Property 'screenshot' does not exist on type 'BotResult'.
+src/lib/testing/core/report-generator.ts(268,35): error TS2339: Property 'headless' does not exist on type 'BotConfig'.
+src/lib/testing/core/report-generator.ts(270,34): error TS2339: Property 'timeout' does not exist on type 'BotConfig'.
+src/lib/testing/core/report-generator.ts(271,37): error TS2339: Property 'screenshot' does not exist on type 'BotConfig'.
+src/lib/testing/core/report-generator.ts(493,20): error TS2339: Property 'screenshot' does not exist on type 'BotResult'.
+src/lib/testing/core/report-generator.ts(493,85): error TS2339: Property 'screenshot' does not exist on type 'BotResult'.
+src/lib/testing/core/report-generator.ts(549,20): error TS2339: Property 'screenshot' does not exist on type 'BotResult'.
+src/lib/testing/core/report-generator.ts(550,50): error TS2339: Property 'screenshot' does not exist on type 'BotResult'.
+src/lib/testing/core/report-generator.ts(651,9): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'Error | LogContext | undefined'.
+src/lib/testing/core/test-runner.ts(267,56): error TS2339: Property 'continueOnFailure' does not exist on type 'BotConfig'.
+src/lib/testing/core/test-runner.ts(379,9): error TS18048: 'm.tags' is possibly 'undefined'.
+src/lib/testing/core/test-runner.ts(398,17): error TS18048: 'm.tags' is possibly 'undefined'.
+src/lib/testing/modules/auth/login.module.ts(21,3): error TS2820: Type '"auth"' is not assignable to type 'TestCategory'. Did you mean '"AUTH"'?
+src/lib/testing/modules/auth/login.module.ts(38,28): error TS2551: Property 'navigateTo' does not exist on type 'BrowserManager'. Did you mean 'navigate'?
+src/lib/testing/modules/auth/login.module.ts(47,22): error TS2353: Object literal may only specify known properties, and 'titleCheck' does not exist in type '{ totalTests?: number | undefined; passedTests?: number | undefined; failedTests?: number | undefined; skippedTests?: number | undefined; successRate?: number | undefined; results?: any[] | undefined; }'.
+src/lib/testing/modules/auth/login.module.ts(57,11): error TS2353: Object literal may only specify known properties, and 'screenshot' does not exist in type 'BotResult'.
+src/lib/testing/modules/auth/login.module.ts(63,16): error TS2339: Property 'testUsers' does not exist on type 'BotConfig'.
+src/lib/testing/modules/auth/login.module.ts(65,16): error TS2339: Property 'testUsers' does not exist on type 'BotConfig'.
+src/lib/testing/modules/auth/login.module.ts(84,11): error TS2353: Object literal may only specify known properties, and 'screenshot' does not exist in type 'BotResult'.
+src/lib/testing/modules/auth/login.module.ts(98,11): error TS2353: Object literal may only specify known properties, and 'email' does not exist in type '{ totalTests?: number | undefined; passedTests?: number | undefined; failedTests?: number | undefined; skippedTests?: number | undefined; successRate?: number | undefined; results?: any[] | undefined; }'.
+src/lib/testing/modules/auth/login.module.ts(107,53): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'Error | LogContext | undefined'.
+src/lib/testing/modules/auth/login.module.ts(109,47): error TS2551: Property 'takeScreenshot' does not exist on type 'BrowserManager'. Did you mean 'screenshot'?
+src/lib/testing/modules/auth/login.module.ts(117,20): error TS2353: Object literal may only specify known properties, and 'url' does not exist in type '{ totalTests?: number | undefined; passedTests?: number | undefined; failedTests?: number | undefined; skippedTests?: number | undefined; successRate?: number | undefined; results?: any[] | undefined; }'.
+src/lib/testing/modules/auth/login.module.ts(129,3): error TS2820: Type '"auth"' is not assignable to type 'TestCategory'. Did you mean '"AUTH"'?
+src/lib/testing/modules/auth/login.module.ts(149,28): error TS2551: Property 'navigateTo' does not exist on type 'BrowserManager'. Did you mean 'navigate'?
+src/lib/testing/modules/auth/login.module.ts(158,11): error TS2353: Object literal may only specify known properties, and 'screenshot' does not exist in type 'BotResult'.
+src/lib/testing/modules/auth/login.module.ts(180,11): error TS2353: Object literal may only specify known properties, and 'screenshot' does not exist in type 'BotResult'.
+src/lib/testing/modules/auth/login.module.ts(194,11): error TS2353: Object literal may only specify known properties, and 'email' does not exist in type '{ totalTests?: number | undefined; passedTests?: number | undefined; failedTests?: number | undefined; skippedTests?: number | undefined; successRate?: number | undefined; results?: any[] | undefined; }'.
+src/lib/testing/modules/auth/login.module.ts(195,28): error TS2339: Property 'farmName' does not exist on type '{ email: string; password: string; }'.
+src/lib/testing/modules/auth/login.module.ts(204,51): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'Error | LogContext | undefined'.
+src/lib/testing/modules/auth/login.module.ts(206,47): error TS2551: Property 'takeScreenshot' does not exist on type 'BrowserManager'. Did you mean 'screenshot'?
+src/lib/testing/modules/auth/login.module.ts(214,20): error TS2353: Object literal may only specify known properties, and 'url' does not exist in type '{ totalTests?: number | undefined; passedTests?: number | undefined; failedTests?: number | undefined; skippedTests?: number | undefined; successRate?: number | undefined; results?: any[] | undefined; }'.
+src/lib/testing/modules/auth/login.module.ts(226,3): error TS2820: Type '"auth"' is not assignable to type 'TestCategory'. Did you mean '"AUTH"'?
+src/lib/testing/modules/auth/login.module.ts(246,28): error TS2551: Property 'navigateTo' does not exist on type 'BrowserManager'. Did you mean 'navigate'?
+src/lib/testing/modules/auth/login.module.ts(267,11): error TS2353: Object literal may only specify known properties, and 'screenshot' does not exist in type 'BotResult'.
+src/lib/testing/modules/auth/login.module.ts(281,11): error TS2353: Object literal may only specify known properties, and 'email' does not exist in type '{ totalTests?: number | undefined; passedTests?: number | undefined; failedTests?: number | undefined; skippedTests?: number | undefined; successRate?: number | undefined; results?: any[] | undefined; }'.
+src/lib/testing/modules/auth/login.module.ts(290,50): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'Error | LogContext | undefined'.
+src/lib/testing/modules/auth/login.module.ts(293,30): error TS2551: Property 'takeScreenshot' does not exist on type 'BrowserManager'. Did you mean 'screenshot'?
+src/lib/testing/modules/auth/login.module.ts(299,20): error TS2353: Object literal may only specify known properties, and 'url' does not exist in type '{ totalTests?: number | undefined; passedTests?: number | undefined; failedTests?: number | undefined; skippedTests?: number | undefined; successRate?: number | undefined; results?: any[] | undefined; }'.
+src/lib/testing/modules/auth/login.module.ts(311,3): error TS2820: Type '"auth"' is not assignable to type 'TestCategory'. Did you mean '"AUTH"'?
+src/lib/testing/modules/auth/login.module.ts(328,28): error TS2551: Property 'navigateTo' does not exist on type 'BrowserManager'. Did you mean 'navigate'?
+src/lib/testing/modules/auth/login.module.ts(345,11): error TS2353: Object literal may only specify known properties, and 'screenshot' does not exist in type 'BotResult'.
+src/lib/testing/modules/auth/login.module.ts(355,22): error TS2353: Object literal may only specify known properties, and 'currentUrl' does not exist in type '{ totalTests?: number | undefined; passedTests?: number | undefined; failedTests?: number | undefined; skippedTests?: number | undefined; successRate?: number | undefined; results?: any[] | undefined; }'.
+src/lib/testing/modules/auth/login.module.ts(364,11): error TS2353: Object literal may only specify known properties, and 'errorMessageShown' does not exist in type '{ totalTests?: number | undefined; passedTests?: number | undefined; failedTests?: number | undefined; skippedTests?: number | undefined; successRate?: number | undefined; results?: any[] | undefined; }'.
+src/lib/testing/modules/auth/login.module.ts(371,52): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'Error | LogContext | undefined'.
+src/lib/testing/modules/auth/login.module.ts(376,20): error TS2353: Object literal may only specify known properties, and 'url' does not exist in type '{ totalTests?: number | undefined; passedTests?: number | undefined; failedTests?: number | undefined; skippedTests?: number | undefined; successRate?: number | undefined; results?: any[] | undefined; }'.
+src/lib/testing/modules/auth/login.module.ts(388,3): error TS2820: Type '"auth"' is not assignable to type 'TestCategory'. Did you mean '"AUTH"'?
+src/lib/testing/modules/auth/login.module.ts(406,28): error TS2551: Property 'navigateTo' does not exist on type 'BrowserManager'. Did you mean 'navigate'?
+src/lib/testing/modules/auth/login.module.ts(417,9): error TS2739: Type '{ status: "failed"; error: string; }' is missing the following properties from type 'BotResult': moduleId, moduleName, timestamp, duration
+src/lib/testing/modules/auth/login.module.ts(434,11): error TS2353: Object literal may only specify known properties, and 'screenshot' does not exist in type 'BotResult'.
+src/lib/testing/modules/auth/login.module.ts(446,11): error TS2353: Object literal may only specify known properties, and 'sessionPersisted' does not exist in type '{ totalTests?: number | undefined; passedTests?: number | undefined; failedTests?: number | undefined; skippedTests?: number | undefined; successRate?: number | undefined; results?: any[] | undefined; }'.
+src/lib/testing/modules/auth/login.module.ts(453,46): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'Error | LogContext | undefined'.
+src/lib/testing/modules/auth/login.module.ts(458,20): error TS2353: Object literal may only specify known properties, and 'url' does not exist in type '{ totalTests?: number | undefined; passedTests?: number | undefined; failedTests?: number | undefined; skippedTests?: number | undefined; successRate?: number | undefined; results?: any[] | undefined; }'.
+src/lib/testing/modules/marketplace/browse.module.ts(31,3): error TS2322: Type '"CRITICAL"' is not assignable to type 'TestCategory'.
+src/lib/testing/modules/pages/new-pages.module.ts(29,3): error TS2353: Object literal may only specify known properties, and 'tests' does not exist in type 'TestSuite'.
+src/lib/testing/modules/pages/new-pages.module.ts(145,3): error TS2353: Object literal may only specify known properties, and 'tests' does not exist in type 'TestSuite'.
+src/lib/testing/modules/pages/new-pages.module.ts(227,3): error TS2353: Object literal may only specify known properties, and 'tests' does not exist in type 'TestSuite'.
+src/lib/testing/modules/pages/new-pages.module.ts(306,3): error TS2353: Object literal may only specify known properties, and 'tests' does not exist in type 'TestSuite'.
+src/lib/testing/modules/pages/new-pages.module.ts(390,3): error TS2353: Object literal may only specify known properties, and 'tests' does not exist in type 'TestSuite'.
+src/lib/testing/modules/pages/new-pages.module.ts(493,3): error TS2353: Object literal may only specify known properties, and 'suites' does not exist in type 'BotModule'.
+src/lib/testing/seed-data.ts(99,7): error TS2322: Type '"CUSTOMER"' is not assignable to type 'UserRole | undefined'.
+src/lib/testing/seed-data.ts(100,7): error TS2322: Type 'Date' is not assignable to type 'boolean | undefined'.
+src/lib/testing/seed-data.ts(114,7): error TS2322: Type 'Date' is not assignable to type 'boolean | undefined'.
+src/lib/testing/seed-data.ts(128,7): error TS2322: Type 'Date' is not assignable to type 'boolean | undefined'.
+src/lib/testing/seed-data.ts(169,7): error TS2559: Type 'string[]' has no properties in common with type 'FarmCertificationCreateNestedManyWithoutFarmInput'.
+src/lib/testing/seed-data.ts(208,7): error TS2559: Type 'string[]' has no properties in common with type 'FarmCertificationCreateNestedManyWithoutFarmInput'.
+src/lib/testing/seed-data.ts(239,7): error TS2322: Type '{ connect: { slug: string; }; }' is not assignable to type 'ProductCategory'.
+src/lib/testing/seed-data.ts(271,7): error TS2322: Type '{ connect: { slug: string; }; }' is not assignable to type 'ProductCategory | undefined'.
+src/lib/testing/seed-data.ts(281,7): error TS2322: Type '{ connect: { slug: string; }; }' is not assignable to type 'ProductCategory | undefined'.
+src/lib/testing/seed-data.ts(291,7): error TS2322: Type '{ connect: { slug: string; }; }' is not assignable to type 'ProductCategory | undefined'.
+src/lib/testing/seed-data.ts(323,9): error TS2322: Type '{ product: { connect: { id: string; }; }; quantity: number; price: number; subtotal: number; }[]' is not assignable to type '(Without<OrderItemCreateWithoutOrderInput, OrderItemUncheckedCreateWithoutOrderInput> & OrderItemUncheckedCreateWithoutOrderInput) | (Without<...> & OrderItemCreateWithoutOrderInput) | OrderItemCreateWithoutOrderInput[] | OrderItemUncheckedCreateWithoutOrderInput[] | undefined'.
+  Type '{ product: { connect: { id: string; }; }; quantity: number; price: number; subtotal: number; }[]' is not assignable to type 'OrderItemCreateWithoutOrderInput[]'.
+    Type '{ product: { connect: { id: string; }; }; quantity: number; price: number; subtotal: number; }' is missing the following properties from type 'OrderItemCreateWithoutOrderInput': productName, unit, unitPrice
+src/lib/testing/seed-data.ts(362,7): error TS2353: Object literal may only specify known properties, and 'user' does not exist in type 'ReviewCreateInput'.
+src/lib/testing/seed-data.ts(393,9): error TS2353: Object literal may only specify known properties, and 'comment' does not exist in type 'Partial<ReviewCreateInput>'.
+src/lib/testing/seed-data.ts(415,18): error TS2339: Property 'location' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+src/lib/testing/seed-data.ts(579,16): error TS2322: Type '"CUSTOMER"' is not assignable to type 'UserRole | EnumUserRoleFilter<"User"> | undefined'.
+src/lib/testing/seed-data.ts(600,50): error TS2345: Argument of type '{ productId: string; quantity: number; price: Decimal; }[]' is not assignable to parameter of type '{ productId: string; quantity: number; price: number; }[]'.
+  Type '{ productId: string; quantity: number; price: Prisma.Decimal; }' is not assignable to type '{ productId: string; quantity: number; price: number; }'.
+    Types of property 'price' are incompatible.
+      Type 'Decimal' is not assignable to type 'number'.
+src/lib/testing/utils/screenshots.ts(134,73): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'Error | LogContext | undefined'.
+src/lib/testing/utils/screenshots.ts(176,9): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'Error | LogContext | undefined'.
+src/lib/testing/utils/screenshots.ts(261,9): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'Error | LogContext | undefined'.
+src/lib/testing/utils/screenshots.ts(335,64): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'Error | LogContext | undefined'.
+src/lib/testing/utils/screenshots.ts(463,68): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'Error | LogContext | undefined'.
+src/lib/testing/utils/screenshots.ts(508,59): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'Error | LogContext | undefined'.
+src/lib/testing/utils/screenshots.ts(536,72): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'Error | LogContext | undefined'.
+src/lib/testing/utils/screenshots.ts(551,11): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'Error | LogContext | undefined'.
+src/types/global.d.ts(13,3): error TS2666: Exports and export assignments are not permitted in module augmentations.
+src/types/global.d.ts(13,17): error TS2307: Cannot find module '../../node_modules/.prisma/client' or its corresponding type declarations.
+src/types/global.d.ts(45,5): error TS2687: All declarations of 'userId' must have identical modifiers.
+src/types/global.d.ts(45,5): error TS2717: Subsequent property declarations must have the same type.  Property 'userId' must be of type 'string | undefined', but here has type 'string'.
+src/types/global.d.ts(46,5): error TS2717: Subsequent property declarations must have the same type.  Property 'type' must be of type 'ProviderType', but here has type 'string'.
+src/types/global.d.ts(51,5): error TS2717: Subsequent property declarations must have the same type.  Property 'expires_at' must be of type 'number | undefined', but here has type 'number | null | undefined'.
+src/types/global.d.ts(78,16): error TS2451: Cannot redeclare block-scoped variable 'SessionProvider'.
+src/types/global.d.ts(179,7): error TS2687: All declarations of 'NODE_ENV' must have identical modifiers.
+src/types/global.d.ts(199,8): error TS2300: Duplicate identifier 'Awaited'.
+src/types/global.d.ts(222,8): error TS2300: Duplicate identifier 'NonNullable'.
