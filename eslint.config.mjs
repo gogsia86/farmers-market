@@ -122,6 +122,7 @@ const eslintConfig = [
       "**/*.spec.{js,jsx,ts,tsx}",
       "**/jest.setup.js",
       "**/jest.setup.cjs",
+      "**/jest.integration.setup.cjs",
       "**/__tests__/**/*.{js,jsx,ts,tsx}",
       "**/__mocks__/**/*.{js,jsx,ts,tsx}",
     ],
@@ -225,7 +226,7 @@ const eslintConfig = [
     files: [
       "**/tests/helpers/**/*.ts",
       "**/tests/utils/**/*.ts",
-      "**/src/lib/test-utils.tsx",
+      "**/src/lib/testing/react-test-utils.tsx",
     ],
     rules: {
       "@typescript-eslint/no-explicit-any": "off",

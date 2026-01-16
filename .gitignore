@@ -23,6 +23,7 @@ coverage/
 test-results/
 playwright-report/
 .jest-cache/
+.jest-cache-integration/
 cleanup-logs/
 *.log
 

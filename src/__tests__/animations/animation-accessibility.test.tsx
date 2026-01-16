@@ -13,7 +13,6 @@ import React from "react";
  */
 
 import { Banner } from "@/components/notifications/Banner";
-// import { NotificationCenter } from "@/components/notifications/NotificationCenter";
 import { Toast } from "@/components/notifications/Toast";
 import { AnimationProvider } from "@/components/notifications/context/AnimationContext";
 import type { Toast as ToastType } from "@/types/notifications";

@@ -7,7 +7,7 @@
     "lib": [
       "ES2022", // Modern JavaScript features
       "DOM", // DOM types for browser APIs
-      "DOM.Iterable" // Iterable DOM collections
+      "DOM.Iterable", // Iterable DOM collections
     ],
     "module": "ESNext", // Use ESNext module system
     "moduleResolution": "bundler", // Next.js 15 bundler resolution (correct for App Router)
@@ -58,7 +58,7 @@
     // ========================================================================
     "typeRoots": [
       "./node_modules/@types", // Only look in @types packages
-      "./src/types" // And our custom types
+      "./src/types", // And our custom types
     ],
     "types": ["node"], // Include node types for global declarations
     // ========================================================================
@@ -78,7 +78,7 @@
       "@/config/*": ["./src/config/*"],
       "@/services/*": ["./src/services/*"],
       "@/repositories/*": ["./src/repositories/*"],
-      "@/controllers/*": ["./src/controllers/*"]
+      "@/controllers/*": ["./src/controllers/*"],
     },
     // ========================================================================
     // NEXT.JS SPECIFIC
@@ -87,9 +87,9 @@
     "tsBuildInfoFile": "./.next/tsconfig.tsbuildinfo", // Store build info
     "plugins": [
       {
-        "name": "next"
-      }
-    ]
+        "name": "next",
+      },
+    ],
   },
   // ==========================================================================
   // INCLUDE/EXCLUDE
@@ -104,8 +104,8 @@
     "**/*.cts", // CommonJS TypeScript files
     ".next/dev/types/**/*.ts",
     "**/*.d.ts", // Include all declaration files
-    "jest.setup.js" // Include Jest setup for global types
-, "prisma.config.ts.disabled"  ],
+    "jest.setup.js", // Include Jest setup for global types
+  ],
   "exclude": [
     "node_modules", // Exclude dependencies
     ".next", // Exclude Next.js build output
@@ -134,11 +134,10 @@
     "src/components/ui/QuantumComponents.example.tsx", // Exclude example component
     "src/lib/middleware/api-cache.ts", // Exclude middleware (optional optimization)
     "src/lib/middleware/compression.ts", // Exclude middleware (optional optimization)
-    "src/lib/workers.disabled/**", // Exclude disabled queue workers (require Bull/Redis)
     "src/lib/testing/**", // Exclude testing framework (has type issues - needs refactor)
     "**/*.md", // Exclude all markdown files (contain code examples)
     "COMPREHENSIVE_CODE_REVIEW.md", // Exclude code review documentation
     "prisma/seed-*.ts", // Exclude seed files (use Prisma types differently)
-    "sentry.*.config.ts" // Exclude Sentry config files (external types)
-  ]
+    "sentry.*.config.ts", // Exclude Sentry config files (external types)
+  ],
 }
