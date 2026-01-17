@@ -1,4 +1,9 @@
 /**
+ * @jest-environment jsdom
+ */
+
+
+/**
  * @fileoverview Toast Component Tests
  * @module components/notifications/__tests__/Toast.test
  * @description Comprehensive tests for Toast notification component

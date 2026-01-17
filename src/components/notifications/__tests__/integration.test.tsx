@@ -1,4 +1,9 @@
 /**
+ * @jest-environment jsdom
+ */
+
+
+/**
  * @fileoverview Notification System Integration Tests
  * @module components/notifications/__tests__/integration.test
  * @description Comprehensive integration tests for the complete notification system

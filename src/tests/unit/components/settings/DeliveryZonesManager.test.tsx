@@ -1,4 +1,9 @@
 /**
+ * @jest-environment jsdom
+ */
+
+
+/**
  * 🧪 DELIVERY ZONES MANAGER - UNIT TESTS
  * Comprehensive test suite for DeliveryZonesManager component
  * Sprint 5: Settings & Configuration

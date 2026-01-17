@@ -1,4 +1,9 @@
 /**
+ * @jest-environment jsdom
+ */
+
+
+/**
  * SEASONAL CONSCIOUSNESS HOOK TESTS
  * Validates seasonal awareness and biodynamic patterns
  */

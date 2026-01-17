@@ -1,4 +1,9 @@
 /**
+ * @jest-environment jsdom
+ */
+
+
+/**
  * 🧪 Toast Animation Tests
  * Divine Agricultural Testing Patterns
  *

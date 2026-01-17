@@ -1,4 +1,9 @@
 /**
+ * @jest-environment jsdom
+ */
+
+
+/**
  * 🧪 FARMER SETTINGS - INTEGRATION TESTS
  * End-to-end integration test suite for complete farmer settings workflow
  * Sprint 5: Settings & Configuration

@@ -1,4 +1,9 @@
 /**
+ * @jest-environment jsdom
+ */
+
+
+/**
  * 🧠 QUANTUM CONSCIOUSNESS HOOK TESTS
  * Divine performance tracking and consciousness measurement
  */

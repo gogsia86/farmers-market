@@ -1,4 +1,9 @@
 /**
+ * @jest-environment jsdom
+ */
+
+
+/**
  * 🧪 Banner Animation Tests
  * Divine Agricultural Testing Patterns
  *

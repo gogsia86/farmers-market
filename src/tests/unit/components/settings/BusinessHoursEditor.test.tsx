@@ -1,4 +1,9 @@
 /**
+ * @jest-environment jsdom
+ */
+
+
+/**
  * 🧪 BUSINESS HOURS EDITOR - UNIT TESTS
  * Comprehensive test suite for BusinessHoursEditor component
  * Sprint 5: Settings & Configuration

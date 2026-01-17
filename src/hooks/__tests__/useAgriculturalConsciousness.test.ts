@@ -1,4 +1,9 @@
 /**
+ * @jest-environment jsdom
+ */
+
+
+/**
  * 🌾 AGRICULTURAL CONSCIOUSNESS HOOK TESTS
  * Divine biodynamic awareness and seasonal consciousness testing
  */

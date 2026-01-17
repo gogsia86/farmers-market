@@ -1,4 +1,9 @@
 /**
+ * @jest-environment jsdom
+ */
+
+
+/**
  * 🧬 DIVINE TEST SUITE: Component Consciousness Hook
  * 📚 Reference: 05_TESTING_SECURITY_DIVINITY.instructions.md
  * 🌾 Domain: Performance Tracking & Analytics

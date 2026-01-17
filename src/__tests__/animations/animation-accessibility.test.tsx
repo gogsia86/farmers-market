@@ -1,4 +1,9 @@
 /**
+ * @jest-environment jsdom
+ */
+
+
+/**
  * ♿ Animation Accessibility Tests
  * Divine Agricultural Accessibility Patterns
  *

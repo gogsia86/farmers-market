@@ -1,4 +1,9 @@
 /**
+ * @jest-environment jsdom
+ */
+
+
+/**
  * @fileoverview Notification Hooks Tests
  * @module hooks/__tests__/use-notifications.test
  * @description Comprehensive tests for notification system hooks
