@@ -105,7 +105,11 @@
     "clean:all": "rm -rf .jest-cache coverage playwright-report node_modules/.cache",
     "kill-server": "node scripts/kill-dev-server.js",
     "migrate:testid": "tsx scripts/add-testid-migration.ts",
-    "migrate:testid:dry": "tsx scripts/add-testid-migration.ts --dry-run"
+    "migrate:testid:dry": "tsx scripts/add-testid-migration.ts --dry-run",
+    "sentry:test": "tsx scripts/test-sentry.ts",
+    "sentry:test:verbose": "tsx scripts/test-sentry.ts --verbose",
+    "sentry:send-test": "tsx scripts/test-sentry.ts --send-test-error",
+    "sentry:check": "tsx scripts/test-sentry.ts --verbose"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.2",
