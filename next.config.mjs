@@ -295,64 +295,24 @@ export default withSentryConfig(withBundleAnalyzer(nextConfig), {
 
   project: "farmers-market-prod",
 
-  // Enable verbose logging to debug source map uploads
-  silent: false,
-  dryRun: false,
+  // DISABLE SOURCE MAP UPLOADS until valid production token is configured
+  // This prevents deployment failures with invalid/expired tokens
+  // Sentry will still capture errors, but stack traces won't have source maps
+  silent: true,
 
-  // Source map configuration for Turbopack
-  include: ".next",
-  ignore: ["node_modules", ".next/cache"],
-  urlPrefix: "~/_next",
+  // Disable all upload-related features
+  disableLogger: true,
 
-  // Auto-detect source maps (KEY FIX for Turbopack)
+  // Skip source map uploads entirely
   sourcemaps: {
-    assets: [
-      ".next/static/chunks/**",
-      ".next/server/**",
-      ".next/static/css/**",
-    ],
-    deleteAfterUpload: false, // Keep for debugging
-    filesToDeleteAfterUpload: [],
+    disable: true,
   },
-
-  // Error handling - don't fail build on Sentry errors
-  errorHandler: (err, invokeErr, compilation) => {
-    console.error("❌ Sentry upload error:", err.message);
-    return false;
-  },
-
-  // Git integration
-  setCommits: {
-    auto: true,
-    ignoreMissing: true,
-    ignoreEmpty: true,
-  },
-
-  // Deployment tracking
-  deploy: {
-    env: process.env.VERCEL_ENV || process.env.NODE_ENV || "production",
-  },
-
-  // Release naming
-  release: {
-    name: process.env.VERCEL_GIT_COMMIT_SHA || undefined,
-    uploadLegacySourcemaps: true,
-  },
-
-  // Auth token from environment
-  authToken: process.env.SENTRY_AUTH_TOKEN,
-
-  // Upload a larger set of source maps for prettier stack traces
-  widenClientFileUpload: true,
 
   // Route browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers.
-  // This can increase your server load as well as your hosting bill.
-  // Note: Check that the configured route will not match with your Next.js middleware, otherwise reporting of client-
-  // side errors will fail.
   tunnelRoute: "/monitoring",
 
-  // Don't hide source maps - we need them for Sentry
-  hideSourceMaps: false,
+  // Hide source maps in production (no uploads anyway)
+  hideSourceMaps: true,
 
   // Webpack-specific configurations
   webpack: {
