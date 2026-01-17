@@ -15,7 +15,16 @@ declare module "@/lib/cache" {
     getSeasonalData(season: string): Promise<unknown | null>;
   }
 
+  export interface CacheType {
+    get<T>(key: string): Promise<T | null>;
+    set<T>(key: string, value: T, ttl?: number): Promise<void>;
+    del(key: string): Promise<void>;
+    delPattern(pattern: string): Promise<void>;
+    clear(): Promise<void>;
+    wrap<T>(key: string, fn: () => Promise<T>, ttl?: number): Promise<T>;
+  }
+
   export const AgriculturalCache: AgriculturalCacheType;
-  export const cache: any;
+  export const cache: CacheType;
   export function warmCache(): Promise<void>;
 }

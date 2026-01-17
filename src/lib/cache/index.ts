@@ -43,13 +43,47 @@ type Season = keyof typeof SEASONAL_TTL;
  * CACHE KEY PATTERNS
  */
 export const CacheKeys = {
-  farm: (id: string) => `farm:${id}`,
-  farmList: (filters: string) => `farms:list:${filters}`,
+  // Product caching
   product: (id: string) => `product:${id}`,
+  productsByFarm: (farmId: string) => `products:farm:${farmId}`,
+  productsByCategory: (category: string) => `products:category:${category}`,
   productList: (farmId: string, filters: string) =>
     `products:${farmId}:${filters}`,
+
+  // Farm caching
+  farm: (id: string) => `farm:${id}`,
+  farmsByRegion: (region: string) => `farms:region:${region}`,
+  farmList: (filters: string) => `farms:list:${filters}`,
+
+  // Order caching
+  order: (id: string) => `order:${id}`,
+  userOrders: (userId: string) => `orders:user:${userId}`,
+
+  // User caching
+  user: (id: string) => `user:${id}`,
   userProfile: (id: string) => `user:${id}`,
+  userSession: (userId: string) => `session:${userId}`,
+
+  // Seasonal data
+  seasonalCrops: (season: string) => `crops:season:${season}`,
+  seasonalProducts: (season: string) => `products:season:${season}`,
   seasonalData: (season: Season) => `seasonal:${season}`,
+
+  // Analytics
+  analytics: (type: string, date: string) => `analytics:${type}:${date}`,
+} as const;
+
+/**
+ * CACHE TTL CONSTANTS (in seconds)
+ * Standard durations for common cache scenarios
+ */
+export const CacheTTL = {
+  SHORT: 5 * 60, // 5 minutes
+  MEDIUM: 30 * 60, // 30 minutes
+  LONG: 2 * 3600, // 2 hours
+  DAY: 24 * 3600, // 1 day
+  WEEK: 7 * 24 * 3600, // 1 week
+  SEASONAL: 30 * 24 * 3600, // 1 month
 } as const;
 
 /**
@@ -368,6 +402,30 @@ class MultiLayerCache {
     const value = await fn();
     await this.set(key, value, ttl);
     return value;
+  }
+
+  /**
+   * Delete key from cache (alias for del)
+   */
+  async delete(key: string): Promise<void> {
+    await this.del(key);
+  }
+
+  /**
+   * Delete keys matching pattern (alias for delPattern)
+   */
+  async invalidatePattern(pattern: string): Promise<void> {
+    await this.delPattern(pattern);
+  }
+
+  /**
+   * Get cache statistics
+   */
+  getStats() {
+    return {
+      size: this.memoryCache ? "memory-cache-active" : "unknown",
+      redis: this.useRedis ? "enabled" : "disabled",
+    };
   }
 }
 

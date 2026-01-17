@@ -107,37 +107,45 @@
     "jest.setup.js", // Include Jest setup for global types
   ],
   "exclude": [
+    // Build artifacts and dependencies (essential exclusions)
     "node_modules", // Exclude dependencies
     ".next", // Exclude Next.js build output
     "dist", // Exclude output directory
     "coverage", // Exclude test coverage
     "build", // Exclude build artifacts
-    "mobile-app/**", // Exclude React Native mobile app (separate project)
+
+    // Separate projects (not part of main build)
+    "mobile-app/**", // Exclude React Native mobile app (separate project with own tsconfig)
     "mobile-app-export-*/**", // Exclude mobile app export directories (Phase 2 backup)
-    "scripts/**", // Exclude all script files (have separate TS errors)
-    "tests/**", // Exclude test files
-    "**/*.spec.ts", // Test files (handled by separate config)
+
+    // Test files (handled by separate test configs: tsconfig.testing.json)
+    "tests/**", // E2E and integration test files
+    "**/*.spec.ts", // Jest unit test files
     "**/*.test.ts",
     "**/*.spec.tsx",
     "**/*.test.tsx",
     "**/__tests__/**", // Test directories
     "**/__mocks__/**", // Mock directories
+
+    // Scripts and utilities (CLI tools, not part of app bundle)
+    "scripts/**", // Utility scripts (bot CLI, inspection tools, etc.)
     "scripts/profiling_output/**", // Profiling output
     "performance_reports/**", // Performance reports
+
+    // Examples and documentation (demonstration code, not production)
     "**/example.tsx", // Exclude example files
     "**/examples/**", // Exclude example directories
     "**/*.example.ts", // Exclude example TypeScript files
     "**/*.example.tsx", // Exclude example TypeScript React files
-    "src/lib/monitoring/workflows/**", // Exclude monitoring workflows (testing utilities)
-    "src/components/ui/AgriculturalChart.tsx", // Exclude UI library component (optional feature)
-    "src/components/ui/Map.tsx", // Exclude UI library component (optional feature)
-    "src/components/ui/QuantumComponents.example.tsx", // Exclude example component
-    "src/lib/middleware/api-cache.ts", // Exclude middleware (optional optimization)
-    "src/lib/middleware/compression.ts", // Exclude middleware (optional optimization)
-    "src/lib/testing/**", // Exclude testing framework (has type issues - needs refactor)
     "**/*.md", // Exclude all markdown files (contain code examples)
     "COMPREHENSIVE_CODE_REVIEW.md", // Exclude code review documentation
-    "prisma/seed-*.ts", // Exclude seed files (use Prisma types differently)
-    "sentry.*.config.ts", // Exclude Sentry config files (external types)
+
+    // Optional/external integrations (require additional dependencies or config)
+    "src/lib/monitoring/workflows/**", // Exclude monitoring workflows (Temporal.io - optional feature)
+    "src/components/ui/AgriculturalChart.tsx", // Recharts component (optional feature, heavy dependency)
+    "src/components/ui/Map.tsx", // MapBox component (optional feature, requires API key)
+    "src/components/ui/QuantumComponents.example.tsx", // Example component
+    "prisma/seed-*.ts", // Seed files (use Prisma types differently, run via tsx not tsc)
+    "sentry.*.config.ts", // Sentry config files (external types, processed by Sentry)
   ],
 }
