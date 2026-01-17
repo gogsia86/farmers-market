@@ -1,0 +1,360 @@
+name: Code Quality & Coverage
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+    branches: [main, master]
+  schedule:
+    # Run weekly on Sundays at 00:00 UTC
+    - cron: '0 0 * * 0'
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  code-quality:
+    name: Code Quality Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: Run ESLint with detailed reporting
+        run: |
+          npm run lint -- --format json --output-file eslint-report.json || true
+          npm run lint
+
+      - name: Check code formatting
+        run: npx prettier --check "src/**/*.{ts,tsx,js,jsx,json,css,md}"
+        continue-on-error: true
+
+      - name: Run complexity analysis
+        run: |
+          npx complexity-report src --format json > complexity-report.json || true
+        continue-on-error: true
+
+      - name: Check for duplicate code
+        run: npx jscpd src --format json --output jscpd-report.json
+        continue-on-error: true
+
+      - name: Upload ESLint report
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: eslint-report
+          path: eslint-report.json
+          retention-days: 30
+
+      - name: Upload complexity report
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: complexity-report
+          path: complexity-report.json
+          retention-days: 30
+
+      - name: Upload duplicate code report
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: jscpd-report
+          path: jscpd-report.json
+          retention-days: 30
+
+  test-coverage:
+    name: Test Coverage
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: farmers_market_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: Run database migrations
+        run: npx prisma migrate deploy
+        env:
+          DATABASE_URL: postgresql://test:test@localhost:5432/farmers_market_test
+
+      - name: Run all tests with coverage
+        run: npm run test:coverage
+        env:
+          DATABASE_URL: postgresql://test:test@localhost:5432/farmers_market_test
+          REDIS_URL: redis://localhost:6379
+          NODE_ENV: test
+          NEXTAUTH_SECRET: test-secret-key-for-ci
+          NEXTAUTH_URL: http://localhost:3000
+
+      - name: Generate coverage badge
+        uses: cicirello/jacoco-badge-generator@v2
+        if: always()
+        with:
+          badges-directory: badges
+          generate-branches-badge: true
+          generate-summary: true
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        if: always()
+        with:
+          files: ./coverage/lcov.info
+          flags: all-tests
+          name: full-coverage
+          fail_ci_if_error: false
+          verbose: true
+
+      - name: Upload coverage reports
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: coverage-report
+          path: |
+            coverage/
+            badges/
+          retention-days: 30
+
+      - name: Check coverage thresholds
+        run: |
+          node -e "
+          const fs = require('fs');
+          const coverage = JSON.parse(fs.readFileSync('./coverage/coverage-summary.json'));
+          const statements = coverage.total.statements.pct;
+          const branches = coverage.total.branches.pct;
+          const functions = coverage.total.functions.pct;
+          const lines = coverage.total.lines.pct;
+
+          console.log('Coverage Summary:');
+          console.log('  Statements:', statements + '%');
+          console.log('  Branches:', branches + '%');
+          console.log('  Functions:', functions + '%');
+          console.log('  Lines:', lines + '%');
+
+          const threshold = 80;
+          if (statements < threshold || branches < threshold || functions < threshold || lines < threshold) {
+            console.error('❌ Coverage below threshold of ' + threshold + '%');
+            process.exit(1);
+          } else {
+            console.log('✅ Coverage meets threshold of ' + threshold + '%');
+          }
+          "
+        continue-on-error: true
+
+      - name: Comment coverage on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const coverage = JSON.parse(fs.readFileSync('./coverage/coverage-summary.json'));
+            const total = coverage.total;
+
+            const body = `## 📊 Test Coverage Report
+
+            | Metric | Coverage | Status |
+            |--------|----------|--------|
+            | Statements | ${total.statements.pct}% | ${total.statements.pct >= 80 ? '✅' : '⚠️'} |
+            | Branches | ${total.branches.pct}% | ${total.branches.pct >= 80 ? '✅' : '⚠️'} |
+            | Functions | ${total.functions.pct}% | ${total.functions.pct >= 80 ? '✅' : '⚠️'} |
+            | Lines | ${total.lines.pct}% | ${total.lines.pct >= 80 ? '✅' : '⚠️'} |
+
+            **Threshold**: 80%
+
+            ${total.statements.pct >= 80 && total.branches.pct >= 80 && total.functions.pct >= 80 && total.lines.pct >= 80
+              ? '✅ All coverage thresholds met!'
+              : '⚠️ Some metrics below threshold'}
+            `;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body
+            });
+
+  dependency-review:
+    name: Dependency Review
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Dependency Review
+        uses: actions/dependency-review-action@v3
+        with:
+          fail-on-severity: moderate
+          deny-licenses: GPL-2.0, GPL-3.0
+
+  bundle-analysis:
+    name: Bundle Size Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: Build application
+        run: npm run build
+        env:
+          DATABASE_URL: postgresql://placeholder:placeholder@localhost:5432/placeholder
+          SKIP_ENV_VALIDATION: true
+
+      - name: Analyze bundle
+        run: |
+          npx @next/bundle-analyzer
+        continue-on-error: true
+
+      - name: Check bundle size
+        uses: andresz1/size-limit-action@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          skip_step: install
+
+      - name: Upload bundle analysis
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: bundle-analysis
+          path: .next/analyze/
+          retention-days: 30
+
+  performance-metrics:
+    name: Performance Metrics
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: Build application
+        run: npm run build
+        env:
+          DATABASE_URL: postgresql://placeholder:placeholder@localhost:5432/placeholder
+          SKIP_ENV_VALIDATION: true
+
+      - name: Run Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v10
+        with:
+          urls: |
+            http://localhost:3000
+            http://localhost:3000/marketplace
+            http://localhost:3000/farms
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+
+  quality-gate:
+    name: Quality Gate
+    runs-on: ubuntu-latest
+    needs: [code-quality, test-coverage, bundle-analysis]
+    if: always()
+
+    steps:
+      - name: Check quality gate
+        run: |
+          echo "Code Quality: ${{ needs.code-quality.result }}"
+          echo "Test Coverage: ${{ needs.test-coverage.result }}"
+          echo "Bundle Analysis: ${{ needs.bundle-analysis.result }}"
+
+          if [[ "${{ needs.code-quality.result }}" != "success" ]] || [[ "${{ needs.test-coverage.result }}" != "success" ]]; then
+            echo "❌ Quality gate failed"
+            exit 1
+          else
+            echo "✅ Quality gate passed"
+          fi
+
+      - name: Create quality report
+        run: |
+          echo "# Quality Gate Report" > quality-report.md
+          echo "" >> quality-report.md
+          echo "**Status**: ${{ needs.code-quality.result == 'success' && needs.test-coverage.result == 'success' && '✅ PASSED' || '❌ FAILED' }}" >> quality-report.md
+          echo "" >> quality-report.md
+          echo "## Results" >> quality-report.md
+          echo "- Code Quality: ${{ needs.code-quality.result }}" >> quality-report.md
+          echo "- Test Coverage: ${{ needs.test-coverage.result }}" >> quality-report.md
+          echo "- Bundle Analysis: ${{ needs.bundle-analysis.result }}" >> quality-report.md
+
+      - name: Upload quality report
+        uses: actions/upload-artifact@v3
+        with:
+          name: quality-report
+          path: quality-report.md
+          retention-days: 90
