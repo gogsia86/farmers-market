@@ -1,7 +1,9 @@
 # 📚 Scripts Reference Guide
 
-**Last Updated**: January 2025  
+**Last Updated**: January 2025 (Task 2.3 - NPM Scripts Consolidation)  
 **Purpose**: Complete reference for all npm scripts, including those moved from package.json for clarity
+
+> 📝 **Note**: This document was updated as part of Task 2.3 (NPM Scripts Consolidation) to reflect the standardized script naming conventions and removal of duplicate/redundant commands.
 
 ---
 
@@ -38,6 +40,18 @@ npm run db:push          # Push schema changes
 npm run db:seed          # Seed database
 npm run db:studio        # Open Prisma Studio
 npm run db:reset         # Reset database and reseed
+npm run db:diagnose      # Diagnose database issues
+
+# Cache Management
+npm run cache:warm       # Warm up production cache
+npm run cache:verify     # Verify cache functionality
+npm run cache:clear      # Clear all caches
+
+# Inspection & Diagnostics
+npm run inspect          # Run comprehensive site inspector (V4)
+npm run inspect:quick    # Quick inspection (critical pages only)
+npm run inspect:full     # Full inspection with all features
+npm run inspect:ci       # CI-optimized inspection
 ```
 
 ---
@@ -98,6 +112,223 @@ next start -p 3001
 #### `npm run build:analyze`
 
 **Production build with bundle analysis**
+
+---
+
+## 🔍 Inspection & Diagnostics
+
+### `npm run inspect`
+
+**Comprehensive website inspector (V4 - Canonical)**
+
+```bash
+tsx scripts/comprehensive-website-inspector-v4.ts
+```
+
+- Default inspector command
+- Tests all critical pages
+- Performance metrics
+- Accessibility checks
+- SEO validation
+- Link verification
+
+### `npm run inspect:quick`
+
+**Quick inspection (critical pages only)**
+
+```bash
+tsx scripts/comprehensive-website-inspector-v4.ts --quick
+```
+
+- Fast validation
+- Critical pages only
+- Perfect for pre-commit checks
+
+### `npm run inspect:full`
+
+**Full inspection with all features**
+
+```bash
+tsx scripts/comprehensive-website-inspector-v4.ts --full
+```
+
+- All pages and features
+- Visual regression testing
+- Performance profiling
+- Complete report generation
+
+### `npm run inspect:ci`
+
+**CI-optimized inspection**
+
+```bash
+tsx scripts/comprehensive-website-inspector-v4.ts --ci
+```
+
+- Headless mode
+- No screenshots
+- Fast execution for CI/CD
+
+### `npm run inspect:auth`
+
+**Inspection with authentication**
+
+```bash
+tsx scripts/comprehensive-website-inspector-v4.ts --auth
+```
+
+- Tests protected pages
+- Validates auth flows
+- Tests user-specific features
+
+---
+
+## 💾 Cache Management
+
+### `npm run cache:warm`
+
+**Warm up production cache**
+
+```bash
+tsx scripts/warm-cache.ts
+```
+
+- Pre-loads frequently accessed data
+- Reduces cold start times
+- Improves first-page load performance
+
+### `npm run cache:verify`
+
+**Verify cache functionality**
+
+```bash
+tsx scripts/verify-cache.ts
+```
+
+- Tests L1 (memory) cache
+- Tests L2 (Redis) cache
+- Validates TTL behavior
+- Reports hit/miss rates
+- Performance benchmarking
+
+### `npm run cache:clear`
+
+**Clear all caches**
+
+```bash
+tsx scripts/clear-cache.ts
+```
+
+- Clears memory cache
+- Clears Redis cache
+- Useful for debugging
+- Forces fresh data fetch
+
+---
+
+## 🗄️ Database Scripts
+
+### `npm run db:diagnose`
+
+**Diagnose database issues**
+
+```bash
+tsx scripts/diagnose-database.ts
+```
+
+- Connection testing
+- Schema validation
+- Migration status
+- Performance metrics
+- Index analysis
+
+### Redis Commands
+
+### `npm run redis:test`
+
+**Test Redis connectivity**
+
+```bash
+tsx scripts/redis-test.ts
+```
+
+- Validates Redis connection
+- Tests read/write operations
+- Checks authentication
+- Reports latency
+
+### `npm run redis:flush`
+
+**Flush all Redis data**
+
+```bash
+tsx scripts/redis-flush.ts
+```
+
+- ⚠️ WARNING: Clears all Redis data
+- Use only in development
+- Requires confirmation
+
+---
+
+## 🧪 Advanced Testing
+
+### `npm run test:coverage`
+
+**Run tests with coverage report**
+
+```bash
+jest --coverage --maxWorkers=6
+```
+
+- Full test suite
+- Coverage metrics
+- HTML report generation
+- Uploads to Codecov
+
+---
+
+## 🔧 Migration Guide (Task 2.3)
+
+The following scripts were renamed or consolidated in Task 2.3:
+
+### Inspector Scripts
+- `inspect:v3` → **REMOVED** (use `inspect`)
+- `inspect:v4` → **`inspect`** (now canonical)
+- `inspect:comprehensive` → **`inspect`**
+- `inspect:v4:quick` → **`inspect:quick`**
+- `inspect:v4:full` → **`inspect:full`**
+- `inspect:v4:ci` → **`inspect:ci`**
+- `inspect:v4:auth` → **`inspect:auth`**
+
+### Cache Scripts
+- `warm-cache` → **`cache:warm`**
+- `verify:cache` → **`cache:verify`**
+- `clear-cache` → **`cache:clear`**
+
+### Database Scripts
+- `diagnose-db` → **`db:diagnose`**
+
+### Removed Scripts
+The following specialized/duplicate scripts were removed as redundant:
+- `inspect:v3` (superseded by V4)
+- Various versioned duplicates
+- Comment divider lines (23 removed)
+
+**Total Consolidation**: ~28% reduction in package.json scripts (125 → 97)
+
+---
+
+## 📝 Notes
+
+- All scripts use `tsx` for TypeScript execution
+- Most scripts support `--help` flag for usage information
+- Environment variables can be set via `.env.local`
+- CI workflows continue to use standard script names (no changes needed)
+
+For detailed task documentation, see:
+- `docs/TASK_2.3_SCRIPT_CONSOLIDATION_COMPLETE.md`
+- `TASK_2.3_SUMMARY.md`
 
 ```bash
 cross-env ANALYZE=true next build --webpack
