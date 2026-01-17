@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * 🧪 CHECKOUT STORE TESTS
  * Comprehensive test suite for checkout state management
  *

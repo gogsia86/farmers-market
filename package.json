@@ -224,6 +224,7 @@
     "ioredis": "^5.8.2",
     "jest": "^30.2.0",
     "jest-axe": "^10.0.0",
+    "jest-environment-jsdom": "^30.2.0",
     "lint-staged": "^16.2.7",
     "node-mocks-http": "^1.17.2",
     "pixelmatch": "^7.1.0",
