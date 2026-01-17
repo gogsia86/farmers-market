@@ -9,7 +9,7 @@
     "npm": ">=10.0.0"
   },
   "scripts": {
-    "postinstall": "prisma generate",
+    "postinstall": "node -e \"if (process.env.VERCEL || process.env.CI) { console.log('Skipping postinstall on Vercel/CI'); process.exit(0); } try { require('child_process').execSync('prisma generate', {stdio: 'inherit'}); } catch(e) { console.log('Prisma generate skipped:', e.message); }\"",
     "prepare": "node -e \"if (!process.env.CI && !process.env.DOCKER && !process.env.HUSKY) { try { require('husky').install() } catch (e) {} }\"",
     "prebuild": "echo 'Skipping type check in CI/production builds'",
     "dev": "cross-env NODE_OPTIONS='--max-old-space-size=16384' NODE_ENV=development node server.js",
