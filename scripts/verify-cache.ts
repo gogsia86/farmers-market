@@ -669,8 +669,8 @@ async function main() {
   process.exit(failed > 0 ? 1 : 0);
 }
 
-// Run if called directly
-if (require.main === module) {
+// Run if called directly (ESM compatible)
+if (import.meta.url === `file://${process.argv[1]}`) {
   main().catch((error) => {
     console.error("❌ Cache verification failed:", error);
     process.exit(1);
