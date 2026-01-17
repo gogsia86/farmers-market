@@ -36,14 +36,11 @@ const config: TestConfig = {
 
 function initializeSentry(): boolean {
   try {
-    const dsn =
-      process.env.SENTRY_DSN || process.env.NEXT_PUBLIC_SENTRY_DSN;
+    const dsn = process.env.SENTRY_DSN || process.env.NEXT_PUBLIC_SENTRY_DSN;
 
     if (!dsn) {
       console.error(chalk.red("❌ SENTRY_DSN not configured"));
-      console.log(
-        chalk.yellow("\n💡 Set SENTRY_DSN in your .env file:"),
-      );
+      console.log(chalk.yellow("\n💡 Set SENTRY_DSN in your .env file:"));
       console.log(
         chalk.gray(
           'SENTRY_DSN="https://[KEY]@[ORG].ingest.sentry.io/[PROJECT]"',
@@ -58,9 +55,7 @@ function initializeSentry(): boolean {
       environment: "test",
       debug: config.verbose,
       tracesSampleRate: 1.0,
-      integrations: [
-        Sentry.httpIntegration(),
-      ],
+      integrations: [Sentry.httpIntegration()],
       beforeSend(event) {
         // Add test tag
         if (!event.tags) {
@@ -75,10 +70,7 @@ function initializeSentry(): boolean {
     console.log(chalk.green("✓ Sentry initialized successfully"));
     return true;
   } catch (error) {
-    console.error(
-      chalk.red("❌ Failed to initialize Sentry:"),
-      error,
-    );
+    console.error(chalk.red("❌ Failed to initialize Sentry:"), error);
     return false;
   }
 }
@@ -156,8 +148,7 @@ function checkSentryConfiguration(): void {
   const dsn = client.getDsn();
   if (dsn) {
     const dsnString = dsn.toString();
-    const masked =
-      dsnString.substring(0, 30) + "..." + dsnString.slice(-20);
+    const masked = dsnString.substring(0, 30) + "..." + dsnString.slice(-20);
     console.log(chalk.green(`✓ DSN configured: ${masked}`));
   } else {
     console.log(chalk.red("✗ No DSN configured"));
@@ -165,21 +156,15 @@ function checkSentryConfiguration(): void {
 
   const options = client.getOptions();
   console.log(chalk.bold("\nClient Options:"));
+  console.log(chalk.gray(`  Environment: ${options.environment || "not set"}`));
   console.log(
-    chalk.gray(`  Environment: ${options.environment || "not set"}`),
-  );
-  console.log(
-    chalk.gray(
-      `  Traces Sample Rate: ${options.tracesSampleRate || 0}`,
-    ),
+    chalk.gray(`  Traces Sample Rate: ${options.tracesSampleRate || 0}`),
   );
   console.log(
     chalk.gray(`  Debug Mode: ${options.debug ? "enabled" : "disabled"}`),
   );
   console.log(
-    chalk.gray(
-      `  Integrations: ${options.integrations?.length || 0}`,
-    ),
+    chalk.gray(`  Integrations: ${options.integrations?.length || 0}`),
   );
 
   if (config.verbose && options.integrations) {
@@ -240,19 +225,14 @@ async function sendTestError(): Promise<void> {
         test_run: "automated",
       });
 
-      const contextError = new Error(
-        "Test error with agricultural context",
-      );
+      const contextError = new Error("Test error with agricultural context");
       Sentry.captureException(contextError);
     });
     console.log(chalk.green("   ✓ Error with context sent"));
 
     // 3. Test message capture
     console.log(chalk.gray("3. Testing message capture..."));
-    Sentry.captureMessage(
-      "🌾 Test Message - Sentry Integration Check",
-      "info",
-    );
+    Sentry.captureMessage("🌾 Test Message - Sentry Integration Check", "info");
     console.log(chalk.green("   ✓ Message sent"));
 
     // 4. Test breadcrumbs
@@ -272,9 +252,7 @@ async function sendTestError(): Promise<void> {
     console.log(chalk.green("   ✓ Error with breadcrumbs sent"));
 
     // 5. Test agricultural-specific error
-    console.log(
-      chalk.gray("5. Testing agricultural-specific error..."),
-    );
+    console.log(chalk.gray("5. Testing agricultural-specific error..."));
     Sentry.withScope((scope) => {
       scope.setTag("operation", "farm_creation");
       scope.setTag("farm_type", "organic");
@@ -289,9 +267,7 @@ async function sendTestError(): Promise<void> {
         certifications: ["USDA_ORGANIC", "NON_GMO"],
       });
 
-      const agricError = new Error(
-        "Test agricultural operation error",
-      );
+      const agricError = new Error("Test agricultural operation error");
       Sentry.captureException(agricError);
     });
     console.log(chalk.green("   ✓ Agricultural error sent"));
@@ -323,33 +299,20 @@ async function sendTestError(): Promise<void> {
 
     if (flushed) {
       console.log(
-        chalk.green(
-          "\n✅ All test events sent successfully to Sentry!",
-        ),
+        chalk.green("\n✅ All test events sent successfully to Sentry!"),
       );
       console.log(
-        chalk.yellow(
-          "\n💡 Check your Sentry dashboard at https://sentry.io",
-        ),
+        chalk.yellow("\n💡 Check your Sentry dashboard at https://sentry.io"),
       );
-      console.log(
-        chalk.gray("   Organization: medicis-gang"),
-      );
-      console.log(
-        chalk.gray("   Project: farmers-market-prod"),
-      );
+      console.log(chalk.gray("   Organization: medicis-gang"));
+      console.log(chalk.gray("   Project: farmers-market-prod"));
     } else {
       console.log(
-        chalk.yellow(
-          "\n⚠️  Some events may not have been sent (timeout)",
-        ),
+        chalk.yellow("\n⚠️  Some events may not have been sent (timeout)"),
       );
     }
   } catch (error) {
-    console.error(
-      chalk.red("\n❌ Failed to send test errors:"),
-      error,
-    );
+    console.error(chalk.red("\n❌ Failed to send test errors:"), error);
     throw error;
   }
 }
@@ -362,7 +325,7 @@ async function main(): Promise<void> {
   console.log(
     chalk.bold.cyan("\n🌾 FARMERS MARKET - SENTRY INTEGRATION TEST\n"),
   );
-  console.log(chalk.gray("=" .repeat(60)));
+  console.log(chalk.gray("=".repeat(60)));
 
   // Check environment variables
   if (config.checkConfig) {
@@ -373,11 +336,7 @@ async function main(): Promise<void> {
   const initialized = initializeSentry();
 
   if (!initialized) {
-    console.log(
-      chalk.red(
-        "\n❌ Cannot proceed without Sentry configuration",
-      ),
-    );
+    console.log(chalk.red("\n❌ Cannot proceed without Sentry configuration"));
     process.exit(1);
   }
 
@@ -397,9 +356,7 @@ async function main(): Promise<void> {
       ),
     );
     console.log(
-      chalk.gray(
-        "   npx tsx scripts/test-sentry.ts --send-test-error",
-      ),
+      chalk.gray("   npx tsx scripts/test-sentry.ts --send-test-error"),
     );
   }
 
@@ -416,4 +373,3 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 }
 
 export { checkEnvironmentVariables, initializeSentry, main };
-

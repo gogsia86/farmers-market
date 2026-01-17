@@ -29,28 +29,14 @@ Sentry.init({
   // Server-side integrations for better error tracking
   integrations: [
     // HTTP integration for request tracing
-    Sentry.httpIntegration({
-      // Don't capture transactions for healthcheck endpoints
-      tracing: {
-        shouldCreateSpanForRequest: (url) => {
-          return (
-            !url.includes("/api/health") &&
-            !url.includes("/api/metrics") &&
-            !url.includes("/_next/static")
-          );
-        },
-      },
-    }),
+    Sentry.httpIntegration(),
 
     // Prisma integration for database query tracing
     Sentry.prismaIntegration(),
-
-    // Node profiling for performance insights
-    Sentry.nodeProfilingIntegration(),
   ],
 
   // Before sending to Sentry, clean up sensitive data
-  beforeSend(event, hint) {
+  beforeSend(event: Sentry.ErrorEvent, hint: Sentry.EventHint) {
     // Don't send events in development unless explicitly enabled
     if (process.env.NODE_ENV === "development" && !process.env.SENTRY_DEBUG) {
       return null;
@@ -72,12 +58,14 @@ Sentry.init({
     // Sanitize query strings
     if (event.request?.query_string) {
       // Remove sensitive query parameters
-      const sanitized = event.request.query_string
-        .replace(/token=[^&]*/gi, "token=[REDACTED]")
-        .replace(/key=[^&]*/gi, "key=[REDACTED]")
-        .replace(/apiKey=[^&]*/gi, "apiKey=[REDACTED]")
-        .replace(/password=[^&]*/gi, "password=[REDACTED]");
-      event.request.query_string = sanitized;
+      if (typeof event.request.query_string === "string") {
+        const sanitized = event.request.query_string
+          .replace(/token=[^&]*/gi, "token=[REDACTED]")
+          .replace(/key=[^&]*/gi, "key=[REDACTED]")
+          .replace(/apiKey=[^&]*/gi, "apiKey=[REDACTED]")
+          .replace(/password=[^&]*/gi, "password=[REDACTED]");
+        event.request.query_string = sanitized;
+      }
     }
 
     // Sanitize user data
@@ -88,10 +76,11 @@ Sentry.init({
     }
 
     // Sanitize database queries
-    if (event.contexts?.db) {
+    if (event.contexts?.db && typeof event.contexts.db === "object") {
       // Remove sensitive SQL values
-      if (event.contexts.db.statement) {
-        event.contexts.db.statement = event.contexts.db.statement
+      const dbContext = event.contexts.db as { statement?: string };
+      if (dbContext.statement && typeof dbContext.statement === "string") {
+        dbContext.statement = dbContext.statement
           .replace(/'[^']*'/g, "'[REDACTED]'")
           .replace(/"[^"]*"/g, '"[REDACTED]"');
       }
@@ -157,7 +146,11 @@ Sentry.init({
   },
 
   // Performance monitoring configuration
-  tracesSampler(samplingContext) {
+  tracesSampler(samplingContext: {
+    parentSampled?: boolean;
+    name?: string;
+    [key: string]: unknown;
+  }) {
     // Always capture errors
     if (samplingContext.parentSampled === false) {
       return 0;
@@ -215,12 +208,7 @@ Sentry.init({
   maxValueLength: 2000,
 
   // Transport options for sending to Sentry
-  transportOptions: {
-    // Retry failed requests
-    retry: {
-      maxRetries: 3,
-    },
-  },
+  transportOptions: {},
 
   // Enable logs integration
   enableLogs: true,

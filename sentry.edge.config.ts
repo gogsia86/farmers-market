@@ -31,23 +31,11 @@ Sentry.init({
   // Only use integrations that work in edge runtime
   integrations: [
     // HTTP integration for request tracing
-    Sentry.httpIntegration({
-      tracing: {
-        shouldCreateSpanForRequest: (url) => {
-          // Don't capture transactions for healthcheck endpoints
-          return (
-            !url.includes("/api/health") &&
-            !url.includes("/api/metrics") &&
-            !url.includes("/_next/static") &&
-            !url.includes("/monitoring")
-          );
-        },
-      },
-    }),
+    Sentry.httpIntegration(),
   ],
 
   // Before sending to Sentry, clean up sensitive data
-  beforeSend(event, hint) {
+  beforeSend(event: Sentry.ErrorEvent, hint: Sentry.EventHint) {
     // Don't send events in development unless explicitly enabled
     if (process.env.NODE_ENV === "development" && !process.env.SENTRY_DEBUG) {
       return null;
@@ -69,12 +57,14 @@ Sentry.init({
     // Sanitize query strings
     if (event.request?.query_string) {
       // Remove sensitive query parameters
-      const sanitized = event.request.query_string
-        .replace(/token=[^&]*/gi, "token=[REDACTED]")
-        .replace(/key=[^&]*/gi, "key=[REDACTED]")
-        .replace(/apiKey=[^&]*/gi, "apiKey=[REDACTED]")
-        .replace(/password=[^&]*/gi, "password=[REDACTED]");
-      event.request.query_string = sanitized;
+      if (typeof event.request.query_string === "string") {
+        const sanitized = event.request.query_string
+          .replace(/token=[^&]*/gi, "token=[REDACTED]")
+          .replace(/key=[^&]*/gi, "key=[REDACTED]")
+          .replace(/apiKey=[^&]*/gi, "apiKey=[REDACTED]")
+          .replace(/password=[^&]*/gi, "password=[REDACTED]");
+        event.request.query_string = sanitized;
+      }
     }
 
     // Sanitize user data
@@ -143,7 +133,11 @@ Sentry.init({
   },
 
   // Performance monitoring configuration
-  tracesSampler(samplingContext) {
+  tracesSampler(samplingContext: {
+    parentSampled?: boolean;
+    name?: string;
+    [key: string]: unknown;
+  }) {
     // Always capture errors
     if (samplingContext.parentSampled === false) {
       return 0;
@@ -206,12 +200,7 @@ Sentry.init({
   maxValueLength: 1000,
 
   // Transport options for sending to Sentry
-  transportOptions: {
-    // Retry failed requests
-    retry: {
-      maxRetries: 2, // Lower retries for edge runtime
-    },
-  },
+  transportOptions: {},
 
   // Disable PII by default for privacy
   sendDefaultPii: false,

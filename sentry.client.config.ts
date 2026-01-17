@@ -25,7 +25,8 @@ Sentry.init({
   replaysSessionSampleRate: 0.1, // Capture 10% of all sessions for replay
 
   // Environment detection
-  environment: process.env.NEXT_PUBLIC_VERCEL_ENV || process.env.NODE_ENV || "development",
+  environment:
+    process.env.NEXT_PUBLIC_VERCEL_ENV || process.env.NODE_ENV || "development",
 
   // Release tracking (Git SHA from Vercel)
   release: process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA || undefined,
@@ -34,8 +35,6 @@ Sentry.init({
   integrations: [
     // Browser tracing for performance monitoring
     Sentry.browserTracingIntegration({
-      // Set sampling rate for performance monitoring
-      tracingOrigins: ["localhost", /^\//],
       // Propagate traces to backend
       tracePropagationTargets: ["localhost", /^https:\/\/[^/]*\.vercel\.app/],
     }),
@@ -56,7 +55,10 @@ Sentry.init({
   // Before sending to Sentry, clean up sensitive data
   beforeSend(event, hint) {
     // Don't send events in development unless explicitly enabled
-    if (process.env.NODE_ENV === "development" && !process.env.NEXT_PUBLIC_SENTRY_DEBUG) {
+    if (
+      process.env.NODE_ENV === "development" &&
+      !process.env.NEXT_PUBLIC_SENTRY_DEBUG
+    ) {
       return null;
     }
 
@@ -170,12 +172,7 @@ Sentry.init({
   maxValueLength: 1000,
 
   // Transport options for sending to Sentry
-  transportOptions: {
-    // Retry failed requests
-    retry: {
-      maxRetries: 3,
-    },
-  },
+  transportOptions: {},
 });
 
 // Export Sentry for use in the app

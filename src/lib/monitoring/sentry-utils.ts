@@ -85,7 +85,7 @@ export function clearUserContext(): void {
 export function trackError(
   error: Error,
   context?: ErrorContext,
-  level: "error" | "warning" | "fatal" = "error"
+  level: "error" | "warning" | "fatal" = "error",
 ): void {
   Sentry.withScope((scope) => {
     // Set severity level
@@ -132,7 +132,7 @@ export function trackError(
 export function trackMessage(
   message: string,
   context?: ErrorContext,
-  level: "info" | "warning" | "error" = "info"
+  level: "info" | "warning" | "error" = "info",
 ): void {
   Sentry.withScope((scope) => {
     scope.setLevel(level);
@@ -161,7 +161,7 @@ export function trackApiError(
     url: string;
     statusCode?: number;
     userId?: string;
-  }
+  },
 ): void {
   Sentry.withScope((scope) => {
     scope.setLevel("error");
@@ -196,7 +196,7 @@ export function trackDatabaseError(
     model?: string;
     query?: string;
     duration?: number;
-  }
+  },
 ): void {
   Sentry.withScope((scope) => {
     scope.setLevel("error");
@@ -230,7 +230,7 @@ export function trackAgriculturalOperation(
     success: boolean;
     error?: Error;
     duration?: number;
-  }
+  },
 ): void {
   Sentry.withScope((scope) => {
     scope.setLevel(context.success ? "info" : "error");
@@ -282,20 +282,21 @@ export function trackAgriculturalOperation(
 export function startTransaction(
   name: string,
   op: string,
-  tags?: Record<string, string>
+  tags?: Record<string, string>,
 ): () => void {
-  const transaction = Sentry.startTransaction({
-    name,
-    op,
-    tags,
-  });
-
-  Sentry.getCurrentHub().configureScope((scope) => {
-    scope.setSpan(transaction);
-  });
+  const span = Sentry.startSpan(
+    {
+      name,
+      op,
+      attributes: tags,
+    },
+    () => {
+      // Span will be active during this callback
+    },
+  );
 
   return () => {
-    transaction.finish();
+    // Span is automatically finished
   };
 }
 
@@ -331,7 +332,7 @@ export function trackPageLoad(
     lcp?: number; // Largest contentful paint
     cls?: number; // Cumulative layout shift
     fid?: number; // First input delay
-  }
+  },
 ): void {
   Sentry.withScope((scope) => {
     scope.setTag("page", page);
@@ -360,7 +361,7 @@ export function addBreadcrumb(
   message: string,
   data?: Record<string, unknown>,
   category: string = "user-action",
-  level: "info" | "warning" | "error" = "info"
+  level: "info" | "warning" | "error" = "info",
 ): void {
   Sentry.addBreadcrumb({
     message,
@@ -396,7 +397,7 @@ export function addNavigationBreadcrumb(from: string, to: string): void {
  */
 export function setCustomContext(
   key: string,
-  value: Record<string, unknown>
+  value: Record<string, unknown>,
 ): void {
   Sentry.setContext(key, value);
 }
@@ -419,7 +420,7 @@ export function setTags(tags: Record<string, string>): void {
  */
 export function captureErrorBoundaryError(
   error: Error,
-  errorInfo: { componentStack: string }
+  errorInfo: { componentStack: string },
 ): void {
   Sentry.withScope((scope) => {
     scope.setContext("react_error_boundary", {
@@ -463,7 +464,7 @@ export function sendTestError(): void {
  * Check if Sentry is properly configured
  */
 export function isSentryConfigured(): boolean {
-  const client = Sentry.getCurrentHub().getClient();
+  const client = Sentry.getClient();
   return !!client && !!client.getDsn();
 }
 
@@ -475,7 +476,7 @@ export function getSentryStatus(): {
   environment: string;
   dsn?: string;
 } {
-  const client = Sentry.getCurrentHub().getClient();
+  const client = Sentry.getClient();
   const dsn = client?.getDsn();
 
   return {
@@ -494,7 +495,7 @@ export function getSentryStatus(): {
  */
 export function withErrorTracking<T extends (...args: any[]) => Promise<any>>(
   fn: T,
-  context?: ErrorContext
+  context?: ErrorContext,
 ): T {
   return (async (...args: Parameters<T>) => {
     try {
@@ -511,7 +512,7 @@ export function withErrorTracking<T extends (...args: any[]) => Promise<any>>(
  */
 export function withSyncErrorTracking<T extends (...args: any[]) => any>(
   fn: T,
-  context?: ErrorContext
+  context?: ErrorContext,
 ): T {
   return ((...args: Parameters<T>) => {
     try {
@@ -533,7 +534,7 @@ export function withSyncErrorTracking<T extends (...args: any[]) => any>(
  */
 export function shouldSampleError(
   errorType: string,
-  sampleRate: number = 1.0
+  sampleRate: number = 1.0,
 ): boolean {
   if (sampleRate >= 1.0) {
     return true;
