@@ -28,7 +28,7 @@ export const MarketplaceBrowseModule: TestModule = {
   id: "marketplace-browse",
   name: "Marketplace Browse & Search",
   description: "Product browsing, search, and discovery functionality",
-  category: "CRITICAL",
+  category: "MARKETPLACE",
   tags: ["marketplace", "products", "search", "customer"],
   timeout: 30000,
 

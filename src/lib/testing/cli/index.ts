@@ -345,7 +345,7 @@ function listModules(): void {
 
   modules.forEach((module) => {
     const categoryColor =
-      module.category === "HEALTH_CHECK"
+      module.category === "HEALTH"
         ? colors.red
         : module.category === "AUTH"
           ? colors.yellow
@@ -358,7 +358,7 @@ function listModules(): void {
       `    Category: ${categoryColor}${module.category}${colors.reset}`,
     );
     console.log(`    Tags: ${module.tags?.join(", ") || "none"}`);
-    console.log(`    Tests: ${module.tests?.length || "N/A"}`);
+    console.log(`    Enabled: ${module.enabled ? "Yes" : "No"}`);
     console.log("");
   });
 

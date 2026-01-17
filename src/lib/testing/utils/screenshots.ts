@@ -131,7 +131,10 @@ export class ScreenshotManager {
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
-      logger.error("[ScreenshotManager] Failed to capture screenshot:", error);
+      logger.error(
+        "[ScreenshotManager] Failed to capture screenshot:",
+        error instanceof Error ? error : new Error(String(error)),
+      );
 
       return {
         success: false,
@@ -173,7 +176,7 @@ export class ScreenshotManager {
         error instanceof Error ? error.message : String(error);
       logger.error(
         "[ScreenshotManager] Failed to capture failure screenshot:",
-        error,
+        error instanceof Error ? error : new Error(String(error)),
       );
 
       return {
@@ -257,8 +260,8 @@ export class ScreenshotManager {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
       logger.error(
-        "[ScreenshotManager] Failed to capture element screenshot:",
-        error,
+        "[ScreenshotManager] Failed to capture comparison screenshot:",
+        error instanceof Error ? error : new Error(String(error)),
       );
 
       return {
@@ -332,7 +335,10 @@ export class ScreenshotManager {
             : undefined,
         };
       } catch (error) {
-        logger.error("[ScreenshotManager] Comparison failed:", error);
+        logger.error(
+          "[ScreenshotManager] Comparison failed:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
       }
     }
 
@@ -460,7 +466,10 @@ export class ScreenshotManager {
 
       logger.info(`[ScreenshotManager] Saved metadata: ${metadataPath}`);
     } catch (error) {
-      logger.error("[ScreenshotManager] Failed to save metadata:", error);
+      logger.error(
+        "[ScreenshotManager] Failed to capture viewport:",
+        error instanceof Error ? error : new Error(String(error)),
+      );
     }
   }
 
@@ -505,7 +514,10 @@ export class ScreenshotManager {
 
       return deletedCount;
     } catch (error) {
-      logger.error("[ScreenshotManager] Cleanup failed:", error);
+      logger.error(
+        "[ScreenshotManager] Cleanup failed:",
+        error instanceof Error ? error : new Error(String(error)),
+      );
       return 0;
     }
   }
@@ -533,7 +545,10 @@ export class ScreenshotManager {
 
       return deletedCount;
     } catch (error) {
-      logger.error("[ScreenshotManager] Failed to clear screenshots:", error);
+      logger.error(
+        "[ScreenshotManager] Failed to capture element:",
+        error instanceof Error ? error : new Error(String(error)),
+      );
       return 0;
     }
   }
@@ -548,7 +563,7 @@ export class ScreenshotManager {
       if ((error as any).code !== "EEXIST") {
         logger.error(
           "[ScreenshotManager] Failed to create output directory:",
-          error,
+          error instanceof Error ? error : new Error(String(error)),
         );
         throw error;
       }

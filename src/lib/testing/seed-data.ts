@@ -96,8 +96,9 @@ export const UserFactory = {
       email: generateTestEmail("customer"),
       name: "Test Customer",
       password: "$2a$10$HASHED_TEST_PASSWORD", // Pre-hashed test password
-      role: "CUSTOMER",
-      emailVerified: new Date(),
+      role: "CONSUMER",
+      emailVerified: true,
+      emailVerifiedAt: new Date(),
       ...overrides,
     };
   },
@@ -111,7 +112,8 @@ export const UserFactory = {
       name: "Test Farmer",
       password: "$2a$10$HASHED_TEST_PASSWORD",
       role: "FARMER",
-      emailVerified: new Date(),
+      emailVerified: true,
+      emailVerifiedAt: new Date(),
       ...overrides,
     };
   },
@@ -125,7 +127,8 @@ export const UserFactory = {
       name: "Test Admin",
       password: "$2a$10$HASHED_TEST_PASSWORD",
       role: "ADMIN",
-      emailVerified: new Date(),
+      emailVerified: true,
+      emailVerifiedAt: new Date(),
       ...overrides,
     };
   },
@@ -166,20 +169,30 @@ export const FarmFactory = {
         "A beautiful organic farm dedicated to sustainable agriculture and community health.",
       owner: { connect: { id: ownerId } },
       status: "ACTIVE",
-      certifications: ["ORGANIC", "NON_GMO"],
-      farmSize: 50,
-      establishedYear: 2020,
-      location: {
-        create: {
-          address: "123 Farm Road",
-          city: "Farmville",
-          state: "CA",
-          zipCode: "95000",
-          country: "USA",
-          latitude: 40.7128,
-          longitude: -74.006,
-        },
+      certifications: {
+        create: [
+          {
+            type: "ORGANIC",
+            certifierName: "USDA",
+            issueDate: new Date(),
+          },
+          {
+            type: "FAIR_TRADE",
+            certifierName: "Fair Trade USA",
+            issueDate: new Date(),
+          },
+        ],
       },
+      farmSize: 50,
+      address: "123 Farm Road",
+      city: "Farmville",
+      state: "CA",
+      zipCode: "95000",
+      country: "US",
+      latitude: 40.7128,
+      longitude: -74.006,
+      email: "testfarm@farmersmarket.test",
+      phone: "555-0100",
       ...overrides,
     };
   },
@@ -205,7 +218,20 @@ export const FarmFactory = {
     return this.create(ownerId, {
       name: "Organic Valley Farm",
       slug: generateSlug("organic-valley"),
-      certifications: ["ORGANIC", "BIODYNAMIC"],
+      certifications: {
+        create: [
+          {
+            type: "ORGANIC",
+            certifierName: "USDA",
+            issueDate: new Date(),
+          },
+          {
+            type: "REGENERATIVE",
+            certifierName: "Regenerative Organic Alliance",
+            issueDate: new Date(),
+          },
+        ],
+      },
       farmingPractices: ["ORGANIC", "REGENERATIVE"],
     });
   },
@@ -236,12 +262,12 @@ export const ProductFactory = {
       slug: generateSlug("test-product"),
       description: "Fresh, organic, and locally grown.",
       farm: { connect: { id: farmId } },
-      category: { connect: { slug: "vegetables" } },
+      category: "VEGETABLES",
       price: 9.99,
       unit: "lb",
-      stock: 100,
+      inStock: true,
       status: "ACTIVE",
-      isOrganic: true,
+      organic: true,
       harvestDate: new Date(),
       ...overrides,
     };
@@ -268,7 +294,7 @@ export const ProductFactory = {
     return this.create(farmId, {
       name,
       slug: generateSlug(name.toLowerCase()),
-      category: { connect: { slug: "vegetables" } },
+      category: "VEGETABLES",
       unit: "lb",
       price: 4.99,
     });
@@ -278,7 +304,7 @@ export const ProductFactory = {
     return this.create(farmId, {
       name,
       slug: generateSlug(name.toLowerCase()),
-      category: { connect: { slug: "fruits" } },
+      category: "FRUITS",
       unit: "lb",
       price: 6.99,
     });
@@ -288,7 +314,7 @@ export const ProductFactory = {
     return this.create(farmId, {
       name,
       slug: generateSlug(name.toLowerCase()),
-      category: { connect: { slug: "dairy" } },
+      category: "DAIRY",
       unit: "gallon",
       price: 8.99,
     });
@@ -300,10 +326,11 @@ export const ProductFactory = {
  */
 export const OrderFactory = {
   /**
-   * Create order data
+   * Create basic order
    */
   create(
     customerId: string,
+    farmId: string,
     items: Array<{ productId: string; quantity: number; price: number }>,
   ): Prisma.OrderCreateInput {
     const subtotal = items.reduce(
@@ -311,20 +338,30 @@ export const OrderFactory = {
       0,
     );
     const tax = subtotal * 0.08;
+    const platformFee = subtotal * 0.1;
+    const farmerAmount = subtotal - platformFee;
     const total = subtotal + tax;
 
     return {
+      orderNumber: `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       customer: { connect: { id: customerId } },
+      farm: { connect: { id: farmId } },
       status: "PENDING",
       subtotal,
       tax,
+      platformFee,
+      farmerAmount,
       total,
+      fulfillmentMethod: "FARM_PICKUP",
       items: {
         create: items.map((item) => ({
           product: { connect: { id: item.productId } },
+          productName: "Test Product",
           quantity: item.quantity,
           price: item.price,
-          subtotal: item.price * item.quantity,
+          unit: "lb",
+          unitPrice: item.price,
+          subtotal: item.quantity * item.price,
         })),
       },
     };
@@ -335,9 +372,10 @@ export const OrderFactory = {
    */
   completed(
     customerId: string,
+    farmId: string,
     items: Array<{ productId: string; quantity: number; price: number }>,
   ): Prisma.OrderCreateInput {
-    const order = this.create(customerId, items);
+    const order = this.create(customerId, farmId, items);
     return {
       ...order,
       status: "COMPLETED",
@@ -359,12 +397,12 @@ export const ReviewFactory = {
     overrides?: Partial<Prisma.ReviewCreateInput>,
   ): Prisma.ReviewCreateInput {
     return {
-      user: { connect: { id: userId } },
+      customer: { connect: { id: userId } },
       farm: { connect: { id: farmId } },
       rating: 5,
-      comment:
+      reviewText:
         "Excellent farm! Fresh produce and friendly staff. Highly recommended!",
-      verified: true,
+      isVerifiedPurchase: true,
       ...overrides,
     };
   },
@@ -390,7 +428,7 @@ export const ReviewFactory = {
       const userId = userIds[i % userIds.length];
       return this.create(userId, farmId, {
         rating: ratings[i % ratings.length],
-        comment: comments[i % comments.length],
+        reviewText: comments[i % comments.length],
       });
     });
   },
@@ -412,7 +450,7 @@ export async function cleanTestData(verbose: boolean = false): Promise<void> {
   await database.review.deleteMany({});
   await database.product.deleteMany({});
   await database.farm.deleteMany({});
-  await database.location.deleteMany({});
+
   await database.user.deleteMany({
     where: {
       OR: [
@@ -576,28 +614,29 @@ export async function seedComprehensiveData(
     if (options.verbose) console.log("  Creating orders...");
 
     const customerRecords = await database.user.findMany({
-      where: { role: "CUSTOMER" },
+      where: { role: "CONSUMER" },
       select: { id: true },
     });
     const customerIds = customerRecords.map((c) => c.id);
 
     const productRecords = await database.product.findMany({
       take: 20,
-      select: { id: true, price: true },
+      select: { id: true, price: true, farmId: true },
     });
 
     for (let i = 0; i < 20; i++) {
       const customerId = customerIds[i % customerIds.length];
+      const productRecord = productRecords[i % productRecords.length];
       const items = [
         {
-          productId: productRecords[i % productRecords.length].id,
+          productId: productRecord.id,
           quantity: Math.floor(Math.random() * 5) + 1,
-          price: productRecords[i % productRecords.length].price,
+          price: Number(productRecord.price),
         },
       ];
 
       await database.order.create({
-        data: OrderFactory.completed(customerId, items),
+        data: OrderFactory.completed(customerId, productRecord.farmId, items),
       });
       counts.orders++;
     }
