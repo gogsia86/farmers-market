@@ -4,10 +4,10 @@
 // 🌾 Domain: WebSocket Server Integration
 // ⚡ Performance: Optimized HTTP/WebSocket dual protocol server
 
-const { createServer } = require("http");
-const { parse } = require("url");
-const next = require("next");
-const { Server } = require("socket.io");
+import { createServer } from "http";
+import next from "next";
+import { Server } from "socket.io";
+import { parse } from "url";
 
 // Environment configuration
 const dev = process.env.NODE_ENV !== "production";
