@@ -20,11 +20,10 @@
  * @module ApiCacheMiddleware
  */
 
-import { NextRequest, NextResponse } from "next/server";
-import type { NextResponse as NextResponseType } from "next/server";
-import { cacheService, CacheKeys } from "@/lib/cache/cache-service";
+import { CacheKeys, cacheService } from "@/lib/cache/cache-service";
 import { logger } from "@/lib/monitoring/logger";
 import crypto from "crypto";
+import { NextRequest, NextResponse } from "next/server";
 
 // ============================================================================
 // TYPES
@@ -401,7 +400,8 @@ export function withApiCache(
           },
         });
       } catch (error) {
-        logger.error("Failed to cache API response", error as Error, {
+        logger.error("Failed to cache API response", {
+          error: error as Error,
           pathname,
         });
         return response;
@@ -427,7 +427,10 @@ export async function invalidateCacheByTag(tag: string): Promise<void> {
     await cacheService.invalidateByTag(tag);
     logger.info("Cache invalidated by tag", { tag });
   } catch (error) {
-    logger.error("Failed to invalidate cache by tag", error as Error, { tag });
+    logger.error("Failed to invalidate cache by tag", {
+      error: error as Error,
+      tag,
+    });
   }
 }
 
@@ -445,7 +448,8 @@ export async function invalidateCacheByPattern(pattern: string): Promise<void> {
     await cacheService.deletePattern(pattern);
     logger.info("Cache invalidated by pattern", { pattern });
   } catch (error) {
-    logger.error("Failed to invalidate cache by pattern", error as Error, {
+    logger.error("Failed to invalidate cache by pattern", {
+      error: error as Error,
       pattern,
     });
   }

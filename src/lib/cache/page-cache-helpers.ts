@@ -10,8 +10,8 @@
  * - Performance monitoring
  */
 
-import { cache, CacheKeys, CacheTTL } from "@/lib/cache";
 import { logger } from "@/lib/logger";
+import { cache, CacheKeys, CacheTTL } from "./index";
 
 /**
  * Cache key generator for pages

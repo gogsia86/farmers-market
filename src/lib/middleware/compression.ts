@@ -19,11 +19,11 @@
  * @module CompressionMiddleware
  */
 
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
 import { logger } from "@/lib/monitoring/logger";
-import zlib from "zlib";
+import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import { promisify } from "util";
+import zlib from "zlib";
 
 // Promisified compression functions
 const gzipAsync = promisify(zlib.gzip);
@@ -196,7 +196,9 @@ async function compressBrotli(buffer: Buffer): Promise<Buffer> {
   try {
     return await brotliCompressAsync(buffer, BROTLI_OPTIONS);
   } catch (error) {
-    logger.error("Brotli compression failed", error as Error);
+    logger.error("Brotli compression failed", {
+      error: error as Error,
+    });
     throw error;
   }
 }
@@ -211,7 +213,9 @@ async function compressGzip(
   try {
     return await gzipAsync(buffer, { level });
   } catch (error) {
-    logger.error("Gzip compression failed", error as Error);
+    logger.error("Gzip compression failed", {
+      error: error as Error,
+    });
     throw error;
   }
 }
@@ -253,7 +257,10 @@ async function compressBody(
 
     return { buffer: compressedBuffer, stats };
   } catch (error) {
-    logger.error("Compression failed", error as Error, { algorithm });
+    logger.error("Compression failed", {
+      error: error as Error,
+      algorithm,
+    });
     // Return uncompressed on error
     return {
       buffer: originalBuffer,
@@ -379,7 +386,9 @@ export function withCompression(
         headers,
       });
     } catch (error) {
-      logger.error("Compression middleware error", error as Error);
+      logger.error("Compression middleware error", {
+        error: error as Error,
+      });
       return response; // Return original response on error
     }
   };
@@ -445,7 +454,9 @@ export async function createCompressedResponse(
       },
     });
   } catch (error) {
-    logger.error("Manual compression failed", error as Error);
+    logger.error("Manual compression failed", {
+      error: error as Error,
+    });
     return NextResponse.json(data);
   }
 }
@@ -454,4 +465,4 @@ export async function createCompressedResponse(
 // EXPORTS
 // ============================================================================
 
-export type { CompressionConfig, CompressionStats, CompressionAlgorithm };
+export type { CompressionAlgorithm, CompressionConfig, CompressionStats };
