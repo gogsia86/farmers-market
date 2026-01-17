@@ -1,5 +1,8 @@
 # 🌾 Farmers Market Platform
 
+[![CI](https://github.com/gogsia86/farmers-market/workflows/CI/badge.svg)](https://github.com/gogsia86/farmers-market/actions/workflows/ci.yml)
+[![Code Quality](https://github.com/gogsia86/farmers-market/workflows/Code%20Quality/badge.svg)](https://github.com/gogsia86/farmers-market/actions/workflows/code-quality.yml)
+[![Deploy](https://github.com/gogsia86/farmers-market/workflows/Deploy/badge.svg)](https://github.com/gogsia86/farmers-market/actions/workflows/deploy.yml)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue.svg)](https://www.typescriptlang.org/)
 [![Next.js](https://img.shields.io/badge/Next.js-15-black.svg)](https://nextjs.org/)
 [![Prisma](https://img.shields.io/badge/Prisma-7-green.svg)](https://www.prisma.io/)
