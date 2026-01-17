@@ -1,0 +1,86 @@
+===========================================
+PULL REQUEST CREATION INSTRUCTIONS
+===========================================
+
+METHOD 1: GitHub Web UI (RECOMMENDED - EASIEST)
+------------------------------------------------
+
+1. Open your browser and go to:
+   https://github.com/gogsia86/farmers-market
+
+2. You should see a yellow banner at the top:
+   "refactor/phase2-cache-scripts-consolidation had recent pushes less than a minute ago"
+   
+3. Click the green "Compare & pull request" button
+
+4. Fill in the PR form:
+   
+   Title:
+   Phase 2: Cache Consolidation & NPM Scripts Simplification
+   
+   Description:
+   Copy the entire contents of: docs/PR_DESCRIPTION.md
+   (The file is ready to paste)
+
+5. Add labels (if available):
+   - maintenance
+   - refactor
+   - documentation
+
+6. Click "Create pull request"
+
+===========================================
+
+METHOD 2: Direct Link
+------------------------------------------------
+
+If you don't see the yellow banner, use this direct link:
+
+https://github.com/gogsia86/farmers-market/compare/master...refactor/phase2-cache-scripts-consolidation
+
+Then follow steps 4-6 from Method 1 above.
+
+===========================================
+
+METHOD 3: GitHub CLI (if installed)
+------------------------------------------------
+
+gh pr create \
+  --title "Phase 2: Cache Consolidation & NPM Scripts Simplification" \
+  --body-file docs/PR_DESCRIPTION.md \
+  --base master \
+  --head refactor/phase2-cache-scripts-consolidation
+
+===========================================
+
+PR DESCRIPTION LOCATION
+------------------------------------------------
+Full PR description is ready in:
+docs/PR_DESCRIPTION.md
+
+Just copy and paste the entire contents!
+
+===========================================
+
+AFTER PR IS CREATED
+------------------------------------------------
+
+1. Request reviews from:
+   - Backend/Cache specialist
+   - DevOps/CI maintainer
+   - Documentation owner
+
+2. Add these labels:
+   - maintenance
+   - refactor
+   - documentation
+   - no-breaking-changes
+
+3. Link to any related issues if they exist
+
+===========================================
+
+That's it! Everything else is done.
+The code is tested, documented, and ready.
+
+===========================================
