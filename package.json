@@ -116,6 +116,9 @@
     "stripe:trigger": "stripe trigger payment_intent.succeeded && stripe trigger checkout.session.completed",
     "verify:integrations": "npm run sentry:test && npm run stripe:test",
     "verify:all": "npm run db:test && npm run sentry:test && npm run stripe:test",
+    "verify:local": "tsx scripts/verification/local-verification-sprint.ts",
+    "verify:local:quick": "tsx scripts/verification/local-verification-sprint.ts --quick",
+    "verify:local:full": "tsx scripts/verification/local-verification-sprint.ts --full",
     "db:seed:croatian": "tsx scripts/seed-croatian-market.ts",
     "seed:croatian": "tsx scripts/seed-croatian-market.ts"
   },

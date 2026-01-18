@@ -10,78 +10,68 @@ datasource db {
 }
 
 model User {
-  id                      String                   @id @default(cuid())
-  email                   String                   @unique @db.VarChar(255)
-  password                String?                  @db.VarChar(255)
-  firstName               String?                  @db.VarChar(100)
-  lastName                String?                  @db.VarChar(100)
-  name                    String?                  @db.VarChar(255)
-  phone                   String?                  @db.VarChar(20)
-  avatar                  String?                  @db.VarChar(500)
-  role                    UserRole                 @default(CONSUMER)
-  status                  UserStatus               @default(ACTIVE)
-  approvedBy              String?
-  approvedAt              DateTime?
-  suspendedBy             String?
-  suspendedAt             DateTime?
-  suspensionReason        String?
-  emailVerified           Boolean                  @default(false)
-  emailVerifiedAt         DateTime?
-  phoneVerified           Boolean                  @default(false)
-  phoneVerifiedAt         DateTime?
-  verificationToken       String?                  @unique @db.VarChar(255)
-  verificationExpiry      DateTime?
-  resetToken              String?                  @unique @db.VarChar(255)
-  resetTokenExpiry        DateTime?
-  dietaryPreferences      Json?
-  notificationPreferences Json?
-  privacySettings         Json?
-  lastLoginAt             DateTime?
-  lastLoginIP             String?                  @db.VarChar(45)
-  loginCount              Int                      @default(0)
-  createdAt               DateTime                 @default(now())
-  updatedAt               DateTime                 @updatedAt
-  accounts                Account[]
-  Address                 Address[]
-  adminActions            AdminAction[]            @relation("AdminActions")
-  auditLogs               AuditLog[]
-  cartItems               CartItem[]
-  downloadLogs            DownloadLog[]
-  teamMemberships         FarmTeamMember[]
-  farms                   Farm[]
-  favorites               Favorite[]
-  messages                Message[]                @relation("MessageSender")
-  notificationSettings    NotificationPreferences?
-  notifications           Notification[]
-  orders                  Order[]
-  qualityIssues           QualityIssue[]
-  reviews                 Review[]
-  sessions                Session[]
-  supportTickets          SupportTicket[]
-  addresses               UserAddress[]
-
-  // Run 4: Saved Searches, Analytics & Personalization
-  savedSearches      SavedSearch[]
-  savedSearchFolders SavedSearchFolder[]
-  userPreference     UserPreference?
-
-  // Sprint 4: Email Enhancements
-  emailPreferences EmailPreferences?
-  emailLogs        EmailLog[]
-
-  // Sprint 5: Settings & Configuration
-  userSettings              UserSettings?
+  id                        String                     @id @default(cuid())
+  email                     String                     @unique @db.VarChar(255)
+  password                  String?                    @db.VarChar(255)
+  firstName                 String?                    @db.VarChar(100)
+  lastName                  String?                    @db.VarChar(100)
+  name                      String?                    @db.VarChar(255)
+  phone                     String?                    @db.VarChar(20)
+  avatar                    String?                    @db.VarChar(500)
+  role                      UserRole                   @default(CONSUMER)
+  status                    UserStatus                 @default(ACTIVE)
+  approvedBy                String?
+  approvedAt                DateTime?
+  suspendedBy               String?
+  suspendedAt               DateTime?
+  suspensionReason          String?
+  emailVerified             Boolean                    @default(false)
+  emailVerifiedAt           DateTime?
+  phoneVerified             Boolean                    @default(false)
+  phoneVerifiedAt           DateTime?
+  verificationToken         String?                    @unique @db.VarChar(255)
+  verificationExpiry        DateTime?
+  resetToken                String?                    @unique @db.VarChar(255)
+  resetTokenExpiry          DateTime?
+  dietaryPreferences        Json?
+  notificationPreferences   Json?
+  privacySettings           Json?
+  lastLoginAt               DateTime?
+  lastLoginIP               String?                    @db.VarChar(45)
+  loginCount                Int                        @default(0)
+  createdAt                 DateTime                   @default(now())
+  updatedAt                 DateTime                   @updatedAt
+  accounts                  Account[]
+  Address                   Address[]
+  adminActions              AdminAction[]              @relation("AdminActions")
+  aiUsageLogs               AIUsageLog[]
+  aiUsageQuota              AIUsageQuota?
+  auditLogs                 AuditLog[]
+  cartItems                 CartItem[]
+  chatThreads               ChatThread[]
+  deviceTokens              DeviceToken[]
+  downloadLogs              DownloadLog[]
+  emailLogs                 EmailLog[]
+  emailPreferences          EmailPreferences?
+  teamMemberships           FarmTeamMember[]
+  farms                     Farm[]
+  favorites                 Favorite[]
+  messages                  Message[]                  @relation("MessageSender")
+  notificationSettings      NotificationPreferences?
   notificationPreferencesV2 NotificationPreferencesV2?
-
-  // Sprint 6: SMS & Push Notifications
-  smsLogs               SMSLog[]
-  pushNotificationLogs  PushNotificationLog[]
-  deviceTokens          DeviceToken[]
-
-  // AI Chat & Conversations
-  chatThreads           ChatThread[]
-  aiUsageLogs           AIUsageLog[]
-  aiUsageQuota          AIUsageQuota?
+  notifications             Notification[]
+  orders                    Order[]
+  pushNotificationLogs      PushNotificationLog[]
+  qualityIssues             QualityIssue[]
+  reviews                   Review[]
+  savedSearchFolders        SavedSearchFolder[]
+  savedSearches             SavedSearch[]
+  sessions                  Session[]
+  smsLogs                   SMSLog[]
+  supportTickets            SupportTicket[]
+  addresses                 UserAddress[]
+  userPreference            UserPreference?
+  userSettings              UserSettings?
 
   @@index([email])
   @@index([role, status])
@@ -104,34 +94,23 @@ model Session {
   @@map("sessions")
 }
 
-// ============================================================================
-// AI Usage Tracking & Cost Management
-// ============================================================================
-
 model AIUsageLog {
-  id          String   @id @default(cuid())
-  userId      String
-  endpoint    String   @db.VarChar(100) // e.g., "product-description", "pricing", "advisor", "pest-identify"
-  model       String   @db.VarChar(50)  // e.g., "gpt-4o", "gpt-4-vision-preview"
-  tokensUsed  Int
-  costUSD     Decimal  @db.Decimal(10, 6) // Estimated cost in USD
-  requestId   String   @unique @db.VarChar(100)
-
-  // Request metadata
-  requestData Json?    // Input parameters (sanitized)
-  responseData Json?   // Output summary (sanitized)
-  confidence  Decimal? @db.Decimal(3, 2) // AI confidence score (0.00-1.00)
-
-  // Performance metrics
+  id               String   @id @default(cuid())
+  userId           String
+  endpoint         String   @db.VarChar(100)
+  model            String   @db.VarChar(50)
+  tokensUsed       Int
+  costUSD          Decimal  @db.Decimal(10, 6)
+  requestId        String   @unique @db.VarChar(100)
+  requestData      Json?
+  responseData     Json?
+  confidence       Decimal? @db.Decimal(3, 2)
   processingTimeMs Int
-  success     Boolean  @default(true)
-  errorCode   String?  @db.VarChar(50)
-  errorMessage String? @db.Text
-
-  // Timestamps
-  createdAt   DateTime @default(now())
-
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  success          Boolean  @default(true)
+  errorCode        String?  @db.VarChar(50)
+  errorMessage     String?
+  createdAt        DateTime @default(now())
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, createdAt])
   @@index([endpoint, createdAt])
@@ -141,30 +120,21 @@ model AIUsageLog {
 }
 
 model AIUsageQuota {
-  id                String   @id @default(cuid())
-  userId            String   @unique
-
-  // Monthly quotas
-  monthlyTokenLimit Int      @default(100000)
-  monthlyTokenUsed  Int      @default(0)
-  monthlyCostLimit  Decimal  @db.Decimal(10, 2) @default(50.00) // $50 default
-  monthlyCostUsed   Decimal  @db.Decimal(10, 2) @default(0.00)
-
-  // Per-endpoint limits (hourly)
-  productDescriptionHourly Int @default(50)
-  pricingHourly            Int @default(100)
-  advisorHourly            Int @default(30)
-  pestIdentifyHourly       Int @default(20)
-
-  // Quota period
-  periodStart   DateTime @default(now())
-  periodEnd     DateTime
-
-  // Timestamps
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                       String   @id @default(cuid())
+  userId                   String   @unique
+  monthlyTokenLimit        Int      @default(100000)
+  monthlyTokenUsed         Int      @default(0)
+  monthlyCostLimit         Decimal  @default(50.00) @db.Decimal(10, 2)
+  monthlyCostUsed          Decimal  @default(0.00) @db.Decimal(10, 2)
+  productDescriptionHourly Int      @default(50)
+  pricingHourly            Int      @default(100)
+  advisorHourly            Int      @default(30)
+  pestIdentifyHourly       Int      @default(20)
+  periodStart              DateTime @default(now())
+  periodEnd                DateTime
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
+  user                     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([periodEnd])
@@ -237,108 +207,97 @@ model AdminAction {
 }
 
 model Farm {
-  id                     String                 @id @default(cuid())
-  name                   String                 @db.VarChar(255)
-  slug                   String                 @unique @db.VarChar(255)
-  description            String?
-  story                  String?
-  status                 FarmStatus             @default(PENDING)
-  verificationStatus     FarmVerificationStatus @default(PENDING)
-  verifiedBy             String?
-  verifiedAt             DateTime?
-  rejectionReason        String?
-  ownerId                String
-  email                  String                 @db.VarChar(255)
-  phone                  String                 @db.VarChar(20)
-  website                String?                @db.VarChar(500)
-  address                String                 @db.VarChar(255)
-  city                   String                 @db.VarChar(100)
-  state                  String                 @db.VarChar(50)
-  zipCode                String                 @db.VarChar(20)
-  country                String                 @default("US") @db.VarChar(2)
-  latitude               Decimal                @db.Decimal(10, 8)
-  longitude              Decimal                @db.Decimal(11, 8)
-  location               Json?
-  images                 String[]
-  logoUrl                String?                @db.VarChar(500)
-  bannerUrl              String?                @db.VarChar(500)
-  businessName           String?                @db.VarChar(255)
-  taxId                  String?                @db.VarChar(50)
-  businessType           String?                @db.VarChar(50)
-  yearEstablished        Int?
-  farmSize               Decimal?               @db.Decimal(10, 2)
-
-  // Biodynamic & Agricultural Metadata
-  hardinessZone          Int?
-  soilType               String?
-  waterAvailability      String?
-  sunExposure            String?
-  equipmentAvailable     String[]
-  laborCapacityHours     Int?
-  budgetPerAcre          Decimal?               @db.Decimal(10, 2)
-
-  // Biodynamic Practices
-  isOrganic              Boolean                @default(false)
-  isBiodynamic           Boolean                @default(false)
-  followsLunarCalendar   Boolean                @default(false)
-  usesBiodynamicPreparations Boolean            @default(false)
-  practicesCropRotation  Boolean                @default(false)
-  maintainsBiodiversity  Boolean                @default(false)
-  compostsOnSite         Boolean                @default(false)
-  avoidsSyntheticChemicals Boolean              @default(false)
-  integratesLivestock    Boolean                @default(false)
-
-  // Crop History (for rotation planning)
-  previousCrops          Json?
-
-  certificationsArray    String[]
-  stripeAccountId        String?                @unique @db.VarChar(255)
-  stripeOnboarded        Boolean                @default(false)
-  stripeOnboardedAt      DateTime?
-  payoutsEnabled         Boolean                @default(false)
-  stripeDetailsSubmitted Boolean                @default(false)
-  payoutSchedule         Json?
-  productCategories      Json?
-  farmingPractices       Json?
-  deliveryRadius         Int?                   @default(25)
-  profileViewsCount      Int                    @default(0)
-  totalOrdersCount       Int                    @default(0)
-  totalRevenueUSD        Decimal                @default(0) @db.Decimal(12, 2)
-  averageRating          Decimal?               @db.Decimal(3, 2)
-  reviewCount            Int                    @default(0)
-  createdAt              DateTime               @default(now())
-  updatedAt              DateTime               @updatedAt
-  biodynamicCalendar     BiodynamicCalendar[]
-  cropRotations          CropRotation[]
-  DeliverySlot           DeliverySlot[]
-  DeliveryZone           DeliveryZone[]
-  certifications         FarmCertification[]
-  photos                 FarmPhoto[]
-  FarmRating             FarmRating?
-  teamMembers            FarmTeamMember[]
-  owner                  User                   @relation(fields: [ownerId], references: [id])
-  harvestSchedules       HarvestSchedule[]
-  Inventory              Inventory[]
-  marketLocations        MarketLocation[]
-  messages               Message[]
-  notifications          Notification[]
-  orders                 Order[]
-  payouts                Payout[]
-  PickupLocation         PickupLocation[]
-  products               Product[]
-  qualityIssues          QualityIssue[]
-  reviews                Review[]
-  favorites              Favorite[]
-  soilAnalyses           SoilAnalysis[]
-  weatherData            WeatherData[]
-  yieldPredictions       YieldPrediction[]
-  harvestRecords         HarvestRecord[]
-
-  // Sprint 5: Settings & Configuration
-  farmSettings FarmSettings?
-
-  // AI Chat & Conversations
-  chatThreads  ChatThread[]
+  id                         String                 @id @default(cuid())
+  name                       String                 @db.VarChar(255)
+  slug                       String                 @unique @db.VarChar(255)
+  description                String?
+  story                      String?
+  status                     FarmStatus             @default(PENDING)
+  verificationStatus         FarmVerificationStatus @default(PENDING)
+  verifiedBy                 String?
+  verifiedAt                 DateTime?
+  rejectionReason            String?
+  ownerId                    String
+  email                      String                 @db.VarChar(255)
+  phone                      String                 @db.VarChar(20)
+  website                    String?                @db.VarChar(500)
+  address                    String                 @db.VarChar(255)
+  city                       String                 @db.VarChar(100)
+  state                      String                 @db.VarChar(50)
+  zipCode                    String                 @db.VarChar(20)
+  country                    String                 @default("US") @db.VarChar(2)
+  latitude                   Decimal                @db.Decimal(10, 8)
+  longitude                  Decimal                @db.Decimal(11, 8)
+  location                   Json?
+  images                     String[]
+  logoUrl                    String?                @db.VarChar(500)
+  bannerUrl                  String?                @db.VarChar(500)
+  businessName               String?                @db.VarChar(255)
+  taxId                      String?                @db.VarChar(50)
+  businessType               String?                @db.VarChar(50)
+  yearEstablished            Int?
+  farmSize                   Decimal?               @db.Decimal(10, 2)
+  hardinessZone              Int?
+  soilType                   String?
+  waterAvailability          String?
+  sunExposure                String?
+  equipmentAvailable         String[]
+  laborCapacityHours         Int?
+  budgetPerAcre              Decimal?               @db.Decimal(10, 2)
+  isOrganic                  Boolean                @default(false)
+  isBiodynamic               Boolean                @default(false)
+  followsLunarCalendar       Boolean                @default(false)
+  usesBiodynamicPreparations Boolean                @default(false)
+  practicesCropRotation      Boolean                @default(false)
+  maintainsBiodiversity      Boolean                @default(false)
+  compostsOnSite             Boolean                @default(false)
+  avoidsSyntheticChemicals   Boolean                @default(false)
+  integratesLivestock        Boolean                @default(false)
+  previousCrops              Json?
+  certificationsArray        String[]
+  stripeAccountId            String?                @unique @db.VarChar(255)
+  stripeOnboarded            Boolean                @default(false)
+  stripeOnboardedAt          DateTime?
+  payoutsEnabled             Boolean                @default(false)
+  stripeDetailsSubmitted     Boolean                @default(false)
+  payoutSchedule             Json?
+  productCategories          Json?
+  farmingPractices           Json?
+  deliveryRadius             Int?                   @default(25)
+  profileViewsCount          Int                    @default(0)
+  totalOrdersCount           Int                    @default(0)
+  totalRevenueUSD            Decimal                @default(0) @db.Decimal(12, 2)
+  averageRating              Decimal?               @db.Decimal(3, 2)
+  reviewCount                Int                    @default(0)
+  createdAt                  DateTime               @default(now())
+  updatedAt                  DateTime               @updatedAt
+  biodynamicCalendar         BiodynamicCalendar[]
+  chatThreads                ChatThread[]
+  cropRotations              CropRotation[]
+  DeliverySlot               DeliverySlot[]
+  DeliveryZone               DeliveryZone[]
+  certifications             FarmCertification[]
+  photos                     FarmPhoto[]
+  FarmRating                 FarmRating?
+  farmSettings               FarmSettings?
+  teamMembers                FarmTeamMember[]
+  owner                      User                   @relation(fields: [ownerId], references: [id])
+  favorites                  Favorite[]
+  harvestRecords             HarvestRecord[]
+  harvestSchedules           HarvestSchedule[]
+  Inventory                  Inventory[]
+  marketLocations            MarketLocation[]
+  messages                   Message[]
+  notifications              Notification[]
+  orders                     Order[]
+  payouts                    Payout[]
+  PickupLocation             PickupLocation[]
+  products                   Product[]
+  qualityIssues              QualityIssue[]
+  reviews                    Review[]
+  soilAnalyses               SoilAnalysis[]
+  weatherData                WeatherData[]
+  yieldPredictions           YieldPrediction[]
 
   @@index([ownerId])
   @@index([slug])
@@ -357,81 +316,54 @@ model Farm {
   @@map("farms")
 }
 
-// Crop Database for Recommendations
 model Crop {
-  id                    String          @id @default(cuid())
-  name                  String          @db.VarChar(100)
-  scientificName        String?         @db.VarChar(200)
-  commonNames           String[]
-  category              ProductCategory
-  cropType              String          @db.VarChar(50) // ROOT, LEAFY, FRUIT, FLOWER, SEED
-  cropFamily            CropFamily
-
-  // Growing Requirements
-  hardinessZones        Int[]
-  soilPreferences       String[]        // SANDY, CLAY, LOAMY, etc.
-  waterRequirements     String          @db.VarChar(20) // LOW, MODERATE, HIGH
-  sunRequirements       String          @db.VarChar(20) // FULL_SUN, PARTIAL_SHADE, FULL_SHADE
-  phRange               Json?           // { min: 6.0, max: 7.0 }
-
-  // Growing Info
-  daysToMaturity        Json            // { min: 60, max: 80 }
-  plantingDepth         Decimal?        @db.Decimal(5, 2) // inches
-  spacing               Json?           // { rows: 24, plants: 12 } inches
-  growingSeasons        Season[]
-
-  // Yield & Economics
-  averageYieldPerAcre   Decimal         @db.Decimal(10, 2)
-  yieldUnit             String          @db.VarChar(20) // lbs, tons, bushels
-  marketPricePerLb      Decimal?        @db.Decimal(10, 2)
-  organicPremium        Decimal?        @default(1.3) @db.Decimal(3, 2)
-  inputCostPerAcre      Decimal         @db.Decimal(10, 2)
-  laborHoursPerAcre     Decimal         @db.Decimal(8, 2)
-
-  // Storage & Marketing
-  storageLife           Int?            // days
-  priceVolatility       Decimal?        @default(0.2) @db.Decimal(3, 2)
-  peakSeason            String?         @db.VarChar(50)
-
-  // Companion Planting
-  companionPlants       String[]        // IDs or names of companion crops
-  antagonistPlants      String[]        // IDs or names of incompatible crops
-
-  // Pests & Diseases
-  commonPests           String[]
-  commonDiseases        String[]
-
-  // Nutritional Value (per 100g)
-  nutritionalInfo       Json?
-
-  // Biodynamic Info
-  lunarPlantingPhases   String[]        // Preferred lunar phases for planting
-  biodynamicPreparations String[]       // Recommended preparations
-
-  // Images & Resources
-  imageUrl              String?         @db.VarChar(500)
-  thumbnailUrl          String?         @db.VarChar(500)
-
-  // SEO & Content
-  description           String?         @db.Text
-  growingTips           String?         @db.Text
-  harvestingTips        String?         @db.Text
-  storageTips           String?         @db.Text
-
-  // Status
-  isActive              Boolean         @default(true)
-  isFeatured            Boolean         @default(false)
-
-  // Metadata
-  createdAt             DateTime        @default(now())
-  updatedAt             DateTime        @updatedAt
-
-  // Relations
-  cropRotations         CropRotation[]
-  harvestSchedules      HarvestSchedule[]
-  yieldPredictions      YieldPrediction[]
-  marketData            CropMarketData[]
-  harvestRecords        HarvestRecord[]
+  id                     String            @id @default(cuid())
+  name                   String            @db.VarChar(100)
+  scientificName         String?           @db.VarChar(200)
+  commonNames            String[]
+  category               ProductCategory
+  cropType               String            @db.VarChar(50)
+  cropFamily             CropFamily
+  hardinessZones         Int[]
+  soilPreferences        String[]
+  waterRequirements      String            @db.VarChar(20)
+  sunRequirements        String            @db.VarChar(20)
+  phRange                Json?
+  daysToMaturity         Json
+  plantingDepth          Decimal?          @db.Decimal(5, 2)
+  spacing                Json?
+  growingSeasons         Season[]
+  averageYieldPerAcre    Decimal           @db.Decimal(10, 2)
+  yieldUnit              String            @db.VarChar(20)
+  marketPricePerLb       Decimal?          @db.Decimal(10, 2)
+  organicPremium         Decimal?          @default(1.3) @db.Decimal(3, 2)
+  inputCostPerAcre       Decimal           @db.Decimal(10, 2)
+  laborHoursPerAcre      Decimal           @db.Decimal(8, 2)
+  storageLife            Int?
+  priceVolatility        Decimal?          @default(0.2) @db.Decimal(3, 2)
+  peakSeason             String?           @db.VarChar(50)
+  companionPlants        String[]
+  antagonistPlants       String[]
+  commonPests            String[]
+  commonDiseases         String[]
+  nutritionalInfo        Json?
+  lunarPlantingPhases    String[]
+  biodynamicPreparations String[]
+  imageUrl               String?           @db.VarChar(500)
+  thumbnailUrl           String?           @db.VarChar(500)
+  description            String?
+  growingTips            String?
+  harvestingTips         String?
+  storageTips            String?
+  isActive               Boolean           @default(true)
+  isFeatured             Boolean           @default(false)
+  createdAt              DateTime          @default(now())
+  updatedAt              DateTime          @updatedAt
+  marketData             CropMarketData[]
+  cropRotations          CropRotation[]
+  harvestRecords         HarvestRecord[]
+  harvestSchedules       HarvestSchedule[]
+  yieldPredictions       YieldPrediction[]
 
   @@index([category])
   @@index([cropFamily])
@@ -441,29 +373,22 @@ model Crop {
   @@map("crops")
 }
 
-// Market Data for Crops
 model CropMarketData {
-  id                    String   @id @default(cuid())
-  cropId                String
-  crop                  Crop     @relation(fields: [cropId], references: [id], onDelete: Cascade)
-
-  // Market Metrics
-  region                String   @db.VarChar(100)
-  averagePrice          Decimal  @db.Decimal(10, 2)
-  priceUnit             String   @db.VarChar(20)
-  demandIndex           Decimal  @db.Decimal(5, 2) // 0-100
-  supplyIndex           Decimal  @db.Decimal(5, 2) // 0-100
-  competitionLevel      String   @db.VarChar(20) // LOW, MODERATE, HIGH
-  trendDirection        String   @db.VarChar(20) // UP, STABLE, DOWN
-  seasonalPriceFactor   Decimal  @default(1.0) @db.Decimal(3, 2)
-
-  // Source & Date
-  source                String?  @db.VarChar(100)
-  dataDate              DateTime @default(now())
-
-  // Metadata
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
+  id                  String   @id @default(cuid())
+  cropId              String
+  region              String   @db.VarChar(100)
+  averagePrice        Decimal  @db.Decimal(10, 2)
+  priceUnit           String   @db.VarChar(20)
+  demandIndex         Decimal  @db.Decimal(5, 2)
+  supplyIndex         Decimal  @db.Decimal(5, 2)
+  competitionLevel    String   @db.VarChar(20)
+  trendDirection      String   @db.VarChar(20)
+  seasonalPriceFactor Decimal  @default(1.0) @db.Decimal(3, 2)
+  source              String?  @db.VarChar(100)
+  dataDate            DateTime @default(now())
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  crop                Crop     @relation(fields: [cropId], references: [id], onDelete: Cascade)
 
   @@index([cropId])
   @@index([region])
@@ -471,38 +396,28 @@ model CropMarketData {
   @@map("crop_market_data")
 }
 
-// Yield Predictions & Tracking
 model YieldPrediction {
-  id                    String   @id @default(cuid())
-  cropId                String
-  crop                  Crop     @relation(fields: [cropId], references: [id], onDelete: Cascade)
-  farmId                String
-  farm                  Farm     @relation(fields: [farmId], references: [id], onDelete: Cascade)
-
-  // Prediction
-  plantingDate          DateTime
-  predictedHarvestDate  DateTime
-  predictedYield        Decimal  @db.Decimal(10, 2)
-  yieldUnit             String   @db.VarChar(20)
-  confidence            Decimal  @db.Decimal(3, 2) // 0-1
-
-  // Prediction Factors
-  weatherScore          Decimal? @db.Decimal(3, 2)
-  soilScore             Decimal? @db.Decimal(3, 2)
-  biodynamicScore       Decimal? @db.Decimal(3, 2)
-  historicalScore       Decimal? @db.Decimal(3, 2)
-
-  // Actual Results (filled after harvest)
-  actualHarvestDate     DateTime?
-  actualYield           Decimal?  @db.Decimal(10, 2)
-  harvestQuality        HarvestQuality?
-  notes                 String?   @db.Text
-
-  // Metadata
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
-
-  harvestRecords        HarvestRecord[]
+  id                   String          @id @default(cuid())
+  cropId               String
+  farmId               String
+  plantingDate         DateTime
+  predictedHarvestDate DateTime
+  predictedYield       Decimal         @db.Decimal(10, 2)
+  yieldUnit            String          @db.VarChar(20)
+  confidence           Decimal         @db.Decimal(3, 2)
+  weatherScore         Decimal?        @db.Decimal(3, 2)
+  soilScore            Decimal?        @db.Decimal(3, 2)
+  biodynamicScore      Decimal?        @db.Decimal(3, 2)
+  historicalScore      Decimal?        @db.Decimal(3, 2)
+  actualHarvestDate    DateTime?
+  actualYield          Decimal?        @db.Decimal(10, 2)
+  harvestQuality       HarvestQuality?
+  notes                String?
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
+  harvestRecords       HarvestRecord[]
+  crop                 Crop            @relation(fields: [cropId], references: [id], onDelete: Cascade)
+  farm                 Farm            @relation(fields: [farmId], references: [id], onDelete: Cascade)
 
   @@index([cropId])
   @@index([farmId])
@@ -510,75 +425,56 @@ model YieldPrediction {
   @@map("yield_predictions")
 }
 
-// Harvest Record - Actual harvest tracking
 model HarvestRecord {
-  id                    String          @id @default(cuid())
-  farmId                String
-  farm                  Farm            @relation(fields: [farmId], references: [id], onDelete: Cascade)
-  cropId                String
-  crop                  Crop            @relation(fields: [cropId], references: [id], onDelete: Cascade)
-  scheduleId            String?
-  schedule              HarvestSchedule? @relation(fields: [scheduleId], references: [id])
-  predictionId          String?
-  prediction            YieldPrediction? @relation(fields: [predictionId], references: [id])
-
-  // Harvest Details
-  harvestDate           DateTime
-  fieldName             String          @db.VarChar(255)
-  fieldSize             Decimal?        @db.Decimal(10, 2)
-  fieldSizeUnit         String?         @db.VarChar(20)
-
-  // Yield Data
-  totalYield            Decimal         @db.Decimal(10, 2)
-  yieldUnit             String          @db.VarChar(20)
-  yieldPerArea          Decimal?        @db.Decimal(10, 2)
-  quality               HarvestQuality
-  gradeSplit            Json?           // { "Grade A": 60, "Grade B": 30, "Grade C": 10 }
-
-  // Labor & Economics
-  laborHours            Decimal?        @db.Decimal(6, 2)
-  laborCost             Decimal?        @db.Decimal(10, 2)
-  equipmentUsed         String[]
-  totalCost             Decimal?        @db.Decimal(10, 2)
-  marketValue           Decimal?        @db.Decimal(10, 2)
-
-  // Environmental Conditions at Harvest
-  temperature           Decimal?        @db.Decimal(4, 1)
-  humidity              Decimal?        @db.Decimal(3, 0)
-  rainfall7Days         Decimal?        @db.Decimal(5, 2)
-  lunarPhase            LunarPhase?
-  season                Season
-
-  // Plant Health
-  diseasePresent        Boolean         @default(false)
-  diseaseName           String?         @db.VarChar(255)
-  pestDamage            Boolean         @default(false)
-  pestName              String?         @db.VarChar(255)
-  plantHealthScore      Int?            // 0-100
-
-  // Soil Data
-  soilMoisture          Decimal?        @db.Decimal(3, 0)
-  soilPH                Decimal?        @db.Decimal(3, 1)
-  soilNitrogen          Decimal?        @db.Decimal(5, 2)
-  soilPhosphorus        Decimal?        @db.Decimal(5, 2)
-  soilPotassium         Decimal?        @db.Decimal(5, 2)
-
-  // Notes & Observations
-  notes                 String?         @db.Text
-  challenges            String[]
-  successes             String[]
-  lessonsLearned        String?         @db.Text
-
-  // Photos & Documentation
-  photos                String[]
-  documents             String[]
-
-  // Metadata
-  recordedBy            String?
-  verifiedBy            String?
-  verifiedAt            DateTime?
-  createdAt             DateTime        @default(now())
-  updatedAt             DateTime        @updatedAt
+  id               String           @id @default(cuid())
+  farmId           String
+  cropId           String
+  scheduleId       String?
+  predictionId     String?
+  harvestDate      DateTime
+  fieldName        String           @db.VarChar(255)
+  fieldSize        Decimal?         @db.Decimal(10, 2)
+  fieldSizeUnit    String?          @db.VarChar(20)
+  totalYield       Decimal          @db.Decimal(10, 2)
+  yieldUnit        String           @db.VarChar(20)
+  yieldPerArea     Decimal?         @db.Decimal(10, 2)
+  quality          HarvestQuality
+  gradeSplit       Json?
+  laborHours       Decimal?         @db.Decimal(6, 2)
+  laborCost        Decimal?         @db.Decimal(10, 2)
+  equipmentUsed    String[]
+  totalCost        Decimal?         @db.Decimal(10, 2)
+  marketValue      Decimal?         @db.Decimal(10, 2)
+  temperature      Decimal?         @db.Decimal(4, 1)
+  humidity         Decimal?         @db.Decimal(3, 0)
+  rainfall7Days    Decimal?         @db.Decimal(5, 2)
+  lunarPhase       LunarPhase?
+  season           Season
+  diseasePresent   Boolean          @default(false)
+  diseaseName      String?          @db.VarChar(255)
+  pestDamage       Boolean          @default(false)
+  pestName         String?          @db.VarChar(255)
+  plantHealthScore Int?
+  soilMoisture     Decimal?         @db.Decimal(3, 0)
+  soilPH           Decimal?         @db.Decimal(3, 1)
+  soilNitrogen     Decimal?         @db.Decimal(5, 2)
+  soilPhosphorus   Decimal?         @db.Decimal(5, 2)
+  soilPotassium    Decimal?         @db.Decimal(5, 2)
+  notes            String?
+  challenges       String[]
+  successes        String[]
+  lessonsLearned   String?
+  photos           String[]
+  documents        String[]
+  recordedBy       String?
+  verifiedBy       String?
+  verifiedAt       DateTime?
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  crop             Crop             @relation(fields: [cropId], references: [id], onDelete: Cascade)
+  farm             Farm             @relation(fields: [farmId], references: [id], onDelete: Cascade)
+  prediction       YieldPrediction? @relation(fields: [predictionId], references: [id])
+  schedule         HarvestSchedule? @relation(fields: [scheduleId], references: [id])
 
   @@index([farmId])
   @@index([cropId])
@@ -588,137 +484,95 @@ model HarvestRecord {
   @@map("harvest_records")
 }
 
-// ML Training Data - Processed features for yield prediction
 model MLTrainingData {
-  id                    String   @id @default(cuid())
-  harvestRecordId       String   @unique
-
-  // Input Features (normalized 0-1)
-  // Weather Features
-  avgTemperature        Decimal  @db.Decimal(5, 4)
-  totalRainfall         Decimal  @db.Decimal(5, 4)
-  avgHumidity           Decimal  @db.Decimal(5, 4)
-  growingDegreeDays     Decimal  @db.Decimal(5, 4)
-  frostDays             Int      @default(0)
-
-  // Soil Features
-  soilQualityScore      Decimal  @db.Decimal(5, 4)
-  soilNitrogenLevel     Decimal  @db.Decimal(5, 4)
-  soilPhosphorusLevel   Decimal  @db.Decimal(5, 4)
-  soilPotassiumLevel    Decimal  @db.Decimal(5, 4)
-  soilPHLevel           Decimal  @db.Decimal(5, 4)
-  soilMoistureAvg       Decimal  @db.Decimal(5, 4)
-
-  // Biodynamic Features
-  lunarPhaseScore       Decimal  @db.Decimal(5, 4)
-  seasonalAlignment     Decimal  @db.Decimal(5, 4)
-  plantingTiming        Decimal  @db.Decimal(5, 4)
-
-  // Crop Features
-  cropType              String   @db.VarChar(100)
-  cropFamily            String   @db.VarChar(100)
-  daysToMaturity        Int
-  companionPlants       Int      @default(0)
-
-  // Farm Features
-  farmSize              Decimal  @db.Decimal(5, 4)
-  farmerExperience      Int      // years
-  organicCertified      Boolean
-  irrigationMethod      String   @db.VarChar(50)
-
-  // Target Variables
-  yieldPerArea          Decimal  @db.Decimal(10, 4)
-  qualityScore          Decimal  @db.Decimal(5, 4) // 0-1 normalized
-
-  // Metadata
-  trainingSetVersion    String   @db.VarChar(20)
-  usedInTraining        Boolean  @default(false)
-  validationSet         Boolean  @default(false)
-  outlier               Boolean  @default(false)
-
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
+  id                  String   @id @default(cuid())
+  harvestRecordId     String   @unique
+  avgTemperature      Decimal  @db.Decimal(5, 4)
+  totalRainfall       Decimal  @db.Decimal(5, 4)
+  avgHumidity         Decimal  @db.Decimal(5, 4)
+  growingDegreeDays   Decimal  @db.Decimal(5, 4)
+  frostDays           Int      @default(0)
+  soilQualityScore    Decimal  @db.Decimal(5, 4)
+  soilNitrogenLevel   Decimal  @db.Decimal(5, 4)
+  soilPhosphorusLevel Decimal  @db.Decimal(5, 4)
+  soilPotassiumLevel  Decimal  @db.Decimal(5, 4)
+  soilPHLevel         Decimal  @db.Decimal(5, 4)
+  soilMoistureAvg     Decimal  @db.Decimal(5, 4)
+  lunarPhaseScore     Decimal  @db.Decimal(5, 4)
+  seasonalAlignment   Decimal  @db.Decimal(5, 4)
+  plantingTiming      Decimal  @db.Decimal(5, 4)
+  cropType            String   @db.VarChar(100)
+  cropFamily          String   @db.VarChar(100)
+  daysToMaturity      Int
+  companionPlants     Int      @default(0)
+  farmSize            Decimal  @db.Decimal(5, 4)
+  farmerExperience    Int
+  organicCertified    Boolean
+  irrigationMethod    String   @db.VarChar(50)
+  yieldPerArea        Decimal  @db.Decimal(10, 4)
+  qualityScore        Decimal  @db.Decimal(5, 4)
+  trainingSetVersion  String   @db.VarChar(20)
+  usedInTraining      Boolean  @default(false)
+  validationSet       Boolean  @default(false)
+  outlier             Boolean  @default(false)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 
   @@index([trainingSetVersion])
   @@index([usedInTraining])
   @@map("ml_training_data")
 }
 
-// ML Model Versions - Track deployed models
 model MLModel {
-  id                    String   @id @default(cuid())
-  modelName             String   @db.VarChar(100)
-  version               String   @db.VarChar(20)
-  algorithm             String   @db.VarChar(50)
-
-  // Training Metrics
-  trainingDataSize      Int
-  validationDataSize    Int
-  trainingAccuracy      Decimal  @db.Decimal(5, 4)
-  validationAccuracy    Decimal  @db.Decimal(5, 4)
-  meanAbsoluteError     Decimal  @db.Decimal(10, 4)
-  rootMeanSquareError   Decimal  @db.Decimal(10, 4)
-  r2Score               Decimal  @db.Decimal(5, 4)
-
-  // Hyperparameters
-  hyperparameters       Json
-
-  // Feature Importance
-  featureImportance     Json
-
-  // Model Storage
-  modelPath             String?  @db.VarChar(500)
-  modelSize             Int?     // bytes
-
-  // Status
-  status                MLModelStatus @default(TRAINING)
-  deployedAt            DateTime?
-  deprecatedAt          DateTime?
-
-  // Metadata
-  trainedBy             String?
-  notes                 String?  @db.Text
-
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
-
-  predictions           MLPrediction[]
+  id                  String         @id @default(cuid())
+  modelName           String         @db.VarChar(100)
+  version             String         @db.VarChar(20)
+  algorithm           String         @db.VarChar(50)
+  trainingDataSize    Int
+  validationDataSize  Int
+  trainingAccuracy    Decimal        @db.Decimal(5, 4)
+  validationAccuracy  Decimal        @db.Decimal(5, 4)
+  meanAbsoluteError   Decimal        @db.Decimal(10, 4)
+  rootMeanSquareError Decimal        @db.Decimal(10, 4)
+  r2Score             Decimal        @db.Decimal(5, 4)
+  hyperparameters     Json
+  featureImportance   Json
+  modelPath           String?        @db.VarChar(500)
+  modelSize           Int?
+  status              MLModelStatus  @default(TRAINING)
+  deployedAt          DateTime?
+  deprecatedAt        DateTime?
+  trainedBy           String?
+  notes               String?
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+  predictions         MLPrediction[]
 
   @@unique([modelName, version])
   @@index([status])
   @@map("ml_models")
 }
 
-// ML Predictions - Track all predictions made
 model MLPrediction {
-  id                    String   @id @default(cuid())
-  modelId               String
-  model                 MLModel  @relation(fields: [modelId], references: [id])
-  farmId                String
-  cropId                String
-
-  // Input Features
-  inputFeatures         Json
-
-  // Prediction
-  predictedYield        Decimal  @db.Decimal(10, 2)
-  predictedQuality      HarvestQuality
-  confidence            Decimal  @db.Decimal(3, 2)
-  confidenceInterval    Json     // { "lower": X, "upper": Y }
-
-  // Actual Results (for validation)
-  actualYield           Decimal? @db.Decimal(10, 2)
-  actualQuality         HarvestQuality?
-  predictionError       Decimal? @db.Decimal(10, 2)
-
-  // Metadata
-  predictionDate        DateTime @default(now())
-  harvestDate           DateTime?
-  validated             Boolean  @default(false)
-  validatedAt           DateTime?
-
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
+  id                 String          @id @default(cuid())
+  modelId            String
+  farmId             String
+  cropId             String
+  inputFeatures      Json
+  predictedYield     Decimal         @db.Decimal(10, 2)
+  predictedQuality   HarvestQuality
+  confidence         Decimal         @db.Decimal(3, 2)
+  confidenceInterval Json
+  actualYield        Decimal?        @db.Decimal(10, 2)
+  actualQuality      HarvestQuality?
+  predictionError    Decimal?        @db.Decimal(10, 2)
+  predictionDate     DateTime        @default(now())
+  harvestDate        DateTime?
+  validated          Boolean         @default(false)
+  validatedAt        DateTime?
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+  model              MLModel         @relation(fields: [modelId], references: [id])
 
   @@index([modelId])
   @@index([farmId])
@@ -928,8 +782,8 @@ model CropRotation {
   soilBenefits        String[]
   createdAt           DateTime   @default(now())
   updatedAt           DateTime   @updatedAt
+  crop                Crop?      @relation(fields: [cropId], references: [id])
   farm                Farm       @relation(fields: [farmId], references: [id], onDelete: Cascade)
-  crop                Crop?      @relation(fields: [cropId], references: [id], onDelete: SetNull)
 
   @@unique([farmId, fieldName])
   @@index([farmId])
@@ -971,10 +825,10 @@ model HarvestSchedule {
   successes            String[]
   createdAt            DateTime        @default(now())
   updatedAt            DateTime        @updatedAt
+  harvestRecords       HarvestRecord[]
+  crop                 Crop?           @relation(fields: [cropId], references: [id])
   farm                 Farm            @relation(fields: [farmId], references: [id], onDelete: Cascade)
   product              Product?        @relation(fields: [productId], references: [id])
-  crop                 Crop?           @relation(fields: [cropId], references: [id], onDelete: SetNull)
-  harvestRecords       HarvestRecord[]
 
   @@index([farmId])
   @@index([productId])
@@ -1031,13 +885,13 @@ model Product {
   createdAt            DateTime          @default(now())
   updatedAt            DateTime          @updatedAt
   cartItems            CartItem[]
+  favorites            Favorite[]
   harvestSchedules     HarvestSchedule[]
   Inventory            Inventory[]
   inventoryLogs        InventoryLog[]
   orderItems           OrderItem[]
   farm                 Farm              @relation(fields: [farmId], references: [id], onDelete: Cascade)
   reviews              Review[]
-  favorites            Favorite[]
   SeasonalCycle        SeasonalCycle[]
 
   @@unique([farmId, slug])
@@ -1245,14 +1099,14 @@ model Payment {
 model WebhookEvent {
   id            String    @id @default(cuid())
   eventId       String?   @unique @db.VarChar(255)
-  provider      String    @db.VarChar(50) // "STRIPE", "PAYPAL"
+  provider      String    @db.VarChar(50)
   eventType     String    @db.VarChar(100)
   payload       Json
   processed     Boolean   @default(false)
   processedAt   DateTime?
   attempts      Int       @default(0)
   lastAttemptAt DateTime  @default(now())
-  error         String?   @db.Text
+  error         String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
@@ -1373,9 +1227,9 @@ model Favorite {
   farmId    String?
   productId String?
   createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   farm      Farm?    @relation(fields: [farmId], references: [id], onDelete: Cascade)
   product   Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, farmId])
   @@unique([userId, productId])
@@ -1799,6 +1653,968 @@ model AuditLog {
   @@map("audit_logs")
 }
 
+/// Monitoring report for workflow executions
+model MonitoringReport {
+  id                 String              @id @default(cuid())
+  reportId           String              @unique @map("report_id") @db.VarChar(255)
+  startTime          DateTime            @map("start_time")
+  endTime            DateTime            @map("end_time")
+  totalRuns          Int                 @default(0) @map("total_runs")
+  successfulRuns     Int                 @default(0) @map("successful_runs")
+  failedRuns         Int                 @default(0) @map("failed_runs")
+  totalDurationMs    Int                 @default(0) @map("total_duration_ms")
+  avgDurationMs      Float               @default(0) @map("avg_duration_ms")
+  successRate        Float               @default(0) @map("success_rate")
+  status             String              @default("COMPLETED")
+  reportType         String              @default("PERIODIC") @map("report_type")
+  generatedAt        DateTime            @default(now()) @map("generated_at")
+  notified           Boolean             @default(false)
+  notifiedAt         DateTime?           @map("notified_at")
+  metadata           Json?
+  createdAt          DateTime            @default(now()) @map("created_at")
+  updatedAt          DateTime            @updatedAt @map("updated_at")
+  notificationLogs   NotificationLog[]
+  workflowExecutions WorkflowExecution[]
+
+  @@index([reportId])
+  @@index([status])
+  @@index([generatedAt])
+  @@index([startTime])
+  @@map("monitoring_reports")
+}
+
+/// Individual workflow execution record
+model WorkflowExecution {
+  id                 String              @id @default(cuid())
+  runId              String              @unique @map("run_id") @db.VarChar(255)
+  workflowName       String              @map("workflow_name")
+  status             String
+  startedAt          DateTime            @map("started_at")
+  completedAt        DateTime?           @map("completed_at")
+  durationMs         Int?                @map("duration_ms")
+  testsPassed        Int                 @default(0) @map("tests_passed")
+  testsFailed        Int                 @default(0) @map("tests_failed")
+  testsTotal         Int                 @default(0) @map("tests_total")
+  errorMessage       String?             @map("error_message")
+  errorStack         String?             @map("error_stack")
+  triggeredBy        String              @default("SCHEDULED") @map("triggered_by")
+  environment        String              @default("production")
+  metadata           Json?
+  reportId           String?             @map("report_id")
+  createdAt          DateTime            @default(now()) @map("created_at")
+  updatedAt          DateTime            @updatedAt @map("updated_at")
+  notificationLogs   NotificationLog[]
+  systemHealthChecks SystemHealthCheck[]
+  report             MonitoringReport?   @relation(fields: [reportId], references: [reportId])
+  workflowMetrics    WorkflowMetrics[]
+
+  @@index([runId])
+  @@index([workflowName])
+  @@index([status])
+  @@index([startedAt])
+  @@index([reportId])
+  @@map("workflow_executions")
+}
+
+/// Workflow metrics and performance data
+model WorkflowMetrics {
+  id                String             @id @default(cuid())
+  workflowId        String             @map("workflow_id") @db.VarChar(255)
+  metricName        String             @map("metric_name")
+  metricValue       Float              @map("metric_value")
+  metricUnit        String?            @map("metric_unit")
+  thresholdValue    Float?             @map("threshold_value")
+  isWithinThreshold Boolean            @default(true) @map("is_within_threshold")
+  recordedAt        DateTime           @default(now()) @map("recorded_at")
+  tags              Json?
+  metadata          Json?
+  executionId       String?            @map("execution_id")
+  createdAt         DateTime           @default(now()) @map("created_at")
+  execution         WorkflowExecution? @relation(fields: [executionId], references: [runId], onDelete: Cascade)
+
+  @@index([workflowId])
+  @@index([metricName])
+  @@index([recordedAt])
+  @@index([executionId])
+  @@index([isWithinThreshold])
+  @@map("workflow_metrics")
+}
+
+/// System health checks
+model SystemHealthCheck {
+  id             String             @id @default(cuid())
+  checkId        String             @unique @map("check_id")
+  checkName      String             @map("check_name")
+  status         String
+  responseTimeMs Int                @map("response_time_ms")
+  details        Json?
+  checkedAt      DateTime           @default(now()) @map("checked_at")
+  endpoint       String?
+  expectedStatus Int?               @map("expected_status")
+  actualStatus   Int?               @map("actual_status")
+  errorMessage   String?            @map("error_message")
+  metadata       Json?
+  executionId    String?            @map("execution_id")
+  createdAt      DateTime           @default(now()) @map("created_at")
+  execution      WorkflowExecution? @relation(fields: [executionId], references: [runId], onDelete: Cascade)
+
+  @@index([checkId])
+  @@index([checkName])
+  @@index([status])
+  @@index([checkedAt])
+  @@index([executionId])
+  @@map("system_health_checks")
+}
+
+/// Notification log
+model NotificationLog {
+  id               String             @id @default(cuid())
+  logId            String             @unique @map("log_id") @db.VarChar(255)
+  channel          String
+  notificationType String             @map("notification_type")
+  status           String
+  recipient        String?
+  subject          String?
+  message          String
+  sentAt           DateTime           @default(now()) @map("sent_at")
+  deliveryStatus   String?            @map("delivery_status")
+  errorMessage     String?            @map("error_message")
+  retryCount       Int                @default(0) @map("retry_count")
+  metadata         Json?
+  executionId      String?            @map("execution_id")
+  reportId         String?            @map("report_id")
+  createdAt        DateTime           @default(now()) @map("created_at")
+  execution        WorkflowExecution? @relation(fields: [executionId], references: [runId])
+  report           MonitoringReport?  @relation(fields: [reportId], references: [reportId])
+
+  @@index([logId])
+  @@index([channel])
+  @@index([status])
+  @@index([sentAt])
+  @@index([executionId])
+  @@index([reportId])
+  @@map("notification_logs")
+}
+
+/// Workflow scheduler configuration
+model WorkflowSchedule {
+  id             String    @id @default(cuid())
+  scheduleId     String    @unique @map("schedule_id") @db.VarChar(255)
+  workflowName   String    @map("workflow_name")
+  cronExpression String    @map("cron_expression")
+  enabled        Boolean   @default(true)
+  lastRunAt      DateTime? @map("last_run_at")
+  nextRunAt      DateTime? @map("next_run_at")
+  runCount       Int       @default(0) @map("run_count")
+  failureCount   Int       @default(0) @map("failure_count")
+  successCount   Int       @default(0) @map("success_count")
+  description    String?
+  tags           Json?
+  metadata       Json?
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  @@index([scheduleId])
+  @@index([workflowName])
+  @@index([enabled])
+  @@index([nextRunAt])
+  @@map("workflow_schedules")
+}
+
+model SavedSearch {
+  id                    String                @id @default(cuid())
+  userId                String
+  name                  String                @db.VarChar(255)
+  description           String?
+  query                 String?               @db.VarChar(500)
+  filters               Json                  @default("{}")
+  sortBy                String?               @db.VarChar(50)
+  location              Json?
+  isPublic              Boolean               @default(false)
+  shareToken            String?               @unique @db.VarChar(100)
+  folderId              String?
+  tags                  String[]
+  notificationsEnabled  Boolean               @default(true)
+  notificationFrequency NotificationFrequency @default(DAILY)
+  lastNotificationSent  DateTime?
+  executionCount        Int                   @default(0)
+  lastExecutedAt        DateTime?
+  resultsCount          Int?
+  seasonalPreference    Season?
+  preferredFarms        String[]
+  biodynamicOnly        Boolean               @default(false)
+  createdAt             DateTime              @default(now())
+  updatedAt             DateTime              @updatedAt
+  sharedWith            SavedSearchShare[]
+  folder                SavedSearchFolder?    @relation(fields: [folderId], references: [id])
+  user                  User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  alerts                SearchAlert[]
+
+  @@index([userId])
+  @@index([shareToken])
+  @@index([createdAt])
+  @@index([lastExecutedAt])
+  @@map("saved_searches")
+}
+
+model SavedSearchFolder {
+  id          String        @id @default(cuid())
+  userId      String
+  name        String        @db.VarChar(100)
+  description String?
+  icon        String?       @db.VarChar(50)
+  sortOrder   Int           @default(0)
+  color       String?       @db.VarChar(20)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  searches    SavedSearch[]
+
+  @@index([userId])
+  @@map("saved_search_folders")
+}
+
+model SavedSearchShare {
+  id              String          @id @default(cuid())
+  savedSearchId   String
+  sharedWithEmail String          @db.VarChar(255)
+  sharedWithId    String?
+  permission      SharePermission @default(VIEW)
+  expiresAt       DateTime?
+  createdAt       DateTime        @default(now())
+  savedSearch     SavedSearch     @relation(fields: [savedSearchId], references: [id], onDelete: Cascade)
+
+  @@unique([savedSearchId, sharedWithEmail])
+  @@index([savedSearchId])
+  @@map("saved_search_shares")
+}
+
+model SearchAlert {
+  id            String          @id @default(cuid())
+  savedSearchId String
+  userId        String
+  type          SearchAlertType @default(NEW_PRODUCTS)
+  conditions    Json
+  isActive      Boolean         @default(true)
+  lastTriggered DateTime?
+  triggerCount  Int             @default(0)
+  channels      Json
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  savedSearch   SavedSearch     @relation(fields: [savedSearchId], references: [id], onDelete: Cascade)
+
+  @@index([savedSearchId])
+  @@index([userId])
+  @@index([isActive])
+  @@map("search_alerts")
+}
+
+model SearchEvent {
+  id                  String    @id @default(cuid())
+  userId              String?
+  sessionId           String    @db.VarChar(100)
+  query               String?   @db.VarChar(500)
+  filters             Json?
+  sortBy              String?   @db.VarChar(50)
+  categoryId          String?
+  farmId              String?
+  location            Json?
+  priceRange          Json?
+  seasonalFilter      Season?
+  resultsCount        Int
+  resultsShown        Int?
+  clickedResults      String[]
+  clickedResultIds    Json?
+  hasResults          Boolean?
+  responseTime        Int?
+  responseTimeMs      Int?
+  cacheHit            Boolean   @default(false)
+  databaseTimeMs      Int?
+  renderTimeMs        Int?
+  source              String?   @db.VarChar(50)
+  userAgent           String?   @db.VarChar(500)
+  ipAddress           String?   @db.VarChar(45)
+  referrer            String?   @db.VarChar(500)
+  deviceId            String?   @db.VarChar(100)
+  currentSeason       Season?
+  lunarPhase          String?   @db.VarChar(50)
+  agriculturalContext Json?
+  biodynamicFactors   Json?
+  seasonalRelevance   Decimal?  @db.Decimal(5, 2)
+  savedSearch         Boolean   @default(false)
+  refinedSearch       Boolean   @default(false)
+  exitedAt            DateTime?
+  sessionDepth        Int       @default(1)
+  abTestVariant       String?   @db.VarChar(50)
+  timestamp           DateTime  @default(now())
+  createdAt           DateTime  @default(now())
+
+  @@index([userId])
+  @@index([sessionId])
+  @@index([timestamp])
+  @@index([query])
+  @@index([userId, sessionId, query, createdAt])
+  @@map("search_events")
+}
+
+model UserInteraction {
+  id                  String          @id @default(cuid())
+  userId              String?
+  sessionId           String          @db.VarChar(100)
+  type                InteractionType
+  entityType          String          @db.VarChar(50)
+  entityId            String
+  searchEventId       String?
+  recommendationId    String?
+  abTestId            String?
+  abTestVariant       String?         @db.VarChar(50)
+  source              String?         @db.VarChar(50)
+  metadata            Json?
+  durationMs          Int?
+  scrollDepth         Decimal?        @db.Decimal(5, 2)
+  clickPosition       Int?
+  timeInSession       Int?
+  sessionDepth        Int             @default(1)
+  agriculturalContext Json?
+  userAgent           String?         @db.VarChar(500)
+  deviceId            String?         @db.VarChar(100)
+  value               Decimal?        @db.Decimal(10, 2)
+  timestamp           DateTime        @default(now())
+  createdAt           DateTime        @default(now())
+
+  @@index([userId])
+  @@index([sessionId])
+  @@index([entityType, entityId])
+  @@index([type])
+  @@index([timestamp])
+  @@index([userId, sessionId, type, entityType, entityId])
+  @@map("user_interactions")
+}
+
+model SearchAnalytics {
+  id                   String      @id @default(cuid())
+  query                String?     @db.VarChar(500)
+  categoryId           String?
+  farmId               String?
+  season               Season?
+  periodType           PeriodType
+  period               PeriodType?
+  periodKey            String?     @db.VarChar(50)
+  periodStart          DateTime
+  periodEnd            DateTime
+  totalSearches        Int         @default(0)
+  uniqueUsers          Int         @default(0)
+  uniqueSessions       Int         @default(0)
+  uniqueQueries        Int         @default(0)
+  averageResultsCount  Decimal     @db.Decimal(10, 2)
+  noResultsCount       Int         @default(0)
+  refinementRate       Decimal     @db.Decimal(5, 4)
+  saveRate             Decimal     @db.Decimal(5, 4)
+  bounceRate           Decimal     @db.Decimal(5, 4)
+  avgResponseTime      Int
+  averageResponseTime  Decimal     @db.Decimal(10, 2)
+  cacheHitRate         Decimal     @db.Decimal(5, 4)
+  p95ResponseTime      Int
+  p99ResponseTime      Decimal     @db.Decimal(10, 2)
+  avgResultsCount      Decimal     @db.Decimal(10, 2)
+  avgClickThrough      Decimal     @db.Decimal(5, 4)
+  clickThroughRate     Decimal     @db.Decimal(5, 4)
+  conversionRate       Decimal     @db.Decimal(5, 4)
+  seasonalRelevanceAvg Decimal?    @db.Decimal(5, 2)
+  biodynamicEngagement Decimal?    @db.Decimal(5, 4)
+  seasonalTrends       Json?
+  farmPopularity       Json?
+  topQueries           Json?
+  topFilters           Json?
+  topCategories        Json?
+  topClickedResults    Json?
+  topConvertedItems    Json?
+  createdAt            DateTime    @default(now())
+  calculatedAt         DateTime    @default(now())
+  updatedAt            DateTime?
+
+  @@unique([periodType, periodStart])
+  @@unique([query, categoryId, farmId, season, period, periodKey])
+  @@index([periodType, periodStart])
+  @@index([query])
+  @@index([categoryId])
+  @@index([farmId])
+  @@map("search_analytics")
+}
+
+model UserPreference {
+  id                    String   @id @default(cuid())
+  userId                String   @unique
+  dietaryRestrictions   String[]
+  allergens             String[]
+  certifications        String[]
+  preferOrganic         Boolean  @default(false)
+  preferLocal           Boolean  @default(false)
+  priceRangeMin         Decimal? @db.Decimal(10, 2)
+  priceRangeMax         Decimal? @db.Decimal(10, 2)
+  favoriteFarms         String[]
+  favoriteCategories    String[]
+  budgetRange           Json?
+  defaultLocation       Json?
+  preferredLocations    Json[]
+  maxDistance           Int?
+  preferredPickupDays   String[]
+  preferredDeliveryTime String?
+  springPreferences     Json?
+  summerPreferences     Json?
+  fallPreferences       Json?
+  winterPreferences     Json?
+  lunarPhaseAware       Boolean  @default(false)
+  biodynamicOnly        Boolean  @default(false)
+  allowPersonalization  Boolean  @default(true)
+  shareDataForAnalytics Boolean  @default(true)
+  autoApplyFilters      Boolean  @default(true)
+  autoApplySort         Boolean  @default(true)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("user_preferences")
+}
+
+model PersonalizationScore {
+  id              String   @id @default(cuid())
+  userId          String
+  entityType      String   @db.VarChar(50)
+  entityId        String
+  relevanceScore  Int
+  affinityScore   Int
+  seasonalScore   Int
+  proximityScore  Int
+  popularityScore Int
+  totalScore      Int
+  season          Season
+  calculatedAt    DateTime @default(now())
+  expiresAt       DateTime
+
+  @@unique([userId, entityType, entityId, season])
+  @@index([userId])
+  @@index([entityType, entityId])
+  @@index([totalScore])
+  @@index([expiresAt])
+  @@map("personalization_scores")
+}
+
+model Recommendation {
+  id          String             @id @default(cuid())
+  userId      String
+  type        RecommendationType
+  entityType  String             @db.VarChar(50)
+  entityId    String
+  score       Decimal            @db.Decimal(5, 2)
+  confidence  Decimal            @db.Decimal(5, 4)
+  reasons     Json
+  season      Season?
+  source      String?            @db.VarChar(50)
+  shown       Boolean            @default(false)
+  shownAt     DateTime?
+  clicked     Boolean            @default(false)
+  clickedAt   DateTime?
+  converted   Boolean            @default(false)
+  convertedAt DateTime?
+  createdAt   DateTime           @default(now())
+  expiresAt   DateTime
+
+  @@index([userId])
+  @@index([type])
+  @@index([entityType, entityId])
+  @@index([shown, clicked, converted])
+  @@index([expiresAt])
+  @@map("recommendations")
+}
+
+model ABTest {
+  id             String             @id @default(cuid())
+  name           String             @db.VarChar(255)
+  description    String?
+  variants       Json
+  trafficSplit   Json
+  targetAudience Json?
+  status         ABTestStatus       @default(DRAFT)
+  startedAt      DateTime?
+  endedAt        DateTime?
+  results        Json?
+  winnerVariant  String?
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  assignments    ABTestAssignment[]
+
+  @@index([status])
+  @@index([startedAt, endedAt])
+  @@map("ab_tests")
+}
+
+model ABTestAssignment {
+  id         String   @id @default(cuid())
+  testId     String
+  userId     String?
+  sessionId  String   @db.VarChar(100)
+  variantId  String   @db.VarChar(50)
+  assignedAt DateTime @default(now())
+  test       ABTest   @relation(fields: [testId], references: [id], onDelete: Cascade)
+
+  @@unique([testId, userId])
+  @@unique([testId, sessionId])
+  @@index([testId])
+  @@index([userId])
+  @@map("ab_test_assignments")
+}
+
+model ABTestEvent {
+  id        String   @id @default(cuid())
+  testId    String
+  userId    String
+  variantId String   @db.VarChar(50)
+  event     String   @db.VarChar(100)
+  value     Decimal  @default(0) @db.Decimal(10, 2)
+  metadata  Json?
+  timestamp DateTime @default(now())
+
+  @@index([testId])
+  @@index([userId])
+  @@index([variantId])
+  @@index([event])
+  @@index([timestamp])
+  @@map("ab_test_events")
+}
+
+model UserSearchProfile {
+  id                    String    @id @default(cuid())
+  userId                String    @unique
+  totalSearches         Int
+  uniqueQueriesCount    Int
+  averageSessionDepth   Decimal   @db.Decimal(5, 2)
+  averageSearchesPerDay Decimal   @db.Decimal(10, 2)
+  preferredSortBy       String?   @db.VarChar(50)
+  topCategories         Json
+  favoriteFarms         Json
+  seasonalPreferences   Json
+  dietaryPatterns       Json?
+  priceRangeTendency    Json
+  clickThroughRate      Decimal   @db.Decimal(5, 4)
+  conversionRate        Decimal   @db.Decimal(5, 4)
+  averageOrderValue     Decimal?  @db.Decimal(10, 2)
+  repeatPurchaseRate    Decimal?  @db.Decimal(5, 4)
+  peakSearchHours       Json
+  peakSearchDays        Json
+  lastSearchAt          DateTime?
+  firstSearchAt         DateTime?
+  savedSearchesCount    Int       @default(0)
+  activeAlertsCount     Int       @default(0)
+  sharedSearchesCount   Int       @default(0)
+  reviewsCount          Int       @default(0)
+  biodynamicEngagement  Decimal   @db.Decimal(5, 4)
+  seasonalAwareness     Decimal   @db.Decimal(5, 4)
+  localFarmSupport      Decimal   @db.Decimal(5, 4)
+  calculatedAt          DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([calculatedAt])
+  @@map("user_search_profiles")
+}
+
+model PerformanceMetric {
+  id           String     @id @default(cuid())
+  metricName   String     @db.VarChar(100)
+  metricType   String     @db.VarChar(50)
+  period       PeriodType
+  periodKey    String     @db.VarChar(50)
+  count        Int
+  sum          Decimal    @db.Decimal(15, 2)
+  average      Decimal    @db.Decimal(10, 2)
+  min          Decimal    @db.Decimal(10, 2)
+  max          Decimal    @db.Decimal(10, 2)
+  median       Decimal    @db.Decimal(10, 2)
+  p50          Decimal    @db.Decimal(10, 2)
+  p75          Decimal    @db.Decimal(10, 2)
+  p90          Decimal    @db.Decimal(10, 2)
+  p95          Decimal    @db.Decimal(10, 2)
+  p99          Decimal    @db.Decimal(10, 2)
+  stdDev       Decimal    @db.Decimal(10, 4)
+  context      Json?
+  cpuUsage     Decimal?   @db.Decimal(5, 2)
+  memoryUsage  Decimal?   @db.Decimal(5, 2)
+  gpuUsage     Decimal?   @db.Decimal(5, 2)
+  threadCount  Int?
+  calculatedAt DateTime   @default(now())
+
+  @@unique([metricName, metricType, period, periodKey])
+  @@index([metricName, metricType])
+  @@index([period, periodKey])
+  @@index([calculatedAt])
+  @@map("performance_metrics")
+}
+
+model SearchTrend {
+  id                  String     @id @default(cuid())
+  query               String?    @db.VarChar(500)
+  categoryId          String?
+  farmId              String?
+  season              Season?
+  trendType           String     @db.VarChar(50)
+  currentVolume       Int
+  previousVolume      Int
+  growthRate          Decimal    @db.Decimal(10, 4)
+  volatility          Decimal    @db.Decimal(5, 4)
+  trendScore          Decimal    @db.Decimal(5, 2)
+  period              PeriodType
+  periodKey           String     @db.VarChar(50)
+  comparisonPeriodKey String     @db.VarChar(50)
+  forecast            Json?
+  seasonality         Json?
+  agriculturalFactors Json?
+  biodynamicInfluence Decimal?   @db.Decimal(5, 2)
+  rank                Int?
+  previousRank        Int?
+  calculatedAt        DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
+  expiresAt           DateTime
+
+  @@unique([query, categoryId, farmId, season, period, periodKey])
+  @@index([trendType])
+  @@index([period, periodKey])
+  @@index([rank])
+  @@index([expiresAt])
+  @@map("search_trends")
+}
+
+model AnalyticsDashboard {
+  id               String     @id @default(cuid())
+  dashboardType    String     @db.VarChar(50)
+  entityId         String?
+  period           PeriodType
+  periodKey        String     @db.VarChar(50)
+  metrics          Json
+  kpis             Json
+  timeSeriesData   Json?
+  distributionData Json?
+  comparisonData   Json?
+  seasonalInsights Json?
+  farmPerformance  Json?
+  productTrends    Json?
+  calculatedAt     DateTime   @default(now())
+  expiresAt        DateTime
+
+  @@unique([dashboardType, entityId, period, periodKey])
+  @@index([dashboardType])
+  @@index([period, periodKey])
+  @@index([expiresAt])
+  @@map("analytics_dashboards")
+}
+
+model EmailPreferences {
+  id                     String    @id @default(cuid())
+  userId                 String    @unique
+  orderConfirmation      Boolean   @default(true)
+  orderStatusUpdates     Boolean   @default(true)
+  shippingNotifications  Boolean   @default(true)
+  deliveryReminders      Boolean   @default(true)
+  farmUpdates            Boolean   @default(true)
+  newProducts            Boolean   @default(true)
+  promotions             Boolean   @default(true)
+  seasonalNews           Boolean   @default(true)
+  newsletter             Boolean   @default(true)
+  productRecommendations Boolean   @default(true)
+  securityAlerts         Boolean   @default(true)
+  accountUpdates         Boolean   @default(true)
+  priceAlerts            Boolean   @default(true)
+  inventoryAlerts        Boolean   @default(true)
+  surveyRequests         Boolean   @default(true)
+  unsubscribedAll        Boolean   @default(false)
+  unsubscribedAt         DateTime?
+  unsubscribeToken       String?   @unique @db.VarChar(64)
+  unsubscribeReason      String?   @db.VarChar(500)
+  unsubscribeFeedback    String?
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+  user                   User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([unsubscribeToken])
+  @@map("email_preferences")
+}
+
+model EmailLog {
+  id             String      @id @default(cuid())
+  userId         String?     @db.VarChar(255)
+  recipient      String      @db.VarChar(255)
+  emailType      EmailType   @default(OTHER)
+  subject        String      @db.VarChar(500)
+  status         EmailStatus @default(PENDING)
+  sentAt         DateTime?
+  deliveredAt    DateTime?
+  failedAt       DateTime?
+  errorMessage   String?
+  attemptCount   Int         @default(0)
+  lastAttemptAt  DateTime?
+  openedAt       DateTime?
+  clickedAt      DateTime?
+  unsubscribedAt DateTime?
+  jobId          String?     @unique @db.VarChar(255)
+  queueName      String?     @db.VarChar(100)
+  metadata       Json?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  user           User?       @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([recipient])
+  @@index([emailType])
+  @@index([status])
+  @@index([sentAt])
+  @@index([jobId])
+  @@index([createdAt])
+  @@map("email_logs")
+}
+
+model UserSettings {
+  id                      String   @id @default(cuid())
+  userId                  String   @unique
+  notificationPreferences Json?
+  theme                   String   @default("light") @db.VarChar(20)
+  language                String   @default("en") @db.VarChar(10)
+  timezone                String   @default("UTC") @db.VarChar(100)
+  distanceUnit            String   @default("miles") @db.VarChar(20)
+  currency                String   @default("USD") @db.VarChar(10)
+  profileVisibility       String   @default("public") @db.VarChar(20)
+  showEmail               Boolean  @default(false)
+  showPhone               Boolean  @default(false)
+  allowMessaging          Boolean  @default(true)
+  dataSharing             Boolean  @default(false)
+  contactMethod           String   @default("email") @db.VarChar(20)
+  communicationFrequency  String   @default("normal") @db.VarChar(20)
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+  user                    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("user_settings")
+}
+
+model NotificationPreferencesV2 {
+  id                   String   @id @default(cuid())
+  userId               String   @unique
+  emailEnabled         Boolean  @default(true)
+  emailFrequency       String   @default("immediate") @db.VarChar(20)
+  emailQuietHoursStart String?  @db.VarChar(5)
+  emailQuietHoursEnd   String?  @db.VarChar(5)
+  smsEnabled           Boolean  @default(false)
+  smsFrequency         String   @default("immediate") @db.VarChar(20)
+  smsQuietHoursStart   String?  @db.VarChar(5)
+  smsQuietHoursEnd     String?  @db.VarChar(5)
+  pushEnabled          Boolean  @default(true)
+  pushFrequency        String   @default("immediate") @db.VarChar(20)
+  pushQuietHoursStart  String?  @db.VarChar(5)
+  pushQuietHoursEnd    String?  @db.VarChar(5)
+  inAppEnabled         Boolean  @default(true)
+  inAppSound           Boolean  @default(true)
+  inAppBadge           Boolean  @default(true)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("notification_preferences_v2")
+}
+
+model FarmSettings {
+  id                     String          @id @default(cuid())
+  farmId                 String          @unique
+  deliveryAreas          Json?
+  deliveryFee            Float?
+  minOrderValue          Float?
+  acceptedPaymentMethods String[]
+  requireDepositOnOrders Boolean         @default(false)
+  depositPercentage      Float?
+  returnPolicy           String?
+  cancellationPolicy     String?
+  termsAndConditions     String?
+  enablePreOrders        Boolean         @default(false)
+  enableSubscriptions    Boolean         @default(false)
+  enableGiftCards        Boolean         @default(false)
+  createdAt              DateTime        @default(now())
+  updatedAt              DateTime        @updatedAt
+  businessHours          BusinessHours[]
+  farm                   Farm            @relation(fields: [farmId], references: [id], onDelete: Cascade)
+
+  @@index([farmId])
+  @@map("farm_settings")
+}
+
+model BusinessHours {
+  id             String       @id @default(cuid())
+  farmSettingsId String
+  dayOfWeek      Int          @db.SmallInt
+  openTime       String       @db.VarChar(5)
+  closeTime      String       @db.VarChar(5)
+  timezone       String       @default("UTC") @db.VarChar(100)
+  isClosed       Boolean      @default(false)
+  effectiveFrom  DateTime?
+  effectiveTo    DateTime?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  farmSettings   FarmSettings @relation(fields: [farmSettingsId], references: [id], onDelete: Cascade)
+
+  @@unique([farmSettingsId, dayOfWeek])
+  @@index([farmSettingsId])
+  @@index([dayOfWeek])
+  @@map("business_hours")
+}
+
+model SystemSettings {
+  id          String   @id @default(cuid())
+  key         String   @unique @db.VarChar(255)
+  value       Json
+  type        String   @db.VarChar(20)
+  category    String   @db.VarChar(50)
+  description String?
+  isPublic    Boolean  @default(false)
+  isEditable  Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([category])
+  @@index([isPublic])
+  @@index([key])
+  @@map("system_settings")
+}
+
+model SMSLog {
+  id           String    @id @default(cuid())
+  userId       String
+  phoneNumber  String    @db.VarChar(20)
+  message      String
+  status       String    @db.VarChar(20)
+  messageId    String?   @db.VarChar(255)
+  errorMessage String?
+  metadata     Json      @default("{}")
+  sentAt       DateTime?
+  failedAt     DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+  @@index([phoneNumber])
+  @@map("sms_logs")
+}
+
+model PushNotificationLog {
+  id             String    @id @default(cuid())
+  userId         String
+  notificationId String?
+  title          String    @db.VarChar(255)
+  body           String
+  data           Json      @default("{}")
+  status         String    @db.VarChar(20)
+  successCount   Int       @default(0)
+  failureCount   Int       @default(0)
+  errorMessage   String?
+  sentAt         DateTime?
+  failedAt       DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([notificationId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("push_notification_logs")
+}
+
+model DeviceToken {
+  id         String   @id @default(cuid())
+  userId     String
+  token      String   @unique @db.VarChar(255)
+  platform   String   @db.VarChar(20)
+  isActive   Boolean  @default(true)
+  lastUsedAt DateTime @default(now())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([platform])
+  @@index([isActive])
+  @@index([token])
+  @@map("device_tokens")
+}
+
+model ChatThread {
+  id             String        @id @default(cuid())
+  userId         String?
+  farmId         String?
+  title          String?       @db.VarChar(255)
+  provider       ChatProvider  @default(OLLAMA)
+  model          String?       @db.VarChar(100)
+  isActive       Boolean       @default(true)
+  messageCount   Int           @default(0)
+  lastActivityAt DateTime      @default(now())
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  messages       ChatMessage[]
+  summaries      ChatSummary[]
+  farm           Farm?         @relation(fields: [farmId], references: [id])
+  user           User?         @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([farmId])
+  @@index([provider])
+  @@index([isActive])
+  @@index([lastActivityAt])
+  @@index([createdAt])
+  @@map("chat_threads")
+}
+
+model ChatMessage {
+  id         String     @id @default(cuid())
+  threadId   String
+  role       ChatRole
+  content    String
+  tokens     Int?
+  model      String?    @db.VarChar(100)
+  confidence Float?
+  citations  Json?
+  createdAt  DateTime   @default(now())
+  thread     ChatThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+
+  @@index([threadId])
+  @@index([role])
+  @@index([createdAt])
+  @@map("chat_messages")
+}
+
+model ChatSummary {
+  id              String     @id @default(cuid())
+  threadId        String
+  summary         String
+  keyTopics       Json?
+  keyEntities     Json?
+  userIntent      String?    @db.VarChar(500)
+  messagesCovered Int        @default(0)
+  tokensCondensed Int?
+  summaryTokens   Int?
+  confidence      Float?
+  createdAt       DateTime   @default(now())
+  expiresAt       DateTime?
+  thread          ChatThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+
+  @@index([threadId])
+  @@index([createdAt])
+  @@index([expiresAt])
+  @@map("chat_summaries")
+}
+
 enum UserRole {
   CONSUMER
   FARMER
@@ -2071,17 +2887,16 @@ enum WeatherCondition {
 }
 
 enum CropFamily {
-  // Botanical family names for scientific accuracy
-  ASTERACEAE      // Lettuce, Sunflower family
-  AMARANTHACEAE   // Spinach, Beet, Chard
-  BRASSICACEAE    // Kale, Broccoli, Cabbage, Radish (formerly BRASSICAS)
-  APIACEAE        // Carrot, Celery, Parsley (formerly UMBELLIFERS)
-  SOLANACEAE      // Tomato, Pepper, Eggplant, Potato (formerly NIGHTSHADES)
-  CUCURBITACEAE   // Cucumber, Squash, Melon (formerly CUCURBITS)
-  FABACEAE        // Beans, Peas, Lentils (formerly LEGUMES)
-  AMARYLLIDACEAE  // Onion, Garlic, Leek (formerly ALLIUMS)
-  LAMIACEAE       // Basil, Mint, Oregano, Sage
-  POACEAE         // Corn, Wheat, Rice (formerly GRASSES)
+  ASTERACEAE
+  AMARANTHACEAE
+  BRASSICACEAE
+  APIACEAE
+  SOLANACEAE
+  CUCURBITACEAE
+  FABACEAE
+  AMARYLLIDACEAE
+  LAMIACEAE
+  POACEAE
   OTHER
 }
 
@@ -2181,704 +2996,6 @@ enum AuditAction {
   RESTORE
 }
 
-// ============================================================================
-// WORKFLOW MONITORING & METRICS
-// ============================================================================
-
-/// Monitoring report for workflow executions
-model MonitoringReport {
-  id              String    @id @default(cuid())
-  reportId        String    @unique @map("report_id") @db.VarChar(255)
-  startTime       DateTime  @map("start_time")
-  endTime         DateTime  @map("end_time")
-  totalRuns       Int       @default(0) @map("total_runs")
-  successfulRuns  Int       @default(0) @map("successful_runs")
-  failedRuns      Int       @default(0) @map("failed_runs")
-  totalDurationMs Int       @default(0) @map("total_duration_ms")
-  avgDurationMs   Float     @default(0) @map("avg_duration_ms")
-  successRate     Float     @default(0) @map("success_rate")
-  status          String    @default("COMPLETED")
-  reportType      String    @default("PERIODIC") @map("report_type")
-  generatedAt     DateTime  @default(now()) @map("generated_at")
-  notified        Boolean   @default(false)
-  notifiedAt      DateTime? @map("notified_at")
-  metadata        Json?
-
-  // Relations
-  workflowExecutions WorkflowExecution[]
-  notificationLogs   NotificationLog[]
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@index([reportId])
-  @@index([status])
-  @@index([generatedAt])
-  @@index([startTime])
-  @@map("monitoring_reports")
-}
-
-/// Individual workflow execution record
-model WorkflowExecution {
-  id           String    @id @default(cuid())
-  runId        String    @unique @map("run_id") @db.VarChar(255)
-  workflowName String    @map("workflow_name")
-  status       String
-  startedAt    DateTime  @map("started_at")
-  completedAt  DateTime? @map("completed_at")
-  durationMs   Int?      @map("duration_ms")
-  testsPassed  Int       @default(0) @map("tests_passed")
-  testsFailed  Int       @default(0) @map("tests_failed")
-  testsTotal   Int       @default(0) @map("tests_total")
-  errorMessage String?   @map("error_message") @db.Text
-  errorStack   String?   @map("error_stack") @db.Text
-  triggeredBy  String    @default("SCHEDULED") @map("triggered_by")
-  environment  String    @default("production")
-  metadata     Json?
-
-  // Relations
-  reportId           String?             @map("report_id")
-  report             MonitoringReport?   @relation(fields: [reportId], references: [reportId], onDelete: SetNull)
-  workflowMetrics    WorkflowMetrics[]
-  systemHealthChecks SystemHealthCheck[]
-  notificationLogs   NotificationLog[]
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@index([runId])
-  @@index([workflowName])
-  @@index([status])
-  @@index([startedAt])
-  @@index([reportId])
-  @@map("workflow_executions")
-}
-
-/// Workflow metrics and performance data
-model WorkflowMetrics {
-  id                String   @id @default(cuid())
-  workflowId        String   @map("workflow_id") @db.VarChar(255)
-  metricName        String   @map("metric_name")
-  metricValue       Float    @map("metric_value")
-  metricUnit        String?  @map("metric_unit")
-  thresholdValue    Float?   @map("threshold_value")
-  isWithinThreshold Boolean  @default(true) @map("is_within_threshold")
-  recordedAt        DateTime @default(now()) @map("recorded_at")
-  tags              Json?
-  metadata          Json?
-
-  // Relations
-  executionId String?            @map("execution_id")
-  execution   WorkflowExecution? @relation(fields: [executionId], references: [runId], onDelete: Cascade)
-
-  createdAt DateTime @default(now()) @map("created_at")
-
-  @@index([workflowId])
-  @@index([metricName])
-  @@index([recordedAt])
-  @@index([executionId])
-  @@index([isWithinThreshold])
-  @@map("workflow_metrics")
-}
-
-/// System health checks
-model SystemHealthCheck {
-  id             String   @id @default(cuid())
-  checkId        String   @unique @map("check_id")
-  checkName      String   @map("check_name")
-  status         String
-  responseTimeMs Int      @map("response_time_ms")
-  details        Json?
-  checkedAt      DateTime @default(now()) @map("checked_at")
-  endpoint       String?
-  expectedStatus Int?     @map("expected_status")
-  actualStatus   Int?     @map("actual_status")
-  errorMessage   String?  @map("error_message") @db.Text
-  metadata       Json?
-
-  // Relations
-  executionId String?            @map("execution_id")
-  execution   WorkflowExecution? @relation(fields: [executionId], references: [runId], onDelete: Cascade)
-
-  createdAt DateTime @default(now()) @map("created_at")
-
-  @@index([checkId])
-  @@index([checkName])
-  @@index([status])
-  @@index([checkedAt])
-  @@index([executionId])
-  @@map("system_health_checks")
-}
-
-/// Notification log
-model NotificationLog {
-  id               String   @id @default(cuid())
-  logId            String   @unique @map("log_id") @db.VarChar(255)
-  channel          String
-  notificationType String   @map("notification_type")
-  status           String
-  recipient        String?
-  subject          String?
-  message          String   @db.Text
-  sentAt           DateTime @default(now()) @map("sent_at")
-  deliveryStatus   String?  @map("delivery_status")
-  errorMessage     String?  @map("error_message") @db.Text
-  retryCount       Int      @default(0) @map("retry_count")
-  metadata         Json?
-
-  // Relations
-  executionId String?            @map("execution_id")
-  execution   WorkflowExecution? @relation(fields: [executionId], references: [runId], onDelete: SetNull)
-
-  reportId String?           @map("report_id")
-  report   MonitoringReport? @relation(fields: [reportId], references: [reportId], onDelete: SetNull)
-
-  createdAt DateTime @default(now()) @map("created_at")
-
-  @@index([logId])
-  @@index([channel])
-  @@index([status])
-  @@index([sentAt])
-  @@index([executionId])
-  @@index([reportId])
-  @@map("notification_logs")
-}
-
-/// Workflow scheduler configuration
-model WorkflowSchedule {
-  id             String    @id @default(cuid())
-  scheduleId     String    @unique @map("schedule_id") @db.VarChar(255)
-  workflowName   String    @map("workflow_name")
-  cronExpression String    @map("cron_expression")
-  enabled        Boolean   @default(true)
-  lastRunAt      DateTime? @map("last_run_at")
-  nextRunAt      DateTime? @map("next_run_at")
-  runCount       Int       @default(0) @map("run_count")
-  failureCount   Int       @default(0) @map("failure_count")
-  successCount   Int       @default(0) @map("success_count")
-  description    String?
-  tags           Json?
-  metadata       Json?
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@index([scheduleId])
-  @@index([workflowName])
-  @@index([enabled])
-  @@index([nextRunAt])
-  @@map("workflow_schedules")
-}
-
-// ============================================
-// RUN 4: SAVED SEARCHES, ANALYTICS & PERSONALIZATION
-// ============================================
-
-model SavedSearch {
-  id          String  @id @default(cuid())
-  userId      String
-  name        String  @db.VarChar(255)
-  description String?
-
-  // Search Parameters (JSONB)
-  query    String? @db.VarChar(500)
-  filters  Json    @default("{}")
-  sortBy   String? @db.VarChar(50)
-  location Json?
-
-  // Metadata
-  isPublic   Boolean  @default(false)
-  shareToken String?  @unique @db.VarChar(100)
-  folderId   String?
-  tags       String[]
-
-  // Notifications
-  notificationsEnabled  Boolean               @default(true)
-  notificationFrequency NotificationFrequency @default(DAILY)
-  lastNotificationSent  DateTime?
-
-  // Stats
-  executionCount Int       @default(0)
-  lastExecutedAt DateTime?
-  resultsCount   Int?
-
-  // Agricultural Consciousness
-  seasonalPreference Season?
-  preferredFarms     String[]
-  biodynamicOnly     Boolean  @default(false)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // Relations
-  user       User               @relation(fields: [userId], references: [id], onDelete: Cascade)
-  folder     SavedSearchFolder? @relation(fields: [folderId], references: [id])
-  alerts     SearchAlert[]
-  sharedWith SavedSearchShare[]
-
-  @@index([userId])
-  @@index([shareToken])
-  @@index([createdAt])
-  @@index([lastExecutedAt])
-  @@map("saved_searches")
-}
-
-model SavedSearchFolder {
-  id          String  @id @default(cuid())
-  userId      String
-  name        String  @db.VarChar(100)
-  description String?
-  icon        String? @db.VarChar(50)
-  sortOrder   Int     @default(0)
-  color       String? @db.VarChar(20)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user     User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  searches SavedSearch[]
-
-  @@index([userId])
-  @@map("saved_search_folders")
-}
-
-model SavedSearchShare {
-  id              String          @id @default(cuid())
-  savedSearchId   String
-  sharedWithEmail String          @db.VarChar(255)
-  sharedWithId    String?
-  permission      SharePermission @default(VIEW)
-  expiresAt       DateTime?
-
-  createdAt DateTime @default(now())
-
-  savedSearch SavedSearch @relation(fields: [savedSearchId], references: [id], onDelete: Cascade)
-
-  @@unique([savedSearchId, sharedWithEmail])
-  @@index([savedSearchId])
-  @@map("saved_search_shares")
-}
-
-model SearchAlert {
-  id            String @id @default(cuid())
-  savedSearchId String
-  userId        String
-
-  // Alert Type
-  type SearchAlertType @default(NEW_PRODUCTS)
-
-  // Conditions (JSONB)
-  conditions Json
-
-  // Status
-  isActive      Boolean   @default(true)
-  lastTriggered DateTime?
-  triggerCount  Int       @default(0)
-
-  // Delivery
-  channels Json
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  savedSearch SavedSearch @relation(fields: [savedSearchId], references: [id], onDelete: Cascade)
-
-  @@index([savedSearchId])
-  @@index([userId])
-  @@index([isActive])
-  @@map("search_alerts")
-}
-
-model SearchEvent {
-  id        String  @id @default(cuid())
-  userId    String?
-  sessionId String  @db.VarChar(100)
-
-  // Search Details
-  query   String? @db.VarChar(500)
-  filters Json?
-  sortBy  String? @db.VarChar(50)
-
-  // Search Context
-  categoryId     String?
-  farmId         String?
-  location       Json?
-  priceRange     Json?
-  seasonalFilter Season?
-
-  // Results
-  resultsCount     Int
-  resultsShown     Int?
-  clickedResults   String[]
-  clickedResultIds Json?
-  hasResults       Boolean?
-
-  // Performance Metrics
-  responseTime   Int?
-  responseTimeMs Int?
-  cacheHit       Boolean @default(false)
-  databaseTimeMs Int?
-  renderTimeMs   Int?
-
-  // Context
-  source    String? @db.VarChar(50)
-  userAgent String? @db.VarChar(500)
-  ipAddress String? @db.VarChar(45)
-  referrer  String? @db.VarChar(500)
-  deviceId  String? @db.VarChar(100)
-
-  // Agricultural Context
-  currentSeason       Season?
-  lunarPhase          String?  @db.VarChar(50)
-  agriculturalContext Json?
-  biodynamicFactors   Json?
-  seasonalRelevance   Decimal? @db.Decimal(5, 2)
-
-  // User Behavior
-  savedSearch   Boolean   @default(false)
-  refinedSearch Boolean   @default(false)
-  exitedAt      DateTime?
-  sessionDepth  Int       @default(1)
-
-  // A/B Testing
-  abTestVariant String? @db.VarChar(50)
-
-  // Timestamps
-  timestamp DateTime @default(now())
-  createdAt DateTime @default(now())
-
-  @@index([userId])
-  @@index([sessionId])
-  @@index([timestamp])
-  @@index([query])
-  @@index([userId, sessionId, query, createdAt])
-  @@map("search_events")
-}
-
-model UserInteraction {
-  id        String  @id @default(cuid())
-  userId    String?
-  sessionId String  @db.VarChar(100)
-
-  // Interaction Type
-  type       InteractionType
-  entityType String          @db.VarChar(50)
-  entityId   String
-
-  // Linked Events
-  searchEventId    String?
-  recommendationId String?
-  abTestId         String?
-  abTestVariant    String? @db.VarChar(50)
-
-  // Context
-  source   String? @db.VarChar(50)
-  metadata Json?
-
-  // Engagement Metrics
-  durationMs    Int?
-  scrollDepth   Decimal? @db.Decimal(5, 2)
-  clickPosition Int?
-  timeInSession Int?
-  sessionDepth  Int      @default(1)
-
-  // Agricultural Context
-  agriculturalContext Json?
-
-  // Device Info
-  userAgent String? @db.VarChar(500)
-  deviceId  String? @db.VarChar(100)
-
-  // Value
-  value Decimal? @db.Decimal(10, 2)
-
-  // Timestamps
-  timestamp DateTime @default(now())
-  createdAt DateTime @default(now())
-
-  @@index([userId])
-  @@index([sessionId])
-  @@index([entityType, entityId])
-  @@index([type])
-  @@index([timestamp])
-  @@index([userId, sessionId, type, entityType, entityId])
-  @@map("user_interactions")
-}
-
-model SearchAnalytics {
-  id String @id @default(cuid())
-
-  // Search Context
-  query      String? @db.VarChar(500)
-  categoryId String?
-  farmId     String?
-  season     Season?
-
-  // Time Window
-  periodType  PeriodType
-  period      PeriodType?
-  periodKey   String?     @db.VarChar(50)
-  periodStart DateTime
-  periodEnd   DateTime
-
-  // Aggregated Metrics
-  totalSearches  Int @default(0)
-  uniqueUsers    Int @default(0)
-  uniqueSessions Int @default(0)
-  uniqueQueries  Int @default(0)
-
-  // Results Metrics
-  averageResultsCount Decimal @db.Decimal(10, 2)
-  noResultsCount      Int     @default(0)
-
-  // User Behavior
-  refinementRate Decimal @db.Decimal(5, 4)
-  saveRate       Decimal @db.Decimal(5, 4)
-  bounceRate     Decimal @db.Decimal(5, 4)
-
-  // Performance
-  avgResponseTime     Int
-  averageResponseTime Decimal @db.Decimal(10, 2)
-  cacheHitRate        Decimal @db.Decimal(5, 4)
-  p95ResponseTime     Int
-  p99ResponseTime     Decimal @db.Decimal(10, 2)
-
-  // Engagement
-  avgResultsCount  Decimal @db.Decimal(10, 2)
-  avgClickThrough  Decimal @db.Decimal(5, 4)
-  clickThroughRate Decimal @db.Decimal(5, 4)
-  conversionRate   Decimal @db.Decimal(5, 4)
-
-  // Agricultural Insights
-  seasonalRelevanceAvg Decimal? @db.Decimal(5, 2)
-  biodynamicEngagement Decimal? @db.Decimal(5, 4)
-  seasonalTrends       Json?
-  farmPopularity       Json?
-
-  // Top Items (JSONB)
-  topQueries        Json?
-  topFilters        Json?
-  topCategories     Json?
-  topClickedResults Json?
-  topConvertedItems Json?
-
-  // Timestamps
-  createdAt    DateTime  @default(now())
-  calculatedAt DateTime  @default(now())
-  updatedAt    DateTime?
-
-  @@unique([periodType, periodStart])
-  @@unique([query, categoryId, farmId, season, period, periodKey])
-  @@index([periodType, periodStart])
-  @@index([query])
-  @@index([categoryId])
-  @@index([farmId])
-  @@map("search_analytics")
-}
-
-model UserPreference {
-  id     String @id @default(cuid())
-  userId String @unique
-
-  // Dietary Preferences
-  dietaryRestrictions String[]
-  allergens           String[]
-  certifications      String[]
-
-  // Preference Flags
-  preferOrganic Boolean @default(false)
-  preferLocal   Boolean @default(false)
-
-  // Price Preferences
-  priceRangeMin Decimal? @db.Decimal(10, 2)
-  priceRangeMax Decimal? @db.Decimal(10, 2)
-
-  // Shopping Preferences
-  favoriteFarms      String[]
-  favoriteCategories String[]
-  budgetRange        Json?
-
-  // Default Location
-  defaultLocation Json?
-
-  // Location Preferences
-  preferredLocations Json[]
-  maxDistance        Int?
-
-  // Delivery Preferences
-  preferredPickupDays   String[]
-  preferredDeliveryTime String?
-
-  // Seasonal Preferences (JSONB by Season)
-  springPreferences Json?
-  summerPreferences Json?
-  fallPreferences   Json?
-  winterPreferences Json?
-
-  // Biodynamic Preferences
-  lunarPhaseAware Boolean @default(false)
-  biodynamicOnly  Boolean @default(false)
-
-  // Privacy Settings
-  allowPersonalization  Boolean @default(true)
-  shareDataForAnalytics Boolean @default(true)
-
-  // Auto-Apply Settings
-  autoApplyFilters Boolean @default(true)
-  autoApplySort    Boolean @default(true)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-  @@map("user_preferences")
-}
-
-model PersonalizationScore {
-  id         String @id @default(cuid())
-  userId     String
-  entityType String @db.VarChar(50)
-  entityId   String
-
-  // Scores (0-100)
-  relevanceScore  Int
-  affinityScore   Int
-  seasonalScore   Int
-  proximityScore  Int
-  popularityScore Int
-
-  // Combined Score
-  totalScore Int
-
-  // Context
-  season       Season
-  calculatedAt DateTime @default(now())
-  expiresAt    DateTime
-
-  @@unique([userId, entityType, entityId, season])
-  @@index([userId])
-  @@index([entityType, entityId])
-  @@index([totalScore])
-  @@index([expiresAt])
-  @@map("personalization_scores")
-}
-
-model Recommendation {
-  id     String @id @default(cuid())
-  userId String
-
-  // Recommendation Type
-  type RecommendationType
-
-  // Recommended Entity
-  entityType String @db.VarChar(50)
-  entityId   String
-
-  // Scoring
-  score      Decimal @db.Decimal(5, 2)
-  confidence Decimal @db.Decimal(5, 4)
-
-  // Reason (JSONB)
-  reasons Json
-
-  // Context
-  season Season?
-  source String? @db.VarChar(50)
-
-  // Interaction Tracking
-  shown       Boolean   @default(false)
-  shownAt     DateTime?
-  clicked     Boolean   @default(false)
-  clickedAt   DateTime?
-  converted   Boolean   @default(false)
-  convertedAt DateTime?
-
-  createdAt DateTime @default(now())
-  expiresAt DateTime
-
-  @@index([userId])
-  @@index([type])
-  @@index([entityType, entityId])
-  @@index([shown, clicked, converted])
-  @@index([expiresAt])
-  @@map("recommendations")
-}
-
-model ABTest {
-  id          String  @id @default(cuid())
-  name        String  @db.VarChar(255)
-  description String?
-
-  // Test Configuration
-  variants     Json
-  trafficSplit Json
-
-  // Targeting
-  targetAudience Json?
-
-  // Status
-  status    ABTestStatus @default(DRAFT)
-  startedAt DateTime?
-  endedAt   DateTime?
-
-  // Results (updated periodically)
-  results       Json?
-  winnerVariant String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  assignments ABTestAssignment[]
-
-  @@index([status])
-  @@index([startedAt, endedAt])
-  @@map("ab_tests")
-}
-
-model ABTestAssignment {
-  id        String  @id @default(cuid())
-  testId    String
-  userId    String?
-  sessionId String  @db.VarChar(100)
-
-  variantId  String   @db.VarChar(50)
-  assignedAt DateTime @default(now())
-
-  test ABTest @relation(fields: [testId], references: [id], onDelete: Cascade)
-
-  @@unique([testId, userId])
-  @@unique([testId, sessionId])
-  @@index([testId])
-  @@index([userId])
-  @@map("ab_test_assignments")
-}
-
-model ABTestEvent {
-  id        String @id @default(cuid())
-  testId    String
-  userId    String
-  variantId String @db.VarChar(50)
-
-  // Event Details
-  event     String   @db.VarChar(100)
-  value     Decimal  @default(0) @db.Decimal(10, 2)
-  metadata  Json?
-  timestamp DateTime @default(now())
-
-  @@index([testId])
-  @@index([userId])
-  @@index([variantId])
-  @@index([event])
-  @@index([timestamp])
-  @@map("ab_test_events")
-}
-
-// ============================================
-// RUN 4: NEW ENUMS
-// ============================================
-
 enum NotificationFrequency {
   REALTIME
   HOURLY
@@ -2946,192 +3063,6 @@ enum ABTestStatus {
   ARCHIVED
 }
 
-// ============================================
-// PHASE 3: ANALYTICS & TRACKING MODELS
-// ============================================
-// Note: SearchEvent, UserInteraction, SearchAnalytics already exist above
-// Additional Phase 3 models below:
-
-// User Search Profile - Personalization intelligence
-model UserSearchProfile {
-  id     String @id @default(cuid())
-  userId String @unique
-
-  // Search Behavior
-  totalSearches         Int
-  uniqueQueriesCount    Int
-  averageSessionDepth   Decimal @db.Decimal(5, 2)
-  averageSearchesPerDay Decimal @db.Decimal(10, 2)
-  preferredSortBy       String? @db.VarChar(50)
-
-  // Agricultural Preferences (JSONB)
-  topCategories       Json // [{categoryId, count, percentage}]
-  favoriteFarms       Json // [{farmId, interactionCount, lastVisit}]
-  seasonalPreferences Json // {SPRING: score, SUMMER: score, ...}
-  dietaryPatterns     Json?
-  priceRangeTendency  Json // {min, max, average}
-
-  // Interaction Patterns
-  clickThroughRate   Decimal  @db.Decimal(5, 4)
-  conversionRate     Decimal  @db.Decimal(5, 4)
-  averageOrderValue  Decimal? @db.Decimal(10, 2)
-  repeatPurchaseRate Decimal? @db.Decimal(5, 4)
-
-  // Time Patterns
-  peakSearchHours Json // [hour1, hour2, ...]
-  peakSearchDays  Json // [day1, day2, ...]
-  lastSearchAt    DateTime?
-  firstSearchAt   DateTime?
-
-  // Engagement Metrics
-  savedSearchesCount  Int @default(0)
-  activeAlertsCount   Int @default(0)
-  sharedSearchesCount Int @default(0)
-  reviewsCount        Int @default(0)
-
-  // Agricultural Consciousness
-  biodynamicEngagement Decimal @db.Decimal(5, 4)
-  seasonalAwareness    Decimal @db.Decimal(5, 4)
-  localFarmSupport     Decimal @db.Decimal(5, 4)
-
-  calculatedAt DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  @@index([userId])
-  @@index([calculatedAt])
-  @@map("user_search_profiles")
-}
-
-// Performance Metrics - System-wide quantum performance tracking
-model PerformanceMetric {
-  id String @id @default(cuid())
-
-  // Metric Identity
-  metricName String     @db.VarChar(100)
-  metricType String     @db.VarChar(50) // "response_time", "database_query", "cache_hit", etc.
-  period     PeriodType
-  periodKey  String     @db.VarChar(50)
-
-  // Statistical Measures
-  count   Int
-  sum     Decimal @db.Decimal(15, 2)
-  average Decimal @db.Decimal(10, 2)
-  min     Decimal @db.Decimal(10, 2)
-  max     Decimal @db.Decimal(10, 2)
-  median  Decimal @db.Decimal(10, 2)
-  p50     Decimal @db.Decimal(10, 2)
-  p75     Decimal @db.Decimal(10, 2)
-  p90     Decimal @db.Decimal(10, 2)
-  p95     Decimal @db.Decimal(10, 2)
-  p99     Decimal @db.Decimal(10, 2)
-  stdDev  Decimal @db.Decimal(10, 4)
-
-  // Context
-  context Json?
-
-  // Hardware Awareness (HP OMEN optimization tracking)
-  cpuUsage    Decimal? @db.Decimal(5, 2)
-  memoryUsage Decimal? @db.Decimal(5, 2)
-  gpuUsage    Decimal? @db.Decimal(5, 2)
-  threadCount Int?
-
-  calculatedAt DateTime @default(now())
-
-  @@unique([metricName, metricType, period, periodKey])
-  @@index([metricName, metricType])
-  @@index([period, periodKey])
-  @@index([calculatedAt])
-  @@map("performance_metrics")
-}
-
-// Search Trend - Temporal pattern analysis
-model SearchTrend {
-  id String @id @default(cuid())
-
-  // Trend Identity
-  query      String? @db.VarChar(500)
-  categoryId String?
-  farmId     String?
-  season     Season?
-  trendType  String  @db.VarChar(50) // "rising", "falling", "stable", "seasonal"
-
-  // Trend Metrics
-  currentVolume  Int
-  previousVolume Int
-  growthRate     Decimal @db.Decimal(10, 4)
-  volatility     Decimal @db.Decimal(5, 4)
-  trendScore     Decimal @db.Decimal(5, 2)
-
-  // Temporal Analysis
-  period              PeriodType
-  periodKey           String     @db.VarChar(50)
-  comparisonPeriodKey String     @db.VarChar(50)
-
-  // Forecasting (JSONB)
-  forecast    Json? // {nextPeriod: volume, confidence: 0.85}
-  seasonality Json? // Pattern detection
-
-  // Agricultural Context
-  agriculturalFactors Json?
-  biodynamicInfluence Decimal? @db.Decimal(5, 2)
-
-  // Ranking
-  rank         Int?
-  previousRank Int?
-
-  // Timestamps
-  calculatedAt DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  expiresAt    DateTime
-
-  @@unique([query, categoryId, farmId, season, period, periodKey])
-  @@index([trendType])
-  @@index([period, periodKey])
-  @@index([rank])
-  @@index([expiresAt])
-  @@map("search_trends")
-}
-
-// Analytics Dashboard Snapshot - Pre-computed dashboard data
-model AnalyticsDashboard {
-  id String @id @default(cuid())
-
-  // Dashboard Identity
-  dashboardType String     @db.VarChar(50) // "overview", "search", "user", "farm", "product"
-  entityId      String?
-  period        PeriodType
-  periodKey     String     @db.VarChar(50)
-
-  // Computed Metrics (JSONB)
-  metrics Json // Complete dashboard data structure
-
-  // Key Performance Indicators
-  kpis Json // {totalSearches, totalUsers, conversionRate, ...}
-
-  // Charts Data (JSONB arrays)
-  timeSeriesData   Json? // For trend charts
-  distributionData Json? // For pie/bar charts
-  comparisonData   Json? // For period-over-period
-
-  // Agricultural Insights
-  seasonalInsights Json?
-  farmPerformance  Json?
-  productTrends    Json?
-
-  calculatedAt DateTime @default(now())
-  expiresAt    DateTime
-
-  @@unique([dashboardType, entityId, period, periodKey])
-  @@index([dashboardType])
-  @@index([period, periodKey])
-  @@index([expiresAt])
-  @@map("analytics_dashboards")
-}
-
-// ============================================
-// PHASE 3: ADDITIONAL ENUMS
-// ============================================
-
 enum AnalyticsGranularity {
   MINUTE
   HOUR
@@ -3150,10 +3081,6 @@ enum TrendDirection {
   SEASONAL
 }
 
-// ============================================
-// PHASE 5: ML ENUMS
-// ============================================
-
 enum MLModelType {
   RECOMMENDATION
   DEMAND_FORECASTING
@@ -3171,103 +3098,6 @@ enum MLTrainingStatus {
   COMPLETED
   FAILED
   CANCELLED
-}
-
-// ============================================
-// SPRINT 4: EMAIL ENHANCEMENTS
-// ============================================
-
-model EmailPreferences {
-  id String @id @default(cuid())
-
-  // User relationship
-  userId String @unique
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  // Transactional preferences (cannot be disabled)
-  orderConfirmation     Boolean @default(true)
-  orderStatusUpdates    Boolean @default(true)
-  shippingNotifications Boolean @default(true)
-  deliveryReminders     Boolean @default(true)
-
-  // Marketing preferences
-  farmUpdates            Boolean @default(true)
-  newProducts            Boolean @default(true)
-  promotions             Boolean @default(true)
-  seasonalNews           Boolean @default(true)
-  newsletter             Boolean @default(true)
-  productRecommendations Boolean @default(true)
-
-  // System preferences (cannot be disabled)
-  securityAlerts  Boolean @default(true)
-  accountUpdates  Boolean @default(true)
-  priceAlerts     Boolean @default(true)
-  inventoryAlerts Boolean @default(true)
-
-  // Engagement preferences
-  surveyRequests Boolean @default(true)
-
-  // Unsubscribe functionality
-  unsubscribedAll     Boolean   @default(false)
-  unsubscribedAt      DateTime?
-  unsubscribeToken    String?   @unique @db.VarChar(64)
-  unsubscribeReason   String?   @db.VarChar(500)
-  unsubscribeFeedback String?   @db.Text
-
-  // Metadata
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([userId])
-  @@index([unsubscribeToken])
-  @@map("email_preferences")
-}
-
-model EmailLog {
-  id String @id @default(cuid())
-
-  // Recipient information
-  userId    String? @db.VarChar(255)
-  user      User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
-  recipient String  @db.VarChar(255)
-
-  // Email details
-  emailType EmailType @default(OTHER)
-  subject   String    @db.VarChar(500)
-
-  // Delivery status
-  status      EmailStatus @default(PENDING)
-  sentAt      DateTime?
-  deliveredAt DateTime?
-  failedAt    DateTime?
-
-  // Error tracking
-  errorMessage  String?   @db.Text
-  attemptCount  Int       @default(0)
-  lastAttemptAt DateTime?
-
-  // Engagement tracking
-  openedAt       DateTime?
-  clickedAt      DateTime?
-  unsubscribedAt DateTime?
-
-  // Job tracking
-  jobId     String? @unique @db.VarChar(255)
-  queueName String? @db.VarChar(100)
-
-  // Metadata
-  metadata  Json?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([userId])
-  @@index([recipient])
-  @@index([emailType])
-  @@index([status])
-  @@index([sentAt])
-  @@index([jobId])
-  @@index([createdAt])
-  @@map("email_logs")
 }
 
 enum EmailType {
@@ -3309,348 +3139,6 @@ enum EmailStatus {
   DEFERRED
 }
 
-// ============================================
-// SPRINT 5: SETTINGS & CONFIGURATION SYSTEM
-// ============================================
-
-// User Settings - Personal preferences and display options
-model UserSettings {
-  id     String @id @default(cuid())
-  userId String @unique
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  // Notification Preferences (JSON - complex structure)
-  notificationPreferences Json? // NotificationPreferences type
-
-  // Display Preferences
-  theme        String @default("light") @db.VarChar(20) // "light" | "dark" | "system"
-  language     String @default("en") @db.VarChar(10)
-  timezone     String @default("UTC") @db.VarChar(100)
-  distanceUnit String @default("miles") @db.VarChar(20) // "miles" | "kilometers"
-  currency     String @default("USD") @db.VarChar(10)
-
-  // Privacy Settings
-  profileVisibility String  @default("public") @db.VarChar(20) // "public" | "friends" | "private"
-  showEmail         Boolean @default(false)
-  showPhone         Boolean @default(false)
-  allowMessaging    Boolean @default(true)
-  dataSharing       Boolean @default(false)
-
-  // Communication Preferences
-  contactMethod          String @default("email") @db.VarChar(20) // "email" | "sms" | "both"
-  communicationFrequency String @default("normal") @db.VarChar(20) // "minimal" | "normal" | "all"
-
-  // Metadata
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([userId])
-  @@map("user_settings")
-}
-
-// Notification Preferences V2 - Multi-channel notification control
-model NotificationPreferencesV2 {
-  id     String @id @default(cuid())
-  userId String @unique
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  // Email Channel
-  emailEnabled         Boolean @default(true)
-  emailFrequency       String  @default("immediate") @db.VarChar(20) // "immediate" | "daily" | "weekly" | "never"
-  emailQuietHoursStart String? @db.VarChar(5) // "22:00"
-  emailQuietHoursEnd   String? @db.VarChar(5) // "08:00"
-
-  // SMS Channel
-  smsEnabled         Boolean @default(false)
-  smsFrequency       String  @default("immediate") @db.VarChar(20)
-  smsQuietHoursStart String? @db.VarChar(5)
-  smsQuietHoursEnd   String? @db.VarChar(5)
-
-  // Push Notifications
-  pushEnabled         Boolean @default(true)
-  pushFrequency       String  @default("immediate") @db.VarChar(20)
-  pushQuietHoursStart String? @db.VarChar(5)
-  pushQuietHoursEnd   String? @db.VarChar(5)
-
-  // In-App Notifications
-  inAppEnabled Boolean @default(true)
-  inAppSound   Boolean @default(true)
-  inAppBadge   Boolean @default(true)
-
-  // Metadata
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([userId])
-  @@map("notification_preferences_v2")
-}
-
-// Farm Settings - Business configuration and policies
-model FarmSettings {
-  id     String @id @default(cuid())
-  farmId String @unique
-  farm   Farm   @relation(fields: [farmId], references: [id], onDelete: Cascade)
-
-  // Business Hours
-  businessHours BusinessHours[]
-
-  // Delivery Configuration
-  deliveryAreas Json? // DeliveryArea[] type
-  deliveryFee   Float?
-  minOrderValue Float?
-
-  // Payment Configuration
-  acceptedPaymentMethods String[] // ["CARD", "CASH", "CHECK"]
-  requireDepositOnOrders Boolean  @default(false)
-  depositPercentage      Float?
-
-  // Policies
-  returnPolicy       String? @db.Text
-  cancellationPolicy String? @db.Text
-  termsAndConditions String? @db.Text
-
-  // Features
-  enablePreOrders     Boolean @default(false)
-  enableSubscriptions Boolean @default(false)
-  enableGiftCards     Boolean @default(false)
-
-  // Metadata
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([farmId])
-  @@map("farm_settings")
-}
-
-// Business Hours - Farm operating hours with timezone support
-model BusinessHours {
-  id             String       @id @default(cuid())
-  farmSettingsId String
-  farmSettings   FarmSettings @relation(fields: [farmSettingsId], references: [id], onDelete: Cascade)
-
-  dayOfWeek Int     @db.SmallInt // 0-6 (Sunday-Saturday)
-  openTime  String  @db.VarChar(5) // "09:00"
-  closeTime String  @db.VarChar(5) // "17:00"
-  timezone  String  @default("UTC") @db.VarChar(100)
-  isClosed  Boolean @default(false)
-
-  // Seasonal overrides
-  effectiveFrom DateTime?
-  effectiveTo   DateTime?
-
-  // Metadata
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@unique([farmSettingsId, dayOfWeek])
-  @@index([farmSettingsId])
-  @@index([dayOfWeek])
-  @@map("business_hours")
-}
-
-// System Settings - Platform-wide configuration
-model SystemSettings {
-  id  String @id @default(cuid())
-  key String @unique @db.VarChar(255)
-
-  value    Json
-  type     String @db.VarChar(20) // "string" | "number" | "boolean" | "json"
-  category String @db.VarChar(50) // "platform" | "feature" | "security" | "integration"
-
-  description String? @db.Text
-  isPublic    Boolean @default(false) // Can be read by frontend
-  isEditable  Boolean @default(true) // Can be changed via UI
-
-  // Metadata
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([category])
-  @@index([isPublic])
-  @@index([key])
-  @@map("system_settings")
-}
-
-// SMS Logging - Track SMS delivery
-model SMSLog {
-  id String @id @default(cuid())
-
-  userId      String
-  user        User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  phoneNumber String @db.VarChar(20)
-
-  message      String @db.Text
-  status       String @db.VarChar(20) // "QUEUED" | "SENT" | "FAILED" | "DELIVERED"
-  messageId    String? @db.VarChar(255) // Twilio SID
-  errorMessage String? @db.Text
-
-  metadata Json @default("{}")
-
-  sentAt     DateTime?
-  failedAt   DateTime?
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
-
-  @@index([userId])
-  @@index([status])
-  @@index([createdAt])
-  @@index([phoneNumber])
-  @@map("sms_logs")
-}
-
-// Push Notification Logging - Track push notification delivery
-model PushNotificationLog {
-  id String @id @default(cuid())
-
-  userId         String
-  user           User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  notificationId String? // Link to Notification model
-
-  title String @db.VarChar(255)
-  body  String @db.Text
-  data  Json   @default("{}")
-
-  status        String @db.VarChar(20) // "QUEUED" | "SENT" | "FAILED"
-  successCount  Int    @default(0)
-  failureCount  Int    @default(0)
-  errorMessage  String? @db.Text
-
-  sentAt    DateTime?
-  failedAt  DateTime?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-
-  @@index([userId])
-  @@index([notificationId])
-  @@index([status])
-  @@index([createdAt])
-  @@map("push_notification_logs")
-}
-
-// Device Tokens - Store FCM/APNS tokens for push notifications
-model DeviceToken {
-  id String @id @default(cuid())
-
-  userId   String
-  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  token    String @unique @db.VarChar(255) // FCM/APNS token
-  platform String @db.VarChar(20) // "ios" | "android" | "web"
-
-  isActive   Boolean   @default(true)
-  lastUsedAt DateTime  @default(now())
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
-
-  @@index([userId])
-  @@index([platform])
-  @@index([isActive])
-  @@index([token])
-  @@map("device_tokens")
-}
-
-// =============================================================================
-// AI CHAT & CONVERSATION MODELS
-// =============================================================================
-
-// Chat Thread - Tracks AI conversation sessions
-model ChatThread {
-  id        String   @id @default(cuid())
-  userId    String?
-  farmId    String?
-
-  // Thread metadata
-  title     String?  @db.VarChar(255)
-  provider  ChatProvider @default(OLLAMA)
-  model     String?  @db.VarChar(100)
-
-  // Status tracking
-  isActive  Boolean  @default(true)
-  messageCount Int   @default(0)
-
-  // Timestamps
-  lastActivityAt DateTime @default(now())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // Relations
-  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
-  farm      Farm?    @relation(fields: [farmId], references: [id], onDelete: SetNull)
-  messages  ChatMessage[]
-  summaries ChatSummary[]
-
-  @@index([userId])
-  @@index([farmId])
-  @@index([provider])
-  @@index([isActive])
-  @@index([lastActivityAt])
-  @@index([createdAt])
-  @@map("chat_threads")
-}
-
-// Chat Message - Individual messages in a conversation
-model ChatMessage {
-  id        String   @id @default(cuid())
-  threadId  String
-
-  // Message content
-  role      ChatRole
-  content   String   @db.Text
-
-  // Metadata
-  tokens    Int?     // Token count for this message
-  model     String?  @db.VarChar(100)
-
-  // For assistant messages
-  confidence Float?
-  citations  Json?   // Array of citation URLs
-
-  // Timestamps
-  createdAt DateTime @default(now())
-
-  // Relations
-  thread    ChatThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
-
-  @@index([threadId])
-  @@index([role])
-  @@index([createdAt])
-  @@map("chat_messages")
-}
-
-// Chat Summary - Condensed conversation context for continuity
-model ChatSummary {
-  id        String   @id @default(cuid())
-  threadId  String
-
-  // Summary content
-  summary   String   @db.Text
-
-  // Context for next chat
-  keyTopics Json?    // Array of key topics discussed
-  keyEntities Json?  // Important entities (farms, products, etc.)
-  userIntent String? @db.VarChar(500) // Last understood user intent
-
-  // Metrics
-  messagesCovered Int @default(0) // Number of messages summarized
-  tokensCondensed Int? // Original token count before summarization
-  summaryTokens   Int? // Token count of summary
-
-  // Quality metrics
-  confidence Float?  // Confidence score of summary
-
-  // Timestamps
-  createdAt DateTime @default(now())
-  expiresAt DateTime? // Optional expiry for summary relevance
-
-  // Relations
-  thread    ChatThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
-
-  @@index([threadId])
-  @@index([createdAt])
-  @@index([expiresAt])
-  @@map("chat_summaries")
-}
-
-// Chat Provider enum
 enum ChatProvider {
   OLLAMA
   PERPLEXITY
@@ -3658,7 +3146,6 @@ enum ChatProvider {
   ANTHROPIC
 }
 
-// Chat Role enum
 enum ChatRole {
   SYSTEM
   USER
