@@ -4,7 +4,7 @@
  * @module lib/utils/toast
  */
 
-import { toast as sonnerToast } from 'sonner';
+import { toast as sonnerToast } from "sonner";
 
 export interface ToastOptions {
   /**
@@ -17,7 +17,13 @@ export interface ToastOptions {
    * Toast position
    * @default 'top-right'
    */
-  position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'top-center' | 'bottom-center';
+  position?:
+    | "top-left"
+    | "top-right"
+    | "bottom-left"
+    | "bottom-right"
+    | "top-center"
+    | "bottom-center";
 
   /**
    * Custom description text
@@ -29,7 +35,7 @@ export interface ToastOptions {
    */
   action?: {
     label: string;
-    onClick: () => void;
+    onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
   };
 
   /**
@@ -37,7 +43,7 @@ export interface ToastOptions {
    */
   cancel?: {
     label: string;
-    onClick?: () => void;
+    onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   };
 
   /**
@@ -82,7 +88,7 @@ export const toast = {
   success: (message: string, options?: ToastOptions) => {
     return sonnerToast.success(message, {
       duration: options?.duration ?? 3000,
-      position: options?.position ?? 'top-right',
+      position: options?.position ?? "top-right",
       description: options?.description,
       action: options?.action,
       cancel: options?.cancel,
@@ -107,7 +113,7 @@ export const toast = {
   error: (message: string, options?: ToastOptions) => {
     return sonnerToast.error(message, {
       duration: options?.duration ?? 5000,
-      position: options?.position ?? 'top-right',
+      position: options?.position ?? "top-right",
       description: options?.description,
       action: options?.action,
       cancel: options?.cancel,
@@ -127,7 +133,7 @@ export const toast = {
   info: (message: string, options?: ToastOptions) => {
     return sonnerToast.info(message, {
       duration: options?.duration ?? 3000,
-      position: options?.position ?? 'top-right',
+      position: options?.position ?? "top-right",
       description: options?.description,
       action: options?.action,
       cancel: options?.cancel,
@@ -149,7 +155,7 @@ export const toast = {
   warning: (message: string, options?: ToastOptions) => {
     return sonnerToast.warning(message, {
       duration: options?.duration ?? 4000,
-      position: options?.position ?? 'top-right',
+      position: options?.position ?? "top-right",
       description: options?.description,
       action: options?.action,
       cancel: options?.cancel,
@@ -176,7 +182,7 @@ export const toast = {
    */
   loading: (message: string, options?: ToastOptions) => {
     return sonnerToast.loading(message, {
-      position: options?.position ?? 'top-right',
+      position: options?.position ?? "top-right",
       description: options?.description,
       dismissible: options?.dismissible ?? false,
     });
@@ -210,13 +216,13 @@ export const toast = {
   promise: <T = any>(
     promise: Promise<T>,
     messages: PromiseToastMessages<T>,
-    options?: ToastOptions
+    options?: ToastOptions,
   ): Promise<T> => {
     return sonnerToast.promise(promise, {
       loading: messages.loading,
       success: messages.success,
       error: messages.error,
-      position: options?.position ?? 'top-right',
+      position: options?.position ?? "top-right",
       duration: options?.duration,
     });
   },
@@ -237,10 +243,13 @@ export const toast = {
    * ));
    * ```
    */
-  custom: (jsx: (id: string | number) => React.ReactElement, options?: ToastOptions) => {
+  custom: (
+    jsx: (id: string | number) => React.ReactElement,
+    options?: ToastOptions,
+  ) => {
     return sonnerToast.custom(jsx, {
       duration: options?.duration ?? 4000,
-      position: options?.position ?? 'top-right',
+      position: options?.position ?? "top-right",
       dismissible: options?.dismissible ?? true,
     });
   },
@@ -277,82 +286,82 @@ export const toast = {
  */
 export const ToastMessages = {
   // Auth
-  loginSuccess: 'Welcome back!',
-  loginError: 'Invalid email or password',
-  logoutSuccess: 'Logged out successfully',
-  registerSuccess: 'Account created successfully!',
-  registerError: 'Failed to create account',
-  passwordResetSent: 'Password reset email sent',
-  passwordResetSuccess: 'Password reset successfully',
+  loginSuccess: "Welcome back!",
+  loginError: "Invalid email or password",
+  logoutSuccess: "Logged out successfully",
+  registerSuccess: "Account created successfully!",
+  registerError: "Failed to create account",
+  passwordResetSent: "Password reset email sent",
+  passwordResetSuccess: "Password reset successfully",
 
   // Cart
-  addToCartSuccess: 'Added to cart',
-  addToCartError: 'Failed to add to cart',
-  removeFromCartSuccess: 'Removed from cart',
-  updateCartSuccess: 'Cart updated',
-  clearCartSuccess: 'Cart cleared',
+  addToCartSuccess: "Added to cart",
+  addToCartError: "Failed to add to cart",
+  removeFromCartSuccess: "Removed from cart",
+  updateCartSuccess: "Cart updated",
+  clearCartSuccess: "Cart cleared",
 
   // Orders
-  orderPlaced: 'Order placed successfully!',
-  orderPlacedError: 'Failed to place order',
-  orderCancelled: 'Order cancelled',
-  orderCancelledError: 'Failed to cancel order',
+  orderPlaced: "Order placed successfully!",
+  orderPlacedError: "Failed to place order",
+  orderCancelled: "Order cancelled",
+  orderCancelledError: "Failed to cancel order",
 
   // Products
-  productCreated: 'Product created successfully',
-  productCreatedError: 'Failed to create product',
-  productUpdated: 'Product updated',
-  productUpdatedError: 'Failed to update product',
-  productDeleted: 'Product deleted',
-  productDeletedError: 'Failed to delete product',
+  productCreated: "Product created successfully",
+  productCreatedError: "Failed to create product",
+  productUpdated: "Product updated",
+  productUpdatedError: "Failed to update product",
+  productDeleted: "Product deleted",
+  productDeletedError: "Failed to delete product",
 
   // Farms
-  farmCreated: 'Farm created successfully',
-  farmCreatedError: 'Failed to create farm',
-  farmUpdated: 'Farm updated',
-  farmUpdatedError: 'Failed to update farm',
-  farmDeleted: 'Farm deleted',
-  farmDeletedError: 'Failed to delete farm',
+  farmCreated: "Farm created successfully",
+  farmCreatedError: "Failed to create farm",
+  farmUpdated: "Farm updated",
+  farmUpdatedError: "Failed to update farm",
+  farmDeleted: "Farm deleted",
+  farmDeletedError: "Failed to delete farm",
 
   // Favorites
-  addToFavoritesSuccess: 'Added to favorites',
-  addToFavoritesError: 'Failed to add to favorites',
-  removeFromFavoritesSuccess: 'Removed from favorites',
+  addToFavoritesSuccess: "Added to favorites",
+  addToFavoritesError: "Failed to add to favorites",
+  removeFromFavoritesSuccess: "Removed from favorites",
 
   // Reviews
-  reviewSubmitted: 'Review submitted successfully',
-  reviewSubmittedError: 'Failed to submit review',
-  reviewUpdated: 'Review updated',
-  reviewDeleted: 'Review deleted',
+  reviewSubmitted: "Review submitted successfully",
+  reviewSubmittedError: "Failed to submit review",
+  reviewUpdated: "Review updated",
+  reviewDeleted: "Review deleted",
 
   // Profile
-  profileUpdated: 'Profile updated successfully',
-  profileUpdatedError: 'Failed to update profile',
-  avatarUploaded: 'Profile picture updated',
-  avatarUploadError: 'Failed to upload image',
+  profileUpdated: "Profile updated successfully",
+  profileUpdatedError: "Failed to update profile",
+  avatarUploaded: "Profile picture updated",
+  avatarUploadError: "Failed to upload image",
 
   // Payments
-  paymentSuccess: 'Payment successful!',
-  paymentError: 'Payment failed',
-  paymentProcessing: 'Processing payment...',
+  paymentSuccess: "Payment successful!",
+  paymentError: "Payment failed",
+  paymentProcessing: "Processing payment...",
 
   // File uploads
-  uploadSuccess: 'File uploaded successfully',
-  uploadError: 'Failed to upload file',
-  uploading: 'Uploading...',
+  uploadSuccess: "File uploaded successfully",
+  uploadError: "Failed to upload file",
+  uploading: "Uploading...",
 
   // Generic
-  saveSuccess: 'Saved successfully',
-  saveError: 'Failed to save',
-  deleteSuccess: 'Deleted successfully',
-  deleteError: 'Failed to delete',
-  updateSuccess: 'Updated successfully',
-  updateError: 'Failed to update',
-  loadError: 'Failed to load data',
-  networkError: 'Network error. Please try again.',
-  unexpectedError: 'An unexpected error occurred',
-  permissionDenied: 'You do not have permission to do that',
-  validationError: 'Please check the form for errors',
+  saveSuccess: "Saved successfully",
+  saveError: "Failed to save",
+  deleteSuccess: "Deleted successfully",
+  deleteError: "Failed to delete",
+  updateSuccess: "Updated successfully",
+  updateError: "Failed to update",
+  loadError: "Failed to load data",
+  networkError: "Network error. Please try again.",
+  unexpectedError: "An unexpected error occurred",
+  permissionDenied: "You do not have permission to do that",
+  validationError: "Please check the form for errors",
 } as const;
 
 /**
@@ -374,12 +383,13 @@ export const ToastMessages = {
  */
 export function toastFormSubmit<T>(
   promise: Promise<T>,
-  entityName: string = 'Item'
+  entityName: string = "Item",
 ): Promise<T> {
   return toast.promise(promise, {
     loading: `Saving ${entityName.toLowerCase()}...`,
     success: `${entityName} saved successfully!`,
-    error: (err) => err?.message || `Failed to save ${entityName.toLowerCase()}`,
+    error: (err) =>
+      err?.message || `Failed to save ${entityName.toLowerCase()}`,
   });
 }
 
@@ -398,12 +408,13 @@ export function toastFormSubmit<T>(
  */
 export function toastDelete<T>(
   promise: Promise<T>,
-  entityName: string = 'Item'
+  entityName: string = "Item",
 ): Promise<T> {
   return toast.promise(promise, {
     loading: `Deleting ${entityName.toLowerCase()}...`,
     success: `${entityName} deleted successfully`,
-    error: (err) => err?.message || `Failed to delete ${entityName.toLowerCase()}`,
+    error: (err) =>
+      err?.message || `Failed to delete ${entityName.toLowerCase()}`,
   });
 }
 
