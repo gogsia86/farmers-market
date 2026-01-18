@@ -90,8 +90,8 @@ export const toast = {
       duration: options?.duration ?? 3000,
       position: options?.position ?? "top-right",
       description: options?.description,
-      action: options?.action,
-      cancel: options?.cancel,
+      ...(options?.action && { action: options.action }),
+      ...(options?.cancel && { cancel: options.cancel }),
       icon: options?.icon,
       dismissible: options?.dismissible ?? true,
     });
@@ -115,8 +115,8 @@ export const toast = {
       duration: options?.duration ?? 5000,
       position: options?.position ?? "top-right",
       description: options?.description,
-      action: options?.action,
-      cancel: options?.cancel,
+      ...(options?.action && { action: options.action }),
+      ...(options?.cancel && { cancel: options.cancel }),
       icon: options?.icon,
       dismissible: options?.dismissible ?? true,
     });
@@ -135,8 +135,8 @@ export const toast = {
       duration: options?.duration ?? 3000,
       position: options?.position ?? "top-right",
       description: options?.description,
-      action: options?.action,
-      cancel: options?.cancel,
+      ...(options?.action && { action: options.action }),
+      ...(options?.cancel && { cancel: options.cancel }),
       icon: options?.icon,
       dismissible: options?.dismissible ?? true,
     });
@@ -157,8 +157,8 @@ export const toast = {
       duration: options?.duration ?? 4000,
       position: options?.position ?? "top-right",
       description: options?.description,
-      action: options?.action,
-      cancel: options?.cancel,
+      ...(options?.action && { action: options.action }),
+      ...(options?.cancel && { cancel: options.cancel }),
       icon: options?.icon,
       dismissible: options?.dismissible ?? true,
     });
