@@ -109,7 +109,13 @@
     "sentry:test": "tsx scripts/test-sentry.ts",
     "sentry:test:verbose": "tsx scripts/test-sentry.ts --verbose",
     "sentry:send-test": "tsx scripts/test-sentry.ts --send-test-error",
-    "sentry:check": "tsx scripts/test-sentry.ts --verbose"
+    "sentry:check": "tsx scripts/test-sentry.ts --verbose",
+    "stripe:test": "tsx scripts/test-stripe-webhooks.ts",
+    "stripe:test:verbose": "tsx scripts/test-stripe-webhooks.ts --verbose",
+    "stripe:webhook": "stripe listen --forward-to localhost:3001/api/payments/webhook",
+    "stripe:trigger": "stripe trigger payment_intent.succeeded && stripe trigger checkout.session.completed",
+    "verify:integrations": "npm run sentry:test && npm run stripe:test",
+    "verify:all": "npm run db:test && npm run sentry:test && npm run stripe:test"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.2",
