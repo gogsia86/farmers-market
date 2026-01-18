@@ -26,7 +26,11 @@ interface Message {
 }
 
 interface ChatInterfaceProps {
-  agentName?: "farmAnalyst" | "productCatalog" | "orderProcessor" | "customerSupport";
+  agentName?:
+    | "farmAnalyst"
+    | "productCatalog"
+    | "orderProcessor"
+    | "customerSupport";
   context?: {
     farmId?: string;
     orderId?: string;
@@ -111,10 +115,46 @@ export default function ChatInterface({
         }),
       });
 
-      const data = await response.json();
+      // Handle non-OK HTTP responses
+      if (!response.ok) {
+        if (response.status === 401) {
+          throw new Error("Please sign in to use the AI advisor");
+        } else if (response.status === 503) {
+          throw new Error(
+            "AI service is temporarily unavailable. Please try again in a moment.",
+          );
+        } else if (response.status >= 500) {
+          throw new Error(
+            "Server error. Our team has been notified. Please try again later.",
+          );
+        }
+      }
 
-      if (!response.ok || !data.success) {
-        throw new Error(data.error?.message || "Failed to get response");
+      // Parse response JSON with error handling
+      let data;
+      try {
+        data = await response.json();
+      } catch (parseError) {
+        console.error("Failed to parse response JSON:", parseError);
+        throw new Error(
+          "Received an invalid response from the server. Please try again.",
+        );
+      }
+
+      // Validate response structure
+      if (!data || typeof data !== "object") {
+        throw new Error("Invalid response format from server");
+      }
+
+      if (!data.success) {
+        throw new Error(
+          data.error?.message || "Failed to get response from AI advisor",
+        );
+      }
+
+      // Validate required fields in successful response
+      if (!data.data || !data.data.message) {
+        throw new Error("Incomplete response from AI advisor");
       }
 
       // Store conversation ID for context continuity
@@ -127,15 +167,38 @@ export default function ChatInterface({
         id: `assistant-${Date.now()}`,
         role: "assistant",
         content: data.data.message,
-        timestamp: new Date(data.data.metadata.timestamp),
+        timestamp: data.data.metadata?.timestamp
+          ? new Date(data.data.metadata.timestamp)
+          : new Date(),
         agentName: data.data.agent,
         confidence: data.data.confidence,
       };
 
       setMessages((prev) => [...prev, assistantMessage]);
+      setError(null); // Clear any previous errors on success
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+      let errorMessage = "An unexpected error occurred. Please try again.";
+
+      if (err instanceof Error) {
+        errorMessage = err.message;
+      } else if (typeof err === "string") {
+        errorMessage = err;
+      }
+
+      setError(errorMessage);
       console.error("Chat error:", err);
+
+      // Optionally add a system message to chat for better UX
+      const errorSystemMessage: Message = {
+        id: `error-${Date.now()}`,
+        role: "assistant",
+        content: `⚠️ ${errorMessage}`,
+        timestamp: new Date(),
+        agentName,
+        confidence: 0,
+      };
+
+      setMessages((prev) => [...prev, errorSystemMessage]);
     } finally {
       setIsLoading(false);
       inputRef.current?.focus();
@@ -154,7 +217,9 @@ export default function ChatInterface({
   const agentInfo = getAgentInfo(agentName);
 
   return (
-    <div className={`flex flex-col h-full bg-white dark:bg-gray-900 rounded-lg shadow-lg ${className}`}>
+    <div
+      className={`flex flex-col h-full bg-white dark:bg-gray-900 rounded-lg shadow-lg ${className}`}
+    >
       {/* Header */}
       <div className="flex items-center gap-3 p-4 border-b dark:border-gray-700 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-gray-800 dark:to-gray-800">
         <div className="flex-shrink-0">
@@ -269,9 +334,7 @@ function MessageBubble({ message }: { message: Message }) {
 
         {/* Message content */}
         <div
-          className={`flex flex-col ${
-            isUser ? "items-end" : "items-start"
-          }`}
+          className={`flex flex-col ${isUser ? "items-end" : "items-start"}`}
         >
           <div
             className={`px-4 py-2 rounded-2xl ${
@@ -300,8 +363,8 @@ function MessageBubble({ message }: { message: Message }) {
                   message.confidence >= 0.8
                     ? "text-green-600 dark:text-green-400"
                     : message.confidence >= 0.6
-                    ? "text-yellow-600 dark:text-yellow-400"
-                    : "text-red-600 dark:text-red-400"
+                      ? "text-yellow-600 dark:text-yellow-400"
+                      : "text-red-600 dark:text-red-400"
                 }`}
               >
                 {(message.confidence * 100).toFixed(0)}% confidence
@@ -318,11 +381,15 @@ function MessageBubble({ message }: { message: Message }) {
 // Helper Functions
 // ============================================================================
 
-function getAgentInfo(agentName: string): { name: string; description: string } {
+function getAgentInfo(agentName: string): {
+  name: string;
+  description: string;
+} {
   const agentInfoMap: Record<string, { name: string; description: string }> = {
     farmAnalyst: {
       name: "Farm Analyst",
-      description: "Expert in farm operations, yield analysis, and crop planning",
+      description:
+        "Expert in farm operations, yield analysis, and crop planning",
     },
     productCatalog: {
       name: "Product Manager",
@@ -334,7 +401,8 @@ function getAgentInfo(agentName: string): { name: string; description: string } 
     },
     customerSupport: {
       name: "Customer Support",
-      description: "General assistance with products, farms, and platform features",
+      description:
+        "General assistance with products, farms, and platform features",
     },
   };
 

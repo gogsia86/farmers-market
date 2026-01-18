@@ -50,6 +50,7 @@
     "test:security": "jest tests/security/security-scanner.test.ts --runInBand --detectOpenHandles",
     "test:users:create": "tsx scripts/create-test-users.ts",
     "test:users:production": "tsx scripts/create-production-test-users.ts",
+    "test:advisor": "tsx scripts/test-ai-advisor.ts",
     "inspect": "tsx scripts/comprehensive-website-inspector-v4.ts",
     "inspect:quick": "tsx scripts/comprehensive-website-inspector-v4.ts -- --quick",
     "inspect:discover": "tsx scripts/comprehensive-website-inspector-v4.ts -- --discover",
@@ -120,7 +121,8 @@
     "verify:local:quick": "tsx scripts/verification/local-verification-sprint.ts --quick",
     "verify:local:full": "tsx scripts/verification/local-verification-sprint.ts --full",
     "db:seed:croatian": "tsx scripts/seed-croatian-market.ts",
-    "seed:croatian": "tsx scripts/seed-croatian-market.ts"
+    "seed:croatian": "tsx scripts/seed-croatian-market.ts",
+    "seed:croatian:safe": "tsx scripts/seed-croatian-safe.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.2",

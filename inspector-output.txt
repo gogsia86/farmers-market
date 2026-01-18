@@ -1,0 +1,127 @@
+npm warn config optional Use `--omit=optional` to exclude optional dependencies, or
+npm warn config `--include=optional` to include them.
+npm warn config
+npm warn config       Default value does install optional deps unless otherwise omitted.
+
+════════════════════════════════════════════════════════════════════════════════
+  [1m[36m🚀 INITIALIZING GODLIKE WEBSITE INSPECTOR V3.0.0[0m
+════════════════════════════════════════════════════════════════════════════════
+[19:07:01] ℹ️ [34mBase URL: https://farmers-market-platform.vercel.app[0m
+[19:07:01] ℹ️ [34mMax Concurrency: 5[0m
+[19:07:01] ℹ️ [34mHeadless Mode: true[0m
+[19:07:01] ✅ [32mBrowser initialized successfully[0m
+
+════════════════════════════════════════════════════════════════════════════════
+  [1m[36m🔍 STARTING PARALLEL WEBSITE INSPECTION[0m
+════════════════════════════════════════════════════════════════════════════════
+[19:07:01] ℹ️ [34mTotal pages to inspect: 43[0m
+[19:07:01] ℹ️ [34mLighthouse enabled: false[0m
+[19:07:01] ℹ️ [34mSecurity scanning enabled: false[0m
+
+════════════════════════════════════════════════════════════════════════════════
+  [1m[36m📄 PUBLIC PAGES (20)[0m
+════════════════════════════════════════════════════════════════════════════════
+[19:07:01] ℹ️ [34mProcessing batch 1/4 (5 pages)[0m
+[19:07:01] ℹ️ [34m🔍 [Worker 0] Inspecting: Homepage (/)[0m
+[19:07:01] ℹ️ [34m🔍 [Worker 1] Inspecting: Sign In (/auth/signin)[0m
+[19:07:01] ℹ️ [34m🔍 [Worker 2] Inspecting: Sign Up (/auth/signup)[0m
+[19:07:01] ℹ️ [34m🔍 [Worker 3] Inspecting: About Us (/about)[0m
+[19:07:01] ℹ️ [34m🔍 [Worker 4] Inspecting: Contact (/contact)[0m
+[19:07:19] ⚠️ [33m⚠️ [Worker 3] About Us: WARNING (5429ms)[0m
+[19:07:21] ⚠️ [33m⚠️ [Worker 1] Sign In: WARNING (5495ms)[0m
+[19:07:24] ⚠️ [33m⚠️ [Worker 4] Contact: WARNING (2706ms)[0m
+[19:07:25] ⚠️ [33m⚠️ [Worker 0] Homepage: WARNING (2519ms)[0m
+[19:07:28] ⚠️ [33m⚠️ [Worker 2] Sign Up: WARNING (16224ms)[0m
+[19:07:28] ℹ️ [34mProcessing batch 2/4 (5 pages)[0m
+[19:07:29] ℹ️ [34m🔍 [Worker 5] Inspecting: Browse Farms (/farms)[0m
+[19:07:29] ℹ️ [34m🔍 [Worker 6] Inspecting: Browse Products (/products)[0m
+[19:07:29] ℹ️ [34m🔍 [Worker 7] Inspecting: Forgot Password (/auth/forgot-password)[0m
+[19:07:29] ℹ️ [34m🔍 [Worker 8] Inspecting: FAQ (/faq)[0m
+[19:07:29] ℹ️ [34m🔍 [Worker 9] Inspecting: How It Works (/how-it-works)[0m
+[19:07:42] ⚠️ [33m⚠️ [Worker 8] FAQ: WARNING (2402ms)[0m
+[19:07:42] ⚠️ [33m⚠️ [Worker 9] How It Works: WARNING (2836ms)[0m
+[19:07:42] ⚠️ [33m⚠️ [Worker 7] Forgot Password: WARNING (3597ms)[0m
+[19:07:53] ⚠️ [33m⚠️ [Worker 6] Browse Products: WARNING (1448ms)[0m
+[19:08:03] ⚠️ [33m⚠️ [Worker 5] Browse Farms: WARNING (21536ms)[0m
+[19:08:03] ℹ️ [34mProcessing batch 3/4 (5 pages)[0m
+[19:08:03] ℹ️ [34m🔍 [Worker 10] Inspecting: Find Markets (/markets)[0m
+[19:08:03] ℹ️ [34m🔍 [Worker 11] Inspecting: Privacy Policy (/privacy)[0m
+[19:08:03] ℹ️ [34m🔍 [Worker 12] Inspecting: Terms of Service (/terms)[0m
+[19:08:03] ℹ️ [34m🔍 [Worker 13] Inspecting: Shipping Info (/shipping)[0m
+[19:08:03] ℹ️ [34m🔍 [Worker 14] Inspecting: Blog (/blog)[0m
+[19:08:16] ⚠️ [33m⚠️ [Worker 10] Find Markets: WARNING (2571ms)[0m
+[19:08:16] ⚠️ [33m⚠️ [Worker 12] Terms of Service: WARNING (2855ms)[0m
+[19:08:16] ⚠️ [33m⚠️ [Worker 11] Privacy Policy: WARNING (2917ms)[0m
+[19:08:20] ⚠️ [33m⚠️ [Worker 14] Blog: WARNING (7219ms)[0m
+[19:08:33] ⚠️ [33m⚠️ [Worker 13] Shipping Info: WARNING (19843ms)[0m
+[19:08:33] ℹ️ [34mProcessing batch 4/4 (5 pages)[0m
+[19:08:33] ℹ️ [34m🔍 [Worker 15] Inspecting: Recipes (/recipes)[0m
+[19:08:33] ℹ️ [34m🔍 [Worker 16] Inspecting: Seasonal Guide (/seasonal-guide)[0m
+[19:08:33] ℹ️ [34m🔍 [Worker 17] Inspecting: Sustainability (/sustainability)[0m
+[19:08:33] ℹ️ [34m🔍 [Worker 18] Inspecting: Community (/community)[0m
+[19:08:33] ℹ️ [34m🔍 [Worker 19] Inspecting: Cookie Policy (/cookies)[0m
+[19:08:45] ⚠️ [33m⚠️ [Worker 17] Sustainability: WARNING (1855ms)[0m
+[19:08:46] ⚠️ [33m⚠️ [Worker 16] Seasonal Guide: WARNING (2223ms)[0m
+[19:08:46] ⚠️ [33m⚠️ [Worker 15] Recipes: WARNING (2294ms)[0m
+[19:08:47] ⚠️ [33m⚠️ [Worker 19] Cookie Policy: WARNING (3963ms)[0m
+[19:08:50] ⚠️ [33m⚠️ [Worker 18] Community: WARNING (6682ms)[0m
+
+════════════════════════════════════════════════════════════════════════════════
+  [1m[36m👤 CUSTOMER PORTAL PAGES (8)[0m
+════════════════════════════════════════════════════════════════════════════════
+[19:09:01] ✅ [32m✓ Authentication successful for customer[0m
+[19:09:01] ℹ️ [34mProcessing batch 1/2 (5 pages)[0m
+[19:09:01] ℹ️ [34m🔍 [Worker 0] Inspecting: Customer Dashboard (/customer/dashboard)[0m
+[19:09:01] ℹ️ [34m🔍 [Worker 2] Inspecting: Shopping Cart (/customer/cart)[0m
+[19:09:01] ℹ️ [34m🔍 [Worker 1] Inspecting: My Orders (/customer/orders)[0m
+[19:09:01] ℹ️ [34m🔍 [Worker 3] Inspecting: Profile Settings (/customer/profile)[0m
+[19:09:01] ℹ️ [34m🔍 [Worker 4] Inspecting: Saved Addresses (/customer/addresses)[0m
+[19:09:13] ⚠️ [33m⚠️ [Worker 0] Customer Dashboard: WARNING (1620ms)[0m
+[19:09:13] ⚠️ [33m⚠️ [Worker 2] Shopping Cart: WARNING (1757ms)[0m
+[19:09:15] ⚠️ [33m⚠️ [Worker 1] My Orders: WARNING (2996ms)[0m
+[19:09:15] ⚠️ [33m⚠️ [Worker 4] Saved Addresses: WARNING (3919ms)[0m
+[19:09:17] ⚠️ [33m⚠️ [Worker 3] Profile Settings: WARNING (5470ms)[0m
+[19:09:17] ℹ️ [34mProcessing batch 2/2 (3 pages)[0m
+[19:09:17] ℹ️ [34m🔍 [Worker 5] Inspecting: Payment Methods (/customer/payment-methods)[0m
+[19:09:17] ℹ️ [34m🔍 [Worker 6] Inspecting: Wishlist (/customer/wishlist)[0m
+[19:09:17] ℹ️ [34m🔍 [Worker 7] Inspecting: Subscriptions (/customer/subscriptions)[0m
+[19:09:28] ⚠️ [33m⚠️ [Worker 7] Subscriptions: WARNING (1279ms)[0m
+[19:09:30] ⚠️ [33m⚠️ [Worker 5] Payment Methods: WARNING (2458ms)[0m
+[19:09:30] ⚠️ [33m⚠️ [Worker 6] Wishlist: WARNING (2554ms)[0m
+
+════════════════════════════════════════════════════════════════════════════════
+  [1m[36m🌾 FARMER PORTAL PAGES (8)[0m
+════════════════════════════════════════════════════════════════════════════════
+[19:09:50] ✅ [32m✓ Authentication successful for farmer[0m
+[19:09:50] ℹ️ [34mProcessing batch 1/2 (5 pages)[0m
+[19:09:50] ℹ️ [34m🔍 [Worker 0] Inspecting: Farmer Dashboard (/farmer/dashboard)[0m
+[19:09:50] ℹ️ [34m🔍 [Worker 1] Inspecting: Manage Products (/farmer/products)[0m
+[19:09:50] ℹ️ [34m🔍 [Worker 3] Inspecting: Add Product (/farmer/products/add)[0m
+[19:09:50] ℹ️ [34m🔍 [Worker 2] Inspecting: Farmer Orders (/farmer/orders)[0m
+[19:09:50] ℹ️ [34m🔍 [Worker 4] Inspecting: Inventory Management (/farmer/inventory)[0m
+[19:10:01] ⚠️ [33m⚠️ [Worker 2] Farmer Orders: WARNING (2457ms)[0m
+[19:10:02] ⚠️ [33m⚠️ [Worker 1] Manage Products: WARNING (1594ms)[0m
+[19:10:02] ⚠️ [33m⚠️ [Worker 4] Inventory Management: WARNING (1849ms)[0m
+[19:10:02] ⚠️ [33m⚠️ [Worker 0] Farmer Dashboard: WARNING (2361ms)[0m
+[19:10:03] ⚠️ [33m⚠️ [Worker 3] Add Product: WARNING (3533ms)[0m
+[19:10:03] ℹ️ [34mProcessing batch 2/2 (3 pages)[0m
+[19:10:04] ℹ️ [34m🔍 [Worker 6] Inspecting: Farmer Settings (/farmer/settings)[0m
+[19:10:04] ℹ️ [34m🔍 [Worker 5] Inspecting: Farm Profile (/farmer/profile)[0m
+[19:10:04] ℹ️ [34m🔍 [Worker 7] Inspecting: Analytics (/farmer/analytics)[0m
+[19:10:09] ✅ [32m✅ [Worker 6] Farmer Settings: SUCCESS (3019ms)[0m
+[19:10:09] ✅ [32m✅ [Worker 5] Farm Profile: SUCCESS (3757ms)[0m
+[19:10:09] ✅ [32m✅ [Worker 7] Analytics: SUCCESS (1092ms)[0m
+
+════════════════════════════════════════════════════════════════════════════════
+  [1m[36m👨‍💼 ADMIN PORTAL PAGES (7)[0m
+════════════════════════════════════════════════════════════════════════════════
+[19:10:14] ❌ [31mAuthentication failed for admin, skipping pages[0m
+[19:10:14] ❌ [31mFatal error: browserContext.close: Target page, context or browser has been closed
+Browser logs:
+
+<launching> C:\Users\Gogsi\AppData\Local\ms-playwright\chromium_headless_shell-1200\chrome-headless-shell-win64\chrome-headless-shell.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AcceptCHFrame,AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate,RenderDocument,OptimizationHints --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --disable-infobars --disable-search-engine-choice-screen --disable-sync --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --no-sandbox --disable-setuid-sandbox --disable-dev-shm-usage --disable-blink-features=AutomationControlled --user-data-dir=C:\Users\Gogsi\AppData\Local\Temp\playwright_chromiumdev_profile-VK2jMp --remote-debugging-pipe --no-startup-window
+<launched> pid=36412
+[pid=36412][err] [0118/191008.990:ERROR:content\browser\network_service_instance_impl.cc:613] Network service crashed or was terminated, restarting service.
+[pid=36412][err] [0118/191014.017:ERROR:content\browser\gpu\gpu_process_host.cc:1006] GPU process exited unexpectedly: exit_code=-1073741510
+[pid=36412][err] [0118/191014.018:WARNING:content\browser\gpu\gpu_process_host.cc:1448] The GPU process has crashed 1 time(s)[0m
+^C

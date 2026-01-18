@@ -474,7 +474,69 @@ Return your response as JSON with the following structure:
     });
 
     const responseContent = completion.choices[0]?.message?.content || "{}";
-    const parsedResponse = JSON.parse(responseContent);
+
+    // Defensive JSON parsing with fallback
+    let parsedResponse: any = null;
+
+    try {
+      // Attempt to parse as JSON
+      const trimmedContent = responseContent.trim();
+
+      if (!trimmedContent) {
+        logger.warn("Empty response content from AI model", { requestId });
+        parsedResponse = {
+          response:
+            "I received your question but couldn't generate a proper response. Please try asking in a different way.",
+        };
+      } else if (
+        trimmedContent.startsWith("{") ||
+        trimmedContent.startsWith("[")
+      ) {
+        // Looks like JSON, try to parse
+        parsedResponse = JSON.parse(trimmedContent);
+      } else {
+        // Plain text response (shouldn't happen with json_object format, but defensive)
+        logger.warn(
+          "Non-JSON response from AI model despite json_object format",
+          {
+            requestId,
+            contentPreview: trimmedContent.substring(0, 100),
+          },
+        );
+        parsedResponse = {
+          response: trimmedContent,
+        };
+      }
+    } catch (parseError) {
+      // JSON parsing failed - log and create fallback response
+      logger.error("Failed to parse AI model response as JSON", {
+        requestId,
+        parseError:
+          parseError instanceof Error ? parseError.message : String(parseError),
+        rawContentPreview: responseContent.substring(0, 200),
+        contentLength: responseContent.length,
+      });
+
+      // Use the raw content as the response text
+      parsedResponse = {
+        response:
+          responseContent.length > 0
+            ? responseContent
+            : "I'm having trouble formulating a response. Could you rephrase your question?",
+      };
+    }
+
+    // Validate parsed response structure
+    if (!parsedResponse || typeof parsedResponse !== "object") {
+      logger.warn("Invalid parsed response structure", {
+        requestId,
+        parsedResponse,
+      });
+      parsedResponse = {
+        response:
+          "I encountered an issue processing your request. Please try again.",
+      };
+    }
 
     // Calculate confidence
     const confidence = calculateResponseConfidence(
@@ -487,14 +549,24 @@ Return your response as JSON with the following structure:
         parsedResponse.response ||
         "I understand your question. Let me provide some guidance on agricultural best practices for your situation.",
       confidence,
-      suggestions: parsedResponse.suggestions || [],
-      relatedTopics: parsedResponse.relatedTopics || [],
-      citations: parsedResponse.citations || [],
+      suggestions: Array.isArray(parsedResponse.suggestions)
+        ? parsedResponse.suggestions
+        : [],
+      relatedTopics: Array.isArray(parsedResponse.relatedTopics)
+        ? parsedResponse.relatedTopics
+        : [],
+      citations: Array.isArray(parsedResponse.citations)
+        ? parsedResponse.citations
+        : [],
       model: agentConfig.model,
       tokensUsed: completion.usage?.total_tokens,
     };
   } catch (error) {
-    logger.error("AI response generation failed", { error, requestId });
+    logger.error("AI response generation failed", {
+      error: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+      requestId,
+    });
 
     // Fallback response
     return {
