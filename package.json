@@ -115,7 +115,9 @@
     "stripe:webhook": "stripe listen --forward-to localhost:3001/api/payments/webhook",
     "stripe:trigger": "stripe trigger payment_intent.succeeded && stripe trigger checkout.session.completed",
     "verify:integrations": "npm run sentry:test && npm run stripe:test",
-    "verify:all": "npm run db:test && npm run sentry:test && npm run stripe:test"
+    "verify:all": "npm run db:test && npm run sentry:test && npm run stripe:test",
+    "db:seed:croatian": "tsx scripts/seed-croatian-market.ts",
+    "seed:croatian": "tsx scripts/seed-croatian-market.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.2",
