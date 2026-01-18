@@ -215,7 +215,7 @@
     "@types/jest": "^30.0.0",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^25.0.5",
-    "@types/nodemailer": "^6.4.16",
+    "@types/nodemailer": "^7.0.5",
     "@types/pg": "^8.16.0",
     "@types/pngjs": "^6.0.5",
     "@types/react": "^19.2.7",
