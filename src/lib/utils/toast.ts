@@ -43,7 +43,7 @@ export interface ToastOptions {
    */
   cancel?: {
     label: string;
-    onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+    onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
   };
 
   /**
@@ -94,7 +94,7 @@ export const toast = {
       ...(options?.cancel && { cancel: options.cancel }),
       icon: options?.icon,
       dismissible: options?.dismissible ?? true,
-    });
+    } as any);
   },
 
   /**
@@ -119,7 +119,7 @@ export const toast = {
       ...(options?.cancel && { cancel: options.cancel }),
       icon: options?.icon,
       dismissible: options?.dismissible ?? true,
-    });
+    } as any);
   },
 
   /**
@@ -139,7 +139,7 @@ export const toast = {
       ...(options?.cancel && { cancel: options.cancel }),
       icon: options?.icon,
       dismissible: options?.dismissible ?? true,
-    });
+    } as any);
   },
 
   /**
@@ -161,7 +161,7 @@ export const toast = {
       ...(options?.cancel && { cancel: options.cancel }),
       icon: options?.icon,
       dismissible: options?.dismissible ?? true,
-    });
+    } as any);
   },
 
   /**
@@ -217,14 +217,14 @@ export const toast = {
     promise: Promise<T>,
     messages: PromiseToastMessages<T>,
     options?: ToastOptions,
-  ): Promise<T> => {
+  ) => {
     return sonnerToast.promise(promise, {
       loading: messages.loading,
       success: messages.success,
       error: messages.error,
       position: options?.position ?? "top-right",
       duration: options?.duration,
-    });
+    } as any);
   },
 
   /**
@@ -384,7 +384,7 @@ export const ToastMessages = {
 export function toastFormSubmit<T>(
   promise: Promise<T>,
   entityName: string = "Item",
-): Promise<T> {
+) {
   return toast.promise(promise, {
     loading: `Saving ${entityName.toLowerCase()}...`,
     success: `${entityName} saved successfully!`,
@@ -409,7 +409,7 @@ export function toastFormSubmit<T>(
 export function toastDelete<T>(
   promise: Promise<T>,
   entityName: string = "Item",
-): Promise<T> {
+) {
   return toast.promise(promise, {
     loading: `Deleting ${entityName.toLowerCase()}...`,
     success: `${entityName} deleted successfully`,
